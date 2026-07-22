@@ -1,1 +1,17 @@
-const CACHE_NAME="albion-atlanta-quiz-v3";const FILES=["./","./index.html","./style.css","./app.js","./config.js","./quiz-data.js","./content-data.js","./manifest.json","./favicon.svg"];self.addEventListener("install",e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(FILES)));self.skipWaiting()});self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==CACHE_NAME?caches.delete(k):null))));self.clients.claim()});self.addEventListener("fetch",e=>{e.respondWith(fetch(e.request).catch(()=>caches.match(e.request)))})
+const CACHE_NAME = 'albion-fan-hub-v5';
+const FILES = [
+  './', './index.html', './style.css', './app.js', './quiz-data.js', './content-data.js',
+  './manifest.json', './favicon.svg', './assets/clean-albion-graphic.svg',
+  './assets/albion-safe-graphic.svg', './assets/amex-line.svg', './assets/seagull-flight.svg'
+];
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES)));
+  self.skipWaiting();
+});
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))));
+  self.clients.claim();
+});
+self.addEventListener('fetch', event => {
+  event.respondWith(fetch(event.request).catch(() => caches.match(event.request)));
+});
