@@ -38,6 +38,7 @@
   const formations = {
     '4-2-3-1':['GK','RB','CB','CB','LB','DM','DM','RW','AM','LW','ST'],
     '4-3-3':['GK','RB','CB','CB','LB','CM','CM','CM','RW','ST','LW'],
+    '4-4-2':['GK','RB','CB','CB','LB','RW','CM','CM','LW','ST','ST'],
     '3-4-2-1':['GK','CB','CB','CB','RWB','CM','CM','LWB','AM','AM','ST']
   };
   const preferred = {GK:'Bart Verbruggen', RB:'Jack Hinshelwood', CB:'Lewis Dunk', LB:'Maxim De Cuyper', DM:'Carlos Baleba', CM:'Mats Wieffer', RWB:'Ferdi Kadioglu', LWB:'Kaoru Mitoma', RW:'Yankuba Minteh', AM:'Georginio Rutter', LW:'Kaoru Mitoma', ST:'Danny Welbeck'};
@@ -231,10 +232,18 @@
     }));
   }
 
+  function travelGuide() {
+    const tabs = [...document.querySelectorAll('.travel-tab')];
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(item => { item.classList.toggle('active', item === tab); item.classList.toggle('ghost', item !== tab); item.setAttribute('aria-selected', String(item === tab)); });
+      document.querySelectorAll('.travel-panel').forEach(panel => { const active = panel.id === tab.dataset.travel; panel.hidden = !active; panel.classList.toggle('active', active); });
+    }));
+  }
+
   function shootout() {
     const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'centre'];
     let shots = 0; let goals = 0; let locked = false; let recentTargets = [];
-    const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal');
+    const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const taker = $('penaltyTaker'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal');
     const targets = [...document.querySelectorAll('.target')];
     const markers = [...document.querySelectorAll('#penaltyMarkers i')]; const accuracyMarker = document.querySelector('.accuracy-meter i');
     const announce = (title, detail) => { status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`; };
@@ -243,7 +252,7 @@
     function reset() {
       shots = 0; goals = 0; locked = false; recentTargets = [];
       $('shotCount').textContent = '1/5'; $('goalCount').textContent = '0'; announce('Pick your spot', 'The keeper is ready.');
-      ball.className = 'ball'; shadow.className = 'ball-shadow'; keeper.className = 'keeper'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal');
+      ball.className = 'ball'; shadow.className = 'ball-shadow'; keeper.className = 'keeper'; taker.className = 'penalty-taker'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal','woodwork');
       markers.forEach(marker => marker.className = ''); targets.forEach(button => button.disabled = false);
     }
     function finish() {
@@ -261,22 +270,27 @@
       const readsShot = Math.random() < (predictable ? .62 : .22);
       const dive = readsShot ? target : positions[Math.floor(Math.random() * positions.length)];
       const missed = (accuracy < .16 && power > 88) || (power < 66 && Math.random() < .18);
-      const saved = !missed && dive === target && Math.random() > Math.max(.12, (power - 60) / 100);
-      const scored = !missed && !saved;
+      const woodwork = !missed && accuracy < .28 && power > 82 && Math.random() < .36;
+      const saved = !missed && !woodwork && dive === target && Math.random() > Math.max(.12, (power - 60) / 100);
+      const scored = !missed && !woodwork && !saved;
       recentTargets.push(target); shots += 1; if (scored) goals += 1;
-      const fifth = shots === 5; const flightTime = fifth ? 1250 : 620;
+      const fifth = shots === 5; const flightTime = fifth ? 1750 : 1100;
       if (fifth) goalFrame.classList.add('slow-motion');
       announce(fifth ? 'Final kick…' : 'Kick taken…', fifth ? 'Slow-motion decider!' : 'Come on Albion!'); flash.className = 'goal-flash';
-      ball.className = `ball ${missed ? (target.includes('left') ? 'shoot-wide-left' : 'shoot-wide-right') : `shoot-${target}`}`;
-      shadow.className = `ball-shadow shadow-${missed ? 'wide' : target}`; keeper.className = `keeper dive-${dive}`;
+      taker.className = 'penalty-taker run-up';
+      const postSide = target.includes('left') ? 'left' : target.includes('right') ? 'right' : Math.random() > .5 ? 'left' : 'right';
+      ball.className = `ball ${missed ? (postSide === 'left' ? 'shoot-wide-left' : 'shoot-wide-right') : woodwork ? `hit-post-${postSide}` : `shoot-${target}`}`;
+      shadow.className = `ball-shadow shadow-${missed ? 'wide' : woodwork ? 'post' : target}`; keeper.className = `keeper dive-${dive}`;
       window.setTimeout(() => {
         markers[shots - 1].className = scored ? 'goal-mark' : 'save-mark';
         $('shotCount').textContent = shots < 5 ? `${shots + 1}/5` : '5/5'; $('goalCount').textContent = String(goals);
-        const saveLine = Math.random() > .5 ? 'The keeper gets a strong hand to it.' : 'A fingertip save pushes it away.';
-        announce(scored ? 'GOAL!' : missed ? 'WIDE!' : 'SAVED!', scored ? 'Get in! The net ripples.' : missed ? 'The timing was just off.' : saveLine);
+        const goalLines = ['Top finish!','Sent the keeper the wrong way.','Cool as you like.','The net ripples!'];
+        const saveLines = ['The keeper gets a strong hand to it.','A fingertip save pushes it away.','The keeper reads the shot.','Caught safely by the goalkeeper.'];
+        announce(scored ? 'GOAL!' : woodwork ? 'OFF THE POST!' : missed ? 'WIDE!' : 'SAVED!', scored ? goalLines[Math.floor(Math.random()*goalLines.length)] : woodwork ? 'So close — the ball rebounds away.' : missed ? 'The timing was just off.' : saveLines[Math.floor(Math.random()*saveLines.length)]);
         flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`; if (scored) goalFrame.classList.add('net-goal');
+        if (woodwork) goalFrame.classList.add('woodwork');
         if (shots === 5) finish();
-        else window.setTimeout(() => { ball.className = 'ball'; shadow.className = 'ball-shadow'; keeper.className = 'keeper'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal'); locked = false; announce('Pick your next spot', `${5 - shots} ${5 - shots === 1 ? 'kick' : 'kicks'} remaining.`); }, 900);
+        else window.setTimeout(() => { ball.className = 'ball'; shadow.className = 'ball-shadow'; keeper.className = 'keeper'; taker.className = 'penalty-taker'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal','woodwork'); locked = false; announce('Pick your next spot', `${5 - shots} ${5 - shots === 1 ? 'kick' : 'kicks'} remaining.`); }, 950);
       }, flightTime);
     }
     targets.forEach(button => button.addEventListener('click', () => takePenalty(button)));
@@ -341,11 +355,12 @@
     $('fixtureSearch').addEventListener('input', renderFixtures);
     $('venueFilter').addEventListener('change', renderFixtures);
     $('monthFilter').addEventListener('change', () => { $('monthButtons').querySelectorAll('button').forEach(button => button.classList.toggle('active', button.dataset.month === $('monthFilter').value)); renderFixtures(); });
+    $('toggleFixtures').addEventListener('click', () => { const hidden = $('fixtureList').toggleAttribute('hidden'); $('toggleFixtures').textContent = hidden ? 'Show fixtures' : 'Hide fixtures'; $('toggleFixtures').setAttribute('aria-expanded', String(!hidden)); });
     $('newQuiz').addEventListener('click', newQuiz);
     $('checkQuiz').addEventListener('click', checkQuiz);
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); ui();
+  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); ui();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 })();
