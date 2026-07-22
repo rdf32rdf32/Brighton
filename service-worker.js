@@ -1,8 +1,7 @@
-const CACHE_NAME = 'albion-fan-hub-v5';
+const CACHE_NAME = 'albion-fan-hub-v6';
 const FILES = [
   './', './index.html', './style.css', './app.js', './quiz-data.js', './content-data.js',
-  './manifest.json', './favicon.svg', './assets/clean-albion-graphic.svg',
-  './assets/albion-safe-graphic.svg', './assets/amex-line.svg', './assets/seagull-flight.svg'
+  './manifest.json', './favicon.svg', './albion-safe-graphic.svg'
 ];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES)));

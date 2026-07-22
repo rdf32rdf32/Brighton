@@ -99,10 +99,20 @@
   function renderFixtures() {
     const query = $('fixtureSearch').value.toLowerCase().trim();
     const venue = $('venueFilter').value;
-    const fixtures = (C.fixtures || []).filter(fixture => (venue === 'all' || fixture.venue === venue) && fixture.opponent.toLowerCase().includes(query));
+    const month = $('monthFilter').value;
+    const fixtures = (C.fixtures || []).filter(fixture => (venue === 'all' || fixture.venue === venue) && (month === 'all' || fixture.date.slice(fixture.date.indexOf(' ') + 1) === month) && fixture.opponent.toLowerCase().includes(query));
     $('fixtureList').innerHTML = fixtures.length ? fixtures.map(fixture => `
       <article class="fixture-item"><div><b>${esc(fixture.date)}</b><small>Premier League</small></div>
       <div><strong>${fixture.venue === 'H' ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === 'H' ? 'Amex Stadium' : 'Away'}</small></div></article>`).join('') : '<p>No fixtures match that search.</p>';
+  }
+
+  function initFixtureMonths() {
+    const months = [];
+    (C.fixtures || []).forEach(fixture => {
+      const key = fixture.date.slice(fixture.date.indexOf(' ') + 1);
+      if (!months.includes(key)) months.push(key);
+    });
+    $('monthFilter').innerHTML = '<option value="all">All months</option>' + months.map(month => `<option value="${esc(month)}">${esc(month)}</option>`).join('');
   }
 
   let currentQuiz = [];
@@ -213,17 +223,70 @@
 
   function celebrate() {
     const modal = $('celebration');
-    $('winConfetti').addEventListener('click', () => {
-      modal.classList.add('show'); $('closeCelebration').focus();
-      for (let i = 0; i < 44; i++) {
+    let returnFocus = null;
+    const open = () => {
+      returnFocus = document.activeElement;
+      modal.classList.add('show'); modal.setAttribute('aria-hidden', 'false'); $('closeCelebration').focus();
+      for (let i = 0; i < 76; i++) {
         const piece = document.createElement('i');
-        piece.className = 'confetti'; piece.style.left = `${Math.random() * 100}%`; piece.style.animationDelay = `${Math.random() * .8}s`;
-        piece.textContent = Math.random() > .55 ? '⌁' : '◆'; modal.appendChild(piece);
+        const gull = i % 7 === 0;
+        piece.className = gull ? 'confetti gull' : 'confetti';
+        piece.style.left = `${Math.random() * 100}%`; piece.style.animationDelay = `${Math.random() * 1.2}s`; piece.style.animationDuration = `${2.4 + Math.random() * 2}s`;
+        piece.textContent = gull ? '⌁' : (i % 2 ? '◆' : '●'); modal.appendChild(piece);
       }
-    });
-    $('closeCelebration').addEventListener('click', () => {
-      modal.classList.remove('show'); modal.querySelectorAll('.confetti').forEach(piece => piece.remove());
-    });
+    };
+    const close = () => {
+      modal.classList.remove('show'); modal.setAttribute('aria-hidden', 'true'); modal.querySelectorAll('.confetti').forEach(piece => piece.remove());
+      if (returnFocus) returnFocus.focus();
+    };
+    $('winConfetti').addEventListener('click', open);
+    $('closeCelebration').addEventListener('click', close);
+    modal.addEventListener('click', event => { if (event.target === modal) close(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('show')) close(); });
+  }
+
+  function story() {
+    const tabs = [...document.querySelectorAll('.story-tab')];
+    tabs.forEach(tab => tab.addEventListener('click', () => {
+      tabs.forEach(item => { item.classList.toggle('active', item === tab); item.classList.toggle('ghost', item !== tab); item.setAttribute('aria-selected', String(item === tab)); });
+      document.querySelectorAll('.story-panel').forEach(panel => { const active = panel.id === tab.dataset.story; panel.hidden = !active; panel.classList.toggle('active', active); });
+    }));
+  }
+
+  function shootout() {
+    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'centre'];
+    let shots = 0; let goals = 0; let locked = false;
+    const ball = $('ball'); const keeper = $('keeper'); const status = $('shootoutStatus');
+    const targets = [...document.querySelectorAll('.target')];
+    function reset() {
+      shots = 0; goals = 0; locked = false;
+      $('shotCount').textContent = '0/5'; $('goalCount').textContent = '0'; status.textContent = 'Pick your spot.';
+      ball.className = 'ball'; keeper.className = 'keeper'; targets.forEach(button => button.disabled = false);
+    }
+    function finish() {
+      targets.forEach(button => button.disabled = true);
+      if (goals >= 3) {
+        status.textContent = `Albion win the shoot-out ${goals}-${5 - goals}!`;
+        window.setTimeout(() => $('winConfetti').click(), 650);
+      } else status.textContent = `The keeper wins this one. You scored ${goals} from five.`;
+    }
+    targets.forEach(button => button.addEventListener('click', () => {
+      if (locked || shots >= 5) return;
+      locked = true;
+      const target = button.dataset.target;
+      let dive = positions[Math.floor(Math.random() * positions.length)];
+      const scored = dive !== target;
+      shots += 1; if (scored) goals += 1;
+      ball.className = `ball shoot-${target}`; keeper.className = `keeper dive-${dive}`;
+      window.setTimeout(() => {
+        $('shotCount').textContent = `${shots}/5`; $('goalCount').textContent = String(goals);
+        status.textContent = scored ? 'GOAL! Get in!' : 'Saved by the keeper.';
+        if (shots === 5) finish();
+        else window.setTimeout(() => { ball.className = 'ball'; keeper.className = 'keeper'; locked = false; status.textContent += ' Pick again.'; }, 700);
+      }, 620);
+    }));
+    $('resetShootout').addEventListener('click', reset);
+    reset();
   }
 
   function ui() {
@@ -231,11 +294,12 @@
     menu.addEventListener('click', () => { const open = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open)); });
     $('fixtureSearch').addEventListener('input', renderFixtures);
     $('venueFilter').addEventListener('change', renderFixtures);
+    $('monthFilter').addEventListener('change', renderFixtures);
     $('quizDifficulty').addEventListener('change', newQuiz);
     $('newQuiz').addEventListener('click', newQuiz);
     $('checkQuiz').addEventListener('click', checkQuiz);
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); celebrate(); ui();
+  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); celebrate(); story(); shootout(); ui();
 })();
