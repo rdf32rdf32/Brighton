@@ -113,19 +113,24 @@
       if (!months.includes(key)) months.push(key);
     });
     $('monthFilter').innerHTML = '<option value="all">All months</option>' + months.map(month => `<option value="${esc(month)}">${esc(month)}</option>`).join('');
+    $('monthButtons').innerHTML = `<button type="button" class="active" data-month="all">All</button>` + months.map(month => `<button type="button" data-month="${esc(month)}">${esc(month.split(' ')[0])}</button>`).join('');
+    $('monthButtons').querySelectorAll('button').forEach(button => button.addEventListener('click', () => {
+      $('monthFilter').value = button.dataset.month;
+      $('monthButtons').querySelectorAll('button').forEach(item => item.classList.toggle('active', item === button));
+      renderFixtures();
+    }));
   }
 
-  let currentQuiz = [];
-  function poolKey(difficulty) { return `albionQuizSeen:${difficulty}`; }
-  function getQuizPool(difficulty) { return difficulty === 'All' ? Q : Q.filter(question => question.difficulty === difficulty); }
-  function selectFreshQuestions(difficulty, count = 5) {
-    const pool = getQuizPool(difficulty);
+  let currentQuiz = []; let quizIndex = 0; let quizScore = 0; let quizChecked = false;
+  function poolKey() { return 'albionQuizSeen:medium-hard'; }
+  function selectFreshQuestions(count = 5) {
+    const pool = Q.filter(question => question.difficulty === 'Medium' || question.difficulty === 'Hard');
     let seen = [];
-    try { seen = JSON.parse(localStorage.getItem(poolKey(difficulty))) || []; } catch {}
+    try { seen = JSON.parse(localStorage.getItem(poolKey())) || []; } catch {}
     let available = pool.filter(question => !seen.includes(question.question));
     if (available.length < count) { seen = []; available = [...pool]; }
     const chosen = shuffle(available).slice(0, count);
-    localStorage.setItem(poolKey(difficulty), JSON.stringify([...seen, ...chosen.map(question => question.question)]));
+    localStorage.setItem(poolKey(), JSON.stringify([...seen, ...chosen.map(question => question.question)]));
     return chosen;
   }
   function prepareQuestion(question) {
@@ -133,45 +138,42 @@
     const shuffled = shuffle(choices);
     return {...question, choices: shuffled, answer: shuffled.findIndex(choice => choice.correct)};
   }
+  function renderQuizQuestion() {
+    const question = currentQuiz[quizIndex];
+    $('quizContainer').innerHTML = `<div class="quiz-step"><div class="quiz-step-label"><b>Question ${quizIndex + 1} of 5</b><span>${esc(question.difficulty)}</span></div><div class="quiz-progress-track"><i style="width:${(quizIndex + 1) * 20}%"></i></div></div>
+      <fieldset class="quiz-question" data-question="${quizIndex}"><legend>${esc(question.question)}</legend>
+      ${question.choices.map((choice, choiceIndex) => `<label><input type="radio" name="currentQuestion" value="${choiceIndex}"><span>${esc(choice.text)}</span></label>`).join('')}
+      <div id="quizFeedback"></div></fieldset>`;
+    $('quizResult').textContent = `Score: ${quizScore}/${quizIndex}`;
+    $('checkQuiz').textContent = 'Check answer'; $('checkQuiz').disabled = false; quizChecked = false;
+  }
   function newQuiz() {
-    const difficulty = $('quizDifficulty').value;
-    currentQuiz = selectFreshQuestions(difficulty).map(prepareQuestion);
-    const poolSize = getQuizPool(difficulty).length;
-    let seenCount = 0;
-    try { seenCount = (JSON.parse(localStorage.getItem(poolKey(difficulty))) || []).length; } catch {}
-    $('quizProgress').textContent = `${Math.min(seenCount, poolSize)}/${poolSize} seen`;
-    $('quizContainer').innerHTML = currentQuiz.map((question, index) => `
-      <fieldset class="quiz-question" data-question="${index}">
-        <legend>${index + 1}. ${esc(question.question)} <small>· ${esc(question.difficulty)}</small></legend>
-        ${question.choices.map((choice, choiceIndex) => `<label><input type="radio" name="q${index}" value="${choiceIndex}"> ${esc(choice.text)}</label>`).join('')}
-        <div id="feedback${index}"></div>
-      </fieldset>`).join('');
-    $('quizResult').textContent = 'Choose one answer for each question.';
-    $('checkQuiz').disabled = false;
+    currentQuiz = selectFreshQuestions().map(prepareQuestion); quizIndex = 0; quizScore = 0;
+    renderQuizQuestion();
   }
   function checkQuiz() {
-    const unanswered = currentQuiz.some((_, index) => !document.querySelector(`input[name=q${index}]:checked`));
-    if (unanswered) { $('quizResult').textContent = 'Please answer all five questions before checking.'; return; }
-    let score = 0;
-    currentQuiz.forEach((question, index) => {
-      const selected = Number(document.querySelector(`input[name=q${index}]:checked`).value);
-      const fieldset = document.querySelector(`[data-question="${index}"]`);
-      const labels = [...fieldset.querySelectorAll('label')];
-      const correct = selected === question.answer;
-      if (correct) score++;
-      fieldset.classList.add(correct ? 'correct' : 'incorrect');
-      labels[question.answer].classList.add('answer-correct');
-      if (!correct) labels[selected].classList.add('answer-wrong');
-      fieldset.querySelectorAll('input').forEach(input => input.disabled = true);
-      $(`feedback${index}`).innerHTML = `<div class="quiz-feedback"><b>${correct ? 'Correct.' : `Correct answer: ${esc(question.choices[question.answer].text)}.`}</b><br>${esc(question.explanation)}</div>`;
-    });
-    const previousBest = Number(localStorage.getItem('albionQuizBest') || 0);
-    const best = Math.max(previousBest, score);
-    localStorage.setItem('albionQuizBest', String(best));
-    $('bestScore').textContent = `Best: ${best}/5`;
-    const verdict = score === 5 ? 'Perfect Albion knowledge.' : score >= 3 ? 'Strong Seagulls knowledge.' : 'Another round will help.';
-    $('quizResult').textContent = `You scored ${score}/5. ${verdict}`;
-    $('checkQuiz').disabled = true;
+    if (quizChecked) {
+      if (quizIndex < 4) { quizIndex += 1; renderQuizQuestion(); }
+      else {
+        const previousBest = Number(localStorage.getItem('albionQuizBest') || 0); const best = Math.max(previousBest, quizScore);
+        localStorage.setItem('albionQuizBest', String(best)); $('bestScore').textContent = `Best: ${best}/5`;
+        const verdict = quizScore === 5 ? 'Perfect Albion knowledge!' : quizScore >= 3 ? 'Strong Seagulls knowledge.' : 'Have another go.';
+        $('quizContainer').innerHTML = `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/5</b><p>${verdict}</p></div>`;
+        $('quizResult').textContent = 'Round complete.'; $('checkQuiz').disabled = true;
+      }
+      return;
+    }
+    const selectedInput = document.querySelector('input[name="currentQuestion"]:checked');
+    if (!selectedInput) { $('quizResult').textContent = 'Choose an answer first.'; return; }
+    const question = currentQuiz[quizIndex]; const selected = Number(selectedInput.value); const correct = selected === question.answer;
+    if (correct) quizScore += 1;
+    const fieldset = document.querySelector('.quiz-question'); const labels = [...fieldset.querySelectorAll('label')];
+    fieldset.classList.add(correct ? 'correct' : 'incorrect'); labels[question.answer].classList.add('answer-correct');
+    if (!correct) labels[selected].classList.add('answer-wrong');
+    fieldset.querySelectorAll('input').forEach(input => input.disabled = true);
+    $('quizFeedback').innerHTML = `<div class="quiz-feedback"><b>${correct ? 'Correct!' : `Correct answer: ${esc(question.choices[question.answer].text)}.`}</b><br>${esc(question.explanation)}</div>`;
+    $('quizResult').textContent = `Score: ${quizScore}/${quizIndex + 1}`; quizChecked = true;
+    $('checkQuiz').textContent = quizIndex === 4 ? 'See result' : 'Next question';
   }
 
   function predictor() {
@@ -221,30 +223,6 @@
     }));
   }
 
-  function celebrate() {
-    const modal = $('celebration');
-    let returnFocus = null;
-    const open = () => {
-      returnFocus = document.activeElement;
-      modal.classList.add('show'); modal.setAttribute('aria-hidden', 'false'); $('closeCelebration').focus();
-      for (let i = 0; i < 76; i++) {
-        const piece = document.createElement('i');
-        const gull = i % 7 === 0;
-        piece.className = gull ? 'confetti gull' : 'confetti';
-        piece.style.left = `${Math.random() * 100}%`; piece.style.animationDelay = `${Math.random() * 1.2}s`; piece.style.animationDuration = `${2.4 + Math.random() * 2}s`;
-        piece.textContent = gull ? '⌁' : (i % 2 ? '◆' : '●'); modal.appendChild(piece);
-      }
-    };
-    const close = () => {
-      modal.classList.remove('show'); modal.setAttribute('aria-hidden', 'true'); modal.querySelectorAll('.confetti').forEach(piece => piece.remove());
-      if (returnFocus) returnFocus.focus();
-    };
-    $('winConfetti').addEventListener('click', open);
-    $('closeCelebration').addEventListener('click', close);
-    modal.addEventListener('click', event => { if (event.target === modal) close(); });
-    document.addEventListener('keydown', event => { if (event.key === 'Escape' && modal.classList.contains('show')) close(); });
-  }
-
   function story() {
     const tabs = [...document.querySelectorAll('.story-tab')];
     tabs.forEach(tab => tab.addEventListener('click', () => {
@@ -256,33 +234,39 @@
   function shootout() {
     const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'centre'];
     let shots = 0; let goals = 0; let locked = false;
-    const ball = $('ball'); const keeper = $('keeper'); const status = $('shootoutStatus');
+    const ball = $('ball'); const keeper = $('keeper'); const status = $('shootoutStatus'); const flash = $('goalFlash');
     const targets = [...document.querySelectorAll('.target')];
+    const markers = [...document.querySelectorAll('#penaltyMarkers i')];
+    const announce = (title, detail) => { status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`; };
     function reset() {
       shots = 0; goals = 0; locked = false;
-      $('shotCount').textContent = '0/5'; $('goalCount').textContent = '0'; status.textContent = 'Pick your spot.';
-      ball.className = 'ball'; keeper.className = 'keeper'; targets.forEach(button => button.disabled = false);
+      $('shotCount').textContent = '1/5'; $('goalCount').textContent = '0'; announce('Pick your spot', 'The keeper is ready.');
+      ball.className = 'ball'; keeper.className = 'keeper'; flash.className = 'goal-flash';
+      markers.forEach(marker => marker.className = ''); targets.forEach(button => button.disabled = false);
     }
     function finish() {
       targets.forEach(button => button.disabled = true);
       if (goals >= 3) {
-        status.textContent = `Albion win the shoot-out ${goals}-${5 - goals}!`;
-        window.setTimeout(() => $('winConfetti').click(), 650);
-      } else status.textContent = `The keeper wins this one. You scored ${goals} from five.`;
+        announce('ALBION WIN!', `${goals} goals from five. Up the Albion!`); flash.className = 'goal-flash win';
+      } else announce('The keeper wins', `Albion scored ${goals} from five. Try again.`);
     }
     targets.forEach(button => button.addEventListener('click', () => {
       if (locked || shots >= 5) return;
       locked = true;
       const target = button.dataset.target;
-      let dive = positions[Math.floor(Math.random() * positions.length)];
+      const anticipation = Math.random();
+      let dive = anticipation < .16 ? target : positions[Math.floor(Math.random() * positions.length)];
       const scored = dive !== target;
       shots += 1; if (scored) goals += 1;
+      announce('Kick taken…', 'Come on Albion!'); flash.className = 'goal-flash';
       ball.className = `ball shoot-${target}`; keeper.className = `keeper dive-${dive}`;
       window.setTimeout(() => {
-        $('shotCount').textContent = `${shots}/5`; $('goalCount').textContent = String(goals);
-        status.textContent = scored ? 'GOAL! Get in!' : 'Saved by the keeper.';
+        markers[shots - 1].className = scored ? 'goal-mark' : 'save-mark';
+        $('shotCount').textContent = shots < 5 ? `${shots + 1}/5` : '5/5'; $('goalCount').textContent = String(goals);
+        announce(scored ? 'GOAL!' : 'SAVED!', scored ? 'Get in! The net ripples.' : 'The keeper guessed correctly.');
+        flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`;
         if (shots === 5) finish();
-        else window.setTimeout(() => { ball.className = 'ball'; keeper.className = 'keeper'; locked = false; status.textContent += ' Pick again.'; }, 700);
+        else window.setTimeout(() => { ball.className = 'ball'; keeper.className = 'keeper'; flash.className = 'goal-flash'; locked = false; announce('Pick your next spot', `${5 - shots} ${5 - shots === 1 ? 'kick' : 'kicks'} remaining.`); }, 850);
       }, 620);
     }));
     $('resetShootout').addEventListener('click', reset);
@@ -292,14 +276,15 @@
   function ui() {
     const menu = $('menuToggle'); const nav = $('navLinks');
     menu.addEventListener('click', () => { const open = nav.classList.toggle('open'); menu.setAttribute('aria-expanded', String(open)); });
+    nav.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { nav.classList.remove('open'); menu.setAttribute('aria-expanded', 'false'); }));
     $('fixtureSearch').addEventListener('input', renderFixtures);
     $('venueFilter').addEventListener('change', renderFixtures);
-    $('monthFilter').addEventListener('change', renderFixtures);
-    $('quizDifficulty').addEventListener('change', newQuiz);
+    $('monthFilter').addEventListener('change', () => { $('monthButtons').querySelectorAll('button').forEach(button => button.classList.toggle('active', button.dataset.month === $('monthFilter').value)); renderFixtures(); });
     $('newQuiz').addEventListener('click', newQuiz);
     $('checkQuiz').addEventListener('click', checkQuiz);
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); celebrate(); story(); shootout(); ui();
+  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); shootout(); ui();
+  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 })();

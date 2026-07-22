@@ -840,3 +840,31 @@ window.ALBION_QUIZ = [
     "explanation": "Jimmy Case scored the only goal against Norwich City."
   }
 ];
+
+// The playable bank contains medium and hard questions only. Historical season
+// statistics add depth without relying on changing current-season information.
+window.ALBION_QUIZ = window.ALBION_QUIZ.filter(item => item.difficulty === 'Medium' || item.difficulty === 'Hard');
+const ALBION_SEASONS = [
+  ['1994/95',16,56,14,17,54],['1995/96',23,40,10,10,46],['1996/97',23,47,13,10,53],
+  ['1997/98',23,35,6,17,38],['1998/99',17,55,16,7,49],['1999/00',11,67,17,16,64],
+  ['2000/01',1,92,28,8,73],['2001/02',1,90,25,15,66],['2002/03',23,45,11,12,49],
+  ['2003/04',4,77,22,11,64],['2004/05',20,51,13,12,40],['2005/06',24,38,7,17,39],
+  ['2006/07',18,53,14,11,49],['2007/08',7,69,19,12,58],['2008/09',16,52,13,13,55],
+  ['2009/10',13,59,15,14,56],['2010/11',1,95,28,11,85],['2011/12',10,66,17,15,52],
+  ['2012/13',4,75,19,18,69],['2013/14',6,72,19,15,55],['2014/15',20,47,10,17,44],
+  ['2015/16',3,89,24,17,72],['2016/17',2,93,28,9,74],['2017/18',15,40,9,13,34],
+  ['2018/19',17,36,9,9,35],['2019/20',15,41,9,14,39],['2020/21',16,41,9,14,40],
+  ['2021/22',9,51,12,15,42],['2022/23',6,62,18,8,72],['2023/24',11,48,12,12,55]
+];
+const statOptions = (answer, offsets) => [answer, ...offsets.map(offset => Math.max(0, answer + offset))].map(String);
+const ordinal = value => `${value}${value % 100 >= 11 && value % 100 <= 13 ? 'th' : value % 10 === 1 ? 'st' : value % 10 === 2 ? 'nd' : value % 10 === 3 ? 'rd' : 'th'}`;
+const positionOptions = position => [position, ((position + 2) % 24) + 1, ((position + 7) % 24) + 1, ((position + 12) % 24) + 1].map(ordinal);
+ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
+  window.ALBION_QUIZ.push(
+    {question:`Where did Albion finish in the league in ${season}?`,options:positionOptions(position),answer:0,difficulty:'Medium',explanation:`Albion finished ${ordinal(position)} in ${season}.`},
+    {question:`How many league points did Albion collect in ${season}?`,options:statOptions(points,[3,-4,7]),answer:0,difficulty:'Medium',explanation:`Albion collected ${points} league points in ${season}.`},
+    {question:`How many league matches did Albion win in ${season}?`,options:statOptions(wins,[2,-2,4]),answer:0,difficulty:'Hard',explanation:`Albion recorded ${wins} league wins in ${season}.`},
+    {question:`How many league draws did Albion record in ${season}?`,options:statOptions(draws,[2,-3,4]),answer:0,difficulty:'Hard',explanation:`Albion drew ${draws} league matches in ${season}.`},
+    {question:`How many league goals did Albion score in ${season}?`,options:statOptions(goals,[4,-5,8]),answer:0,difficulty:'Hard',explanation:`Albion scored ${goals} league goals in ${season}.`}
+  );
+});
