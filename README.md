@@ -1,18 +1,7 @@
-# Albion Fan Hub v6
+# Albion Fan Hub
 
-A visual, multi-file GitHub Pages site for Brighton & Hove Albion supporters.
+Unofficial static Brighton & Hove Albion supporter site for GitHub Pages.
 
-## Upload
-Upload every file and folder to the root of the GitHub repository. Keep the `assets` and `data` folders intact.
+Features include a position-ordered current squad, predicted XI and pick-your-own XI, 2026/27 fixtures, match predictor, quiz with difficulty levels and answer explanations, Albion history, records, legends, memories, original seagull SVG artwork, an Amex orientation guide and win celebration.
 
-## Tested features
-- stadium hero and SVG seagull artwork
-- 11-player XI builder with player menus
-- head coach card
-- 20-club league table
-- four-option fan poll
-- official video archive link
-- 13-entry history timeline
-- five-question random quiz from 55 questions
-- random facts, Memory Lane and Guess the Seagull
-- light/dark mode and cookie notice
+Upload every file and the `assets` folder to the repository root.

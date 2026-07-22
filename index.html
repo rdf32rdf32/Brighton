@@ -1,82 +1,21 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Albion Fan Hub</title>
-<meta name="description" content="Unofficial Brighton & Hove Albion fan hub with matchday tools, an Albion XI builder, history, quizzes and supporter games.">
-<meta name="theme-color" content="#0874d1">
-<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
-<a class="skip" href="#main">Skip to content</a>
-<header class="site-header">
-<nav class="nav">
-<a class="brand" href="#top"><img src="assets/img/seagull-mark.svg" alt="Stylised seagull emblem"><span>Albion Fan Hub</span></a>
-<button id="menuBtn" class="nav-toggle" type="button">Menu</button>
-<div id="nav" class="nav-links"><a href="#match">Match</a><a href="#xi">Pick XI</a><a href="#table">Table</a><a href="#palace">Palace</a><a href="#history">History</a><a href="#quiz">Quiz</a><a href="#games">Games</a></div>
-<button id="themeBtn" class="icon-btn" type="button" aria-label="Switch colour theme">☾</button>
-</nav>
-<section class="hero" id="top">
-<div class="hero-overlay"></div>
-<div class="hero-copy">
-<p class="eyebrow">Unofficial Brighton & Hove Albion fan site</p>
-<h1>From the coast.<br><span>For the Albion.</span></h1>
-<p class="hero-intro">A visual supporter hub for matchday information, the current squad, club history, Palace rivalry, quizzes and fan games.</p>
-<div class="hero-actions"><a class="btn primary" href="#match">Open match centre</a><button class="btn ghost" id="randomFactBtn" type="button">Show another fact</button></div>
-<div class="fact-card"><span>Did you know?</span><p id="randomFact" aria-live="polite"></p></div>
-</div>
-<div class="hero-badge"><img src="assets/img/seagull-mark.svg" alt="Large stylised seagull"><strong>1901</strong><span>Sussex by the sea</span></div>
-</section>
-</header>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Albion Fan Hub</title><meta name="description" content="Unofficial Brighton & Hove Albion supporter hub with fixtures, an XI builder, quiz, club history and matchday tools."><link rel="icon" href="favicon.svg"><link rel="stylesheet" href="style.css"></head>
+<body><a class="skip-link" href="#main">Skip to content</a>
+<header class="hero" id="top"><nav class="topbar" aria-label="Main navigation"><a class="brand" href="#top"><img src="assets/clean-albion-graphic.svg" alt="Original seagull emblem"><span>Albion Fan Hub</span></a><button id="menuToggle" class="menu-toggle" type="button" aria-expanded="false" aria-controls="navLinks">Menu</button><div id="navLinks" class="nav-links"><a href="#next-match">Next match</a><a href="#xi">Pick XI</a><a href="#fixtures">Fixtures</a><a href="#quiz">Quiz</a><a href="#history">History</a><a href="#amex">The Amex</a></div></nav>
+<div class="hero-grid"><section class="hero-copy"><p class="eyebrow">2026/27 season</p><h1>Brighton &amp; Hove Albion</h1><p class="lead">A clean supporter-built home for Albion fixtures, team selection, history and matchday fun.</p><div class="flight" aria-hidden="true"><svg viewBox="0 0 520 85"><path d="M15 56 Q55 15 98 53 Q139 13 185 55 M190 44 Q230 6 270 43 Q310 6 355 46 M350 61 Q390 22 432 58 Q470 21 508 57"/></svg></div></section><section class="match-card" id="next-match"><p class="eyebrow">Next fixture</p><h2>Albion v Aston Villa</h2><p>Sunday 23 August 2026 · 14:00 · Amex Stadium</p><div id="countdown" class="countdown" aria-live="polite"></div><p class="small">Premier League dates remain subject to change.</p></section></div></header>
 <main id="main">
-<section class="search-shell"><label for="siteSearch">Search Albion Fan Hub</label><div class="search-box"><span>⌕</span><input id="siteSearch" type="search" placeholder="Players, history, Palace, quiz…"></div><div id="searchResults"></div></section>
-
-<section id="match" class="panel match-panel">
-<div class="panel-heading"><div><p class="eyebrow blue">Matchday centre</p><h2>Next Albion fixture</h2></div><span class="status-chip">Fixture feed ready</span></div>
-<div class="match-card"><div class="team"><img src="assets/img/seagull-mark.svg" alt="Albion seagull"><strong>Brighton & Hove Albion</strong></div><div class="match-middle"><span>Next confirmed fixture</span><div class="versus">VS</div><p class="muted-light">Add the next opponent and kick-off in <code>assets/js/app.js</code></p></div><div class="team"><div class="away-mark">?</div><strong>Opponent</strong></div></div>
-<div class="weather-strip"><div><span class="weather-icon">☁</span><div><small>Stadium weather</small><strong>Forecast can appear automatically near matchday.</strong></div></div><div class="venue-note">Amex Stadium, Falmer</div></div>
-</section>
-
-<section class="metrics"><article><span>Founded</span><strong>1901</strong></article><article><span>Home</span><strong>Amex</strong></article><article><span>Head coach</span><strong>Hürzeler</strong></article><article><span>Rivalry</span><strong>Palace</strong></article></section>
-
-<section id="xi" class="panel">
-<div class="panel-heading"><div><p class="eyebrow blue">Current first-team pool</p><h2>Pick Your Albion XI</h2></div><span class="status-chip">31-player pool</span></div>
-<div class="manager-card"><div class="manager-photo">FH</div><div><small>Head coach</small><h3>Fabian Hürzeler</h3><p>Displayed alongside your chosen formation.</p></div></div>
-<div class="xi-toolbar"><label>Formation<select id="formation"><option value="433">4-3-3</option><option value="4231">4-2-3-1</option><option value="3421">3-4-2-1</option></select></label><button id="clearXI" class="btn secondary" type="button">Clear XI</button></div>
-<div id="pitch" class="pitch" aria-label="Football formation picker"></div>
-<p class="note">Selections are saved on your device. Former players can be removed by editing <code>data/players.js</code>.</p>
-</section>
-
-<section id="table" class="panel">
-<div class="panel-heading"><div><p class="eyebrow blue">Premier League</p><h2>Full league table</h2></div><span class="status-chip">All 20 clubs loaded</span></div>
-<p class="note">Pre-season display: clubs begin level until live standings are connected.</p>
-<div class="table-scroll"><table><thead><tr><th>Pos</th><th>Club</th><th>P</th><th>GD</th><th>Pts</th></tr></thead><tbody id="leagueBody"></tbody></table></div>
-</section>
-
-<section class="feature-grid">
-<article class="panel video-card"><div class="visual-label">Official Albion videos</div><div class="video-icon">▶</div><h2>Highlights and interviews</h2><p>Open Brighton & Hove Albion’s official video archive for match highlights, press conferences and club features.</p><a class="btn primary" href="https://www.youtube.com/@officialbhafc/videos" target="_blank" rel="noopener">Open official video archive</a></article>
-<article class="panel poll-card"><p class="eyebrow blue">Supporter vote</p><h2>Fan poll</h2><p>Which Albion era should the site expand next?</p><div id="poll" class="poll-options"></div><p id="pollResult" class="poll-result"></p></article>
-</section>
-
-<section id="palace" class="panel rivalry"><img src="assets/img/palace-rivalry.svg" alt="Albion versus Crystal Palace rivalry artwork"><div class="rivalry-copy"><p class="eyebrow">The rivalry</p><h2>Albion v Crystal Palace</h2><p>The site focuses on Albion’s genuine modern rivalry with Crystal Palace.</p><div class="moment-grid"><article><strong>1970s</strong><p>The rivalry intensifies during repeated league and cup meetings.</p></article><article><strong>2013</strong><p>The play-off semi-final adds another major chapter.</p></article><article><strong>2018</strong><p>Albion record a memorable Premier League win at the Amex.</p></article><article><strong>Today</strong><p>One of English football’s most distinctive rivalries continues.</p></article></div></div></section>
-
-<section id="history" class="panel"><div class="panel-heading"><div><p class="eyebrow blue">From the Goldstone to Europe</p><h2>Albion history timeline</h2></div><span class="status-chip">13 milestones</span></div><div id="timeline" class="timeline"></div></section>
-
-<section id="quiz" class="panel quiz-panel"><div class="quiz-hero"><div><p class="eyebrow">The Albion challenge</p><h2>How well do you know the Seagulls?</h2><p>Five random questions from a 55-question bank. Answers are shuffled each round.</p></div><div class="quiz-score"><span id="quizCounter">5 questions</span></div></div><div id="quizBox"></div><div class="actions"><button id="checkQuiz" class="btn primary" type="button">Check answers</button><button id="newQuiz" class="btn secondary" type="button">New questions</button></div><p id="quizResult" class="quiz-result" aria-live="polite"></p></section>
-
-<section id="games" class="games-grid">
-<article class="panel memory-card"><p class="eyebrow blue">Memory Lane</p><h2>Random Albion memory</h2><div id="memory" class="memory-content"></div><button id="memoryBtn" class="btn secondary" type="button">Another memory</button></article>
-<article class="panel guess-card"><p class="eyebrow blue">Guess the Seagull</p><h2>Who is the player?</h2><div class="player-silhouette" id="silhouette">?</div><p id="clue">Reveal clues one by one.</p><div class="actions"><button id="clueBtn" class="btn secondary" type="button">Reveal clue</button><button id="answerBtn" class="btn primary" type="button">Reveal player</button></div></article>
-</section>
-
-<section class="panel"><p class="eyebrow blue">Achievements</p><h2>Seagull Challenge</h2><div class="badges"><div class="badge-card" id="badgeQuiz"><span>🏅</span><strong>Albion Historian</strong><p>Score 5/5 in the quiz.</p></div><div class="badge-card" id="badgeXI"><span>🧠</span><strong>Tactical Genius</strong><p>Complete an XI.</p></div><div class="badge-card" id="badgeFact"><span>🐦</span><strong>Seagull Regular</strong><p>Read five facts.</p></div></div></section>
-</main>
-<footer><div class="footer-brand"><img src="assets/img/seagull-mark.svg" alt=""><div><strong>Albion Fan Hub</strong><p>Independent, unofficial and made for supporters.</p></div></div><p>Not affiliated with Brighton & Hove Albion FC, the Premier League or their commercial partners.</p><div class="footer-links"><a href="privacy.html">Privacy</a><a href="cookies.html">Cookies</a><a href="copyright.html">Copyright & disclaimer</a></div></footer>
-<div id="cookieBanner" class="cookie" role="dialog" aria-label="Cookie notice" aria-live="polite">
-<div><strong>Essential local storage only</strong><p>This site saves your theme, poll, quiz achievements and XI choices on this device. It uses no advertising or analytics cookies.</p></div>
-<div class="cookie-actions"><button id="acceptCookies" class="btn primary" type="button">OK, close</button><a class="btn secondary" href="cookies.html">Read details</a></div>
-</div>
-<script defer src="data/players.js"></script><script defer src="data/clubs.js"></script><script defer src="data/facts.js"></script><script defer src="data/history.js"></script><script defer src="data/quiz.js"></script><script defer src="assets/js/app.js"></script>
-</body></html>
+<section class="dashboard" aria-label="Albion at a glance"><article><span>Home</span><b>Amex Stadium</b></article><article><span>Founded</span><b>1901</b></article><article><span>Nickname</span><b>The Seagulls</b></article><article><span>Next opponent</span><b>Aston Villa</b></article></section>
+<section class="card" id="match-centre"><div class="section-head"><p class="eyebrow">Match centre</p><h2>Albion v Aston Villa</h2><p>Confirmed information is shown clearly. Details not yet announced are never guessed.</p></div><div class="match-details"><article><span>Date</span><b>23 August 2026</b></article><article><span>Kick-off</span><b>14:00</b></article><article><span>Venue</span><b>Amex Stadium</b></article><article><span>Referee / TV</span><b>To be confirmed</b></article></div><div id="weatherPanel" class="weather-note"><b>Falmer weather</b><p>A detailed forecast will appear within the reliable forecast window.</p></div></section>
+<section class="card" id="xi"><div class="section-head"><p class="eyebrow">Team selector</p><h2>Predicted XI and Pick Your XI</h2><p>Use the position-ordered squad list, choose a formation, then select a player for every shirt.</p></div><div class="squad-browser" id="squadBrowser" aria-label="Current Albion squad"></div><div class="xi-controls"><label>Formation<select id="formation"><option>4-2-3-1</option><option>4-3-3</option><option>3-4-2-1</option></select></label><button id="loadPredicted" type="button">Load predicted XI</button><button id="clearXI" class="ghost" type="button">Clear</button></div><div id="pitch" class="pitch" aria-live="polite"></div><div id="xiMessage" class="result" aria-live="polite"></div></section>
+<section class="feature-grid"><article class="mini-card celebrate-card"><img src="assets/albion-safe-graphic.svg" alt="Original blue and white seagull artwork"><div><p class="eyebrow">Celebrate</p><h2>Albion win!</h2><p>Launch a restrained blue-and-white celebration with flying seagulls.</p><button id="winConfetti" type="button">Celebrate a Brighton win</button></div></article><article class="mini-card"><p class="eyebrow">Random memory</p><h2>Albion memories</h2><p id="memoryText"></p><button id="newMemory" class="ghost" type="button">Another memory</button></article></section>
+<section class="card" id="fixtures"><div class="section-head"><p class="eyebrow">Premier League</p><h2>Albion fixtures 2026/27</h2><p>Search the full league schedule or filter home and away matches.</p></div><div class="fixture-tools"><label>Find opponent<input id="fixtureSearch" type="search" placeholder="e.g. Arsenal"></label><label>Venue<select id="venueFilter"><option value="all">Home and away</option><option value="H">Home only</option><option value="A">Away only</option></select></label></div><div id="fixtureList" class="fixtures-list"></div></section>
+<section class="card" id="quiz"><div class="section-head"><p class="eyebrow">Albion quiz</p><h2>Five carefully checked questions</h2><p>Choose a difficulty or mix all levels. Explanations appear after marking.</p></div><div class="quiz-tools"><label>Difficulty<select id="quizDifficulty"><option value="All">All levels</option><option value="Easy">Easy</option><option value="Medium">Medium</option><option value="Hard">Hard</option></select></label><span id="bestScore" class="score-chip"></span></div><div id="quizContainer"></div><div class="button-row"><button id="checkQuiz" type="button">Check answers</button><button id="newQuiz" class="ghost" type="button">New questions</button></div><div id="quizResult" class="result" aria-live="polite"></div></section>
+<section class="card predictor" id="predictor"><div class="section-head"><p class="eyebrow">Match predictor</p><h2>Albion v Aston Villa</h2></div><div class="predictor-grid"><label>Albion goals<input id="homeScore" type="number" min="0" max="15" value="2"></label><label>Villa goals<input id="awayScore" type="number" min="0" max="15" value="1"></label><label>First Albion scorer<select id="firstScorer"></select></label><label>Player of the match<select id="motm"></select></label></div><button id="savePrediction" type="button">Save prediction</button><div id="predictionSummary" class="result"></div></section>
+<section class="card" id="history"><div class="section-head"><p class="eyebrow">Albion history</p><h2>From the Goldstone to Europe</h2></div><div class="timeline"><article><b>1901</b><p>Brighton &amp; Hove Albion are founded.</p></article><article><b>1910</b><p>Southern League champions and Charity Shield winners.</p></article><article><b>1983</b><p>Albion reach the FA Cup final at Wembley.</p></article><article><b>1997</b><p>League status is secured at Hereford after the final Goldstone season.</p></article><article><b>1999</b><p>The club returns to Brighton at Withdean Stadium.</p></article><article><b>2011</b><p>The Amex opens at Falmer.</p></article><article><b>2017</b><p>Promotion to the Premier League.</p></article><article><b>2023</b><p>First qualification for European football.</p></article></div></section>
+<section class="two-col"><section class="card"><div class="section-head"><p class="eyebrow">Club records</p><h2>Albion landmarks</h2></div><div class="records"><article><span>Record competitive scorer</span><b>Tommy Cook · 123</b></article><article><span>Most appearances</span><b>Ernie “Tug” Wilson · 566</b></article><article><span>Most goals in one season</span><b>Peter Ward · 36</b></article><article><span>First Premier League scorer</span><b>Pascal Groß</b></article></div></section><section class="card facts"><div class="section-head"><p class="eyebrow">Albion at a glance</p><h2>Brighton fact</h2></div><p id="factText"></p><button id="newFact" class="ghost" type="button">Another fact</button></section></section>
+<section class="card" id="legends"><div class="section-head"><p class="eyebrow">Albion people</p><h2>Legends across the eras</h2><p>A small, respectful selection rather than an attempt to rank generations.</p></div><div class="legend-grid"><article><div class="shirt">9</div><b>Peter Ward</b><p>Goalscoring hero of the late 1970s.</p></article><article><div class="shirt">25</div><b>Bobby Zamora</b><p>Central to Albion's rise through the divisions.</p></article><article><div class="shirt">17</div><b>Glenn Murray</b><p>Prolific across two memorable spells.</p></article><article><div class="shirt">5</div><b>Lewis Dunk</b><p>Academy graduate, captain and modern-era leader.</p></article><article><div class="shirt">2</div><b>Bruno</b><p>Captain and symbol of the Amex era.</p></article><article><div class="shirt">13</div><b>Pascal Groß</b><p>Albion's first Premier League goalscorer.</p></article></div></section>
+<section class="card" id="amex"><div class="section-head"><p class="eyebrow">Explore the Amex</p><h2>A simple first-visit guide</h2><p>Select an area for a short orientation. Always check official travel guidance before attending.</p></div><div class="amex-grid"><div class="stadium-map" role="img" aria-label="Stylised original illustration of the Amex stands"><button type="button" data-stand="North">North</button><button type="button" data-stand="West">West</button><div class="pitch-mark">AMEX</div><button type="button" data-stand="East">East</button><button type="button" data-stand="South">South</button></div><div id="standInfo" class="stand-info"><h3>Choose a stand</h3><p>Select a labelled area on the illustration.</p></div></div></section>
+<section class="card links"><h2>Useful links</h2><div class="cta-row"><a href="https://www.brightonandhovealbion.com/" target="_blank" rel="noopener">Official Albion site</a><a class="secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" target="_blank" rel="noopener">Current squad</a><a class="secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener">Official fixtures</a></div></section>
+</main><footer><p>Unofficial Brighton &amp; Hove Albion supporter site. Built by Richard Freedman.</p><p><a href="privacy.html">Privacy</a> · <a href="cookies.html">Cookies</a> · <a href="contact.html">Contact</a></p></footer>
+<div id="celebration" class="celebration" role="dialog" aria-modal="true" aria-labelledby="celebrateTitle"><div class="celebration-card"><img src="assets/clean-albion-graphic.svg" alt=""><h2 id="celebrateTitle">ALBION WIN!</h2><p>Blue and white, all the way.</p><button id="closeCelebration" type="button">Close</button></div></div>
+<script src="content-data.js"></script><script src="quiz-data.js"></script><script src="app.js"></script></body></html>
