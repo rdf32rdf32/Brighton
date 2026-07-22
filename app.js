@@ -102,7 +102,7 @@
     const month = $('monthFilter').value;
     const fixtures = (C.fixtures || []).filter(fixture => (venue === 'all' || fixture.venue === venue) && (month === 'all' || fixture.date.slice(fixture.date.indexOf(' ') + 1) === month) && fixture.opponent.toLowerCase().includes(query));
     $('fixtureList').innerHTML = fixtures.length ? fixtures.map(fixture => `
-      <article class="fixture-item"><div><b>${esc(fixture.date)}</b><small>Premier League</small></div>
+      <article class="fixture-item ${fixture.venue === 'H' ? 'fixture-home' : 'fixture-away'}"><div><b>${esc(fixture.date)}</b><small>${fixture.venue === 'H' ? 'HOME' : 'AWAY'} · Premier League</small></div>
       <div><strong>${fixture.venue === 'H' ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === 'H' ? 'Amex Stadium' : 'Away'}</small></div></article>`).join('') : '<p>No fixtures match that search.</p>';
   }
 
@@ -189,8 +189,8 @@
   }
 
   function randomContent() {
-    const showFact = () => { $('factText').textContent = C.facts[Math.floor(Math.random() * C.facts.length)]; };
-    const showMemory = () => { $('memoryText').textContent = C.memories[Math.floor(Math.random() * C.memories.length)]; };
+    const showFact = () => { $('momentType').textContent = 'Albion fact'; $('momentText').textContent = C.facts[Math.floor(Math.random() * C.facts.length)]; };
+    const showMemory = () => { $('momentType').textContent = 'Albion memory'; $('momentText').textContent = C.memories[Math.floor(Math.random() * C.memories.length)]; };
     showFact(); showMemory();
     $('newFact').addEventListener('click', showFact);
     $('newMemory').addEventListener('click', showMemory);
@@ -233,15 +233,17 @@
 
   function shootout() {
     const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'centre'];
-    let shots = 0; let goals = 0; let locked = false;
-    const ball = $('ball'); const keeper = $('keeper'); const status = $('shootoutStatus'); const flash = $('goalFlash');
+    let shots = 0; let goals = 0; let locked = false; let recentTargets = [];
+    const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal');
     const targets = [...document.querySelectorAll('.target')];
-    const markers = [...document.querySelectorAll('#penaltyMarkers i')];
+    const markers = [...document.querySelectorAll('#penaltyMarkers i')]; const accuracyMarker = document.querySelector('.accuracy-meter i');
     const announce = (title, detail) => { status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`; };
+    let liveAccuracy = 1; const accuracyStarted = Date.now();
+    window.setInterval(() => { const phase = ((Date.now() - accuracyStarted) % 1800) / 1800; const position = phase < .5 ? phase * 2 : (1 - phase) * 2; accuracyMarker.style.left = `${1 + position * 97}%`; liveAccuracy = 1 - Math.abs(position - .5) * 2; }, 32);
     function reset() {
-      shots = 0; goals = 0; locked = false;
+      shots = 0; goals = 0; locked = false; recentTargets = [];
       $('shotCount').textContent = '1/5'; $('goalCount').textContent = '0'; announce('Pick your spot', 'The keeper is ready.');
-      ball.className = 'ball'; keeper.className = 'keeper'; flash.className = 'goal-flash';
+      ball.className = 'ball'; shadow.className = 'ball-shadow'; keeper.className = 'keeper'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal');
       markers.forEach(marker => marker.className = ''); targets.forEach(button => button.disabled = false);
     }
     function finish() {
@@ -250,27 +252,86 @@
         announce('ALBION WIN!', `${goals} goals from five. Up the Albion!`); flash.className = 'goal-flash win';
       } else announce('The keeper wins', `Albion scored ${goals} from five. Try again.`);
     }
-    targets.forEach(button => button.addEventListener('click', () => {
+    function takePenalty(button) {
       if (locked || shots >= 5) return;
       locked = true;
       const target = button.dataset.target;
-      const anticipation = Math.random();
-      let dive = anticipation < .16 ? target : positions[Math.floor(Math.random() * positions.length)];
-      const scored = dive !== target;
-      shots += 1; if (scored) goals += 1;
-      announce('Kick taken…', 'Come on Albion!'); flash.className = 'goal-flash';
-      ball.className = `ball shoot-${target}`; keeper.className = `keeper dive-${dive}`;
+      const power = Number($('shotPower').value); const accuracy = liveAccuracy;
+      const predictable = recentTargets.length >= 2 && recentTargets.slice(-2).every(item => item === target);
+      const readsShot = Math.random() < (predictable ? .62 : .22);
+      const dive = readsShot ? target : positions[Math.floor(Math.random() * positions.length)];
+      const missed = (accuracy < .16 && power > 88) || (power < 66 && Math.random() < .18);
+      const saved = !missed && dive === target && Math.random() > Math.max(.12, (power - 60) / 100);
+      const scored = !missed && !saved;
+      recentTargets.push(target); shots += 1; if (scored) goals += 1;
+      const fifth = shots === 5; const flightTime = fifth ? 1250 : 620;
+      if (fifth) goalFrame.classList.add('slow-motion');
+      announce(fifth ? 'Final kick…' : 'Kick taken…', fifth ? 'Slow-motion decider!' : 'Come on Albion!'); flash.className = 'goal-flash';
+      ball.className = `ball ${missed ? (target.includes('left') ? 'shoot-wide-left' : 'shoot-wide-right') : `shoot-${target}`}`;
+      shadow.className = `ball-shadow shadow-${missed ? 'wide' : target}`; keeper.className = `keeper dive-${dive}`;
       window.setTimeout(() => {
         markers[shots - 1].className = scored ? 'goal-mark' : 'save-mark';
         $('shotCount').textContent = shots < 5 ? `${shots + 1}/5` : '5/5'; $('goalCount').textContent = String(goals);
-        announce(scored ? 'GOAL!' : 'SAVED!', scored ? 'Get in! The net ripples.' : 'The keeper guessed correctly.');
-        flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`;
+        const saveLine = Math.random() > .5 ? 'The keeper gets a strong hand to it.' : 'A fingertip save pushes it away.';
+        announce(scored ? 'GOAL!' : missed ? 'WIDE!' : 'SAVED!', scored ? 'Get in! The net ripples.' : missed ? 'The timing was just off.' : saveLine);
+        flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`; if (scored) goalFrame.classList.add('net-goal');
         if (shots === 5) finish();
-        else window.setTimeout(() => { ball.className = 'ball'; keeper.className = 'keeper'; flash.className = 'goal-flash'; locked = false; announce('Pick your next spot', `${5 - shots} ${5 - shots === 1 ? 'kick' : 'kicks'} remaining.`); }, 850);
-      }, 620);
-    }));
+        else window.setTimeout(() => { ball.className = 'ball'; shadow.className = 'ball-shadow'; keeper.className = 'keeper'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal'); locked = false; announce('Pick your next spot', `${5 - shots} ${5 - shots === 1 ? 'kick' : 'kicks'} remaining.`); }, 900);
+      }, flightTime);
+    }
+    targets.forEach(button => button.addEventListener('click', () => takePenalty(button)));
+    $('shotPower').addEventListener('input', () => { $('powerValue').textContent = `${$('shotPower').value}%`; });
+    document.addEventListener('keydown', event => {
+      if (event.repeat || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+      const key = Number(event.key); if (key >= 1 && key <= 5) { event.preventDefault(); takePenalty(targets[key - 1]); }
+    });
     $('resetShootout').addEventListener('click', reset);
     reset();
+  }
+
+  function fixtureCarousel() {
+    const fixtures = (C.fixtures || []).slice(0, 3); let index = 0;
+    const render = () => {
+      const fixture = fixtures[index];
+      $('nextFixtureCarousel').innerHTML = `<article class="${fixture.venue === 'H' ? 'fixture-home' : 'fixture-away'}"><span>${fixture.venue === 'H' ? 'HOME' : 'AWAY'}</span><b>${fixture.venue === 'H' ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</b><small>${esc(fixture.date)}</small></article>`;
+      $('fixtureCarouselPosition').textContent = `${index + 1} of ${fixtures.length}`;
+    };
+    $('previousFixture').addEventListener('click', () => { index = (index + fixtures.length - 1) % fixtures.length; render(); });
+    $('nextFixtureButton').addEventListener('click', () => { index = (index + 1) % fixtures.length; render(); });
+    render();
+  }
+
+  function calendarDownload() {
+    const monthNumbers = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
+    const compactDate = date => { const [day, month, year] = date.split(' '); return `${year}${monthNumbers[month]}${String(day).padStart(2,'0')}`; };
+    const nextDay = date => { const [day, month, year] = date.split(' '); const d = new Date(Date.UTC(Number(year), Number(monthNumbers[month]) - 1, Number(day) + 1)); return `${d.getUTCFullYear()}${String(d.getUTCMonth()+1).padStart(2,'0')}${String(d.getUTCDate()).padStart(2,'0')}`; };
+    $('downloadCalendar').addEventListener('click', event => {
+      event.preventDefault();
+      const events = (C.fixtures || []).map((fixture, index) => { const title = fixture.venue === 'H' ? `Brighton & Hove Albion v ${fixture.opponent}` : `${fixture.opponent} v Brighton & Hove Albion`; return ['BEGIN:VEVENT',`UID:albion-${index + 1}-2026@albion-fan-hub`,`DTSTART;VALUE=DATE:${compactDate(fixture.date)}`,`DTEND;VALUE=DATE:${nextDay(fixture.date)}`,`SUMMARY:${title}`,`DESCRIPTION:Premier League fixture. Date and kick-off subject to change. Check the official Albion website.`,`LOCATION:${fixture.venue === 'H' ? 'Amex Stadium, Falmer' : 'Away fixture'}`,'END:VEVENT'].join('\r\n'); }).join('\r\n');
+      const calendar = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Albion Fan Hub//Fixtures 2026-27//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n${events}\r\nEND:VCALENDAR\r\n`;
+      const url = URL.createObjectURL(new Blob([calendar], {type:'text/calendar;charset=utf-8'})); const link = document.createElement('a');
+      link.href = url; link.download = 'albion-fixtures-2026-27.ics'; document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+  }
+
+  function soundAndInstall() {
+    const audio = $('anthemAudio'); const toggle = $('soundToggle');
+    const updateSound = playing => { toggle.textContent = playing ? '🔊 Sound off' : '♪ Sound on'; toggle.setAttribute('aria-pressed', String(playing)); toggle.title = playing ? 'Mute Sussex by the Sea' : 'Play Sussex by the Sea'; };
+    const play = () => audio.play().then(() => { localStorage.setItem('albionSound','on'); updateSound(true); }).catch(() => updateSound(false));
+    const pause = () => { audio.pause(); localStorage.setItem('albionSound','off'); updateSound(false); };
+    toggle.addEventListener('click', () => audio.paused ? play() : pause()); audio.addEventListener('play', () => updateSound(true)); audio.addEventListener('pause', () => updateSound(false)); audio.addEventListener('ended', () => updateSound(false));
+    if (localStorage.getItem('albionSound') !== 'off') { play(); document.addEventListener('pointerdown', () => { if (audio.paused && localStorage.getItem('albionSound') !== 'off') play(); }, {once:true}); }
+    let installPrompt = null; const installButton = $('installApp');
+    window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); installPrompt = event; installButton.hidden = false; });
+    installButton.addEventListener('click', async () => { if (!installPrompt) return; installPrompt.prompt(); await installPrompt.userChoice; installPrompt = null; installButton.hidden = true; });
+  }
+
+  function pageUtilities() {
+    const topButton = $('backToTop');
+    const showTop = () => topButton.classList.toggle('show', window.scrollY > 650); window.addEventListener('scroll', showTop, {passive:true}); showTop();
+    topButton.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+    const notice = $('cookieNotice'); if (localStorage.getItem('albionCookieNotice') === 'accepted') notice.hidden = true;
+    $('acceptCookies').addEventListener('click', () => { localStorage.setItem('albionCookieNotice','accepted'); notice.hidden = true; });
   }
 
   function ui() {
@@ -285,6 +346,6 @@
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); shootout(); ui();
+  countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); ui();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 })();
