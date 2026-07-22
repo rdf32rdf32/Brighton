@@ -2,6 +2,6 @@
 
 Unofficial static Brighton & Hove Albion supporter site for GitHub Pages.
 
-Features include a position-ordered current squad, predicted XI and pick-your-own XI, 2026/27 fixtures, match predictor, quiz with difficulty levels and answer explanations, Albion history, records, legends, memories, original seagull SVG artwork, an Amex orientation guide and win celebration.
+Features include a medium/hard 200-question quiz bank, animated five-player penalty shoot-out, compact month-filtered fixtures, matchday information, prediction tools, a four-formation XI builder with seven substitutes, Albion Story, Records & Honours, detailed Amex travel guidance, anthem audio and offline support.
 
-Upload every file and the `assets` folder to the repository root.
+Upload every file in the release ZIP directly to the GitHub Pages repository root.

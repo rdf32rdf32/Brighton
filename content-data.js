@@ -1,4 +1,13 @@
 window.ALBION_CONTENT = {
+  "lastUpdated": "22 July 2026",
+  "nextMatch": {
+    "opponent": "Aston Villa",
+    "dateLong": "Sunday 23 August 2026",
+    "dateShort": "23 Aug",
+    "time": "14:00",
+    "venue": "Amex Stadium",
+    "dateISO": "2026-08-23T14:00:00+01:00"
+  },
   "squad": [
     {
       "name": "Bart Verbruggen",
