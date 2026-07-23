@@ -358,16 +358,50 @@
             </div>
             <span class="kick-count">Round <b id="shotCount">1/5</b></span>
           </div>
+          <div
+            id="shootoutSituation"
+            class="shootout-situation"
+            aria-live="polite"
+          >
+            5 Albion kicks left · 5 Palace kicks left
+          </div>
+          <div class="crowd-bowl" aria-hidden="true">
+            <div class="crowd-tier crowd-tier-back">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+              ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+              ><i></i><i></i><i></i><i></i>
+            </div>
+            <div class="crowd-tier crowd-tier-front">
+              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+              ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
+              ><i></i><i></i><i></i><i></i>
+            </div>
+            <span class="crowd-flag flag-albion">BHA</span>
+            <span class="crowd-flag flag-palace">CP</span>
+            <span class="crowd-scarf">SEAGULLS • SEAGULLS • SEAGULLS</span>
+          </div>
           <div class="goal" id="goal">
             <div class="goal-depth" aria-hidden="true"></div>
             <div class="net"></div>
             <div class="goal-line" aria-hidden="true"></div>
+            <div class="turf-detail" aria-hidden="true">
+              <i></i><i></i><i></i><i></i><i></i><i></i>
+            </div>
             <div
               id="goalDecision"
               class="goal-decision"
               hidden
               aria-live="polite"
             ></div>
+            <div
+              id="kickDecision"
+              class="kick-decision"
+              hidden
+              aria-live="assertive"
+            ></div>
+            <div class="referee" aria-hidden="true">
+              <span></span><i></i><b></b>
+            </div>
             <span id="keeperNameTag" class="keeper-name-tag" hidden
               >You control: Bart Verbruggen</span
             >
@@ -392,7 +426,7 @@
               ><span class="player-leg player-leg-left"></span
               ><span class="player-leg player-leg-right"></span>
             </div>
-            <div class="penalty-spot" aria-hidden="true"></div>
+            <div class="penalty-spot" aria-hidden="true"><i></i></div>
             <div class="ball-shadow" id="ballShadow" aria-hidden="true"></div>
             <div class="ball" id="ball" aria-hidden="true"><span></span></div>
             <button

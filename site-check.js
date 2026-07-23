@@ -69,13 +69,13 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v19/.test(serviceWorker) ||
+  !/albion-fan-hub-v20/.test(serviceWorker) ||
   !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v19 release cache or anthem asset is incorrect");
-else pass("v19 cache includes the proven version-14 anthem asset");
+  fail("v20 release cache or anthem asset is incorrect");
+else pass("v20 cache includes the proven version-14 anthem asset");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
 if (
@@ -88,6 +88,10 @@ else pass("sound controls use the version-14 master-volume model");
 [
   ["palaceRunStartedAt", "Palace reaction timing"],
   ["adjacentDives", "adjacent-zone saves"],
+  ["shootoutDecision", "best-of-five early finish rules"],
+  ["commitPalaceDive", "committed keeper dives"],
+  ["Maxim De Cuyper", "left-footed Albion taker"],
+  ["pointerdown", "instant penalty input"],
 ].forEach(([needle, label]) => {
   if (!application.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -96,6 +100,9 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
 [
   ["dive-level-top", "high-dive animation classes"],
   ["dive-level-bottom", "low-dive animation classes"],
+  ["crowd-bowl", "behind-goal crowd"],
+  ["kick-decision", "clear goal and save decisions"],
+  ["placing-ball", "ball-placement sequence"],
 ].forEach(([needle, label]) => {
   if (!stylesheet.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -112,6 +119,16 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
 if (!/Are You a Secret Palace Fan\?/.test(application))
   fail("quiz supporter rating scale is missing");
 else pass("quiz supporter rating scale present");
+
+[
+  ["shootoutSituation", "remaining-kicks display"],
+  ["kickDecision", "large kick decision"],
+  ["crowd-bowl", "crowd bowl"],
+  ["referee", "shoot-out referee"],
+].forEach(([needle, label]) => {
+  if (!html.includes(needle)) fail(`${label} missing`);
+  else pass(`${label} present`);
+});
 
 const anthemPath = path.join(root, "sussex-by-the-sea.mp3");
 if (fs.existsSync(anthemPath) && fs.statSync(anthemPath).size < 100000)

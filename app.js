@@ -1195,16 +1195,18 @@
       "bottom-right",
     ];
     const takers = [
-      { name: "Danny Welbeck", number: 18, skin: "#7b4934", hair: "#211712" },
+      { name: "Danny Welbeck", number: 18, foot: "right", trait: "composed", skin: "#7b4934", hair: "#211712" },
       {
         name: "Georginio Rutter",
         number: 10,
+        foot: "right",
+        trait: "disguised",
         skin: "#70402e",
         hair: "#17110e",
       },
-      { name: "Yankuba Minteh", number: 11, skin: "#5c3427", hair: "#16100d" },
-      { name: "Diego Gómez", number: 25, skin: "#b87855", hair: "#20150f" },
-      { name: "Kaoru Mitoma", number: 22, skin: "#d5a077", hair: "#1b1715" },
+      { name: "Yankuba Minteh", number: 11, foot: "left", trait: "powerful", skin: "#5c3427", hair: "#16100d" },
+      { name: "Diego Gómez", number: 25, foot: "right", trait: "driven", skin: "#b87855", hair: "#20150f" },
+      { name: "Maxim De Cuyper", number: 29, foot: "left", trait: "placed", skin: "#d2a07f", hair: "#a97945" },
     ];
     const palacePreferences = [
       "middle-right",
@@ -1214,11 +1216,11 @@
       "middle-left",
     ];
     const palaceTakers = [
-      { label: "Palace taker 1", style: "quick, straight run-up", skin: "#8e583f", hair: "#241712" },
-      { label: "Palace taker 2", style: "measured, angled approach", skin: "#c88b69", hair: "#322016" },
-      { label: "Palace taker 3", style: "short stutter step", skin: "#754633", hair: "#17110f" },
-      { label: "Palace taker 4", style: "long, composed approach", skin: "#a96f52", hair: "#251912" },
-      { label: "Palace taker 5", style: "fast final stride", skin: "#d09a76", hair: "#2b1c15" },
+      { label: "Palace taker 1", style: "quick, straight run-up", foot: "right", paceMs: 920, skin: "#8e583f", hair: "#241712" },
+      { label: "Palace taker 2", style: "measured, angled approach", foot: "left", paceMs: 1240, skin: "#c88b69", hair: "#322016" },
+      { label: "Palace taker 3", style: "short stutter step", foot: "right", paceMs: 1360, skin: "#754633", hair: "#17110f" },
+      { label: "Palace taker 4", style: "long, composed approach", foot: "left", paceMs: 1120, skin: "#a96f52", hair: "#251912" },
+      { label: "Palace taker 5", style: "fast final stride", foot: "right", paceMs: 980, skin: "#d09a76", hair: "#2b1c15" },
     ];
     let lineup = [];
     let albionResults = [];
@@ -1240,6 +1242,10 @@
     let palaceRunStartedAt = 0;
     let palaceRunTimer = 0;
     let palaceShotTimer = 0;
+    let placementTimer = 0;
+    let palaceStrikeDelay = 1120;
+    let activeFoot = "right";
+    let activeTrait = "placed";
     let lastKick = null;
     let keeperStats = {
       dives: 0,
@@ -1299,9 +1305,9 @@
     const timingLabel = (accuracy) =>
       accuracy < 0.56
         ? ["RED: MISS", "red"]
-        : accuracy < 0.84
+        : accuracy < 0.76
           ? ["RISKY", "risky"]
-          : accuracy < 0.94
+          : accuracy < 0.92
             ? ["GOOD", "good"]
             : ["PERFECT", "perfect"];
     function freezeAccuracy(button, panenka = false) {
@@ -1354,6 +1360,65 @@
         (phase === "shoot" && albionKicks === palaceKicks ? 1 : 0);
       $("shotCount").textContent =
         round <= 5 ? `${round}/5` : `SD ${round - 5}`;
+      const albionRemaining = Math.max(0, 5 - albionKicks);
+      const palaceRemaining = Math.max(0, 5 - palaceKicks);
+      const suddenDeath = albionKicks >= 5 && palaceKicks >= 5;
+      $("shootoutSituation").textContent = suddenDeath
+        ? albionKicks === palaceKicks
+          ? "Sudden death · next pair decides it"
+          : "Sudden death · Palace must respond"
+        : `${albionRemaining} Albion ${albionRemaining === 1 ? "kick" : "kicks"} left · ${palaceRemaining} Palace ${palaceRemaining === 1 ? "kick" : "kicks"} left`;
+    }
+    function shootoutDecision() {
+      const albionRemaining = Math.max(0, 5 - albionKicks);
+      const palaceRemaining = Math.max(0, 5 - palaceKicks);
+      if (albionKicks < 5 || palaceKicks < 5) {
+        if (albionGoals > palaceGoals + palaceRemaining)
+          return { finished: true, albionWon: true };
+        if (palaceGoals > albionGoals + albionRemaining)
+          return { finished: true, albionWon: false };
+      }
+      if (
+        albionKicks >= 5 &&
+        palaceKicks >= 5 &&
+        albionKicks === palaceKicks &&
+        albionGoals !== palaceGoals
+      )
+        return { finished: true, albionWon: albionGoals > palaceGoals };
+      return { finished: false, albionWon: false };
+    }
+    function pressurePrompt(nextPhase = phase) {
+      const albionRemaining = Math.max(0, 5 - albionKicks);
+      const palaceRemaining = Math.max(0, 5 - palaceKicks);
+      if (albionKicks >= 5 && palaceKicks >= 5)
+        return nextPhase === "shoot"
+          ? "Sudden death: Albion must strike first."
+          : "Sudden death: Palace must answer.";
+      if (
+        nextPhase === "shoot" &&
+        palaceGoals > albionGoals + Math.max(0, albionRemaining - 1)
+      )
+        return "MUST SCORE";
+      if (
+        nextPhase === "save" &&
+        albionGoals > palaceGoals + Math.max(0, palaceRemaining - 1)
+      )
+        return "SAVE TO WIN";
+      return "Best of five";
+    }
+    function shotStyleFor(accuracy, target, panenka = false) {
+      if (panenka) return "panenka";
+      if (accuracy < 0.56) return "mishit";
+      if (target.includes("top")) return accuracy > 0.88 ? "rising" : "driven";
+      if (target.includes("middle")) return accuracy > 0.82 ? "curled" : "driven";
+      if (target.includes("bottom")) return accuracy > 0.82 ? "placed" : "driven";
+      return accuracy > 0.9 ? "placed" : "driven";
+    }
+    function showKickDecision(title, detail, className) {
+      const decision = $("kickDecision");
+      decision.className = `kick-decision ${className}`;
+      decision.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`;
+      decision.hidden = false;
     }
     function renderLineup() {
       $("penaltyLineup").innerHTML = lineup
@@ -1368,6 +1433,7 @@
     function clearMotion() {
       window.clearTimeout(palaceRunTimer);
       window.clearTimeout(palaceShotTimer);
+      window.clearTimeout(placementTimer);
       ball.className = "ball";
       shadow.className = "ball-shadow";
       flash.className = "goal-flash";
@@ -1388,19 +1454,39 @@
         "kick-in-flight",
         "save-impact",
         "goal-checking",
+        "placing-ball",
       );
-      stadiumScene.classList.remove("camera-shoot", "camera-save", "palace-run-live");
+      stadiumScene.classList.remove(
+        "camera-shoot",
+        "camera-save",
+        "palace-run-live",
+        "crowd-hush",
+        "crowd-goal",
+        "crowd-save",
+        "crowd-miss",
+        "crowd-win",
+        "crowd-loss",
+      );
       const decision = $("goalDecision");
       decision.hidden = true;
       decision.textContent = "";
+      const kickDecision = $("kickDecision");
+      kickDecision.hidden = true;
+      kickDecision.textContent = "";
     }
     function readyKeeper() {
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${["left", "right", "centre"][Math.floor(Math.random() * 3)]}`;
     }
     function startPalaceRun() {
-      if (phase !== "save" || locked) return;
+      if (phase !== "save") return;
+      locked = false;
+      targets.forEach((button) => (button.disabled = false));
+      goalFrame.classList.remove("placing-ball");
+      taker.classList.remove("place-ball");
+      ball.classList.remove("ball-to-spot");
+      playSfx("whistle");
       palaceRunStartedAt = performance.now();
-      stadiumScene.classList.add("palace-run-live");
+      stadiumScene.classList.add("palace-run-live", "crowd-hush");
       taker.classList.add("run-up", "palace-live-run");
       announce(
         "Palace are running up",
@@ -1408,7 +1494,7 @@
       );
       palaceShotTimer = window.setTimeout(
         () => takePalacePenalty(null, true),
-        1120,
+        palaceStrikeDelay,
       );
     }
     function setScene() {
@@ -1419,9 +1505,10 @@
       const player = lineup[albionKicks % lineup.length];
       targets.forEach((target) => target.classList.remove("selected-target"));
       if (!saving) {
-        accuracyFrozen = false;
+        locked = true;
+        accuracyFrozen = true;
         accuracyMeter.className = "accuracy-meter";
-        accuracyVerdict.textContent = "Time your strike";
+        accuracyVerdict.textContent = "Placing the ball…";
         accuracyVerdict.className = "accuracy-verdict";
       }
       $("turnBadge").textContent = saving
@@ -1446,7 +1533,11 @@
           Math.abs(albionGoals - palaceGoals) <= 1,
       );
       if (saving) {
+        locked = true;
         const palaceTaker = palaceTakers[palaceKicks % palaceTakers.length];
+        activeFoot = palaceTaker.foot;
+        activeTrait = palaceTaker.style;
+        palaceStrikeDelay = palaceTaker.paceMs;
         const preferred =
           palacePreferences[palaceKicks % palacePreferences.length];
         palacePlannedTarget =
@@ -1463,6 +1554,10 @@
             ? trueSide
             : ["left", "right", "centre"][Math.floor(Math.random() * 3)];
         taker.classList.add(`cue-${cue}`);
+        taker.classList.add(`foot-${palaceTaker.foot}`);
+        goalFrame.classList.add("placing-ball");
+        taker.classList.add("place-ball");
+        ball.classList.add("ball-to-spot");
         taker.classList.add(
           ["runup-straight", "runup-angled", "runup-stutter"][
             palaceKicks % 3
@@ -1475,11 +1570,13 @@
         taker.style.setProperty("--player-hair", palaceTaker.hair);
         announce(
           "Watch the Palace taker",
-          "The run-up starts automatically. Choose Verbruggen’s dive before the strike.",
+          `${pressurePrompt("save")} · The run-up speed changes. Commit Verbruggen before the strike.`,
         );
       } else {
+        activeFoot = player.foot;
+        activeTrait = player.trait;
         $("penaltyTakerName").textContent =
-          `${player.name} · No. ${player.number}`;
+          `${player.name} · No. ${player.number} · ${player.foot}-footed`;
         $("penaltyShirt").textContent = player.number;
         taker.style.setProperty("--player-skin", player.skin);
         taker.style.setProperty("--player-hair", player.hair);
@@ -1488,13 +1585,17 @@
             albionKicks % 3
           ],
         );
+        taker.classList.add(`foot-${player.foot}`);
+        goalFrame.classList.add("placing-ball");
+        taker.classList.add("place-ball");
+        ball.classList.add("ball-to-spot");
         announce(
-          albionKicks >= 5 ? "Sudden death: pick your spot" : "Pick your spot",
-          "Red accuracy means an automatic miss.",
+          `${player.name} places the ball`,
+          `${pressurePrompt("shoot")} · The bar starts when the referee is ready.`,
         );
       }
       targets.forEach((button, index) => {
-        button.disabled = false;
+        button.disabled = true;
         button.setAttribute(
           "aria-label",
           saving
@@ -1505,8 +1606,26 @@
       renderLineup();
       renderScore();
       readyKeeper();
-      if (saving)
+      if (saving) {
         palaceRunTimer = window.setTimeout(startPalaceRun, 520);
+      } else {
+        $("panenkaButton").disabled = true;
+        placementTimer = window.setTimeout(() => {
+          goalFrame.classList.remove("placing-ball");
+          taker.classList.remove("place-ball");
+          ball.classList.remove("ball-to-spot");
+          targets.forEach((button) => (button.disabled = false));
+          $("panenkaButton").disabled = false;
+          accuracyFrozen = false;
+          locked = false;
+          accuracyVerdict.textContent = "Time your strike";
+          playSfx("whistle");
+          announce(
+            albionKicks >= 5 ? "Sudden death: pick your spot" : "Pick your spot",
+            `${pressurePrompt("shoot")} · Green timing gives the best finish.`,
+          );
+        }, 780);
+      }
     }
     function renderSummary() {
       const rows = Array.from(
@@ -1560,6 +1679,7 @@
       $("shootoutSummary").innerHTML = "";
       $("shareShootout").hidden = true;
       $("replayKick").hidden = true;
+      $("resetShootout").textContent = "Restart Brighton v Palace";
       status.classList.remove("win-status", "loss-status");
       goalFrame.classList.remove("albion-win", "palace-win");
       renderShootoutRecord();
@@ -1586,6 +1706,13 @@
       );
       status.classList.add(albionWon ? "win-status" : "loss-status");
       goalFrame.classList.add(albionWon ? "albion-win" : "palace-win");
+      stadiumScene.classList.add(albionWon ? "crowd-win" : "crowd-loss");
+      showKickDecision(
+        albionWon ? "SEAGULLS WIN" : "PALACE WIN",
+        `Brighton ${albionGoals}–${palaceGoals} Palace`,
+        albionWon ? "decision-goal" : "decision-miss",
+      );
+      $("resetShootout").textContent = "Play the shoot-out again";
       $("shootoutSummary").hidden = false;
       renderSummary();
       const conversion = albionKicks
@@ -1646,6 +1773,8 @@
         slow,
         panenka = false,
         technique = null,
+        shotStyle = "driven",
+        foot = activeFoot,
       },
       replay = false,
     ) {
@@ -1661,10 +1790,13 @@
           slow,
           panenka,
           technique: resolvedTechnique,
+          shotStyle,
+          foot,
         };
       if (slow) goalFrame.classList.add("slow-motion");
       goalFrame.classList.add("kick-in-flight");
       taker.classList.add("run-up");
+      taker.classList.add(`foot-${foot}`, `strike-${shotStyle}`);
       const postSide = target.includes("left")
         ? "left"
         : target.includes("right")
@@ -1678,7 +1810,7 @@
           : target.includes("right")
             ? "flight-swerve-right"
             : "flight-straight";
-      ball.className = `ball ${panenka ? (scored ? "panenka-goal" : "panenka-saved") : missed ? (postSide === "left" ? "shoot-wide-left" : "shoot-wide-right") : woodwork ? `hit-post-${postSide}` : `shoot-${target}`} ${swerve}`;
+      ball.className = `ball ball-spin shot-${shotStyle} ${panenka ? (scored ? "panenka-goal" : "panenka-saved") : missed ? (postSide === "left" ? "shoot-wide-left" : "shoot-wide-right") : woodwork ? `hit-post-${postSide}` : `shoot-${target}`} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : target}`;
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       const diveLevel = dive.includes("top")
@@ -1707,8 +1839,20 @@
           if (scored) {
             goalFrame.classList.add("net-goal", `net-${target}`);
             taker.classList.add("taker-celebrate");
+            stadiumScene.classList.add("crowd-goal");
+            showKickDecision(
+              "GOAL",
+              shotStyle === "panenka"
+                ? "Panenka"
+                : `${shotStyle[0].toUpperCase()}${shotStyle.slice(1)} finish`,
+              "decision-goal",
+            );
           }
-          if (woodwork) goalFrame.classList.add("woodwork");
+          if (woodwork) {
+            goalFrame.classList.add("woodwork");
+            stadiumScene.classList.add("crowd-miss");
+            showKickDecision("NO GOAL", "Off the woodwork", "decision-woodwork");
+          }
           if (saved) {
             keeper.classList.add(
               `save-${resolvedTechnique.key}`,
@@ -1717,6 +1861,12 @@
             taker.classList.add("taker-disappointed");
             goalFrame.classList.add("save-impact");
             keeper.classList.add("ball-contact");
+            stadiumScene.classList.add("crowd-save");
+            showKickDecision(
+              "SAVED",
+              phase === "save" ? "Verbruggen keeps it out" : "Palace keeper",
+              "decision-save",
+            );
             if (phase === "save")
               bestSave =
                 resolvedTechnique.label[0].toUpperCase() +
@@ -1747,9 +1897,15 @@
             }
           }
           if (missed || woodwork) taker.classList.add("taker-disappointed");
+          if (missed) {
+            stadiumScene.classList.add("crowd-miss");
+            showKickDecision("MISSED", "The ball goes wide", "decision-miss");
+          }
           playSfx(
             scored ? "goal" : woodwork ? "post" : missed ? "miss" : "save",
           );
+          if (scored || (saved && phase === "save"))
+            window.setTimeout(() => playSfx("crowd"), 100);
           vibrate(
             saved ? [35, 30, 55] : woodwork ? [65, 35, 65] : scored ? 35 : 50,
           );
@@ -1781,8 +1937,9 @@
         dive === target ? 0.62 : sameSide && target !== "centre" ? 0.1 : 0;
       const saved = !missed && !woodwork && Math.random() < saveChance;
       const scored = !missed && !woodwork && !saved;
+      const shotStyle = shotStyleFor(accuracy, target);
       const label = scored
-        ? "Goal"
+        ? `Goal: ${shotStyle}`
         : woodwork
           ? "Woodwork"
           : missed
@@ -1800,7 +1957,17 @@
         `${player.name} steps up…`,
         slow ? "The pressure is on." : "Come on Albion!",
       );
-      animateShot({ target, dive, missed, woodwork, saved, scored, slow });
+      animateShot({
+        target,
+        dive,
+        missed,
+        woodwork,
+        saved,
+        scored,
+        slow,
+        shotStyle,
+        foot: player.foot,
+      });
       window.setTimeout(
         () => {
           const goalLines = [
@@ -1829,6 +1996,11 @@
           );
           renderLineup();
           renderScore();
+          const decision = shootoutDecision();
+          if (decision.finished) {
+            window.setTimeout(() => finish(decision.albionWon), 850);
+            return;
+          }
           window.setTimeout(() => {
             announce(
               "Palace step up…",
@@ -1886,6 +2058,8 @@
         scored,
         slow,
         panenka: true,
+        shotStyle: "panenka",
+        foot: player.foot,
       });
       window.setTimeout(() => {
         announce(
@@ -1896,6 +2070,11 @@
         );
         renderLineup();
         renderScore();
+        const decision = shootoutDecision();
+        if (decision.finished) {
+          window.setTimeout(() => finish(decision.albionWon), 900);
+          return;
+        }
         window.setTimeout(() => {
           announce("Palace step up…", "Get ready to control Bart Verbruggen.");
           window.setTimeout(() => {
@@ -1906,7 +2085,7 @@
         }, 900);
       }, 1650);
     }
-    function takePalacePenalty(button) {
+    function takePalacePenalty(button, automatic = false, committedAt = null) {
       window.clearTimeout(palaceRunTimer);
       window.clearTimeout(palaceShotTimer);
       locked = true;
@@ -1920,10 +2099,18 @@
       const dive = button?.dataset.target || "centre";
       const target = palacePlannedTarget;
       const reactionMs = palaceRunStartedAt
-        ? Math.max(0, performance.now() - palaceRunStartedAt)
+        ? committedAt === null
+          ? Math.max(0, performance.now() - palaceRunStartedAt)
+          : committedAt
         : 0;
+      const earlyCutoff = palaceStrikeDelay * 0.22;
+      const idealCutoff = palaceStrikeDelay * 0.72;
       const reaction =
-        reactionMs < 250 ? "early" : reactionMs <= 760 ? "perfect" : "late";
+        reactionMs < earlyCutoff
+          ? "early"
+          : reactionMs <= idealCutoff
+            ? "perfect"
+            : "late";
       keeperStats.dives += 1;
       if (dive === target) keeperStats.correctGuesses += 1;
       const missed = Math.random() < 0.1;
@@ -1945,6 +2132,14 @@
       if (scored || saved) palaceShotsOnTarget += 1;
       if (saved) palaceSaves += 1;
       const technique = saveTechnique(target);
+      const palaceTaker = palaceTakers[palaceKicks % palaceTakers.length];
+      const shotStyle = target.includes("top")
+        ? "rising"
+        : target.includes("bottom")
+          ? "placed"
+          : palaceStrikeDelay < 1000
+            ? "driven"
+            : "curled";
       if (saved) keeperStats[technique.key] += 1;
       const label = scored
         ? "Goal"
@@ -1975,6 +2170,8 @@
         scored,
         slow,
         technique,
+        shotStyle,
+        foot: palaceTaker.foot,
       });
       window.setTimeout(
         () => {
@@ -1993,12 +2190,9 @@
                 : "The ball stays out.",
           );
           renderScore();
-          const canFinish =
-            palaceKicks >= 5 &&
-            palaceKicks === albionKicks &&
-            palaceGoals !== albionGoals;
+          const decision = shootoutDecision();
           const continueShootout = () => {
-            if (canFinish) finish(albionGoals > palaceGoals);
+            if (decision.finished) finish(decision.albionWon);
             else {
               phase = "shoot";
               locked = false;
@@ -2028,6 +2222,8 @@
                   scored,
                   slow: true,
                   technique,
+                  shotStyle,
+                  foot: palaceTaker.foot,
                 },
                 true,
               );
@@ -2038,15 +2234,54 @@
         slow ? 1550 : 1120,
       );
     }
+    function commitPalaceDive(button) {
+      if (locked || phase !== "save") return;
+      const reactionMs = palaceRunStartedAt
+        ? Math.max(0, performance.now() - palaceRunStartedAt)
+        : 0;
+      locked = true;
+      window.clearTimeout(palaceShotTimer);
+      targets.forEach((targetButton) => {
+        targetButton.disabled = true;
+        targetButton.classList.toggle(
+          "selected-target",
+          targetButton === button,
+        );
+      });
+      keeper.className = `keeper user-keeper keeper-committed commit-${button.dataset.target}`;
+      announce(
+        "Verbruggen commits",
+        "The taker is still moving — watch the strike.",
+      );
+      const remaining = Math.max(90, palaceStrikeDelay - reactionMs);
+      palaceShotTimer = window.setTimeout(
+        () => takePalacePenalty(button, false, reactionMs),
+        remaining,
+      );
+    }
     function chooseTarget(button) {
       if (locked) return;
       if (phase === "shoot") takeAlbionPenalty(button);
-      else takePalacePenalty(button);
+      else commitPalaceDive(button);
     }
-    targets.forEach((button) =>
-      button.addEventListener("click", () => chooseTarget(button)),
-    );
-    $("panenkaButton").addEventListener("click", takePanenka);
+    targets.forEach((button) => {
+      button.addEventListener("pointerdown", (event) => {
+        if (event.button !== undefined && event.button !== 0) return;
+        event.preventDefault();
+        chooseTarget(button);
+      });
+      button.addEventListener("click", (event) => {
+        if (event.detail === 0) chooseTarget(button);
+      });
+    });
+    $("panenkaButton").addEventListener("pointerdown", (event) => {
+      if (event.button !== undefined && event.button !== 0) return;
+      event.preventDefault();
+      takePanenka();
+    });
+    $("panenkaButton").addEventListener("click", (event) => {
+      if (event.detail === 0) takePanenka();
+    });
     document.addEventListener("keydown", (event) => {
       if (
         event.repeat ||
@@ -2304,6 +2539,7 @@
         save: "Gloves meet the ball",
         miss: "The shot goes wide",
         crowd: "Albion supporters roar",
+        whistle: "The referee whistles",
       };
       showCaption(captions[type] || "Match sound");
       if (!soundEnabled || masterVolume === 0) return;
@@ -2347,9 +2583,11 @@
         post: 1180,
         save: 180,
         miss: 110,
+        whistle: 1560,
       };
       const oscillator = audioContext.createOscillator();
-      oscillator.type = type === "post" ? "square" : "sine";
+      oscillator.type =
+        type === "post" ? "square" : type === "whistle" ? "triangle" : "sine";
       oscillator.frequency.setValueAtTime(frequencies[type] || 220, now);
       oscillator.frequency.exponentialRampToValueAtTime(
         type === "goal" || type === "confirm"
