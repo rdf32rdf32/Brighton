@@ -1,7 +1,7 @@
-const CACHE_NAME = 'albion-fan-hub-v16';
+const CACHE_NAME = 'albion-fan-hub-v17';
 const FILES = [
-  './', './index.html', './style.css', './app.js', './v16.js', './quiz-data.js', './content-data.js',
-  './manifest.json', './favicon.svg', './albion-safe-graphic.svg', './sussex-by-the-sea.mp3',
+  './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './quiz-data.js', './content-data.js',
+  './manifest.json', './favicon.svg', './albion-safe-graphic.svg', './sussex-by-the-sea-v17.mp3',
   './icon-192.png', './icon-512.png', './social-preview.png', './privacy.html', './cookies.html', './copyright.html', './contact.html', './offline.html',
   './editor.html', './editor.js'
 ];

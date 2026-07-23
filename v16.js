@@ -31,7 +31,6 @@
       albionPredictionHistory: "array",
       albionXITactics: "object",
       albionAccessibility: "object",
-      albionMatchdayItinerary: "object",
     };
     Object.entries(structured).forEach(([key, type]) => {
       const raw = localStorage.getItem(key);
@@ -132,7 +131,7 @@
     let phase = "Planning";
     let headline = `Planning for ${title}`;
     let guidance =
-      "Save your prediction, choose your XI and prepare your travel plan.";
+      "Save your prediction, choose your XI and review the confirmed match details.";
     if (hours <= 24 && hours > 3) {
       phase = "Matchday";
       headline = `${title} is today`;
@@ -187,8 +186,6 @@
     if (localStorage.getItem("albionXI")) actions.push(["Edit your XI", "#xi"]);
     if (localStorage.getItem("albionPrediction"))
       actions.push(["Review match prediction", "#predictor"]);
-    if (localStorage.getItem("albionMatchdayItinerary"))
-      actions.push(["Review matchday plan", "#amex-stands"]);
     showMessage(
       $("returningHeadline"),
       actions.length ? "Welcome back" : "Start exploring",
@@ -230,8 +227,8 @@
       ],
       [
         "amex-stands",
-        "Plan the Amex",
-        "Compare stands and build a personal arrival itinerary.",
+        "Explore the Amex",
+        "Compare stand positions, capacities, atmosphere and accessibility information.",
       ],
       [
         "supporter-settings",
@@ -500,48 +497,6 @@
     });
   }
 
-  function initialiseItinerary() {
-    let saved = {};
-    try {
-      saved = JSON.parse(localStorage.getItem("albionMatchdayItinerary")) || {};
-    } catch {}
-    if (saved.travel) $("itineraryTravel").value = saved.travel;
-    if (saved.arrival) $("itineraryArrival").value = saved.arrival;
-    const render = () => {
-      const travel = $("itineraryTravel").value;
-      const arrival = Number($("itineraryArrival").value);
-      const kickOff = new Date(MATCH.dateISO);
-      const entryTime = new Date(kickOff - arrival * 60000);
-      const travelAllowance = { train: 75, bus: 90, park: 105, walk: 60 }[
-        travel
-      ];
-      const leaveTime = new Date(entryTime - travelAllowance * 60000);
-      const stand =
-        localStorage.getItem("albionPreferredStand") || "your stand";
-      const labels = {
-        train: "train journey and matchday queues",
-        bus: "bus or coach journey and matchday traffic",
-        park: "park-and-ride transfer and queues",
-        walk: "walking or cycling route",
-      };
-      const time = (date) =>
-        new Intl.DateTimeFormat(undefined, {
-          hour: "2-digit",
-          minute: "2-digit",
-        }).format(date);
-      $("itineraryResult").innerHTML =
-        `<li><b>${time(leaveTime)}</b> · Suggested latest departure allowing for ${labels[travel]}.</li><li><b>${time(entryTime)}</b> · Aim to reach the stadium and use the numbered entrance on your ticket.</li><li><b>${time(new Date(kickOff - 20 * 60000))}</b> · Reach ${esc(stand)} and settle into your seat.</li><li><b>${time(kickOff)}</b> · Kick-off, subject to official confirmation.</li>`;
-      localStorage.setItem(
-        "albionMatchdayItinerary",
-        JSON.stringify({ travel, arrival }),
-      );
-      renderReturningVisit();
-    };
-    $("buildItinerary")?.addEventListener("click", render);
-    $("printItinerary")?.addEventListener("click", () => window.print());
-    if (saved.travel) render();
-  }
-
   function initialiseAccessibility() {
     const controls = {
       largeTextSetting: "largeText",
@@ -635,21 +590,6 @@
     });
   }
 
-  function renderFreshness() {
-    const labels = {
-      fixtures: "Fixtures",
-      squad: "Squad",
-      travel: "Travel guidance",
-      history: "History",
-    };
-    $("freshnessPanel").innerHTML = Object.entries(C.freshness || {})
-      .map(
-        ([key, date]) =>
-          `<article><span>${esc(labels[key] || key)}</span><b>${esc(date)}</b></article>`,
-      )
-      .join("");
-  }
-
   function runDiagnostics() {
     const ids = [...document.querySelectorAll("[id]")].map(
       (element) => element.id,
@@ -682,7 +622,7 @@
         $("connectionStatus"),
         navigator.onLine
           ? "Online. Current web information can be requested."
-          : "Offline. Cached quiz, penalty and saved planning features remain available.",
+          : "Offline. Cached quiz, penalty and saved supporter features remain available.",
       );
     window.addEventListener("online", update);
     window.addEventListener("offline", update);
@@ -839,10 +779,8 @@
   initialiseTour();
   trackPredictions();
   initialiseXITools();
-  initialiseItinerary();
   initialiseAccessibility();
   initialiseDataTransfer();
-  renderFreshness();
   runDiagnostics();
   $("runDiagnostics")?.addEventListener("click", runDiagnostics);
   initialiseConnectionStatus();

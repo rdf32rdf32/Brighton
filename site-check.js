@@ -14,6 +14,7 @@ const requiredFiles = [
   "style.css",
   "app.js",
   "v16.js",
+  "v17.js",
   "content-data.js",
   "quiz-data.js",
   "editor.html",
@@ -21,7 +22,7 @@ const requiredFiles = [
   "service-worker.js",
   "manifest.json",
   "offline.html",
-  "sussex-by-the-sea.mp3",
+  "sussex-by-the-sea-v17.mp3",
 ];
 requiredFiles.forEach((file) => {
   if (!fs.existsSync(path.join(root, file))) fail(`missing ${file}`);
@@ -54,7 +55,20 @@ if (!/<button id="checkQuiz"[^>]*hidden/.test(html))
   fail("quiz Check answer control must remain hidden");
 else pass("quiz uses instant answer selection");
 
-["app.js", "v16.js", "editor.js", "service-worker.js"].forEach((file) => {
+if (/Personal matchday itinerary|id="itinerary/i.test(html))
+  fail("personal matchday itinerary must remain removed");
+else pass("personal matchday itinerary is removed");
+
+if (!/Are You a Secret Palace Fan\?/.test(fs.readFileSync(path.join(root, "app.js"), "utf8")))
+  fail("quiz supporter rating scale is missing");
+else pass("quiz supporter rating scale present");
+
+const anthemPath = path.join(root, "sussex-by-the-sea-v17.mp3");
+if (fs.existsSync(anthemPath) && fs.statSync(anthemPath).size < 100000)
+  fail("anthem audio file is unexpectedly small");
+else if (fs.existsSync(anthemPath)) pass("anthem audio file is present");
+
+["app.js", "v16.js", "v17.js", "editor.js", "service-worker.js"].forEach((file) => {
   try {
     new Function(fs.readFileSync(path.join(root, file), "utf8"));
     pass(`${file} parses`);

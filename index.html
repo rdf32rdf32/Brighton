@@ -65,8 +65,8 @@
           <p class="eyebrow">2026/27 season</p>
           <h1>Brighton &amp; Hove Albion</h1>
           <p class="lead">
-            Quiz yourself, take a penalty, follow the fixtures and explore the
-            Albion story.
+            Quiz yourself, face Palace from the spot, follow the fixtures and
+            explore the Albion story.
           </p>
           <div class="flying-gulls" aria-hidden="true">
             <span>⌁</span><span>⌁</span><span>⌁</span>
@@ -190,6 +190,34 @@
           >
         </div>
       </section>
+      <section
+        class="supporter-profile"
+        id="supporter-profile"
+        aria-labelledby="supporterProfileTitle"
+      >
+        <div>
+          <p class="eyebrow">Your Albion profile</p>
+          <h2 id="supporterProfileTitle">Supporter progress</h2>
+          <p>
+            Quiz knowledge, shoot-out record and season prediction, stored only
+            on this device.
+          </p>
+        </div>
+        <div class="supporter-profile-grid">
+          <article>
+            <span>Quiz level</span><b id="profileQuizLevel">Not rated yet</b
+            ><small id="profileQuizScore">Play the five-question quiz</small>
+          </article>
+          <article>
+            <span>Shoot-outs</span><b id="profileShootouts">0 played</b
+            ><small id="profileShootoutDetail">No derby record yet</small>
+          </article>
+          <article>
+            <span>League forecast</span><b id="profileLeague">Not saved</b
+            ><small>Choose Albion’s finishing position</small>
+          </article>
+        </div>
+      </section>
       <section class="card quiz-card first-feature" id="quiz">
         <div class="section-head">
           <p class="eyebrow">First up: Albion quiz</p>
@@ -225,6 +253,9 @@
         <div class="button-row">
           <button id="checkQuiz" type="button" hidden>Check answer</button
           ><button id="newQuiz" class="ghost" type="button">Play again</button
+          ><button id="replayMistakes" class="ghost" type="button" hidden>
+            Replay missed questions
+          </button
           ><button id="shareQuiz" class="ghost" type="button" hidden>
             Share quiz result
           </button>
@@ -327,6 +358,12 @@
             <div class="goal-depth" aria-hidden="true"></div>
             <div class="net"></div>
             <div class="goal-line" aria-hidden="true"></div>
+            <div
+              id="goalDecision"
+              class="goal-decision"
+              hidden
+              aria-live="polite"
+            ></div>
             <span id="keeperNameTag" class="keeper-name-tag" hidden
               >You control: Bart Verbruggen</span
             >
@@ -433,18 +470,24 @@
           <p class="eyebrow">Albion anthem and sound</p>
           <h2>Sussex by the Sea</h2>
           <p>
-            Sound never starts automatically. The anthem and match effects share
-            one master volume, while the sound switch controls game effects
-            independently.
+            Sound never starts automatically. Anthem and match-effect volumes
+            are controlled separately, and your choices are remembered.
           </p>
           <div class="sound-settings">
             <button id="inlineSoundToggle" type="button" aria-pressed="false">
-              Turn sound on
+              Turn effects on
             </button>
             <label for="soundVolume"
-              >Master volume
+              >Effects volume <output id="effectsVolumeValue">75%</output>
               <input id="soundVolume" type="range" min="0" max="100" value="75"
             /></label>
+            <label for="anthemVolume"
+              >Anthem volume <output id="anthemVolumeValue">75%</output>
+              <input id="anthemVolume" type="range" min="0" max="100" value="75"
+            /></label>
+            <button id="playAnthem" class="ghost" type="button">
+              Play anthem
+            </button>
             <button id="testSound" class="ghost" type="button">
               Test match sound
             </button>
@@ -452,10 +495,14 @@
           <p id="soundStatus" class="sound-status" role="status">
             Sound effects are off.
           </p>
-          <audio id="anthemAudio" controls preload="none">
-            <source src="sussex-by-the-sea.mp3" type="audio/mpeg" />
+          <audio id="anthemAudio" controls preload="metadata" playsinline>
+            <source src="sussex-by-the-sea-v17.mp3" type="audio/mpeg" />
             Your browser does not support the audio player.
           </audio>
+          <p id="soundReliability" class="sound-reliability">
+            <span aria-hidden="true">●</span> Ready. Press play for the anthem
+            or test the match effects.
+          </p>
           <p class="audio-credit">
             Music by William Ward-Higgs. Instrumental audio provided by
             FluteTunes.com.
@@ -543,10 +590,6 @@
           <p class="eyebrow">Premier League</p>
           <h2>Albion fixtures 2026/27</h2>
           <p>Search by opponent, venue or month.</p>
-          <p id="fixtureCheckedDate" class="checked-date">
-            Fixture list checked: 22 July 2026. Dates and kick-off times may
-            change.
-          </p>
         </div>
         <div class="season-centre-head">
           <label for="seasonSelector"
@@ -1051,10 +1094,13 @@
             Compare each side of the stadium, find the area that best fits your
             matchday and save your preference on this device.
           </p>
-          <p class="checked-date">
-            Guide checked 23 July 2026. Entrances and matchday arrangements can
-            vary, so use the number printed on your ticket.
-          </p>
+          <div class="ground-capacity">
+            <span>Amex Stadium capacity</span><b>31,876</b>
+            <small
+              >Current published ground capacity. Stand allocations can
+              vary.</small
+            >
+          </div>
         </div>
         <div class="stand-finder">
           <label for="standPreference"
@@ -1073,6 +1119,9 @@
           class="amex-map"
           aria-label="Simplified interactive Amex Stadium map"
         >
+          <span class="map-view-label">Viewed from above</span>
+          <span class="goal-label north-goal">North goal</span>
+          <span class="goal-label south-goal">South goal</span>
           <span class="pitch-mini">PITCH</span>
           <button
             class="stand north"
@@ -1132,35 +1181,6 @@
             >
           </div>
         </div>
-        <section class="matchday-itinerary" aria-labelledby="itineraryTitle">
-          <div>
-            <p class="eyebrow">Personal matchday itinerary</p>
-            <h3 id="itineraryTitle">Plan your arrival</h3>
-          </div>
-          <div class="itinerary-controls">
-            <label
-              >Travel method<select id="itineraryTravel">
-                <option value="train">Train</option>
-                <option value="bus">Bus or coach</option>
-                <option value="park">Park and ride</option>
-                <option value="walk">Walk or cycle</option>
-              </select></label
-            ><label
-              >Aim to enter<select id="itineraryArrival">
-                <option value="75">75 minutes before kick-off</option>
-                <option value="60">60 minutes before kick-off</option>
-                <option value="45">45 minutes before kick-off</option>
-                <option value="30">30 minutes before kick-off</option>
-              </select></label
-            ><button id="buildItinerary" type="button">Build itinerary</button>
-          </div>
-          <ol id="itineraryResult" class="itinerary-result" aria-live="polite">
-            <li>Choose your travel method and preferred arrival time.</li>
-          </ol>
-          <button id="printItinerary" class="ghost" type="button">
-            Print matchday sheet
-          </button>
-        </section>
         <div class="cta-row stand-links">
           <a
             href="https://www.brightonandhovealbion.com/amex-matchday"
@@ -1368,17 +1388,34 @@
             <p id="dataTransferStatus" class="small" aria-live="polite"></p>
           </section>
           <section>
-            <h3>Information freshness</h3>
-            <div id="freshnessPanel" class="freshness-panel"></div>
-            <a href="editor.html">Open site maintenance dashboard</a>
-          </section>
-          <section>
             <h3>Diagnostics</h3>
             <p id="diagnosticStatus">Checking locally saved information…</p>
             <button id="runDiagnostics" class="ghost" type="button">
               Run site checks
             </button>
             <p id="connectionStatus" class="small" role="status"></p>
+          </section>
+          <section class="reset-controls">
+            <h3>Reset saved choices</h3>
+            <p>Clear one part of your profile without losing everything else.</p>
+            <div class="button-row">
+              <button type="button" class="ghost" data-reset-group="quiz">
+                Quiz
+              </button>
+              <button type="button" class="ghost" data-reset-group="penalties">
+                Penalties
+              </button>
+              <button type="button" class="ghost" data-reset-group="predictions">
+                Predictions
+              </button>
+              <button type="button" class="ghost" data-reset-group="team">
+                XI and tactics
+              </button>
+              <button type="button" class="ghost" data-reset-group="display">
+                Display and sound
+              </button>
+            </div>
+            <p id="resetStatus" class="small" aria-live="polite"></p>
           </section>
         </div>
       </section>
@@ -1409,6 +1446,41 @@
             >Accessibility and data</a
           >
         </div>
+        <details class="source-links">
+          <summary>Information sources</summary>
+          <div>
+            <a
+              href="https://www.premierleague.com/en/news/407541"
+              target="_blank"
+              rel="noopener"
+              >Premier League Amex stadium guide</a
+            >
+            <a
+              href="https://www.brightonandhovealbion.com/phase-three"
+              target="_blank"
+              rel="noopener"
+              >Official stadium improvements</a
+            >
+            <a
+              href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
+              target="_blank"
+              rel="noopener"
+              >Official fixtures</a
+            >
+            <a
+              href="https://www.brightonandhovealbion.com/first-team-men-squad"
+              target="_blank"
+              rel="noopener"
+              >Official first-team squad</a
+            >
+            <a
+              href="https://www.brightonandhovealbion.com/amex-accessibility"
+              target="_blank"
+              rel="noopener"
+              >Official accessibility guide</a
+            >
+          </div>
+        </details>
       </section>
     </main>
     <nav class="mobile-jump-nav" aria-label="Quick section navigation">
@@ -1476,7 +1548,6 @@
             Unofficial Brighton &amp; Hove Albion supporter site. Built by
             Richard Freedman.
           </p>
-          <p id="globalUpdated">Information checked 22 July 2026.</p>
         </section>
         <section>
           <b>Official Albion</b>
@@ -1520,5 +1591,6 @@
     <script src="quiz-data.js"></script>
     <script src="app.js"></script>
     <script src="v16.js"></script>
+    <script src="v17.js"></script>
   </body>
 </html>

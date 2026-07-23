@@ -109,9 +109,6 @@
     $("predictorMatchTitle").textContent = title;
     if ($("quickNextFixture")) $("quickNextFixture").textContent = title;
     $("awayScoreLabel").textContent = `${shortOpponent} goals`;
-    $("fixtureCheckedDate").textContent =
-      `Fixture list checked: ${C.lastUpdated}. Dates and kick-off times may change.`;
-    $("globalUpdated").textContent = `Information checked ${C.lastUpdated}.`;
     try {
       const local = new Intl.DateTimeFormat(undefined, {
         weekday: "short",
@@ -258,6 +255,7 @@
       "albionXI",
       JSON.stringify({ formation: $("formation").value, values, bench }),
     );
+    localStorage.setItem("albionXISavedAt", new Date().toISOString());
     const startingComplete = values.filter(Boolean).length === 11;
     const benchComplete = bench.filter(Boolean).length === 7;
     if ($("quickXIStatus"))
@@ -482,8 +480,11 @@
   let quizScore = 0;
   let quizChecked = false;
   let quizAdvanceTimer = 0;
-  const quizGroups = [[0], [1], [2], [3], [4]];
+  let quizGroups = [[0], [1], [2], [3], [4]];
   const quizProgressKey = "albionQuizProgress";
+  const resetQuizGroups = () => {
+    quizGroups = currentQuiz.map((_, index) => [index]);
+  };
   function selectedQuizCategory() {
     return $("quizCategory")?.value || "mixed";
   }
@@ -580,8 +581,10 @@
     const group = quizGroups[quizPage];
     const first = group[0] + 1;
     const last = group[group.length - 1] + 1;
+    const total = currentQuiz.length;
+    const progress = Math.round((last / total) * 100);
     $("quizContainer").innerHTML =
-      `<div class="quiz-step"><div class="quiz-step-label"><b>Question ${first} of 5</b><span>${last * 20}% complete</span></div><div class="quiz-progress-track"><i style="width:${last * 20}%"></i></div></div>
+      `<div class="quiz-step"><div class="quiz-step-label"><b>Question ${first} of ${total}</b><span>${progress}% complete</span></div><div class="quiz-progress-track"><i style="width:${progress}%"></i></div></div>
       <div class="quiz-pair">${group
         .map((index) => {
           const question = currentQuiz[index];
@@ -611,9 +614,11 @@
   function newQuiz() {
     window.clearTimeout(quizAdvanceTimer);
     currentQuiz = selectFreshQuestions().map(prepareQuestion);
+    resetQuizGroups();
     quizPage = 0;
     quizScore = 0;
     $("shareQuiz").hidden = true;
+    $("replayMistakes").hidden = true;
     renderQuizPage();
   }
   function initialiseQuiz() {
@@ -634,6 +639,7 @@
         saved.quizPage < 5
       ) {
         currentQuiz = saved.currentQuiz;
+        resetQuizGroups();
         quizPage = saved.quizPage;
         quizScore = Number(saved.quizScore) || 0;
         renderQuizPage();
@@ -644,15 +650,24 @@
   }
   function showQuizResult() {
     const previousBest = Number(localStorage.getItem("albionQuizBest") || 0);
-    const best = Math.max(previousBest, quizScore);
+    const best =
+      currentQuiz.length === 5
+        ? Math.max(previousBest, quizScore)
+        : previousBest;
     localStorage.setItem("albionQuizBest", String(best));
     $("bestScore").textContent = `Best: ${best}/5`;
-    const verdict =
-      quizScore === 5
-        ? "Perfect Albion knowledge!"
-        : quizScore >= 3
-          ? "Strong Seagulls knowledge."
-          : "Have another go.";
+    const ratings = [
+      "Time for an Albion Refresher",
+      "Are You a Secret Palace Fan?",
+      "Still Learning the Albion Story",
+      "Solid Albion Knowledge",
+      "Amex Regular",
+      "Seagulls Expert",
+    ];
+    const ratingScore = Math.round(
+      (quizScore / Math.max(1, currentQuiz.length)) * 5,
+    );
+    const verdict = ratings[ratingScore] || ratings[0];
     const review = currentQuiz
       .map((question, index) => ({ question, index }))
       .sort(
@@ -660,16 +675,43 @@
           Number(a.question.userCorrect) - Number(b.question.userCorrect),
       );
     $("quizContainer").innerHTML =
-      `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/5</b><p>${verdict}</p></div><details class="quiz-review"><summary>Review answers · mistakes shown first</summary>${review.map(({ question, index }) => `<article class="${question.userCorrect ? "review-correct" : "review-mistake"}"><b>${index + 1}. ${esc(question.question)}</b><p>${esc(question.choices[question.answer].text)} — ${esc(question.explanation)}</p></article>`).join("")}</details>`;
-    $("quizResult").textContent = "Round complete.";
+      `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/${currentQuiz.length}</b><p>${esc(verdict)}</p></div><details class="quiz-review"><summary>Review answers · mistakes shown first</summary>${review.map(({ question, index }) => `<article class="${question.userCorrect ? "review-correct" : "review-mistake"}"><b>${index + 1}. ${esc(question.question)}</b><p>${esc(question.choices[question.answer].text)} — ${esc(question.explanation)}</p></article>`).join("")}</details>`;
+    $("quizResult").textContent = `${verdict} · round complete.`;
     $("checkQuiz").disabled = true;
     $("checkQuiz").textContent = "Round complete";
     $("quizAdvanceCountdown").hidden = true;
     $("quizAdvanceCountdown").classList.remove("running");
     $("shareQuiz").hidden = false;
+    const mistakes = currentQuiz.filter((question) => !question.userCorrect);
+    $("replayMistakes").hidden = mistakes.length === 0;
     $("shareQuiz").dataset.shareText =
-      `I scored ${quizScore}/5 in the Albion Fan Hub quiz.`;
+      `I scored ${quizScore}/${currentQuiz.length} and earned “${verdict}” in the Albion Fan Hub quiz.`;
+    localStorage.setItem(
+      "albionQuizLatest",
+      JSON.stringify({
+        score: quizScore,
+        total: currentQuiz.length,
+        rating: verdict,
+        completedAt: new Date().toISOString(),
+      }),
+    );
     localStorage.removeItem(quizProgressKey);
+    window.dispatchEvent(new Event("albion:progress"));
+  }
+  function replayQuizMistakes() {
+    const mistakes = currentQuiz
+      .filter((question) => !question.userCorrect)
+      .map((question) => ({ ...question, userCorrect: undefined }));
+    if (!mistakes.length) return;
+    window.clearTimeout(quizAdvanceTimer);
+    currentQuiz = mistakes;
+    resetQuizGroups();
+    quizPage = 0;
+    quizScore = 0;
+    $("shareQuiz").hidden = true;
+    $("replayMistakes").hidden = true;
+    renderQuizPage();
+    $("quizResult").textContent = "Mistakes round: your first choice is final.";
   }
   function checkQuiz() {
     if (quizChecked) return;
@@ -741,8 +783,13 @@
     $("savePrediction").addEventListener("click", () => {
       const text = `Albion ${$("homeScore").value}-${$("awayScore").value} ${MATCH.opponent} · First scorer: ${$("firstScorer").value} · Player of the match: ${$("motm").value}`;
       localStorage.setItem("albionPrediction", text);
+      localStorage.setItem(
+        "albionPredictionSavedAt",
+        new Date().toISOString(),
+      );
       $("predictionSummary").textContent = text;
       showToast("Match prediction saved");
+      window.dispatchEvent(new Event("albion:progress"));
     });
     $("predictionSummary").textContent =
       localStorage.getItem("albionPrediction") ||
@@ -790,9 +837,14 @@
     slider.addEventListener("input", update);
     $("saveLeaguePrediction").addEventListener("click", () => {
       localStorage.setItem("albionLeaguePosition", slider.value);
+      localStorage.setItem(
+        "albionLeaguePredictionSavedAt",
+        new Date().toISOString(),
+      );
       update();
       summary.textContent = `Saved: Albion to finish ${ordinal(slider.value)} (${band.textContent}).`;
       showToast("League prediction saved");
+      window.dispatchEvent(new Event("albion:progress"));
     });
     $("shareLeaguePrediction").dataset.defaultLabel = "Share prediction";
     $("shareLeaguePrediction").addEventListener("click", () =>
@@ -861,8 +913,11 @@
       North: {
         title: "North Stand",
         position: "Behind the north goal",
+        capacity: "Approximately 2,688",
         feel: "Traditionally one of the livelier home areas",
         best: "Supporters prioritising atmosphere and an end-on view",
+        access:
+          "Accessible seating and companion arrangements are available through Supporter Services.",
         detail:
           "The lower rows feel close to the action and the stand is a focal point for home support. The ticket office and two-level club megastore are on the North Stand side of the stadium.",
         tip: "Use the numbered entrance printed on your ticket. Opening arrangements can vary by fixture.",
@@ -870,8 +925,11 @@
       West: {
         title: "West Stand",
         position: "Along the west touchline",
+        capacity: "Published estimates vary: 11,833–13,654",
         feel: "Broad side-on views across three levels",
         best: "A wide tactical view, central seating and hospitality areas",
+        access:
+          "The west perimeter uses a ramp; upper levels involve additional height and steps.",
         detail:
           "The West is the largest stand. Higher seats provide a particularly broad view of team shape and movement, although upper areas involve more height and additional steps.",
         tip: "The west side of the stadium perimeter is reached by a ramp. Check accessible seating requirements with Supporter Services before booking.",
@@ -879,8 +937,11 @@
       East: {
         title: "East Stand",
         position: "Along the east touchline",
+        capacity: "Published estimates vary: 11,833–13,654",
         feel: "Clear side-on views and family activity in East Lower",
         best: "Families and supporters who enjoy watching the whole pitch",
+        access:
+          "The east perimeter route is largely flat, with accessible seating arranged through the club.",
         detail:
           "Albion promote family-friendly activity in the East Lower concourse, including selected matchday entertainment. The side-on angle makes it easier to follow tactics and movement from end to end.",
         tip: "The east perimeter route is flat tarmac. Activities and opening arrangements may change for individual fixtures.",
@@ -888,8 +949,11 @@
       South: {
         title: "South Stand",
         position: "Behind the south goal",
+        capacity: "Approximately 2,575",
         feel: "Home sections alongside the visiting-supporter allocation",
         best: "Visiting supporters and an end-on view at the south end",
+        access:
+          "Use the ticketed entrance because accessible and segregation routes can vary by fixture.",
         detail:
           "The visiting allocation is accessed from the South Stand side. Segregation and stewarding arrangements can vary depending on the fixture and ticket allocation.",
         tip: "Follow the entrance shown on the ticket and the directions of matchday stewards.",
@@ -905,8 +969,10 @@
         button.setAttribute("aria-pressed", String(active));
       });
       $("standInfo").innerHTML =
-        `<p class="eyebrow">Your selected area</p><h3>${item.title}</h3><div class="stand-facts"><article><span>Position</span><b>${item.position}</b></article><article><span>Matchday feel</span><b>${item.feel}</b></article><article><span>Best for</span><b>${item.best}</b></article></div><p>${item.detail}</p><p class="stand-tip"><b>First-visit tip:</b> ${item.tip}</p><small>Saved as your preferred Amex stand on this device.</small>`;
+        `<p class="eyebrow">Your selected area</p><h3>${item.title}</h3><div class="stand-facts"><article><span>Position</span><b>${item.position}</b></article><article><span>Capacity guide</span><b>${item.capacity}</b></article><article><span>Matchday feel</span><b>${item.feel}</b></article><article><span>Best for</span><b>${item.best}</b></article></div><p>${item.detail}</p><p class="stand-access"><b>Accessibility:</b> ${item.access}</p><p class="stand-tip"><b>First-visit tip:</b> ${item.tip}</p><small>Stand figures are approximate and do not reconcile exactly with the current 31,876 ground capacity because published stand estimates pre-date later seating changes and match-by-match segregation.</small>`;
       localStorage.setItem("albionPreferredStand", stand);
+      localStorage.setItem("albionStandSavedAt", new Date().toISOString());
+      window.dispatchEvent(new Event("albion:progress"));
     };
     buttons.forEach((button) =>
       button.addEventListener("click", () => render(button.dataset.stand)),
@@ -1103,6 +1169,7 @@
     let albionRedMisses = 0;
     let panenkaAttempts = 0;
     let panenkaGoals = 0;
+    let bestSave = "No save recorded";
     let palacePlannedTarget = "centre";
     let lastKick = null;
     let keeperStats = {
@@ -1111,6 +1178,7 @@
       catches: 0,
       parries: 0,
       fingertips: 0,
+      legs: 0,
     };
     const ball = $("ball");
     const shadow = $("ballShadow");
@@ -1134,7 +1202,7 @@
           ? { key: "parries", label: "one-handed parry" }
           : target === "centre"
             ? { key: "catches", label: "held safely" }
-            : { key: "catches", label: "strong low catch" };
+            : { key: "legs", label: "strong leg save" };
     let liveAccuracy = 1;
     let accuracyFrozen = false;
     const accuracyStarted = Date.now();
@@ -1223,11 +1291,22 @@
       goalFrame.classList.remove(
         "slow-motion",
         "net-goal",
+        "net-top-left",
+        "net-middle-left",
+        "net-bottom-left",
+        "net-centre",
+        "net-top-right",
+        "net-middle-right",
+        "net-bottom-right",
         "woodwork",
         "saving-turn",
         "kick-in-flight",
         "save-impact",
+        "goal-checking",
       );
+      const decision = $("goalDecision");
+      decision.hidden = true;
+      decision.textContent = "";
     }
     function readyKeeper() {
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${["left", "right", "centre"][Math.floor(Math.random() * 3)]}`;
@@ -1276,6 +1355,11 @@
             ? trueSide
             : ["left", "right", "centre"][Math.floor(Math.random() * 3)];
         taker.classList.add(`cue-${cue}`);
+        taker.classList.add(
+          ["runup-straight", "runup-angled", "runup-stutter"][
+            palaceKicks % 3
+          ],
+        );
         $("penaltyTakerName").textContent =
           `Palace taker ${palaceKicks + 1} · Bart Verbruggen in goal`;
         $("penaltyShirt").textContent = palaceKicks + 1;
@@ -1291,6 +1375,11 @@
         $("penaltyShirt").textContent = player.number;
         taker.style.setProperty("--player-skin", player.skin);
         taker.style.setProperty("--player-hair", player.hair);
+        taker.classList.add(
+          ["runup-angled", "runup-straight", "runup-stutter"][
+            albionKicks % 3
+          ],
+        );
         announce(
           albionKicks >= 5 ? "Sudden death: pick your spot" : "Pick your spot",
           "Red accuracy means an automatic miss.",
@@ -1343,6 +1432,7 @@
       albionRedMisses = 0;
       panenkaAttempts = 0;
       panenkaGoals = 0;
+      bestSave = "No save recorded";
       lastKick = null;
       keeperStats = {
         dives: 0,
@@ -1350,6 +1440,7 @@
         catches: 0,
         parries: 0,
         fingertips: 0,
+        legs: 0,
       };
       recentTargets = [];
       albionResults = [];
@@ -1399,10 +1490,14 @@
       record.saves += palaceSaves;
       record.bestSaveRate = Math.max(record.bestSaveRate, saveRate);
       localStorage.setItem("albionShootoutRecord", JSON.stringify(record));
+      localStorage.setItem(
+        "albionShootoutSavedAt",
+        new Date().toISOString(),
+      );
       renderShootoutRecord();
       $("shootoutSummary").insertAdjacentHTML(
         "beforeend",
-        `<div class="shootout-stats"><article><b>${conversion}%</b><span>Albion conversion</span></article><article><b>${saveRate}%</b><span>Verbruggen save rate</span></article><article><b>${palaceSaves}</b><span>Palace penalties saved</span></article><article><b>${albionRedMisses}</b><span>Red-zone misses</span></article><article><b>${panenkaGoals}/${panenkaAttempts}</b><span>Panenkas scored</span></article><article><b>${palaceKicks > 5 ? palaceKicks - 5 : 0}</b><span>Sudden-death rounds</span></article></div>`,
+        `<div class="shootout-stats"><article><b>${conversion}%</b><span>Albion conversion</span></article><article><b>${saveRate}%</b><span>Verbruggen save rate</span></article><article><b>${palaceSaves}</b><span>Palace penalties saved</span></article><article><b>${albionRedMisses}</b><span>Red-zone misses</span></article><article><b>${panenkaGoals}/${panenkaAttempts}</b><span>Panenkas scored</span></article><article><b>${palaceKicks > 5 ? palaceKicks - 5 : 0}</b><span>Sudden-death rounds</span></article></div><p class="best-save"><b>Best Verbruggen moment:</b> ${esc(bestSave)}</p>`,
       );
       const guessRate = keeperStats.dives
         ? Math.round((keeperStats.correctGuesses / keeperStats.dives) * 100)
@@ -1417,7 +1512,7 @@
               : "Kept moving and stayed committed throughout the shoot-out.";
       $("shootoutSummary").insertAdjacentHTML(
         "beforeend",
-        `<section class="keeper-report"><div><p class="eyebrow">Verbruggen report</p><h3>${verdict}</h3></div><div class="keeper-report-grid"><article><b>${keeperStats.correctGuesses}/${keeperStats.dives}</b><span>Correct dives</span></article><article><b>${keeperStats.catches}</b><span>Catches</span></article><article><b>${keeperStats.parries}</b><span>Parries</span></article><article><b>${keeperStats.fingertips}</b><span>Fingertip saves</span></article></div></section>`,
+        `<section class="keeper-report"><div><p class="eyebrow">Verbruggen report</p><h3>${verdict}</h3></div><div class="keeper-report-grid"><article><b>${keeperStats.correctGuesses}/${keeperStats.dives}</b><span>Correct dives</span></article><article><b>${keeperStats.catches}</b><span>Catches</span></article><article><b>${keeperStats.parries}</b><span>Parries</span></article><article><b>${keeperStats.fingertips}</b><span>Fingertip saves</span></article><article><b>${keeperStats.legs}</b><span>Leg saves</span></article></div></section>`,
       );
       $("shareShootout").hidden = false;
       $("replayKick").hidden = !lastKick;
@@ -1428,11 +1523,23 @@
         celebrationBurst();
         playSfx("crowd");
       } else playSfx("miss");
+      window.dispatchEvent(new Event("albion:progress"));
     }
     function animateShot(
-      { target, dive, missed, woodwork, saved, scored, slow, panenka = false },
+      {
+        target,
+        dive,
+        missed,
+        woodwork,
+        saved,
+        scored,
+        slow,
+        panenka = false,
+        technique = null,
+      },
       replay = false,
     ) {
+      const resolvedTechnique = technique || (saved ? saveTechnique(target) : null);
       if (!replay)
         lastKick = {
           target,
@@ -1443,6 +1550,7 @@
           scored,
           slow,
           panenka,
+          technique: resolvedTechnique,
         };
       if (slow) goalFrame.classList.add("slow-motion");
       goalFrame.classList.add("kick-in-flight");
@@ -1454,7 +1562,13 @@
           : Math.random() > 0.5
             ? "left"
             : "right";
-      ball.className = `ball ${panenka ? (scored ? "panenka-goal" : "panenka-saved") : missed ? (postSide === "left" ? "shoot-wide-left" : "shoot-wide-right") : woodwork ? `hit-post-${postSide}` : `shoot-${target}`}`;
+      const swerve =
+        target.includes("left")
+          ? "flight-swerve-left"
+          : target.includes("right")
+            ? "flight-swerve-right"
+            : "flight-straight";
+      ball.className = `ball ${panenka ? (scored ? "panenka-goal" : "panenka-saved") : missed ? (postSide === "left" ? "shoot-wide-left" : "shoot-wide-right") : woodwork ? `hit-post-${postSide}` : `shoot-${target}`} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : target}`;
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       playSfx("kick");
@@ -1463,12 +1577,22 @@
         () => {
           flash.className = `goal-flash ${scored ? "scored" : "saved"}`;
           goalFrame.classList.remove("kick-in-flight");
-          if (scored) goalFrame.classList.add("net-goal");
+          if (scored) {
+            goalFrame.classList.add("net-goal", `net-${target}`);
+            taker.classList.add("taker-celebrate");
+          }
           if (woodwork) goalFrame.classList.add("woodwork");
           if (saved) {
-            const technique = saveTechnique(target);
-            keeper.classList.add(`save-${technique.key}`);
+            keeper.classList.add(
+              `save-${resolvedTechnique.key}`,
+              "keeper-celebrate-save",
+            );
+            taker.classList.add("taker-disappointed");
             goalFrame.classList.add("save-impact");
+            if (phase === "save")
+              bestSave =
+                resolvedTechnique.label[0].toUpperCase() +
+                resolvedTechnique.label.slice(1);
             const deflection =
               target === "centre" || panenka
                 ? "held"
@@ -1478,7 +1602,23 @@
                     ? "right"
                     : "up";
             ball.classList.add(`deflect-${deflection}`);
+            if (
+              resolvedTechnique.key === "fingertips" &&
+              phase === "save" &&
+              !replay &&
+              Math.random() < 0.42
+            ) {
+              const decision = $("goalDecision");
+              goalFrame.classList.add("goal-checking");
+              decision.hidden = false;
+              decision.innerHTML = "<b>GOAL-LINE CHECK</b><span>NO GOAL</span>";
+              window.setTimeout(() => {
+                decision.hidden = true;
+                goalFrame.classList.remove("goal-checking");
+              }, 1050);
+            }
           }
+          if (missed || woodwork) taker.classList.add("taker-disappointed");
           playSfx(
             scored ? "goal" : woodwork ? "post" : missed ? "miss" : "save",
           );
@@ -1527,7 +1667,7 @@
       albionResults.push({ scored, label, target });
       albionKicks += 1;
       if (scored) albionGoals += 1;
-      const slow = albionKicks >= 5;
+      const slow = albionKicks >= 5 || woodwork;
       announce(
         `${player.name} steps up…`,
         slow ? "The pressure is on." : "Come on Albion!",
@@ -1675,9 +1815,21 @@
       palaceResults.push({ scored, label, target });
       palaceKicks += 1;
       if (scored) palaceGoals += 1;
-      const slow = palaceKicks >= 5;
+      const slow =
+        palaceKicks >= 5 ||
+        woodwork ||
+        (saved && technique.key === "fingertips");
       announce("Palace run up…", "Hold your nerve.");
-      animateShot({ target, dive, missed, woodwork, saved, scored, slow });
+      animateShot({
+        target,
+        dive,
+        missed,
+        woodwork,
+        saved,
+        scored,
+        slow,
+        technique,
+      });
       window.setTimeout(
         () => {
           announce(
@@ -1689,7 +1841,7 @@
                   ? "OFF THE POST!"
                   : "PALACE MISS!",
             saved
-              ? `${technique.label[0].toUpperCase()}${technique.label.slice(1)}. Slow-motion replay follows.`
+              ? `${technique.label[0].toUpperCase()}${technique.label.slice(1)}.${technique.key === "fingertips" ? " Slow-motion replay follows." : ""}`
               : scored
                 ? "The Eagles level the pressure."
                 : "The ball stays out.",
@@ -1712,7 +1864,11 @@
           const reducedMotion = window.matchMedia?.(
             "(prefers-reduced-motion: reduce)",
           ).matches;
-          if (saved && !reducedMotion) {
+          if (
+            saved &&
+            technique.key === "fingertips" &&
+            !reducedMotion
+          ) {
             window.setTimeout(() => {
               clearMotion();
               taker.classList.add("palace-taker");
@@ -1725,6 +1881,7 @@
                   saved,
                   scored,
                   slow: true,
+                  technique,
                 },
                 true,
               );
@@ -1946,8 +2103,13 @@
     const toggle = $("soundToggle");
     const inlineToggle = $("inlineSoundToggle");
     const volume = $("soundVolume");
+    const anthemVolumeControl = $("anthemVolume");
+    const effectsVolumeValue = $("effectsVolumeValue");
+    const anthemVolumeValue = $("anthemVolumeValue");
+    const playAnthemButton = $("playAnthem");
     const testButton = $("testSound");
     const soundStatus = $("soundStatus");
+    const soundReliability = $("soundReliability");
     const caption = $("soundCaption");
     let soundEnabled = localStorage.getItem("albionSound") === "on";
     const savedVolume = Number(
@@ -1956,10 +2118,19 @@
     let masterVolume = Number.isFinite(savedVolume)
       ? Math.max(0, Math.min(1, savedVolume / 100))
       : 0.75;
+    const savedAnthemVolume = Number(
+      localStorage.getItem("albionAnthemVolume") || 75,
+    );
+    let anthemVolume = Number.isFinite(savedAnthemVolume)
+      ? Math.max(0, Math.min(1, savedAnthemVolume / 100))
+      : 0.75;
     let audioContext = null;
     let captionTimer = 0;
     volume.value = String(Math.round(masterVolume * 100));
-    audio.volume = masterVolume;
+    anthemVolumeControl.value = String(Math.round(anthemVolume * 100));
+    effectsVolumeValue.textContent = `${volume.value}%`;
+    anthemVolumeValue.textContent = `${anthemVolumeControl.value}%`;
+    audio.volume = anthemVolume;
     const showCaption = (text) => {
       window.clearTimeout(captionTimer);
       caption.textContent = text;
@@ -1974,23 +2145,28 @@
       toggle.textContent = enabled
         ? "🔊 Sound effects on"
         : "🔇 Sound effects off";
-      inlineToggle.textContent = enabled ? "Turn sound off" : "Turn sound on";
+      inlineToggle.textContent = enabled
+        ? "Turn effects off"
+        : "Turn effects on";
       [toggle, inlineToggle].forEach((button) =>
         button.setAttribute("aria-pressed", String(enabled)),
       );
       toggle.classList.toggle("sound-on", enabled);
       toggle.classList.toggle("sound-off", !enabled);
       toggle.title = enabled
-        ? "Turn all site sound off"
+        ? "Turn match effects off"
         : "Turn sound effects on";
       soundStatus.textContent = enabled
         ? `Sound effects are on at ${Math.round(masterVolume * 100)}% volume.`
         : "Sound effects are off.";
       if (!enabled) {
-        if (!audio.paused) audio.pause();
         if (audioContext?.state === "running")
           audioContext.suspend().catch(() => {});
       }
+      soundReliability.classList.toggle("ready", enabled);
+      soundReliability.innerHTML = enabled
+        ? '<span aria-hidden="true">●</span> Match effects ready. Anthem playback remains independent.'
+        : '<span aria-hidden="true">●</span> Match effects off. Anthem controls remain available.';
     };
     playSfx = (type) => {
       const captions = {
@@ -2067,7 +2243,7 @@
     volume.addEventListener("input", () => {
       masterVolume = Number(volume.value) / 100;
       localStorage.setItem("albionSoundVolume", volume.value);
-      audio.volume = masterVolume;
+      effectsVolumeValue.textContent = `${volume.value}%`;
       if (soundEnabled)
         soundStatus.textContent =
           `Sound effects are on at ${volume.value}% volume.`;
@@ -2075,28 +2251,62 @@
     volume.addEventListener("change", () => {
       if (soundEnabled) playSfx("confirm");
     });
+    anthemVolumeControl.addEventListener("input", () => {
+      anthemVolume = Number(anthemVolumeControl.value) / 100;
+      localStorage.setItem(
+        "albionAnthemVolume",
+        anthemVolumeControl.value,
+      );
+      anthemVolumeValue.textContent = `${anthemVolumeControl.value}%`;
+      audio.volume = anthemVolume;
+      soundStatus.textContent = audio.paused
+        ? `Anthem volume set to ${anthemVolumeControl.value}%.`
+        : `Anthem playing at ${anthemVolumeControl.value}%.`;
+    });
     testButton.addEventListener("click", () => {
       if (!soundEnabled) updateSound(true);
       playSfx("save");
       window.setTimeout(() => playSfx("crowd"), 320);
     });
+    playAnthemButton.addEventListener("click", async () => {
+      if (!audio.paused) {
+        audio.pause();
+        return;
+      }
+      audio.volume = anthemVolume;
+      try {
+        await audio.play();
+      } catch {
+        soundStatus.textContent =
+          "The browser blocked playback. Use the play control on the audio bar once.";
+        soundReliability.classList.remove("ready");
+      }
+    });
     audio.addEventListener("play", () => {
-      if (!soundEnabled) updateSound(true);
-      audio.volume = masterVolume;
-      soundStatus.textContent = "Anthem playing. Sound effects are also on.";
+      playAnthemButton.textContent = "Pause anthem";
+      audio.volume = anthemVolume;
+      soundStatus.textContent =
+        `Anthem playing at ${Math.round(anthemVolume * 100)}%. Match effects are ${soundEnabled ? "on" : "off"}.`;
+      soundReliability.classList.add("ready");
+      soundReliability.innerHTML =
+        '<span aria-hidden="true">●</span> Anthem playback is working.';
     });
     audio.addEventListener("pause", () => {
-      soundStatus.textContent = soundEnabled
-        ? `Anthem paused. Sound effects remain on at ${Math.round(masterVolume * 100)}% volume.`
-        : "Sound effects are off.";
+      playAnthemButton.textContent = "Play anthem";
+      soundStatus.textContent =
+        `Anthem paused. Match effects are ${soundEnabled ? `on at ${Math.round(masterVolume * 100)}%` : "off"}.`;
     });
     audio.addEventListener("ended", () => {
+      playAnthemButton.textContent = "Play anthem";
       soundStatus.textContent =
-        `Anthem finished. Sound effects remain on at ${Math.round(masterVolume * 100)}% volume.`;
+        `Anthem finished. Match effects are ${soundEnabled ? "on" : "off"}.`;
     });
     audio.addEventListener("error", () => {
       soundStatus.textContent =
         "The anthem is unavailable, but generated match effects still work.";
+      soundReliability.classList.remove("ready");
+      soundReliability.innerHTML =
+        '<span aria-hidden="true">●</span> Anthem unavailable. Match effects can still be tested.';
     });
     updateSound(soundEnabled);
     let installPrompt = null;
@@ -2279,6 +2489,7 @@
       newQuiz();
     });
     $("checkQuiz").addEventListener("click", checkQuiz);
+    $("replayMistakes").addEventListener("click", replayQuizMistakes);
     $("shareQuiz").dataset.defaultLabel = "Share quiz result";
     $("shareQuiz").addEventListener("click", () =>
       shareText(
