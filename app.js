@@ -1405,6 +1405,13 @@
         stageY < goalOpening.top ||
         stageY > goalOpening.top + goalOpening.height;
       updateAimPointer(x, y, outside);
+      if (phase === "save" && palaceReactionOpen) {
+        const smoothX = clamp((x - 50) / 50, -1, 1);
+        const smoothY = clamp((50 - y) / 50, -1, 1);
+        keeper.classList.add("keeper-live-track");
+        keeper.style.setProperty("--track-x", smoothX.toFixed(3));
+        keeper.style.setProperty("--track-y", smoothY.toFixed(3));
+      }
     }
     function chooseAimPoint() {
       if (locked) return;
@@ -1704,13 +1711,20 @@
       taker.classList.add("ball-struck");
       targets.forEach((button) => (button.disabled = false));
       reactionCue.hidden = false;
-      aimHint.textContent = "React to the ball and release";
+      aimHint.textContent = "Move towards the ball — 1.2 seconds";
       playSfx("kick");
       vibrate(18);
-      announce("BALL STRUCK — REACT!", "Dive towards the ball now.");
+      announce("BALL STRUCK — REACT!", "Move the mouse towards the ball now — you have 1.2 seconds.");
       palaceReactionTimer = window.setTimeout(
-        () => takePalacePenalty(null, true, 1500),
-        1500,
+        () => {
+          const autoButton = targetForPoint(
+            clamp(aimPoint.x, 4, 96),
+            clamp(aimPoint.y, 7, 91),
+          );
+          if (autoButton) commitPalaceDive(autoButton);
+          else takePalacePenalty(null, true, 1200);
+        },
+        1200,
       );
     }
     function startAlbionKick() {
@@ -2455,7 +2469,7 @@
         committedAt === null
           ? palaceReactionStartedAt
             ? Math.max(0, performance.now() - palaceReactionStartedAt)
-            : 1500
+            : 1200
           : committedAt;
       const reaction = !button
         ? "none"
@@ -2606,6 +2620,8 @@
         );
       });
       keeper.className = `keeper user-keeper keeper-committed commit-${button.dataset.target}`;
+      keeper.style.removeProperty("--track-x");
+      keeper.style.removeProperty("--track-y");
       announce(
         "Verbruggen reacts",
         `${Math.round(reactionMs)} ms · reaching for the ball.`,

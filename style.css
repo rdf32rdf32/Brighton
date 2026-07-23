@@ -2174,3 +2174,78 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
   .pitch-perspective .goal-area-marking{left:27%!important;right:27%!important;height:18%!important}
   .goal .keeper[class*="dive-"]{animation-duration:1.12s!important}
 }
+
+/* v28 smooth penalty overhaul */
+.goal .keeper{
+  will-change:transform;
+  transition:transform .62s cubic-bezier(.18,.78,.22,1), filter .28s ease;
+  backface-visibility:hidden;
+  contain:layout paint style;
+}
+.goal .keeper.keeper-live-track{
+  animation:none!important;
+  transform:translateX(calc(-50% + (var(--track-x,0) * 48px))) translateY(calc(var(--track-y,0) * -16px)) rotate(calc(var(--track-x,0) * 4deg))!important;
+}
+.goal .keeper.keeper-committed{transition:transform .28s cubic-bezier(.2,.75,.25,1)!important}
+.goal .keeper.dive-top-left,.goal .keeper.dive-top-right,
+.goal .keeper.dive-middle-left,.goal .keeper.dive-middle-right,
+.goal .keeper.dive-bottom-left,.goal .keeper.dive-bottom-right,
+.goal .keeper.dive-centre{
+  transition-duration:.78s!important;
+  transition-timing-function:cubic-bezier(.16,.76,.2,1)!important;
+}
+.goal .keeper.dive-top-left{transform:translate(-410%,-74%) rotate(-55deg)!important}
+.goal .keeper.dive-top-right{transform:translate(310%,-74%) rotate(55deg)!important}
+.goal .keeper.dive-middle-left{transform:translate(-410%,-38%) rotate(-62deg)!important}
+.goal .keeper.dive-middle-right{transform:translate(310%,-38%) rotate(62deg)!important}
+.goal .keeper.dive-bottom-left{transform:translate(-390%,-4%) rotate(-68deg)!important}
+.goal .keeper.dive-bottom-right{transform:translate(290%,-4%) rotate(68deg)!important}
+.goal .keeper.dive-centre{transform:translate(-50%,-13%)!important}
+.goal .keeper-body{border-radius:17px 17px 10px 10px!important;box-shadow:inset 0 -8px rgba(0,0,0,.12),inset 7px 0 rgba(255,255,255,.08)}
+.goal .keeper-arms{top:46px!important;transform-origin:center center!important}
+.goal .keeper-leg{top:112px!important;height:35px!important;transform-origin:50% 0!important}
+.goal .keeper-leg-left{transform:rotate(12deg)!important}
+.goal .keeper-leg-right{transform:rotate(-12deg)!important}
+.goal .keeper-boot{top:143px!important}
+.goal .keeper-glove{border-radius:7px 7px 9px 9px!important;box-shadow:inset 0 -4px rgba(0,0,0,.16),0 1px 2px rgba(0,0,0,.25)}
+.goal .keeper-head{border-radius:48% 48% 44% 44%!important;box-shadow:inset -4px -3px rgba(0,0,0,.12),0 2px 3px rgba(0,0,0,.25)}
+
+/* Deliberate two-second Brighton ball placement, ball follows both hands. */
+.goal.placing-ball .penalty-taker.place-ball{animation:v28-place-player 2s cubic-bezier(.22,.7,.25,1) both!important}
+.goal.placing-ball .ball.ball-to-spot{animation:v28-place-ball 2s cubic-bezier(.22,.7,.25,1) both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-body{animation:v28-bend-body 2s ease-in-out both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-arm-left,
+.goal.placing-ball .penalty-taker.place-ball .player-arm-right{animation:v28-place-arms 2s ease-in-out both!important;transform-origin:top center!important}
+@keyframes v28-place-player{
+  0%{transform:translate(-44px,0) scale(.96)}
+  18%{transform:translate(-18px,-4px) scale(.96)}
+  34%{transform:translate(-10px,-2px) rotate(3deg) scale(.94)}
+  50%{transform:translate(16px,-18px) rotate(2deg) scale(.9)}
+  68%{transform:translate(50px,-62px) rotate(5deg) scale(.8)}
+  82%{transform:translate(54px,-76px) rotate(7deg) scale(.72)}
+  92%,100%{transform:translate(54px,-76px) rotate(0) scale(.72)}
+}
+@keyframes v28-place-ball{
+  0%,20%{left:34%!important;bottom:8%!important;transform:translateX(-50%) scale(1)!important}
+  34%{left:36%!important;bottom:15%!important;transform:translateX(-50%) scale(.98)!important}
+  50%{left:42%!important;bottom:25%!important;transform:translateX(-50%) scale(.96)!important}
+  68%{left:49%!important;bottom:30%!important;transform:translateX(-50%) scale(.94)!important}
+  84%,100%{left:50%!important;bottom:23.5%!important;transform:translateX(-50%) scale(.92)!important}
+}
+@keyframes v28-bend-body{0%,18%,100%{transform:none}34%{transform:rotate(22deg) translateY(8px)}68%{transform:rotate(34deg) translateY(14px)}84%{transform:rotate(18deg) translateY(7px)}}
+@keyframes v28-place-arms{0%,18%,100%{transform:rotate(8deg)}34%{transform:rotate(-42deg)}50%,72%{transform:rotate(-72deg)}84%{transform:rotate(-48deg)}}
+
+/* Crisp, fixed pitch markings */
+.goal .penalty-area-marking,.goal .goal-area-marking{display:block!important;position:absolute!important;pointer-events:none!important;border:2px solid rgba(255,255,255,.92)!important;border-bottom:0!important;box-sizing:border-box!important;z-index:1!important}
+.goal .penalty-area-marking{left:4%!important;right:4%!important;bottom:2%!important;height:64%!important}
+.goal .goal-area-marking{left:25%!important;right:25%!important;bottom:2%!important;height:32%!important}
+@media(max-width:760px){
+  .goal .keeper.keeper-live-track{transform:translateX(calc(-50% + (var(--track-x,0) * 30px))) translateY(calc(var(--track-y,0) * -11px)) rotate(calc(var(--track-x,0) * 4deg)) scale(.78)!important}
+  .goal .keeper.dive-top-left{transform:translate(-200%,-58%) rotate(-53deg) scale(.78)!important}
+  .goal .keeper.dive-top-right{transform:translate(100%,-58%) rotate(53deg) scale(.78)!important}
+  .goal .keeper.dive-middle-left{transform:translate(-200%,-29%) rotate(-60deg) scale(.78)!important}
+  .goal .keeper.dive-middle-right{transform:translate(100%,-29%) rotate(60deg) scale(.78)!important}
+  .goal .keeper.dive-bottom-left{transform:translate(-190%,0) rotate(-66deg) scale(.78)!important}
+  .goal .keeper.dive-bottom-right{transform:translate(90%,0) rotate(66deg) scale(.78)!important}
+  .goal .keeper.dive-centre{transform:translate(-50%,-10%) scale(.78)!important}
+}
