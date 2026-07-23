@@ -1,7 +1,7 @@
 {
   "name": "Albion Fan Hub",
   "short_name": "Albion Hub",
-  "description": "Unofficial Brighton & Hove Albion quiz, fixtures and matchday fan hub.",
+  "description": "Unofficial Brighton & Hove Albion quiz, penalty shoot-out, fixtures and matchday fan hub.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

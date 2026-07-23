@@ -15,6 +15,15 @@
     }
     return copy;
   };
+  async function shareText(title, text, button) {
+    try {
+      if (navigator.share) await navigator.share({title,text});
+      else if (navigator.clipboard) { await navigator.clipboard.writeText(text); button.textContent = 'Copied'; }
+      else { window.prompt('Copy this result:', text); }
+    } catch {}
+    if (button) window.setTimeout(() => { button.textContent = button.dataset.defaultLabel || 'Share result'; }, 1400);
+  }
+  const vibrate = pattern => { try { if (navigator.vibrate) navigator.vibrate(pattern); } catch {} };
 
   function countdown() {
     const el = $('countdown');
@@ -43,6 +52,10 @@
     $('awayScoreLabel').textContent = `${shortOpponent} goals`;
     $('fixtureCheckedDate').textContent = `Fixture list checked: ${C.lastUpdated}. Dates and kick-off times may change.`;
     $('globalUpdated').textContent = `Information checked ${C.lastUpdated}.`;
+    try {
+      const local = new Intl.DateTimeFormat(undefined, {weekday:'short',day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZoneName:'short'}).format(new Date(MATCH.dateISO));
+      $('localKickoff').textContent = `Your local kick-off: ${local}`;
+    } catch { $('localKickoff').textContent = ''; }
     const matchGap = new Date(MATCH.dateISO) - new Date();
     document.body.classList.toggle('matchday-mode', matchGap <= 864e5 && matchGap >= -216e5);
   }
@@ -134,7 +147,7 @@
     const fixtures = (C.fixtures || []).filter(fixture => (venue === 'all' || fixture.venue === venue) && (month === 'all' || fixture.date.slice(fixture.date.indexOf(' ') + 1) === month) && fixture.opponent.toLowerCase().includes(query));
     $('fixtureList').innerHTML = fixtures.length ? fixtures.map(fixture => `
       <article class="fixture-item ${fixture.venue === 'H' ? 'fixture-home' : 'fixture-away'}"><div><b>${esc(fixture.date)}</b><small>${fixture.venue === 'H' ? 'HOME' : 'AWAY'} · Premier League</small></div>
-      <div><strong>${fixture.venue === 'H' ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === 'H' ? 'Amex Stadium' : 'Away'}</small></div></article>`).join('') : '<p>No fixtures match that search.</p>';
+      <div><strong>${fixture.venue === 'H' ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === 'H' ? 'Amex Stadium' : 'Away'} · Date provisional until confirmed by the club</small></div><button class="fixture-calendar ghost" type="button" data-calendar-index="${C.fixtures.indexOf(fixture)}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></article>`).join('') : '<p>No fixtures match that search.</p>';
   }
 
   function initFixtureMonths() {
@@ -156,16 +169,28 @@
     $('monthButtons').querySelectorAll('button').forEach(button => button.classList.toggle('active', button.dataset.month === initialMonth));
   }
 
-  let currentQuiz = []; let quizPage = 0; let quizScore = 0; let quizChecked = false;
+  let currentQuiz = []; let quizPage = 0; let quizScore = 0; let quizChecked = false; let quizAdvanceTimer = 0;
   const quizGroups = [[0], [1], [2], [3], [4]];
   function poolKey() { return 'albionQuizSeen:medium-hard'; }
+  function questionCategory(question) {
+    const text = `${question.question} ${question.explanation}`.toLowerCase();
+    if (/amex|goldstone|withdean|priestfield|ground|stadium|falmer/.test(text)) return 'grounds';
+    if (/record|most |how many|goalscorer|appearance/.test(text)) return 'records';
+    if (/manager|season|promotion|relegation|founded|league|fa cup|charity shield|europe/.test(text)) return 'history';
+    if (/who |player|captain|goalkeeper|forward|midfielder|defender/.test(text)) return 'people';
+    return 'modern';
+  }
   function selectFreshQuestions(count = 5) {
     const pool = Q.filter(question => question.difficulty === 'Medium' || question.difficulty === 'Hard');
     let seen = [];
     try { seen = JSON.parse(localStorage.getItem(poolKey())) || []; } catch {}
     let available = pool.filter(question => !seen.includes(question.question));
     if (available.length < count) { seen = []; available = [...pool]; }
-    const chosen = shuffle(available).slice(0, count);
+    const mixed = shuffle(available); const chosen = [];
+    ['history','people','grounds','records','modern'].forEach(category => {
+      const match = mixed.find(question => questionCategory(question) === category && !chosen.includes(question)); if (match) chosen.push(match);
+    });
+    mixed.forEach(question => { if (chosen.length < count && !chosen.includes(question)) chosen.push(question); });
     localStorage.setItem(poolKey(), JSON.stringify([...seen, ...chosen.map(question => question.question)]));
     return chosen;
   }
@@ -183,26 +208,28 @@
     $('checkQuiz').textContent = 'Check answer'; $('checkQuiz').disabled = false; quizChecked = false;
   }
   function newQuiz() {
+    window.clearTimeout(quizAdvanceTimer);
     currentQuiz = selectFreshQuestions().map(prepareQuestion); quizPage = 0; quizScore = 0;
+    $('shareQuiz').hidden = true;
     renderQuizPage();
   }
+  function showQuizResult() {
+    const previousBest = Number(localStorage.getItem('albionQuizBest') || 0); const best = Math.max(previousBest, quizScore);
+    localStorage.setItem('albionQuizBest', String(best)); $('bestScore').textContent = `Best: ${best}/5`;
+    const verdict = quizScore === 5 ? 'Perfect Albion knowledge!' : quizScore >= 3 ? 'Strong Seagulls knowledge.' : 'Have another go.';
+    const review = currentQuiz.map((question,index) => ({question,index})).sort((a,b) => Number(a.question.userCorrect) - Number(b.question.userCorrect));
+    $('quizContainer').innerHTML = `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/5</b><p>${verdict}</p></div><details class="quiz-review"><summary>Review answers · mistakes shown first</summary>${review.map(({question,index}) => `<article class="${question.userCorrect ? 'review-correct' : 'review-mistake'}"><b>${index + 1}. ${esc(question.question)}</b><p>${esc(question.choices[question.answer].text)} — ${esc(question.explanation)}</p></article>`).join('')}</details>`;
+    $('quizResult').textContent = 'Round complete.'; $('checkQuiz').disabled = true; $('checkQuiz').textContent = 'Round complete';
+    $('shareQuiz').hidden = false; $('shareQuiz').dataset.shareText = `I scored ${quizScore}/5 in the Albion Fan Hub quiz.`;
+  }
   function checkQuiz() {
-    if (quizChecked) {
-      if (quizPage < quizGroups.length - 1) { quizPage += 1; renderQuizPage(); }
-      else {
-        const previousBest = Number(localStorage.getItem('albionQuizBest') || 0); const best = Math.max(previousBest, quizScore);
-        localStorage.setItem('albionQuizBest', String(best)); $('bestScore').textContent = `Best: ${best}/5`;
-        const verdict = quizScore === 5 ? 'Perfect Albion knowledge!' : quizScore >= 3 ? 'Strong Seagulls knowledge.' : 'Have another go.';
-        $('quizContainer').innerHTML = `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/5</b><p>${verdict}</p></div><details class="quiz-review"><summary>Review the five answers</summary>${currentQuiz.map((question, index) => `<article><b>${index + 1}. ${esc(question.question)}</b><p>${esc(question.choices[question.answer].text)} — ${esc(question.explanation)}</p></article>`).join('')}</details>`;
-        $('quizResult').textContent = 'Round complete.'; $('checkQuiz').disabled = true;
-      }
-      return;
-    }
+    if (quizChecked) return;
     const group = quizGroups[quizPage];
     const answers = group.map(index => document.querySelector(`input[name="quizQuestion${index}"]:checked`));
     if (answers.some(answer => !answer)) { $('quizResult').textContent = group.length === 1 ? 'Choose an answer first.' : 'Answer both questions first.'; return; }
     group.forEach((index, groupIndex) => {
       const question = currentQuiz[index]; const selected = Number(answers[groupIndex].value); const correct = selected === question.answer;
+      question.userCorrect = correct;
       if (correct) quizScore += 1;
       const fieldset = document.querySelector(`.quiz-question[data-question="${index}"]`); const labels = [...fieldset.querySelectorAll('label')];
       fieldset.classList.add(correct ? 'correct' : 'incorrect'); labels[question.answer].classList.add('answer-correct');
@@ -211,8 +238,13 @@
       fieldset.querySelector('.quiz-feedback').innerHTML = `<b>${correct ? 'Correct!' : `Correct answer: ${esc(question.choices[question.answer].text)}.`}</b><br>${esc(question.explanation)}`;
     });
     const completed = quizGroups.slice(0, quizPage + 1).flat().length;
-    $('quizResult').textContent = `Score: ${quizScore}/${completed}`; quizChecked = true;
-    $('checkQuiz').textContent = quizPage === quizGroups.length - 1 ? 'See result' : 'Next question';
+    $('quizResult').textContent = `Score: ${quizScore}/${completed}`; quizChecked = true; $('checkQuiz').disabled = true;
+    const finalQuestion = quizPage === quizGroups.length - 1;
+    $('checkQuiz').textContent = finalQuestion ? 'Results loading…' : 'Next question loading…';
+    quizAdvanceTimer = window.setTimeout(() => {
+      if (finalQuestion) showQuizResult();
+      else { quizPage += 1; renderQuizPage(); }
+    }, 1700);
   }
 
   function predictor() {
@@ -252,10 +284,10 @@
 
   function amex() {
     const info = {
-      North:['North Stand','Home support behind the goal. A lively area on many matchdays.'],
-      South:['South Stand','Includes the visiting-supporter area. Check your ticket for the correct entrance.'],
-      East:['East Stand','Includes family seating and broad views across the pitch.'],
-      West:['West Stand','The largest stand, with hospitality and central seating areas.']
+      North:['North Stand','Behind the goal and traditionally one of the livelier home areas. The lower rows feel close to the action; check the club’s current accessibility information before booking.'],
+      South:['South Stand','Includes the visiting-supporter allocation and adjoining home areas. Use the entrance printed on your ticket and expect additional stewarding for high-profile fixtures.'],
+      East:['East Stand','Broad side-on views and family seating areas. A useful choice for supporters who prefer a clear tactical view of the whole pitch.'],
+      West:['West Stand','The largest stand, with central seating, hospitality and elevated views. Upper areas provide a wide view but involve more steps and height.']
     };
     document.querySelectorAll('[data-stand]').forEach(button => button.addEventListener('click', () => {
       $('standInfo').innerHTML = `<h3>${info[button.dataset.stand][0]}</h3><p>${info[button.dataset.stand][1]}</p>`;
@@ -287,6 +319,23 @@
     });
   }
 
+  function peopleDetails() {
+    const eras = ['1970s','2000s','2010s','Modern era','Amex era','Premier League era'];
+    const extras = [
+      'Ward’s goals helped drive Albion’s rise towards the top flight and made him one of the club’s most celebrated forwards.',
+      'Zamora became a defining figure in successive promotions and later returned for another Albion spell.',
+      'Murray scored prolifically across two spells and played a major role in promotion to the Premier League.',
+      'Dunk progressed through the academy to become a long-serving first-team leader.',
+      'Bruno’s leadership and connection with supporters made him an enduring symbol of the Amex years.',
+      'Groß combined creativity, intelligence and set-piece quality throughout Albion’s early Premier League seasons.'
+    ];
+    document.querySelectorAll('#people .legend-grid article').forEach((article,index) => {
+      article.insertAdjacentHTML('beforeend', `<span class="era-tag">${eras[index]}</span><button class="people-more ghost" type="button" aria-expanded="false">More</button><p class="people-extra" hidden>${esc(extras[index])}</p>`);
+      const button = article.querySelector('.people-more'); const extra = article.querySelector('.people-extra');
+      button.addEventListener('click', () => { const hidden = extra.toggleAttribute('hidden'); button.textContent = hidden ? 'More' : 'Less'; button.setAttribute('aria-expanded', String(!hidden)); });
+    });
+  }
+
   function recordTabs() {
     const tabs = [...document.querySelectorAll('.record-tab')];
     tabs.forEach(tab => tab.addEventListener('click', () => {
@@ -304,7 +353,7 @@
   }
 
   function shootout() {
-    const positions = ['top-left', 'top-right', 'bottom-left', 'bottom-right', 'centre'];
+    const positions = ['top-left', 'middle-left', 'bottom-left', 'centre', 'top-right', 'middle-right', 'bottom-right'];
     const takers = [
       {name:'Danny Welbeck',number:18,skin:'#7b4934',hair:'#211712'},
       {name:'Georginio Rutter',number:10,skin:'#70402e',hair:'#17110e'},
@@ -312,9 +361,12 @@
       {name:'Diego Gómez',number:25,skin:'#b87855',hair:'#20150f'},
       {name:'Kaoru Mitoma',number:22,skin:'#d5a077',hair:'#1b1715'}
     ];
+    const palacePreferences = ['middle-right','bottom-left','top-right','centre','middle-left'];
     let lineup = []; let albionResults = []; let palaceResults = []; let albionKicks = 0; let palaceKicks = 0;
     let albionGoals = 0; let palaceGoals = 0; let phase = 'shoot'; let locked = false; let recentTargets = [];
-    const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const taker = $('penaltyTaker'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal');
+    let palaceSaves = 0; let palaceShotsOnTarget = 0; let albionRedMisses = 0; let panenkaAttempts = 0; let panenkaGoals = 0;
+    let palacePlannedTarget = 'centre'; let lastKick = null;
+    const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const taker = $('penaltyTaker'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal'); const stadiumScene = goalFrame.closest('.stadium-scene');
     const targets = [...document.querySelectorAll('.target')];
     const accuracyMarker = document.querySelector('.accuracy-meter i');
     const announce = (title, detail) => { status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`; };
@@ -349,18 +401,25 @@
     function setScene() {
       clearMotion();
       const saving = phase === 'save'; const player = lineup[albionKicks % lineup.length];
-      $('turnBadge').textContent = saving ? 'PALACE PENALTY · YOU ARE IN GOAL' : 'ALBION PENALTY · YOU ARE SHOOTING';
+      $('turnBadge').textContent = saving ? 'PALACE SHOOTS · YOU CONTROL VERBRUGGEN' : 'ALBION PENALTY · YOU ARE SHOOTING';
       $('turnBadge').className = `turn-badge ${saving ? 'palace-turn' : 'albion-turn'}`;
       $('shotControls').classList.toggle('controls-disabled', saving);
-      $('shotPower').disabled = saving;
+      $('panenkaButton').disabled = saving;
       goalFrame.classList.toggle('saving-turn', saving);
       taker.classList.toggle('palace-taker', saving);
       keeper.classList.toggle('user-keeper', saving);
+      $('keeperNameTag').hidden = !saving;
+      stadiumScene.classList.toggle('pressure-high', Math.max(albionKicks,palaceKicks) >= 4);
       if (saving) {
-        $('penaltyTakerName').textContent = `Palace taker ${palaceKicks + 1}`;
+        const preferred = palacePreferences[palaceKicks % palacePreferences.length];
+        palacePlannedTarget = Math.random() < .52 ? preferred : positions[Math.floor(Math.random() * positions.length)];
+        const trueSide = palacePlannedTarget.includes('left') ? 'left' : palacePlannedTarget.includes('right') ? 'right' : 'centre';
+        const cue = Math.random() < .63 ? trueSide : ['left','right','centre'][Math.floor(Math.random() * 3)];
+        taker.classList.add(`cue-${cue}`);
+        $('penaltyTakerName').textContent = `Palace taker ${palaceKicks + 1} · Bart Verbruggen in goal`;
         $('penaltyShirt').textContent = palaceKicks + 1;
         taker.style.setProperty('--player-skin', '#9b6548'); taker.style.setProperty('--player-hair', '#211611');
-        announce('Choose your dive', 'Tap a target to send the Albion goalkeeper that way.');
+        announce('Choose Verbruggen’s dive', 'The website takes Palace’s penalty when you tap a direction.');
       } else {
         $('penaltyTakerName').textContent = `${player.name} · No. ${player.number}`;
         $('penaltyShirt').textContent = player.number;
@@ -382,8 +441,12 @@
     }
     function reset() {
       albionKicks = 0; palaceKicks = 0; albionGoals = 0; palaceGoals = 0; phase = 'shoot'; locked = false;
+      palaceSaves = 0; palaceShotsOnTarget = 0; albionRedMisses = 0; panenkaAttempts = 0; panenkaGoals = 0; lastKick = null;
       recentTargets = []; albionResults = []; palaceResults = []; lineup = shuffle(takers);
       $('shootoutSummary').hidden = true; $('shootoutSummary').innerHTML = '';
+      $('shareShootout').hidden = true; $('replayKick').hidden = true;
+      status.classList.remove('win-status','loss-status');
+      goalFrame.classList.remove('albion-win','palace-win');
       setScene();
     }
     function celebrationBurst() {
@@ -396,42 +459,53 @@
     }
     function finish(albionWon) {
       targets.forEach(button => button.disabled = true);
-      $('shotPower').disabled = true;
+      $('panenkaButton').disabled = true;
       announce(albionWon ? 'SEAGULLS WIN!' : 'Palace win the shoot-out', `Brighton ${albionGoals}–${palaceGoals} Palace.`);
+      status.classList.add(albionWon ? 'win-status' : 'loss-status');
+      goalFrame.classList.add(albionWon ? 'albion-win' : 'palace-win');
       $('shootoutSummary').hidden = false; renderSummary();
+      const conversion = albionKicks ? Math.round(albionGoals / albionKicks * 100) : 0;
+      const saveRate = palaceShotsOnTarget ? Math.round(palaceSaves / palaceShotsOnTarget * 100) : 0;
+      $('shootoutSummary').insertAdjacentHTML('beforeend', `<div class="shootout-stats"><article><b>${conversion}%</b><span>Albion conversion</span></article><article><b>${saveRate}%</b><span>Verbruggen save rate</span></article><article><b>${palaceSaves}</b><span>Palace penalties saved</span></article><article><b>${albionRedMisses}</b><span>Red-zone misses</span></article><article><b>${panenkaGoals}/${panenkaAttempts}</b><span>Panenkas scored</span></article><article><b>${palaceKicks > 5 ? palaceKicks - 5 : 0}</b><span>Sudden-death rounds</span></article></div>`);
+      $('shareShootout').hidden = false; $('replayKick').hidden = !lastKick;
+      $('shareShootout').dataset.shareText = `Seagulls ${albionGoals}–${palaceGoals} Eagles. I saved ${palaceSaves} Palace ${palaceSaves === 1 ? 'penalty' : 'penalties'} as Bart Verbruggen in the Albion Fan Hub shoot-out.`;
       if (albionWon) { flash.className = 'goal-flash win'; celebrationBurst(); playSfx('crowd'); }
+      else playSfx('miss');
     }
-    function animateShot({target, dive, missed, woodwork, saved, scored, slow}) {
+    function animateShot({target, dive, missed, woodwork, saved, scored, slow, panenka = false}, replay = false) {
+      if (!replay) lastKick = {target,dive,missed,woodwork,saved,scored,slow,panenka};
       if (slow) goalFrame.classList.add('slow-motion');
       taker.classList.add('run-up');
       const postSide = target.includes('left') ? 'left' : target.includes('right') ? 'right' : Math.random() > .5 ? 'left' : 'right';
-      ball.className = `ball ${missed ? (postSide === 'left' ? 'shoot-wide-left' : 'shoot-wide-right') : woodwork ? `hit-post-${postSide}` : `shoot-${target}`}`;
+      ball.className = `ball ${panenka ? (scored ? 'panenka-goal' : 'panenka-saved') : missed ? (postSide === 'left' ? 'shoot-wide-left' : 'shoot-wide-right') : woodwork ? `hit-post-${postSide}` : `shoot-${target}`}`;
       shadow.className = `ball-shadow shadow-${missed ? 'wide' : woodwork ? 'post' : target}`;
       keeper.className = `keeper ${phase === 'save' ? 'user-keeper ' : ''}dive-${dive}`;
-      playSfx('kick');
+      playSfx('kick'); vibrate(18);
       window.setTimeout(() => {
         flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`;
         if (scored) goalFrame.classList.add('net-goal');
         if (woodwork) goalFrame.classList.add('woodwork');
         playSfx(scored ? 'goal' : woodwork ? 'post' : missed ? 'miss' : 'save');
+        vibrate(saved ? [35,30,55] : woodwork ? [65,35,65] : scored ? 35 : 50);
       }, slow ? 1320 : 900);
     }
     function takeAlbionPenalty(button) {
       locked = true;
       targets.forEach(targetButton => { targetButton.disabled = true; });
       const player = lineup[albionKicks % lineup.length]; const target = button.dataset.target;
-      const power = Number($('shotPower').value); const accuracy = liveAccuracy;
+      const accuracy = liveAccuracy;
       const predictable = recentTargets.length >= 2 && recentTargets.slice(-2).every(item => item === target);
       const readsShot = Math.random() < (predictable ? .75 : .36);
       const dive = readsShot ? target : positions[Math.floor(Math.random() * positions.length)];
       const redZone = accuracy < .56;
-      const missed = redZone || (power < 68 && Math.random() < .26);
-      const woodwork = !missed && accuracy < .58 && power > 82 && Math.random() < .45;
+      const missed = redZone;
+      const woodwork = !missed && accuracy < .64 && Math.random() < .32;
       const sameSide = dive.split('-').pop() === target.split('-').pop();
-      const saveChance = dive === target ? Math.max(.5, .82 - (power - 60) / 170) : sameSide && target !== 'centre' ? .16 : 0;
+      const saveChance = dive === target ? .62 : sameSide && target !== 'centre' ? .1 : 0;
       const saved = !missed && !woodwork && Math.random() < saveChance;
       const scored = !missed && !woodwork && !saved;
       const label = scored ? 'Goal' : woodwork ? 'Woodwork' : missed ? (redZone ? 'Missed: red zone' : 'Wide') : 'Saved';
+      if (redZone) albionRedMisses += 1;
       recentTargets.push(target); albionResults.push({scored,label,target}); albionKicks += 1; if (scored) albionGoals += 1;
       const slow = albionKicks >= 5;
       announce(`${player.name} steps up…`, slow ? 'The pressure is on.' : 'Come on Albion!');
@@ -443,21 +517,40 @@
         window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 850);
       }, slow ? 1550 : 1120);
     }
+    function takePanenka() {
+      if (locked || phase !== 'shoot') return;
+      locked = true; targets.forEach(targetButton => { targetButton.disabled = true; }); $('panenkaButton').disabled = true;
+      const player = lineup[albionKicks % lineup.length]; const scored = Math.random() < (1 / 3);
+      const saved = !scored; const target = 'centre'; const dive = scored ? (Math.random() < .5 ? 'bottom-left' : 'bottom-right') : 'centre';
+      panenkaAttempts += 1; if (scored) { panenkaGoals += 1; albionGoals += 1; }
+      albionResults.push({scored,label:scored ? 'Panenka goal' : 'Panenka saved',target}); albionKicks += 1;
+      const slow = true;
+      announce(`${player.name} tries a Panenka…`, 'A brave one-in-three gamble.');
+      animateShot({target,dive,missed:false,woodwork:false,saved,scored,slow,panenka:true});
+      window.setTimeout(() => {
+        announce(scored ? 'PANENKA GOAL!' : 'PANENKA SAVED!', scored ? `${player.name} delicately chips the keeper.` : 'The Palace goalkeeper stays central and catches it.');
+        renderLineup(); renderScore();
+        window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 900);
+      }, 1650);
+    }
     function takePalacePenalty(button) {
       locked = true; targets.forEach(targetButton => { targetButton.disabled = true; });
       const dive = button.dataset.target;
-      const target = positions[Math.floor(Math.random() * positions.length)];
+      const target = palacePlannedTarget;
       const missed = Math.random() < .1; const woodwork = !missed && Math.random() < .07;
       const sameSide = dive.split('-').pop() === target.split('-').pop();
       const saved = !missed && !woodwork && (dive === target ? Math.random() < .82 : sameSide && target !== 'centre' && Math.random() < .12);
       const scored = !missed && !woodwork && !saved;
-      const label = scored ? 'Goal' : woodwork ? 'Woodwork' : missed ? 'Wide' : 'Saved by you';
+      if (scored || saved) palaceShotsOnTarget += 1;
+      if (saved) palaceSaves += 1;
+      const saveType = target.includes('top') ? 'fingertip save' : target.includes('middle') ? 'one-handed parry' : target === 'centre' ? 'held safely' : 'strong low save';
+      const label = scored ? 'Goal' : woodwork ? 'Woodwork' : missed ? 'Wide' : `Verbruggen: ${saveType}`;
       palaceResults.push({scored,label,target}); palaceKicks += 1; if (scored) palaceGoals += 1;
       const slow = palaceKicks >= 5;
       announce('Palace run up…', 'Hold your nerve.');
       animateShot({target,dive,missed,woodwork,saved,scored,slow});
       window.setTimeout(() => {
-        announce(saved ? 'WHAT A SAVE!' : scored ? 'Palace score' : woodwork ? 'OFF THE POST!' : 'PALACE MISS!', saved ? 'You read the penalty perfectly.' : scored ? 'The Eagles level the pressure.' : 'The ball stays out.');
+        announce(saved ? 'VERBRUGGEN SAVES!' : scored ? 'Palace score' : woodwork ? 'OFF THE POST!' : 'PALACE MISS!', saved ? `You guessed correctly: ${saveType}.` : scored ? 'The Eagles level the pressure.' : 'The ball stays out.');
         renderScore();
         const canFinish = palaceKicks >= 5 && palaceKicks === albionKicks && palaceGoals !== albionGoals;
         if (canFinish) finish(albionGoals > palaceGoals);
@@ -473,11 +566,38 @@
       if (phase === 'shoot') takeAlbionPenalty(button); else takePalacePenalty(button);
     }
     targets.forEach(button => button.addEventListener('click', () => chooseTarget(button)));
-    $('shotPower').addEventListener('input', () => { $('powerValue').textContent = `${$('shotPower').value}%`; });
+    $('panenkaButton').addEventListener('click', takePanenka);
     document.addEventListener('keydown', event => {
       if (event.repeat || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
-      const key = Number(event.key); if (key >= 1 && key <= 5) { event.preventDefault(); chooseTarget(targets[key - 1]); }
+      const key = Number(event.key); if (key >= 1 && key <= 7) { event.preventDefault(); chooseTarget(targets[key - 1]); }
+      if (event.key.toLowerCase() === 'p') { event.preventDefault(); takePanenka(); }
     });
+    const shootoutCard = $('shootout');
+    const updateFullscreenButton = () => {
+      const active = document.fullscreenElement === shootoutCard || document.body.classList.contains('shootout-focus');
+      $('fullscreenShootout').textContent = active ? 'Exit full screen' : 'Full-screen game';
+    };
+    $('fullscreenShootout').addEventListener('click', async () => {
+      if (document.fullscreenElement === shootoutCard) { await document.exitFullscreen(); }
+      else if (document.body.classList.contains('shootout-focus')) { document.body.classList.remove('shootout-focus'); }
+      else if (shootoutCard.requestFullscreen) {
+        try { await shootoutCard.requestFullscreen(); } catch { document.body.classList.add('shootout-focus'); }
+      } else document.body.classList.add('shootout-focus');
+      updateFullscreenButton();
+    });
+    document.addEventListener('fullscreenchange', updateFullscreenButton);
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && document.body.classList.contains('shootout-focus')) {
+        document.body.classList.remove('shootout-focus'); updateFullscreenButton();
+      }
+    });
+    $('replayKick').addEventListener('click', () => {
+      if (!lastKick || locked) return;
+      clearMotion(); if (phase === 'save') taker.classList.add('palace-taker'); locked = true; animateShot(lastKick, true);
+      window.setTimeout(() => { locked = false; $('replayKick').hidden = false; }, lastKick.slow ? 1700 : 1250);
+    });
+    $('shareShootout').dataset.defaultLabel = 'Share result';
+    $('shareShootout').addEventListener('click', () => shareText('Albion Fan Hub shoot-out', $('shareShootout').dataset.shareText, $('shareShootout')));
     $('resetShootout').addEventListener('click', reset);
     reset();
   }
@@ -491,6 +611,12 @@
     };
     $('previousFixture').addEventListener('click', () => { index = (index + fixtures.length - 1) % fixtures.length; render(); });
     $('nextFixtureButton').addEventListener('click', () => { index = (index + 1) % fixtures.length; render(); });
+    let touchStart = 0;
+    $('nextFixtureCarousel').addEventListener('touchstart', event => { touchStart = event.changedTouches[0].clientX; }, {passive:true});
+    $('nextFixtureCarousel').addEventListener('touchend', event => {
+      const distance = event.changedTouches[0].clientX - touchStart; if (Math.abs(distance) < 40) return;
+      index = distance < 0 ? (index + 1) % fixtures.length : (index + fixtures.length - 1) % fixtures.length; render();
+    }, {passive:true});
     render();
   }
 
@@ -498,12 +624,23 @@
     const monthNumbers = {Jan:'01',Feb:'02',Mar:'03',Apr:'04',May:'05',Jun:'06',Jul:'07',Aug:'08',Sep:'09',Oct:'10',Nov:'11',Dec:'12'};
     const compactDate = date => { const [day, month, year] = date.split(' '); return `${year}${monthNumbers[month]}${String(day).padStart(2,'0')}`; };
     const nextDay = date => { const [day, month, year] = date.split(' '); const d = new Date(Date.UTC(Number(year), Number(monthNumbers[month]) - 1, Number(day) + 1)); return `${d.getUTCFullYear()}${String(d.getUTCMonth()+1).padStart(2,'0')}${String(d.getUTCDate()).padStart(2,'0')}`; };
-    $('downloadCalendar').addEventListener('click', event => {
-      event.preventDefault();
-      const events = (C.fixtures || []).map((fixture, index) => { const title = fixture.venue === 'H' ? `Brighton & Hove Albion v ${fixture.opponent}` : `${fixture.opponent} v Brighton & Hove Albion`; return ['BEGIN:VEVENT',`UID:albion-${index + 1}-2026@albion-fan-hub`,`DTSTART;VALUE=DATE:${compactDate(fixture.date)}`,`DTEND;VALUE=DATE:${nextDay(fixture.date)}`,`SUMMARY:${title}`,`DESCRIPTION:Premier League fixture. Date and kick-off subject to change. Check the official Albion website.`,`LOCATION:${fixture.venue === 'H' ? 'Amex Stadium, Falmer' : 'Away fixture'}`,'END:VEVENT'].join('\r\n'); }).join('\r\n');
+    const eventText = (fixture, index) => {
+      const title = fixture.venue === 'H' ? `Brighton & Hove Albion v ${fixture.opponent}` : `${fixture.opponent} v Brighton & Hove Albion`;
+      return ['BEGIN:VEVENT',`UID:albion-${index + 1}-2026@albion-fan-hub`,`DTSTART;VALUE=DATE:${compactDate(fixture.date)}`,`DTEND;VALUE=DATE:${nextDay(fixture.date)}`,`SUMMARY:${title}`,`DESCRIPTION:Premier League fixture. Date and kick-off subject to change. Check the official Albion website.`,`LOCATION:${fixture.venue === 'H' ? 'Amex Stadium, Falmer' : 'Away fixture'}`,'END:VEVENT'].join('\r\n');
+    };
+    const download = (events, filename) => {
       const calendar = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Albion Fan Hub//Fixtures 2026-27//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n${events}\r\nEND:VCALENDAR\r\n`;
       const url = URL.createObjectURL(new Blob([calendar], {type:'text/calendar;charset=utf-8'})); const link = document.createElement('a');
-      link.href = url; link.download = 'albion-fixtures-2026-27.ics'; document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    };
+    $('downloadCalendar').addEventListener('click', event => {
+      event.preventDefault();
+      download((C.fixtures || []).map(eventText).join('\r\n'), 'albion-fixtures-2026-27.ics');
+    });
+    $('fixtureList').addEventListener('click', event => {
+      const button = event.target.closest('[data-calendar-index]'); if (!button) return;
+      const index = Number(button.dataset.calendarIndex); const fixture = C.fixtures[index]; if (!fixture) return;
+      download(eventText(fixture,index), `albion-${fixture.opponent.toLowerCase().replace(/[^a-z0-9]+/g,'-')}.ics`);
     });
   }
 
@@ -543,7 +680,36 @@
     topButton.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
     const notice = $('cookieNotice'); if (localStorage.getItem('albionCookieNotice') === 'accepted') notice.hidden = true;
     $('acceptCookies').addEventListener('click', () => { localStorage.setItem('albionCookieNotice','accepted'); notice.hidden = true; });
-    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, prediction, fixture, sound and cookie choices?')) return; ['albionXI','albionPrediction','albionQuizBest','albionQuizSeen:medium-hard','albionFixtureMonth','albionSound','albionCookieNotice'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
+    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, prediction, fixture, sound, theme and cookie choices?')) return; ['albionXI','albionPrediction','albionQuizBest','albionQuizSeen:medium-hard','albionFixtureMonth','albionSound','albionCookieNotice','albionTheme'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
+  }
+
+  function siteExperience() {
+    const search = $('siteSearch'); const results = $('siteSearchResults');
+    const searchable = [
+      ['quiz','Quiz'],['shootout','Penalty shoot-out'],['match-centre','Matchday'],['fixtures','Fixtures'],
+      ['xi','Pick your XI'],['predictor','Match predictor'],['story','Albion Story'],['records','Records & Honours'],
+      ['travel','Getting to the Amex'],['anthem','Sussex by the Sea']
+    ];
+    search.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      if (query.length < 2) { results.innerHTML = ''; return; }
+      const matches = searchable.filter(([id,label]) => `${label} ${$(id)?.textContent || ''}`.toLowerCase().includes(query)).slice(0,6);
+      results.innerHTML = matches.length ? matches.map(([id,label]) => `<a href="#${id}">${esc(label)}</a>`).join('') : '<span>No matching section found.</span>';
+    });
+    results.addEventListener('click', () => { search.value = ''; results.innerHTML = ''; });
+    const theme = $('themeToggle');
+    const setTheme = night => {
+      document.body.classList.toggle('night-theme', night); theme.setAttribute('aria-pressed', String(night));
+      theme.textContent = night ? 'Day-match theme' : 'Night-match theme'; localStorage.setItem('albionTheme', night ? 'night' : 'day');
+    };
+    setTheme(localStorage.getItem('albionTheme') === 'night');
+    theme.addEventListener('click', () => setTheme(!document.body.classList.contains('night-theme')));
+    $('shareXI').dataset.defaultLabel = 'Share XI';
+    $('shareXI').addEventListener('click', () => {
+      const players = [...document.querySelectorAll('#pitch select')].map(select => select.value).filter(Boolean);
+      const text = players.length === 11 ? `My Albion ${$('formation').value}: ${players.join(', ')}.` : `I am building my Albion ${$('formation').value} in the Albion Fan Hub.`;
+      shareText('My Albion XI', text, $('shareXI'));
+    });
   }
 
   function ui() {
@@ -556,9 +722,11 @@
     $('toggleFixtures').addEventListener('click', () => { const hidden = $('fixtureList').toggleAttribute('hidden'); $('toggleFixtures').textContent = hidden ? 'Show fixtures' : 'Hide fixtures'; $('toggleFixtures').setAttribute('aria-expanded', String(!hidden)); });
     $('newQuiz').addEventListener('click', newQuiz);
     $('checkQuiz').addEventListener('click', checkQuiz);
+    $('shareQuiz').dataset.defaultLabel = 'Share quiz result';
+    $('shareQuiz').addEventListener('click', () => shareText('Albion Fan Hub quiz', $('shareQuiz').dataset.shareText, $('shareQuiz')));
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  matchConfiguration(); countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); historyDetails(); recordTabs(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); ui();
+  matchConfiguration(); countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); historyDetails(); peopleDetails(); recordTabs(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); siteExperience(); ui();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('./service-worker.js').catch(() => {});
 })();
