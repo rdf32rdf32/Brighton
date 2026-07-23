@@ -474,24 +474,18 @@
           <p class="eyebrow">Albion anthem and sound</p>
           <h2>Sussex by the Sea</h2>
           <p>
-            Sound never starts automatically. Anthem and match-effect volumes
-            are controlled separately, and your choices are remembered.
+            Sound never starts automatically. The anthem and match effects
+            share one master volume, while the sound switch controls game
+            effects independently.
           </p>
           <div class="sound-settings">
             <button id="inlineSoundToggle" type="button" aria-pressed="false">
-              Turn effects on
+              Turn sound on
             </button>
             <label for="soundVolume"
-              >Effects volume <output id="effectsVolumeValue">75%</output>
+              >Master volume
               <input id="soundVolume" type="range" min="0" max="100" value="75"
             /></label>
-            <label for="anthemVolume"
-              >Anthem volume <output id="anthemVolumeValue">75%</output>
-              <input id="anthemVolume" type="range" min="0" max="100" value="75"
-            /></label>
-            <button id="playAnthem" class="ghost" type="button">
-              Play anthem
-            </button>
             <button id="testSound" class="ghost" type="button">
               Test match sound
             </button>
@@ -503,10 +497,6 @@
             <source src="sussex-by-the-sea.mp3" type="audio/mpeg" />
             Your browser does not support the audio player.
           </audio>
-          <p id="soundReliability" class="sound-reliability">
-            <span aria-hidden="true">●</span> Ready. Press play for the anthem
-            or test the match effects.
-          </p>
           <p class="audio-credit">
             Music by William Ward-Higgs. Instrumental audio provided by
             FluteTunes.com.

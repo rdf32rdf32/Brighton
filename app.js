@@ -2249,13 +2249,8 @@
     const toggle = $("soundToggle");
     const inlineToggle = $("inlineSoundToggle");
     const volume = $("soundVolume");
-    const anthemVolumeControl = $("anthemVolume");
-    const effectsVolumeValue = $("effectsVolumeValue");
-    const anthemVolumeValue = $("anthemVolumeValue");
-    const playAnthemButton = $("playAnthem");
     const testButton = $("testSound");
     const soundStatus = $("soundStatus");
-    const soundReliability = $("soundReliability");
     const caption = $("soundCaption");
     let soundEnabled = localStorage.getItem("albionSound") === "on";
     const savedVolume = Number(
@@ -2264,19 +2259,10 @@
     let masterVolume = Number.isFinite(savedVolume)
       ? Math.max(0, Math.min(1, savedVolume / 100))
       : 0.75;
-    const savedAnthemVolume = Number(
-      localStorage.getItem("albionAnthemVolume") || 75,
-    );
-    let anthemVolume = Number.isFinite(savedAnthemVolume)
-      ? Math.max(0, Math.min(1, savedAnthemVolume / 100))
-      : 0.75;
     let audioContext = null;
     let captionTimer = 0;
     volume.value = String(Math.round(masterVolume * 100));
-    anthemVolumeControl.value = String(Math.round(anthemVolume * 100));
-    effectsVolumeValue.textContent = `${volume.value}%`;
-    anthemVolumeValue.textContent = `${anthemVolumeControl.value}%`;
-    audio.volume = anthemVolume;
+    audio.volume = masterVolume;
     const showCaption = (text) => {
       window.clearTimeout(captionTimer);
       caption.textContent = text;
@@ -2291,28 +2277,23 @@
       toggle.textContent = enabled
         ? "🔊 Sound effects on"
         : "🔇 Sound effects off";
-      inlineToggle.textContent = enabled
-        ? "Turn effects off"
-        : "Turn effects on";
+      inlineToggle.textContent = enabled ? "Turn sound off" : "Turn sound on";
       [toggle, inlineToggle].forEach((button) =>
         button.setAttribute("aria-pressed", String(enabled)),
       );
       toggle.classList.toggle("sound-on", enabled);
       toggle.classList.toggle("sound-off", !enabled);
       toggle.title = enabled
-        ? "Turn match effects off"
+        ? "Turn all site sound off"
         : "Turn sound effects on";
       soundStatus.textContent = enabled
         ? `Sound effects are on at ${Math.round(masterVolume * 100)}% volume.`
         : "Sound effects are off.";
       if (!enabled) {
+        if (!audio.paused) audio.pause();
         if (audioContext?.state === "running")
           audioContext.suspend().catch(() => {});
       }
-      soundReliability.classList.toggle("ready", enabled);
-      soundReliability.innerHTML = enabled
-        ? '<span aria-hidden="true">●</span> Match effects ready. Anthem playback remains independent.'
-        : '<span aria-hidden="true">●</span> Match effects off. Anthem controls remain available.';
     };
     playSfx = (type) => {
       const captions = {
@@ -2389,7 +2370,7 @@
     volume.addEventListener("input", () => {
       masterVolume = Number(volume.value) / 100;
       localStorage.setItem("albionSoundVolume", volume.value);
-      effectsVolumeValue.textContent = `${volume.value}%`;
+      audio.volume = masterVolume;
       if (soundEnabled)
         soundStatus.textContent =
           `Sound effects are on at ${volume.value}% volume.`;
@@ -2397,94 +2378,28 @@
     volume.addEventListener("change", () => {
       if (soundEnabled) playSfx("confirm");
     });
-    anthemVolumeControl.addEventListener("input", () => {
-      anthemVolume = Number(anthemVolumeControl.value) / 100;
-      localStorage.setItem(
-        "albionAnthemVolume",
-        anthemVolumeControl.value,
-      );
-      anthemVolumeValue.textContent = `${anthemVolumeControl.value}%`;
-      audio.volume = anthemVolume;
-      soundStatus.textContent = audio.paused
-        ? `Anthem volume set to ${anthemVolumeControl.value}%.`
-        : `Anthem playing at ${anthemVolumeControl.value}%.`;
-    });
-    testButton.addEventListener("click", async () => {
+    testButton.addEventListener("click", () => {
       if (!soundEnabled) updateSound(true);
-      const AudioEngine = window.AudioContext || window.webkitAudioContext;
-      try {
-        audioContext ||= AudioEngine ? new AudioEngine() : null;
-        if (audioContext?.state === "suspended") await audioContext.resume();
-      } catch {
-        soundStatus.textContent =
-          "Match effects could not start. Check this tab and your device volume.";
-        soundReliability.classList.remove("ready");
-        return;
-      }
       playSfx("save");
       window.setTimeout(() => playSfx("crowd"), 320);
-      soundStatus.textContent =
-        `Match effects test played at ${Math.round(masterVolume * 100)}%.`;
-      soundReliability.classList.add("ready");
-      soundReliability.innerHTML =
-        '<span aria-hidden="true">●</span> Match effects are working.';
-    });
-    playAnthemButton.addEventListener("click", async () => {
-      if (!audio.paused) {
-        audio.pause();
-        return;
-      }
-      soundStatus.textContent = "Loading the anthem…";
-      soundReliability.classList.remove("ready");
-      audio.muted = false;
-      audio.volume = anthemVolume;
-      try {
-        if (audio.ended) audio.currentTime = 0;
-        if (audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
-          audio.src = "sussex-by-the-sea.mp3";
-          audio.load();
-        }
-        await audio.play();
-      } catch (error) {
-        soundStatus.textContent =
-          "Playback was blocked. Press the play triangle in the audio bar, then check your device volume.";
-        soundReliability.classList.remove("ready");
-        soundReliability.innerHTML =
-          '<span aria-hidden="true">●</span> Anthem did not start. The native audio bar remains available.';
-      }
-    });
-    audio.addEventListener("canplay", () => {
-      if (audio.paused) {
-        soundReliability.classList.add("ready");
-        soundReliability.innerHTML =
-          '<span aria-hidden="true">●</span> Anthem loaded and ready to play.';
-      }
     });
     audio.addEventListener("play", () => {
-      playAnthemButton.textContent = "Pause anthem";
-      audio.volume = anthemVolume;
-      soundStatus.textContent =
-        `Anthem playing at ${Math.round(anthemVolume * 100)}%. Match effects are ${soundEnabled ? "on" : "off"}.`;
-      soundReliability.classList.add("ready");
-      soundReliability.innerHTML =
-        '<span aria-hidden="true">●</span> Anthem playback is working.';
+      if (!soundEnabled) updateSound(true);
+      audio.volume = masterVolume;
+      soundStatus.textContent = "Anthem playing. Sound effects are also on.";
     });
     audio.addEventListener("pause", () => {
-      playAnthemButton.textContent = "Play anthem";
-      soundStatus.textContent =
-        `Anthem paused. Match effects are ${soundEnabled ? `on at ${Math.round(masterVolume * 100)}%` : "off"}.`;
+      soundStatus.textContent = soundEnabled
+        ? `Anthem paused. Sound effects remain on at ${Math.round(masterVolume * 100)}% volume.`
+        : "Sound effects are off.";
     });
     audio.addEventListener("ended", () => {
-      playAnthemButton.textContent = "Play anthem";
       soundStatus.textContent =
-        `Anthem finished. Match effects are ${soundEnabled ? "on" : "off"}.`;
+        `Anthem finished. Sound effects remain on at ${Math.round(masterVolume * 100)}% volume.`;
     });
     audio.addEventListener("error", () => {
       soundStatus.textContent =
         "The anthem is unavailable, but generated match effects still work.";
-      soundReliability.classList.remove("ready");
-      soundReliability.innerHTML =
-        '<span aria-hidden="true">●</span> Anthem unavailable. Match effects can still be tested.';
     });
     updateSound(soundEnabled);
     let installPrompt = null;

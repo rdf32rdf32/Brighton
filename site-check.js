@@ -69,15 +69,22 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v18/.test(serviceWorker) ||
-  /FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
+  !/albion-fan-hub-v19/.test(serviceWorker) ||
+  !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("release cache or on-demand anthem loading is incorrect");
-else pass("v18 cache leaves anthem loading on demand");
+  fail("v19 release cache or anthem asset is incorrect");
+else pass("v19 cache includes the proven version-14 anthem asset");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
+if (
+  !/Master volume/.test(html) ||
+  /id="anthemVolume"|id="playAnthem"|id="soundReliability"/.test(html) ||
+  /anthemVolumeControl|playAnthemButton|soundReliability/.test(application)
+)
+  fail("sound controls have not been restored to the version-14 model");
+else pass("sound controls use the version-14 master-volume model");
 [
   ["palaceRunStartedAt", "Palace reaction timing"],
   ["adjacentDives", "adjacent-zone saves"],
@@ -89,6 +96,14 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
 [
   ["dive-level-top", "high-dive animation classes"],
   ["dive-level-bottom", "low-dive animation classes"],
+].forEach(([needle, label]) => {
+  if (!stylesheet.includes(needle)) fail(`${label} missing`);
+  else pass(`${label} present`);
+});
+[
+  ["position:static!important", "non-overlapping mobile score bar"],
+  ["grid-template-columns:minmax(0,1fr) 98px!important", "compact mobile timing controls"],
+  ["aspect-ratio:16/9!important", "mobile goal fit"],
 ].forEach(([needle, label]) => {
   if (!stylesheet.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
