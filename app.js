@@ -1709,8 +1709,8 @@
       vibrate(18);
       announce("BALL STRUCK — REACT!", "Dive towards the ball now.");
       palaceReactionTimer = window.setTimeout(
-        () => takePalacePenalty(null, true, 1000),
-        1000,
+        () => takePalacePenalty(null, true, 1500),
+        1500,
       );
     }
     function startAlbionKick() {
@@ -1897,7 +1897,7 @@
       } else {
         $("panenkaButton").disabled = true;
         if (waitForReady) showTurnReady("shoot");
-        else placementTimer = window.setTimeout(startAlbionKick, 1750);
+        else placementTimer = window.setTimeout(startAlbionKick, 2050);
       }
     }
     function renderSummary() {
@@ -2271,12 +2271,16 @@
         ? target
         : positions[Math.floor(Math.random() * positions.length)];
       const redZone = accuracy < 0.46;
+      const greenZone = accuracy >= 0.76;
       const missed = redZone || pointerMiss;
-      const woodwork = !missed && accuracy < 0.58 && Math.random() < 0.18;
+      const greenRoll = greenZone && !missed ? Math.random() : null;
+      const woodwork = !missed && !greenZone && accuracy < 0.58 && Math.random() < 0.18;
       const sameSide = dive.split("-").pop() === target.split("-").pop();
       const saveChance =
         dive === target ? 0.42 : sameSide && target !== "centre" ? 0.06 : 0;
-      const saved = !missed && !woodwork && Math.random() < saveChance;
+      const saved = !missed && !woodwork && (greenZone
+        ? greenRoll >= 0.90
+        : Math.random() < saveChance);
       const scored = !missed && !woodwork && !saved;
       const shotStyle = shotStyleFor(accuracy, target);
       const label = scored
@@ -2451,7 +2455,7 @@
         committedAt === null
           ? palaceReactionStartedAt
             ? Math.max(0, performance.now() - palaceReactionStartedAt)
-            : 1000
+            : 1500
           : committedAt;
       const reaction = !button
         ? "none"
@@ -2668,7 +2672,7 @@
       } else if (action === "shoot") {
         hideTurnReady();
         locked = true;
-        placementTimer = window.setTimeout(startAlbionKick, 260);
+        placementTimer = window.setTimeout(startAlbionKick, 2000);
       }
     });
     document.addEventListener("keydown", (event) => {

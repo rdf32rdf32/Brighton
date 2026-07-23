@@ -2088,3 +2088,89 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
   @keyframes v26-dive-bottom-right{0%{transform:translateX(-50%) scale(.86)}22%{transform:translate(-20%,0) rotate(10deg) scale(.86)}66%{transform:translate(65%,0) rotate(57deg) scale(.86)}100%{transform:translate(115%,0) rotate(70deg) scale(.86)}}
   @keyframes v26-dive-centre{0%{transform:translateX(-50%) scale(.86)}42%{transform:translate(-50%,-15%) scale(.91)}100%{transform:translate(-50%,-10%) scale(.88)}}
 }
+
+/* v27: smooth goalkeeper timeline, clear penalty-box markings and deliberate two-second placement */
+.pitch-perspective .penalty-area-marking,
+.pitch-perspective .goal-area-marking{
+  display:block!important;
+  position:absolute!important;
+  border:3px solid rgba(255,255,255,.88)!important;
+  border-top:0!important;
+  background:transparent!important;
+  box-shadow:0 1px 1px rgba(0,0,0,.22)!important;
+  pointer-events:none
+}
+.pitch-perspective .penalty-area-marking{
+  left:7%!important;right:7%!important;top:41.2%!important;height:48%!important
+}
+.pitch-perspective .goal-area-marking{
+  left:29%!important;right:29%!important;top:41.2%!important;height:18%!important
+}
+.goal.placing-ball .penalty-taker.place-ball{
+  animation-duration:2s!important;
+  animation-timing-function:cubic-bezier(.35,.02,.18,1)!important;
+  animation-fill-mode:both!important
+}
+.goal.placing-ball .ball.ball-to-spot{
+  animation-duration:2s!important;
+  animation-timing-function:cubic-bezier(.35,.02,.18,1)!important;
+  animation-fill-mode:both!important
+}
+.goal .keeper{
+  will-change:transform;
+  backface-visibility:hidden;
+  transform-style:preserve-3d;
+  contain:layout style;
+}
+.goal .keeper[class*="dive-"]{
+  animation-duration:1.08s!important;
+  animation-timing-function:linear!important;
+  animation-fill-mode:forwards!important;
+  transition:none!important
+}
+.goal .keeper.dive-top-left{animation-name:v27-dive-top-left!important}
+.goal .keeper.dive-top-right{animation-name:v27-dive-top-right!important}
+.goal .keeper.dive-middle-left{animation-name:v27-dive-middle-left!important}
+.goal .keeper.dive-middle-right{animation-name:v27-dive-middle-right!important}
+.goal .keeper.dive-bottom-left{animation-name:v27-dive-bottom-left!important}
+.goal .keeper.dive-bottom-right{animation-name:v27-dive-bottom-right!important}
+.goal .keeper.dive-centre{animation-name:v27-dive-centre!important}
+@keyframes v27-dive-top-left{
+  0%{transform:translate3d(-50%,0,0) rotate(0) scale(.6)}
+  10%{transform:translate3d(-68%,-2%,0) rotate(-2deg) scale(.605)}
+  23%{transform:translate3d(-115%,-11%,0) rotate(-12deg) scale(.605)}
+  42%{transform:translate3d(-220%,-39%,0) rotate(-32deg) scale(.6)}
+  64%{transform:translate3d(-350%,-70%,0) rotate(-52deg) scale(.595)}
+  82%{transform:translate3d(-425%,-84%,0) rotate(-60deg) scale(.59)}
+  100%{transform:translate3d(-438%,-77%,0) rotate(-64deg) scale(.59)}
+}
+@keyframes v27-dive-top-right{
+  0%{transform:translate3d(-50%,0,0) rotate(0) scale(.6)}
+  10%{transform:translate3d(-32%,-2%,0) rotate(2deg) scale(.605)}
+  23%{transform:translate3d(15%,-11%,0) rotate(12deg) scale(.605)}
+  42%{transform:translate3d(120%,-39%,0) rotate(32deg) scale(.6)}
+  64%{transform:translate3d(250%,-70%,0) rotate(52deg) scale(.595)}
+  82%{transform:translate3d(325%,-84%,0) rotate(60deg) scale(.59)}
+  100%{transform:translate3d(338%,-77%,0) rotate(64deg) scale(.59)}
+}
+@keyframes v27-dive-middle-left{
+  0%{transform:translate3d(-50%,0,0) rotate(0) scale(.6)} 12%{transform:translate3d(-75%,-1%,0) rotate(-4deg) scale(.605)} 30%{transform:translate3d(-165%,-13%,0) rotate(-22deg) scale(.602)} 58%{transform:translate3d(-330%,-39%,0) rotate(-53deg) scale(.595)} 82%{transform:translate3d(-425%,-48%,0) rotate(-64deg) scale(.59)} 100%{transform:translate3d(-438%,-39%,0) rotate(-67deg) scale(.59)}
+}
+@keyframes v27-dive-middle-right{
+  0%{transform:translate3d(-50%,0,0) rotate(0) scale(.6)} 12%{transform:translate3d(-25%,-1%,0) rotate(4deg) scale(.605)} 30%{transform:translate3d(65%,-13%,0) rotate(22deg) scale(.602)} 58%{transform:translate3d(230%,-39%,0) rotate(53deg) scale(.595)} 82%{transform:translate3d(325%,-48%,0) rotate(64deg) scale(.59)} 100%{transform:translate3d(338%,-39%,0) rotate(67deg) scale(.59)}
+}
+@keyframes v27-dive-bottom-left{
+  0%{transform:translate3d(-50%,0,0) rotate(0) scale(.6)} 14%{transform:translate3d(-80%,2%,0) rotate(-5deg) scale(.605)} 34%{transform:translate3d(-180%,3%,0) rotate(-27deg) scale(.602)} 62%{transform:translate3d(-340%,0,0) rotate(-59deg) scale(.595)} 84%{transform:translate3d(-410%,5%,0) rotate(-70deg) scale(.59)} 100%{transform:translate3d(-420%,9%,0) rotate(-73deg) scale(.59)}
+}
+@keyframes v27-dive-bottom-right{
+  0%{transform:translate3d(-50%,0,0) rotate(0) scale(.6)} 14%{transform:translate3d(-20%,2%,0) rotate(5deg) scale(.605)} 34%{transform:translate3d(80%,3%,0) rotate(27deg) scale(.602)} 62%{transform:translate3d(240%,0,0) rotate(59deg) scale(.595)} 84%{transform:translate3d(310%,5%,0) rotate(70deg) scale(.59)} 100%{transform:translate3d(320%,9%,0) rotate(73deg) scale(.59)}
+}
+@keyframes v27-dive-centre{
+  0%{transform:translate3d(-50%,0,0) scale(.6)} 18%{transform:translate3d(-50%,-3%,0) scale(.62,.59)} 45%{transform:translate3d(-50%,-12%,0) scale(.63)} 72%{transform:translate3d(-50%,-17%,0) scale(.625)} 100%{transform:translate3d(-50%,-10%,0) scale(.61)}
+}
+.goal .keeper.keeper-landed{transition:none!important}
+@media(max-width:760px){
+  .pitch-perspective .penalty-area-marking{left:4%!important;right:4%!important;height:50%!important}
+  .pitch-perspective .goal-area-marking{left:27%!important;right:27%!important;height:18%!important}
+  .goal .keeper[class*="dive-"]{animation-duration:1.12s!important}
+}
