@@ -6,6 +6,12 @@
   const squad = C.squad || [];
   const MATCH = C.nextMatch || {opponent:'Aston Villa',dateLong:'Sunday 23 August 2026',dateShort:'23 Aug',time:'14:00',venue:'Amex Stadium',dateISO:'2026-08-23T14:00:00+01:00'};
   let playSfx = () => {};
+  let toastTimer = 0;
+  function showToast(message) {
+    const toast = $('siteToast'); if (!toast) return;
+    window.clearTimeout(toastTimer); toast.textContent = message; toast.hidden = false; toast.classList.add('show');
+    toastTimer = window.setTimeout(() => { toast.classList.remove('show'); toast.hidden = true; }, 2200);
+  }
   const esc = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const shuffle = array => {
     const copy = [...array];
@@ -17,8 +23,8 @@
   };
   async function shareText(title, text, button) {
     try {
-      if (navigator.share) await navigator.share({title,text});
-      else if (navigator.clipboard) { await navigator.clipboard.writeText(text); button.textContent = 'Copied'; }
+      if (navigator.share) { await navigator.share({title,text}); showToast('Shared successfully'); }
+      else if (navigator.clipboard) { await navigator.clipboard.writeText(text); button.textContent = 'Copied'; showToast('Copied to your clipboard'); }
       else { window.prompt('Copy this result:', text); }
     } catch {}
     if (button) window.setTimeout(() => { button.textContent = button.dataset.defaultLabel || 'Share result'; }, 1400);
@@ -114,6 +120,7 @@
     $('xiMessage').textContent = unique.size !== chosen.length ? 'Choose a different player for every starting and substitute place.'
       : startingComplete && benchComplete ? 'Your complete matchday squad is saved on this device.'
       : `${values.filter(Boolean).length}/11 starters · ${bench.filter(Boolean).length}/7 substitutes selected.`;
+    showToast('Your XI has been saved');
   }
   function loadPredictedXI() {
     const used = new Set();
@@ -129,6 +136,24 @@
     renderBench(squad.map(player => player.name).filter(name => !used.has(name)).slice(0, 7));
     saveXI();
   }
+  function completeXI() {
+    const pitchSelects = [...document.querySelectorAll('#pitch select')];
+    const benchSelects = [...document.querySelectorAll('#bench select')];
+    const used = new Set([...pitchSelects, ...benchSelects].map(select => select.value).filter(Boolean));
+    formations[$('formation').value].forEach((role,index) => {
+      if (pitchSelects[index].value) return;
+      const candidates = optionsForRole(role);
+      const preferredName = preferred[role];
+      const choice = candidates.find(player => player.name === preferredName && !used.has(player.name)) || candidates.find(player => !used.has(player.name));
+      if (choice) { pitchSelects[index].value = choice.name; used.add(choice.name); }
+    });
+    benchSelects.forEach(select => {
+      if (select.value) return;
+      const choice = squad.find(player => !used.has(player.name));
+      if (choice) { select.value = choice.name; used.add(choice.name); }
+    });
+    saveXI();
+  }
   function initXI() {
     let saved = {};
     try { saved = JSON.parse(localStorage.getItem('albionXI')) || {}; } catch {}
@@ -138,10 +163,13 @@
     if ($('quickXIStatus')) $('quickXIStatus').textContent = savedStarterCount === 11 ? `${$('formation').value} selected` : savedStarterCount ? `${savedStarterCount}/11 selected` : 'Not selected yet';
     $('formation').addEventListener('change', () => { const bench = [...document.querySelectorAll('#bench select')].map(select => select.value); renderPitch(); renderBench(bench); saveXI(); });
     $('loadPredicted').addEventListener('click', loadPredictedXI);
+    $('completeXI').addEventListener('click', completeXI);
     $('clearXI').addEventListener('click', () => {
       localStorage.removeItem('albionXI');
       renderPitch(); renderBench();
       $('xiMessage').textContent = 'Line-up cleared.';
+      if ($('quickXIStatus')) $('quickXIStatus').textContent = 'Not selected yet';
+      showToast('Your XI has been cleared');
     });
   }
 
@@ -149,9 +177,16 @@
     const query = $('fixtureSearch').value.toLowerCase().trim();
     const venue = $('venueFilter').value;
     const month = $('monthFilter').value;
+    const fixtureMonths = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+    const datedFixtures = (C.fixtures || []).map(fixture => {
+      const [day,month,year] = fixture.date.split(' ');
+      return {fixture,date:new Date(Number(year), fixtureMonths[month], Number(day), 12)};
+    });
+    const today = new Date(); today.setHours(0,0,0,0);
+    const nextFixture = datedFixtures.find(item => !Number.isNaN(item.date.valueOf()) && item.date >= today)?.fixture || C.fixtures?.[0];
     const fixtures = (C.fixtures || []).filter(fixture => (venue === 'all' || fixture.venue === venue) && (month === 'all' || fixture.date.slice(fixture.date.indexOf(' ') + 1) === month) && fixture.opponent.toLowerCase().includes(query));
     $('fixtureList').innerHTML = fixtures.length ? fixtures.map(fixture => `
-      <article class="fixture-item ${fixture.venue === 'H' ? 'fixture-home' : 'fixture-away'}"><div><b>${esc(fixture.date)}</b><small>${fixture.venue === 'H' ? 'HOME' : 'AWAY'} · Premier League</small></div>
+      <article class="fixture-item ${fixture.venue === 'H' ? 'fixture-home' : 'fixture-away'} ${fixture === nextFixture ? 'fixture-next' : ''}"><div>${fixture === nextFixture ? '<span class="next-fixture-label">NEXT FIXTURE</span>' : ''}<b>${esc(fixture.date)}</b><small>${fixture.venue === 'H' ? 'HOME' : 'AWAY'} · Premier League</small></div>
       <div><strong>${fixture.venue === 'H' ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === 'H' ? 'Amex Stadium' : 'Away'} · Date provisional until confirmed by the club</small></div><button class="fixture-calendar ghost" type="button" data-calendar-index="${C.fixtures.indexOf(fixture)}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></article>`).join('') : '<p>No fixtures match that search.</p>';
   }
 
@@ -216,6 +251,7 @@
     const completed = quizGroups.slice(0, quizPage).flat().length;
     $('quizResult').textContent = `Score: ${quizScore}/${completed}`;
     $('checkQuiz').textContent = 'Check answer'; $('checkQuiz').disabled = false; quizChecked = false;
+    $('quizAdvanceCountdown').hidden = true; $('quizAdvanceCountdown').classList.remove('running');
     localStorage.setItem(quizProgressKey, JSON.stringify({category:selectedQuizCategory(), currentQuiz, quizPage, quizScore}));
   }
   function newQuiz() {
@@ -243,6 +279,7 @@
     const review = currentQuiz.map((question,index) => ({question,index})).sort((a,b) => Number(a.question.userCorrect) - Number(b.question.userCorrect));
     $('quizContainer').innerHTML = `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/5</b><p>${verdict}</p></div><details class="quiz-review"><summary>Review answers · mistakes shown first</summary>${review.map(({question,index}) => `<article class="${question.userCorrect ? 'review-correct' : 'review-mistake'}"><b>${index + 1}. ${esc(question.question)}</b><p>${esc(question.choices[question.answer].text)} — ${esc(question.explanation)}</p></article>`).join('')}</details>`;
     $('quizResult').textContent = 'Round complete.'; $('checkQuiz').disabled = true; $('checkQuiz').textContent = 'Round complete';
+    $('quizAdvanceCountdown').hidden = true; $('quizAdvanceCountdown').classList.remove('running');
     $('shareQuiz').hidden = false; $('shareQuiz').dataset.shareText = `I scored ${quizScore}/5 in the Albion Fan Hub quiz.`;
     localStorage.removeItem(quizProgressKey);
   }
@@ -265,6 +302,9 @@
     $('quizResult').textContent = `Score: ${quizScore}/${completed}`; quizChecked = true; $('checkQuiz').disabled = true;
     const finalQuestion = quizPage === quizGroups.length - 1;
     $('checkQuiz').textContent = finalQuestion ? 'Results loading…' : 'Next question loading…';
+    const autoNext = $('quizAdvanceCountdown');
+    autoNext.querySelector('span').textContent = finalQuestion ? 'Your result will appear in a moment…' : 'Next question in a moment…';
+    autoNext.hidden = false; autoNext.classList.remove('running'); void autoNext.offsetWidth; autoNext.classList.add('running');
     quizAdvanceTimer = window.setTimeout(() => {
       if (finalQuestion) showQuizResult();
       else { quizPage += 1; renderQuizPage(); }
@@ -279,6 +319,7 @@
       const text = `Albion ${$('homeScore').value}-${$('awayScore').value} ${MATCH.opponent} · First scorer: ${$('firstScorer').value} · Player of the match: ${$('motm').value}`;
       localStorage.setItem('albionPrediction', text);
       $('predictionSummary').textContent = text;
+      showToast('Match prediction saved');
     });
     $('predictionSummary').textContent = localStorage.getItem('albionPrediction') || 'Make and save your prediction.';
   }
@@ -304,21 +345,10 @@
     $('saveLeaguePrediction').addEventListener('click', () => {
       localStorage.setItem('albionLeaguePosition', slider.value); update();
       summary.textContent = `Saved: Albion to finish ${ordinal(slider.value)} (${band.textContent}).`;
+      showToast('League prediction saved');
     });
     $('shareLeaguePrediction').dataset.defaultLabel = 'Share prediction';
     $('shareLeaguePrediction').addEventListener('click', () => shareText('My Albion league prediction', `I predict Brighton & Hove Albion will finish ${ordinal(slider.value)} in the 2026/27 Premier League.`, $('shareLeaguePrediction')));
-  }
-
-  function todayInAlbionHistory() {
-    const memories = [...(C.facts || []), ...(C.memories || [])];
-    const now = new Date(); let offset = 0;
-    const show = () => {
-      const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
-      $('todayHistoryDate').textContent = new Intl.DateTimeFormat(undefined, {day:'numeric',month:'long'}).format(now);
-      $('todayHistoryText').textContent = memories[(dayNumber + offset) % memories.length] || 'Albion history is made by the club and its supporters.';
-    };
-    $('anotherTodayHistory').addEventListener('click', () => { offset += 1; show(); });
-    show();
   }
 
   function randomContent() {
@@ -335,13 +365,16 @@
     const days = (new Date(`${target}T12:00:00`) - new Date()) / 864e5;
     if (days > 14) {
       panel.innerHTML = '<b>Falmer weather</b><p>Forecasts are not reliable this far ahead. This panel will activate closer to matchday.</p>';
+      if ($('quickWeather')) $('quickWeather').textContent = 'Available nearer kick-off';
       return;
     }
     fetch('https://api.open-meteo.com/v1/forecast?latitude=50.8616&longitude=-0.0837&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FLondon')
       .then(response => response.json()).then(data => {
         const index = data.daily.time.indexOf(target);
+        const weatherText = index < 0 ? 'Forecast not yet available' : `${Math.round(data.daily.temperature_2m_max[index])}°C high · ${Math.round(data.daily.precipitation_probability_max[index])}% rain`;
         panel.innerHTML = index < 0 ? '<b>Falmer weather</b><p>Matchday forecast is not yet available.</p>' : `<b>Falmer weather</b><p>${Math.round(data.daily.temperature_2m_max[index])}°C high · ${Math.round(data.daily.temperature_2m_min[index])}°C low · ${Math.round(data.daily.precipitation_probability_max[index])}% rain chance</p>`;
-      }).catch(() => { panel.innerHTML = '<b>Falmer weather</b><p>Weather is temporarily unavailable.</p>'; });
+        if ($('quickWeather')) $('quickWeather').textContent = weatherText;
+      }).catch(() => { panel.innerHTML = '<b>Falmer weather</b><p>Weather is temporarily unavailable.</p>'; if ($('quickWeather')) $('quickWeather').textContent = 'Weather temporarily unavailable'; });
   }
 
   function amex() {
@@ -379,6 +412,16 @@
       const button = article.querySelector('.history-more'); const extra = article.querySelector('.history-extra');
       button.addEventListener('click', () => { const open = extra.toggleAttribute('hidden'); button.setAttribute('aria-expanded', String(!open)); button.textContent = open ? 'More detail' : 'Less detail'; });
     });
+  }
+
+  function historyEraFilters() {
+    const buttons = [...document.querySelectorAll('.era-filters button')];
+    const entries = [...document.querySelectorAll('#journey .timeline article')];
+    buttons.forEach(button => button.addEventListener('click', () => {
+      const era = button.dataset.era;
+      buttons.forEach(item => { item.classList.toggle('active', item === button); item.classList.toggle('ghost', item !== button); });
+      entries.forEach(entry => { entry.hidden = era !== 'all' && entry.dataset.era !== era; });
+    }));
   }
 
   function peopleDetails() {
@@ -430,10 +473,29 @@
     let palacePlannedTarget = 'centre'; let lastKick = null;
     const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const taker = $('penaltyTaker'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal'); const stadiumScene = goalFrame.closest('.stadium-scene');
     const targets = [...document.querySelectorAll('.target')];
-    const accuracyMarker = document.querySelector('.accuracy-meter i');
+    const accuracyMeter = document.querySelector('.accuracy-meter'); const accuracyMarker = accuracyMeter.querySelector('i'); const accuracyVerdict = $('accuracyVerdict');
     const announce = (title, detail) => { status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`; };
-    let liveAccuracy = 1; const accuracyStarted = Date.now();
-    window.setInterval(() => { const phase = ((Date.now() - accuracyStarted) % 1800) / 1800; const position = phase < .5 ? phase * 2 : (1 - phase) * 2; accuracyMarker.style.left = `${1 + position * 97}%`; liveAccuracy = 1 - Math.abs(position - .5) * 2; }, 32);
+    let liveAccuracy = 1; let accuracyFrozen = false; const accuracyStarted = Date.now();
+    window.setInterval(() => {
+      if (accuracyFrozen) return;
+      const sweepPhase = ((Date.now() - accuracyStarted) % 1800) / 1800; const position = sweepPhase < .5 ? sweepPhase * 2 : (1 - sweepPhase) * 2;
+      accuracyMarker.style.left = `${1 + position * 97}%`; liveAccuracy = 1 - Math.abs(position - .5) * 2;
+    }, 32);
+    const timingLabel = accuracy => accuracy < .56 ? ['RED: MISS','red'] : accuracy < .84 ? ['RISKY','risky'] : accuracy < .94 ? ['GOOD','good'] : ['PERFECT','perfect'];
+    function freezeAccuracy(button, panenka = false) {
+      accuracyFrozen = true; accuracyMeter.classList.add('frozen');
+      targets.forEach(target => target.classList.toggle('selected-target', target === button));
+      const [label,className] = panenka ? ['PANENKA SELECTED','panenka'] : timingLabel(liveAccuracy);
+      accuracyVerdict.textContent = label; accuracyVerdict.className = `accuracy-verdict ${className}`;
+    }
+    function readShootoutRecord() {
+      try { return {...{played:0,wins:0,saves:0,bestSaveRate:0}, ...JSON.parse(localStorage.getItem('albionShootoutRecord'))}; }
+      catch { return {played:0,wins:0,saves:0,bestSaveRate:0}; }
+    }
+    function renderShootoutRecord() {
+      const record = readShootoutRecord();
+      $('shootoutRecords').textContent = `Your record · ${record.played} played · ${record.wins} won · ${record.saves} Palace penalties saved · best ${record.bestSaveRate}%`;
+    }
     function markerHtml(results) {
       const suddenDeath = albionKicks >= 5 && palaceKicks >= 5 && albionGoals === palaceGoals;
       const total = Math.max(5, results.length + (results.length > 5 || suddenDeath ? 1 : 0));
@@ -464,6 +526,11 @@
       clearMotion();
       $('shootout').classList.add('game-active');
       const saving = phase === 'save'; const player = lineup[albionKicks % lineup.length];
+      targets.forEach(target => target.classList.remove('selected-target'));
+      if (!saving) {
+        accuracyFrozen = false; accuracyMeter.className = 'accuracy-meter';
+        accuracyVerdict.textContent = 'Time your strike'; accuracyVerdict.className = 'accuracy-verdict';
+      }
       $('turnBadge').textContent = saving ? 'PALACE SHOOTS · YOU CONTROL VERBRUGGEN' : 'ALBION PENALTY · YOU ARE SHOOTING';
       $('turnBadge').className = `turn-badge ${saving ? 'palace-turn' : 'albion-turn'}`;
       $('shotControls').classList.toggle('controls-disabled', saving);
@@ -514,6 +581,7 @@
       $('shareShootout').hidden = true; $('replayKick').hidden = true;
       status.classList.remove('win-status','loss-status');
       goalFrame.classList.remove('albion-win','palace-win');
+      renderShootoutRecord();
       setScene();
     }
     function celebrationBurst() {
@@ -534,6 +602,9 @@
       $('shootoutSummary').hidden = false; renderSummary();
       const conversion = albionKicks ? Math.round(albionGoals / albionKicks * 100) : 0;
       const saveRate = palaceShotsOnTarget ? Math.round(palaceSaves / palaceShotsOnTarget * 100) : 0;
+      const record = readShootoutRecord();
+      record.played += 1; if (albionWon) record.wins += 1; record.saves += palaceSaves; record.bestSaveRate = Math.max(record.bestSaveRate, saveRate);
+      localStorage.setItem('albionShootoutRecord', JSON.stringify(record)); renderShootoutRecord();
       $('shootoutSummary').insertAdjacentHTML('beforeend', `<div class="shootout-stats"><article><b>${conversion}%</b><span>Albion conversion</span></article><article><b>${saveRate}%</b><span>Verbruggen save rate</span></article><article><b>${palaceSaves}</b><span>Palace penalties saved</span></article><article><b>${albionRedMisses}</b><span>Red-zone misses</span></article><article><b>${panenkaGoals}/${panenkaAttempts}</b><span>Panenkas scored</span></article><article><b>${palaceKicks > 5 ? palaceKicks - 5 : 0}</b><span>Sudden-death rounds</span></article></div>`);
       $('shareShootout').hidden = false; $('replayKick').hidden = !lastKick;
       $('shareShootout').dataset.shareText = `Seagulls ${albionGoals}–${palaceGoals} Eagles. I saved ${palaceSaves} Palace ${palaceSaves === 1 ? 'penalty' : 'penalties'} as Bart Verbruggen in the Albion Fan Hub shoot-out.`;
@@ -559,6 +630,7 @@
     }
     function takeAlbionPenalty(button) {
       locked = true;
+      freezeAccuracy(button);
       targets.forEach(targetButton => { targetButton.disabled = true; });
       const player = lineup[albionKicks % lineup.length]; const target = button.dataset.target;
       const accuracy = liveAccuracy;
@@ -582,12 +654,15 @@
         const goalLines = [`${player.name} buries it!`,`${player.name} sends the keeper the wrong way.`,`A composed finish from ${player.name}.`,`The net ripples for ${player.name}!`];
         announce(scored ? 'GOAL!' : woodwork ? 'OFF THE POST!' : missed ? (redZone ? 'RED ZONE: MISSED!' : 'WIDE!') : 'SAVED!', scored ? goalLines[Math.floor(Math.random()*goalLines.length)] : woodwork ? `${player.name} hits the frame of the goal.` : missed ? 'The accuracy marker was outside the safe area.' : `The Palace keeper denies ${player.name}.`);
         renderLineup(); renderScore();
-        window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 850);
+        window.setTimeout(() => {
+          announce('Palace step up…', 'Get ready to control Bart Verbruggen.');
+          window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 650);
+        }, 850);
       }, slow ? 1550 : 1120);
     }
     function takePanenka() {
       if (locked || phase !== 'shoot') return;
-      locked = true; targets.forEach(targetButton => { targetButton.disabled = true; }); $('panenkaButton').disabled = true;
+      locked = true; freezeAccuracy(targets.find(target => target.dataset.target === 'centre'), true); targets.forEach(targetButton => { targetButton.disabled = true; }); $('panenkaButton').disabled = true;
       const player = lineup[albionKicks % lineup.length]; const scored = Math.random() < (1 / 3);
       const saved = !scored; const target = 'centre'; const dive = scored ? (Math.random() < .5 ? 'bottom-left' : 'bottom-right') : 'centre';
       panenkaAttempts += 1; if (scored) { panenkaGoals += 1; albionGoals += 1; }
@@ -598,11 +673,14 @@
       window.setTimeout(() => {
         announce(scored ? 'PANENKA GOAL!' : 'PANENKA SAVED!', scored ? `${player.name} delicately chips the keeper.` : 'The Palace goalkeeper stays central and catches it.');
         renderLineup(); renderScore();
-        window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 900);
+        window.setTimeout(() => {
+          announce('Palace step up…', 'Get ready to control Bart Verbruggen.');
+          window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 650);
+        }, 900);
       }, 1650);
     }
     function takePalacePenalty(button) {
-      locked = true; targets.forEach(targetButton => { targetButton.disabled = true; });
+      locked = true; targets.forEach(targetButton => { targetButton.disabled = true; targetButton.classList.toggle('selected-target', targetButton === button); });
       const dive = button.dataset.target;
       const target = palacePlannedTarget;
       const missed = Math.random() < .1; const woodwork = !missed && Math.random() < .07;
@@ -700,6 +778,7 @@
       const calendar = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Albion Fan Hub//Fixtures 2026-27//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n${events}\r\nEND:VCALENDAR\r\n`;
       const url = URL.createObjectURL(new Blob([calendar], {type:'text/calendar;charset=utf-8'})); const link = document.createElement('a');
       link.href = url; link.download = filename; document.body.appendChild(link); link.click(); link.remove(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Calendar file downloaded');
     };
     $('downloadCalendar').addEventListener('click', event => {
       event.preventDefault();
@@ -748,14 +827,14 @@
     topButton.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
     const notice = $('cookieNotice'); if (localStorage.getItem('albionCookieNotice') === 'accepted') notice.hidden = true;
     $('acceptCookies').addEventListener('click', () => { localStorage.setItem('albionCookieNotice','accepted'); notice.hidden = true; });
-    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, predictions, fixture, sound, theme and cookie choices?')) return; Object.keys(localStorage).filter(key => key.startsWith('albionQuizSeen:')).forEach(key => localStorage.removeItem(key)); ['albionXI','albionPrediction','albionLeaguePosition','albionQuizBest','albionQuizProgress','albionQuizCategory','albionLastSection','albionFixtureMonth','albionSound','albionCookieNotice','albionTheme'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
+    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, predictions, penalty record, fixture, sound, theme and cookie choices?')) return; Object.keys(localStorage).filter(key => key.startsWith('albionQuizSeen:')).forEach(key => localStorage.removeItem(key)); ['albionXI','albionPrediction','albionLeaguePosition','albionShootoutRecord','albionQuizBest','albionQuizProgress','albionQuizCategory','albionLastSection','albionFixtureMonth','albionSound','albionCookieNotice','albionTheme'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
   }
 
   function siteExperience() {
     const search = $('siteSearch'); const results = $('siteSearchResults');
     const searchable = [
       ['quiz','Quiz'],['shootout','Penalty shoot-out'],['match-centre','Matchday'],['fixtures','Fixtures'],
-      ['xi','Pick your XI'],['predictor','Match predictor'],['league-predictor','League position predictor'],['today-history','Today in Albion history'],['story','Albion Story'],['records','Records & Honours'],
+      ['xi','Pick your XI'],['predictor','Match predictor'],['league-predictor','League position predictor'],['story','Albion Story'],['records','Records & Honours'],
       ['travel','Getting to the Amex'],['anthem','Sussex by the Sea']
     ];
     search.addEventListener('input', () => {
@@ -811,7 +890,7 @@
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  matchConfiguration(); countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); predictor(); leaguePredictor(); todayInAlbionHistory(); randomContent(); weather(); amex(); story(); historyDetails(); peopleDetails(); recordTabs(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); siteExperience(); ui(); initialiseQuiz();
+  matchConfiguration(); countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); predictor(); leaguePredictor(); randomContent(); weather(); amex(); story(); historyDetails(); historyEraFilters(); peopleDetails(); recordTabs(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); siteExperience(); ui(); initialiseQuiz();
   if ('serviceWorker' in navigator && location.protocol === 'https:') {
     navigator.serviceWorker.register('./service-worker.js').then(registration => {
       const showUpdate = () => { if (navigator.serviceWorker.controller) $('updateNotice').hidden = false; };
