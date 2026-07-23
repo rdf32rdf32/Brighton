@@ -1,4 +1,4 @@
-const CACHE_NAME = 'albion-fan-hub-v25';
+const CACHE_NAME = 'albion-fan-hub-v26';
 const FILES = [
   './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './v18.js', './quiz-data.js', './content-data.js',
   './manifest.json', './favicon.svg', './albion-safe-graphic.svg', './sussex-by-the-sea.mp3',

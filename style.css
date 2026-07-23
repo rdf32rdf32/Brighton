@@ -2038,3 +2038,53 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
 @media(prefers-reduced-motion:reduce){
   .goal.crossbar-wobble,.goal .keeper.keeper-bar-check,.goal .keeper.keeper-bar-check .keeper-arms,.goal .keeper.keeper-bar-check .keeper-glove{animation:none!important}
 }
+
+/* v26: natural ball flight and complete goalkeeper save motion */
+.goal .ball.shoot-custom{
+  transform:translateX(-50%) scale(.43)!important;
+  rotate:0deg!important;
+  transition:left .66s cubic-bezier(.18,.72,.24,1),bottom .66s cubic-bezier(.18,.72,.24,1),transform .66s ease!important
+}
+.goal .ball.reaction-flight{rotate:0deg!important}
+.goal .ball:after{display:none!important}
+.ball.flight-swerve-left,.ball.flight-swerve-right,.ball.flight-straight{transition-timing-function:cubic-bezier(.18,.72,.24,1)!important}
+
+.goal .keeper[class*="dive-"]{
+  transition:none!important;
+  animation-duration:.82s!important;
+  animation-timing-function:cubic-bezier(.16,.74,.22,1)!important;
+  animation-fill-mode:forwards!important
+}
+.goal .keeper.dive-top-left{animation-name:v26-dive-top-left!important}
+.goal .keeper.dive-top-right{animation-name:v26-dive-top-right!important}
+.goal .keeper.dive-middle-left{animation-name:v26-dive-middle-left!important}
+.goal .keeper.dive-middle-right{animation-name:v26-dive-middle-right!important}
+.goal .keeper.dive-bottom-left{animation-name:v26-dive-bottom-left!important}
+.goal .keeper.dive-bottom-right{animation-name:v26-dive-bottom-right!important}
+.goal .keeper.dive-centre{animation-name:v26-dive-centre!important}
+@keyframes v26-dive-top-left{0%{transform:translateX(-50%) scale(.6)}18%{transform:translate(-95%,-5%) rotate(-8deg) scale(.61)}58%{transform:translate(-325%,-62%) rotate(-48deg) scale(.6)}100%{transform:translate(-430%,-83%) rotate(-61deg) scale(.59)}}
+@keyframes v26-dive-top-right{0%{transform:translateX(-50%) scale(.6)}18%{transform:translate(-5%,-5%) rotate(8deg) scale(.61)}58%{transform:translate(225%,-62%) rotate(48deg) scale(.6)}100%{transform:translate(330%,-83%) rotate(61deg) scale(.59)}}
+@keyframes v26-dive-middle-left{0%{transform:translateX(-50%) scale(.6)}20%{transform:translate(-105%,-2%) rotate(-10deg) scale(.61)}62%{transform:translate(-330%,-31%) rotate(-53deg) scale(.6)}100%{transform:translate(-425%,-43%) rotate(-66deg) scale(.59)}}
+@keyframes v26-dive-middle-right{0%{transform:translateX(-50%) scale(.6)}20%{transform:translate(5%,-2%) rotate(10deg) scale(.61)}62%{transform:translate(230%,-31%) rotate(53deg) scale(.6)}100%{transform:translate(325%,-43%) rotate(66deg) scale(.59)}}
+@keyframes v26-dive-bottom-left{0%{transform:translateX(-50%) scale(.6)}22%{transform:translate(-105%,1%) rotate(-12deg) scale(.61)}66%{transform:translate(-320%,-2%) rotate(-59deg) scale(.6)}100%{transform:translate(-410%,-3%) rotate(-73deg) scale(.59)}}
+@keyframes v26-dive-bottom-right{0%{transform:translateX(-50%) scale(.6)}22%{transform:translate(5%,1%) rotate(12deg) scale(.61)}66%{transform:translate(220%,-2%) rotate(59deg) scale(.6)}100%{transform:translate(310%,-3%) rotate(73deg) scale(.59)}}
+@keyframes v26-dive-centre{0%{transform:translateX(-50%) scale(.6)}42%{transform:translate(-50%,-20%) scale(.66)}100%{transform:translate(-50%,-14%) scale(.63)}}
+.goal .keeper.keeper-landed{animation-play-state:paused!important;filter:drop-shadow(0 3px 2px rgba(0,0,0,.42)) brightness(.98)}
+.goal .keeper.ball-contact .keeper-arms{animation:keeper-impact-absorb .28s ease-out 1!important}
+@keyframes keeper-impact-absorb{50%{transform:scaleX(.92) translateY(3px)}100%{transform:scaleX(1)}}
+
+.goal .keeper.mindgame-point-left .keeper-arm-left{animation:keeper-point-left .72s .12s ease-in-out 1}
+.goal .keeper.mindgame-point-right .keeper-arm-right{animation:keeper-point-right .72s .12s ease-in-out 1}
+@keyframes keeper-point-left{35%,65%{transform:rotate(-82deg) translateY(-5px)}100%{transform:rotate(0)}}
+@keyframes keeper-point-right{35%,65%{transform:rotate(82deg) translateY(-5px)}100%{transform:rotate(0)}}
+
+@media(max-width:760px){
+  .goal .keeper[class*="dive-"]{animation-duration:.86s!important}
+  @keyframes v26-dive-top-left{0%{transform:translateX(-50%) scale(.86)}18%{transform:translate(-75%,-3%) rotate(-7deg) scale(.86)}58%{transform:translate(-165%,-49%) rotate(-46deg) scale(.86)}100%{transform:translate(-220%,-66%) rotate(-58deg) scale(.86)}}
+  @keyframes v26-dive-top-right{0%{transform:translateX(-50%) scale(.86)}18%{transform:translate(-25%,-3%) rotate(7deg) scale(.86)}58%{transform:translate(65%,-49%) rotate(46deg) scale(.86)}100%{transform:translate(120%,-66%) rotate(58deg) scale(.86)}}
+  @keyframes v26-dive-middle-left{0%{transform:translateX(-50%) scale(.86)}20%{transform:translate(-78%,-1%) rotate(-9deg) scale(.86)}62%{transform:translate(-168%,-25%) rotate(-51deg) scale(.86)}100%{transform:translate(-220%,-35%) rotate(-63deg) scale(.86)}}
+  @keyframes v26-dive-middle-right{0%{transform:translateX(-50%) scale(.86)}20%{transform:translate(-22%,-1%) rotate(9deg) scale(.86)}62%{transform:translate(68%,-25%) rotate(51deg) scale(.86)}100%{transform:translate(120%,-35%) rotate(63deg) scale(.86)}}
+  @keyframes v26-dive-bottom-left{0%{transform:translateX(-50%) scale(.86)}22%{transform:translate(-80%,0) rotate(-10deg) scale(.86)}66%{transform:translate(-165%,0) rotate(-57deg) scale(.86)}100%{transform:translate(-215%,0) rotate(-70deg) scale(.86)}}
+  @keyframes v26-dive-bottom-right{0%{transform:translateX(-50%) scale(.86)}22%{transform:translate(-20%,0) rotate(10deg) scale(.86)}66%{transform:translate(65%,0) rotate(57deg) scale(.86)}100%{transform:translate(115%,0) rotate(70deg) scale(.86)}}
+  @keyframes v26-dive-centre{0%{transform:translateX(-50%) scale(.86)}42%{transform:translate(-50%,-15%) scale(.91)}100%{transform:translate(-50%,-10%) scale(.88)}}
+}

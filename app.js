@@ -1642,7 +1642,11 @@
       kickDecision.textContent = "";
     }
     function readyKeeper() {
-      keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${["left", "right", "centre"][Math.floor(Math.random() * 3)]}`;
+      const feint = ["left", "right", "centre"][Math.floor(Math.random() * 3)];
+      const mindGame = phase === "save" && Math.random() < 0.28
+        ? ` mindgame-point-${Math.random() < 0.5 ? "left" : "right"}`
+        : "";
+      keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
     }
     function startPalaceRun() {
       if (phase !== "save") return;
@@ -2114,7 +2118,7 @@
           : woodwork
             ? `hit-post-${postSide}`
             : "shoot-custom";
-      ball.className = `ball ball-spin shot-${shotStyle} ${flightClass} ${swerve}`;
+      ball.className = `ball shot-${shotStyle} ${flightClass} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : "custom"}`;
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       const diveLevel = dive.includes("top")
@@ -2238,7 +2242,7 @@
           );
           window.setTimeout(
             () => keeper.classList.add("keeper-landed"),
-            slow ? 460 : 280,
+            slow ? 980 : 720,
           );
         },
         slow ? 1320 : 900,
@@ -2459,10 +2463,10 @@
       const missed = Math.random() < 0.12;
       const woodwork = !missed && Math.random() < 0.06;
       const adjacent = adjacentDives[target]?.includes(dive);
-      const exactChance = { perfect: 0.86, good: 0.72, none: 0 }[
+      const exactChance = { perfect: 0.92, good: 0.82, none: 0 }[
         reaction
       ];
-      const adjacentChance = { perfect: 0.42, good: 0.28, none: 0 }[
+      const adjacentChance = { perfect: 0.52, good: 0.36, none: 0 }[
         reaction
       ];
       const saved =
