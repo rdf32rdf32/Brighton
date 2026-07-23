@@ -278,8 +278,8 @@
           <h2>Seagulls v Eagles</h2>
           <p>
             Take Albion’s penalty by aiming freely inside the goal, then become
-            Bart Verbruggen. Palace’s destination remains secret: you only
-            choose where and when to dive. Red timing always misses.
+            Bart Verbruggen. Palace’s destination remains secret until the ball
+            is struck: react to its flight and dive. Red timing always misses.
           </p>
         </div>
         <div id="turnBadge" class="turn-badge albion-turn">
@@ -324,9 +324,10 @@
           <p>
             <b>Albion kick:</b> move the pointer or drag towards your chosen
             spot, then release to shoot. <b>Palace kick:</b> move the glove
-            pointer and release to commit Verbruggen. Palace never starts until
-            you press Ready, and their target remains secret. Level after five
-            goes to sudden death.
+            pointer and release after the ball is struck. Verbruggen cannot
+            commit early. Palace never starts until you press Ready, and their
+            target remains secret during the run-up. Level after five goes to
+            sudden death.
           </p>
         </details>
         <p id="gamepadStatus" class="gamepad-status">
@@ -392,15 +393,12 @@
           <div
             class="goal"
             id="goal"
-            aria-label="Penalty pitch with a goal twelve yards beyond the spot"
+            aria-label="Penalty pitch with the goal, goal area, penalty spot and penalty area"
           >
             <div class="pitch-perspective" aria-hidden="true">
-              <i class="pitch-line pitch-line-left"></i
-              ><i class="pitch-line pitch-line-right"></i
-              ><i class="pitch-line penalty-area-left"></i
-              ><i class="pitch-line penalty-area-right"></i
-              ><span class="penalty-arc"></span
-              ><span class="distance-cue">12 YARDS</span>
+              <span class="penalty-area-marking"></span>
+              <span class="goal-area-marking"></span>
+              <span class="penalty-arc"></span>
             </div>
             <div class="goal-advert goal-advert-left" aria-hidden="true">
               ALBION
@@ -409,7 +407,14 @@
               SEAGULLS
             </div>
             <div class="goal-depth" aria-hidden="true"></div>
-            <div class="net"></div>
+            <div class="net-structure" aria-hidden="true">
+              <span class="net-roof"></span>
+              <span class="net-side net-side-left"></span>
+              <span class="net-side net-side-right"></span>
+              <span class="net-support net-support-left"></span>
+              <span class="net-support net-support-right"></span>
+            </div>
+            <div class="net" aria-hidden="true"></div>
             <div class="goal-line" aria-hidden="true"></div>
             <div class="turf-detail" aria-hidden="true">
               <i></i><i></i><i></i><i></i><i></i><i></i>
@@ -472,6 +477,9 @@
             </div>
             <div id="aimHint" class="aim-hint" aria-hidden="true">
               Aim and release
+            </div>
+            <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">
+              REACT!
             </div>
             <div id="firstKickCoach" class="first-kick-coach" hidden>
               <b>Your first kick</b>

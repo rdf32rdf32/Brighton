@@ -1538,3 +1538,452 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
   .goal.boot-contact,
   .goal.boot-contact .penalty-spot:after{animation:none!important}
 }
+
+/* v24: reaction goalkeeping, rear-view run-ups and true penalty-area depth */
+.distance-cue,.pitch-line{display:none!important}
+.pitch-perspective:before{display:none!important}
+.pitch-perspective{
+  z-index:2;
+  background:
+    linear-gradient(112deg,transparent 0 18%,rgba(0,43,20,.09) 18.3% 18.6%,transparent 19%),
+    linear-gradient(68deg,transparent 0 81%,rgba(0,43,20,.09) 81.3% 81.6%,transparent 82%)
+}
+.penalty-area-marking,.goal-area-marking{
+  position:absolute;
+  display:block;
+  box-sizing:border-box;
+  border:3px solid rgba(255,255,255,.9);
+  border-top-width:2px;
+  transform-origin:top center;
+  filter:drop-shadow(0 2px 1px rgba(0,38,18,.24))
+}
+.penalty-area-marking{
+  left:7%;
+  right:7%;
+  top:40.8%;
+  height:50%;
+  transform:perspective(420px) rotateX(7deg);
+  clip-path:polygon(14% 0,86% 0,100% 100%,0 100%)
+}
+.goal-area-marking{
+  left:29%;
+  right:29%;
+  top:40.8%;
+  height:14.5%;
+  transform:perspective(360px) rotateX(8deg);
+  clip-path:polygon(11% 0,89% 0,100% 100%,0 100%)
+}
+.penalty-arc{
+  left:36%!important;
+  top:84.5%!important;
+  width:28%!important;
+  height:18%!important;
+  border:3px solid rgba(255,255,255,.86)!important;
+  border-bottom:0!important;
+  border-radius:50% 50% 0 0!important;
+  transform:perspective(220px) rotateX(63deg)!important;
+  filter:drop-shadow(0 2px 1px rgba(0,38,18,.24))
+}
+.goal .penalty-spot{
+  bottom:23.5%!important;
+  width:20px!important;
+  height:7px!important;
+  border:1px solid rgba(235,243,234,.95)!important;
+  background:#eef3e9!important;
+  box-shadow:0 0 0 4px rgba(31,100,48,.2),0 2px 3px rgba(0,0,0,.28)!important
+}
+.goal .penalty-spot i{display:none}
+.goal .turf-detail{
+  background:
+    linear-gradient(96deg,transparent 0 47%,rgba(255,255,255,.022) 48% 52%,transparent 53%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.027) 0 9%,rgba(0,45,20,.04) 9% 18%)!important
+}
+
+.net-structure{position:absolute;z-index:4;inset:0;pointer-events:none}
+.net-roof,.net-side{
+  position:absolute;
+  display:block;
+  background-image:
+    linear-gradient(rgba(244,249,252,.68) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(244,249,252,.68) 1px,transparent 1px);
+  background-size:clamp(13px,2.5vw,22px) clamp(10px,1.9vw,17px);
+  filter:drop-shadow(0 2px 3px rgba(0,23,40,.28));
+  transform-origin:front center
+}
+.net-roof{
+  left:16.7%;
+  top:6.7%;
+  width:66.6%;
+  height:8%;
+  clip-path:polygon(0 5%,100% 5%,94% 100%,6% 100%);
+  transform:perspective(260px) rotateX(64deg);
+  opacity:.78
+}
+.net-side{top:7.7%;width:8%;height:34%;opacity:.77}
+.net-side-left{
+  left:12.1%;
+  clip-path:polygon(58% 0,100% 0,100% 100%,0 91%);
+  transform:perspective(250px) rotateY(55deg)
+}
+.net-side-right{
+  right:12.1%;
+  clip-path:polygon(0 0,42% 0,100% 91%,0 100%);
+  transform:perspective(250px) rotateY(-55deg)
+}
+.net-support{
+  position:absolute;
+  top:7.5%;
+  width:3px;
+  height:35.5%;
+  border-radius:999px;
+  background:linear-gradient(#dce5e9,#7e919c);
+  opacity:.72;
+  box-shadow:0 1px 2px rgba(0,0,0,.35)
+}
+.net-support-left{left:14.1%;transform:skewX(-8deg)}
+.net-support-right{right:14.1%;transform:skewX(8deg)}
+.goal .goal-depth{
+  border-color:#fff!important;
+  box-shadow:
+    4px 0 0 rgba(205,218,225,.82),
+    -4px 0 0 rgba(205,218,225,.82),
+    0 5px 0 rgba(83,101,111,.7),
+    0 7px 5px rgba(0,0,0,.28)!important
+}
+.goal.net-goal.net-top-left .net-roof,
+.goal.net-goal.net-top-right .net-roof{animation:v24-roof-net .72s ease}
+.goal.net-goal.net-middle-left .net-side-left,
+.goal.net-goal.net-bottom-left .net-side-left{animation:v24-side-net-left .64s ease}
+.goal.net-goal.net-middle-right .net-side-right,
+.goal.net-goal.net-bottom-right .net-side-right{animation:v24-side-net-right .64s ease}
+@keyframes v24-roof-net{
+  38%{transform:perspective(260px) rotateX(68deg) translateY(-7px);filter:brightness(1.22)}
+}
+@keyframes v24-side-net-left{
+  38%{transform:perspective(250px) rotateY(62deg) translateX(-7px);filter:brightness(1.18)}
+}
+@keyframes v24-side-net-right{
+  38%{transform:perspective(250px) rotateY(-62deg) translateX(7px);filter:brightness(1.18)}
+}
+
+.goal .player-eyes,.goal .player-mouth{display:none!important}
+.goal .player-head{
+  background:
+    linear-gradient(110deg,rgba(255,255,255,.13),transparent 38%),
+    var(--player-skin,#78452f)!important;
+  border-radius:48% 48% 43% 43%!important
+}
+.goal .player-head:after{
+  inset:-4px 1px auto!important;
+  height:14px!important;
+  border-radius:55% 55% 30% 30%!important;
+  background:
+    radial-gradient(circle at 25% 50%,rgba(255,255,255,.08) 0 1px,transparent 2px),
+    var(--player-hair,#20160f)!important
+}
+.goal .player-shirt{padding-top:8px;line-height:1}
+.goal .player-shirt:before{
+  content:attr(data-player);
+  position:absolute;
+  left:2px;
+  right:2px;
+  top:8px;
+  overflow:hidden;
+  color:#fff;
+  font-size:.38rem;
+  font-weight:950;
+  letter-spacing:.02em;
+  text-align:center;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+.goal.placing-ball .penalty-taker.place-ball{
+  --place-x:54px;
+  --place-y:-70px;
+  transform:scale(.96)!important;
+  animation:v24-place-player 1.7s cubic-bezier(.28,.72,.24,1) both!important
+}
+.goal.placing-ball .ball.ball-to-spot{
+  animation:v24-ball-place 1.7s cubic-bezier(.24,.72,.24,1) both!important
+}
+.goal.placing-ball .penalty-taker.place-ball .player-arm-right{
+  animation:v24-place-arm 1.7s ease both
+}
+.goal.placing-ball .penalty-taker.place-ball .player-leg-left,
+.goal.placing-ball .penalty-taker.place-ball .player-leg-right{
+  animation:v24-place-knees 1.7s ease both
+}
+@keyframes v24-place-player{
+  0%{translate:-34px 8px;rotate:-2deg;scale:.96}
+  24%{translate:18px -19px;rotate:2deg;scale:.9}
+  38%{translate:var(--place-x) var(--place-y);rotate:7deg;scale:.76}
+  72%{translate:var(--place-x) var(--place-y);rotate:7deg;scale:.76}
+  88%{translate:18px -20px;rotate:1deg;scale:.9}
+  100%{translate:0 0;rotate:0;scale:.96}
+}
+@keyframes v24-ball-place{
+  0%,22%{translate:-112px 54px;scale:.73}
+  40%{translate:-34px -14px;scale:.9}
+  47%,100%{translate:0 0;scale:1}
+}
+@keyframes v24-place-arm{
+  0%,18%{rotate:-10deg}
+  38%,72%{rotate:-72deg}
+  100%{rotate:0}
+}
+@keyframes v24-place-knees{
+  0%,20%,100%{rotate:0}
+  40%,72%{rotate:24deg}
+}
+
+.goal .penalty-taker.run-up,
+.goal .penalty-taker.runup-straight.run-up{
+  animation-name:v24-run-straight!important;
+  animation-duration:var(--runup-duration,.78s)!important;
+  animation-timing-function:cubic-bezier(.25,.68,.28,1)!important
+}
+.goal .penalty-taker.runup-angled.run-up{
+  animation-name:v24-run-angled!important;
+  animation-duration:var(--runup-duration,.88s)!important
+}
+.goal .penalty-taker.runup-stutter.run-up{
+  animation-name:v24-run-stutter!important;
+  animation-duration:var(--runup-duration,1.02s)!important;
+  animation-timing-function:cubic-bezier(.32,.64,.24,1)!important
+}
+.goal .penalty-taker.run-up .player-arm-left{animation:v24-arm-drive .72s ease!important}
+.goal .penalty-taker.run-up .player-arm-right{animation:v24-arm-drive .72s ease reverse!important}
+.goal .penalty-taker.run-up .player-leg-left{animation:v24-stride .72s ease!important}
+.goal .penalty-taker.run-up .player-leg-right{animation:v24-strike .72s .16s cubic-bezier(.25,.8,.28,1)!important}
+.goal .penalty-taker.foot-left.run-up .player-leg-left{animation:v24-strike-left .72s .16s cubic-bezier(.25,.8,.28,1)!important}
+.goal .penalty-taker.foot-left.run-up .player-leg-right{animation:v24-stride-left .72s ease!important}
+.goal .penalty-taker.ball-struck .player-shirt{filter:brightness(1.08)}
+@keyframes v24-run-straight{
+  0%{transform:translate(0,0) rotate(0) scale(.96)}
+  20%{transform:translate(12px,-10px) rotate(1deg) scale(.91)}
+  43%{transform:translate(29px,-28px) rotate(2deg) scale(.85)}
+  67%{transform:translate(44px,-48px) rotate(4deg) scale(.79)}
+  86%{transform:translate(56px,-64px) rotate(6deg) scale(.75)}
+  100%{transform:translate(62px,-73px) rotate(8deg) scale(.72)}
+}
+@keyframes v24-run-angled{
+  0%{transform:translate(-18px,2px) rotate(-7deg) scale(.96)}
+  22%{transform:translate(2px,-10px) rotate(-4deg) scale(.91)}
+  45%{transform:translate(24px,-29px) rotate(0) scale(.85)}
+  69%{transform:translate(44px,-49px) rotate(4deg) scale(.79)}
+  88%{transform:translate(57px,-65px) rotate(7deg) scale(.74)}
+  100%{transform:translate(63px,-73px) rotate(9deg) scale(.72)}
+}
+@keyframes v24-run-stutter{
+  0%{transform:translate(-5px,0) rotate(-2deg) scale(.96)}
+  18%{transform:translate(10px,-9px) rotate(0) scale(.91)}
+  31%{transform:translate(13px,-12px) rotate(-1deg) scale(.9)}
+  42%{transform:translate(27px,-27px) rotate(2deg) scale(.85)}
+  54%{transform:translate(29px,-29px) rotate(1deg) scale(.84)}
+  72%{transform:translate(46px,-50px) rotate(5deg) scale(.78)}
+  88%{transform:translate(57px,-66px) rotate(7deg) scale(.74)}
+  100%{transform:translate(63px,-73px) rotate(9deg) scale(.72)}
+}
+@keyframes v24-arm-drive{25%{transform:rotate(-28deg)}62%{transform:rotate(31deg)}}
+@keyframes v24-stride{35%{transform:rotate(25deg)}72%{transform:rotate(-16deg)}}
+@keyframes v24-strike{0%,32%{transform:rotate(-18deg)}70%{transform:rotate(59deg)}100%{transform:rotate(16deg)}}
+@keyframes v24-strike-left{0%,32%{transform:rotate(18deg)}70%{transform:rotate(-59deg)}100%{transform:rotate(-16deg)}}
+@keyframes v24-stride-left{35%{transform:rotate(-25deg)}72%{transform:rotate(16deg)}}
+
+.stadium-scene.pointer-saving:not(.reaction-window) .aim-pointer,
+.stadium-scene.pointer-saving:not(.reaction-window) .aim-guide{opacity:0!important}
+.stadium-scene.reaction-window .aim-pointer,
+.stadium-scene.reaction-window .aim-guide{opacity:1!important}
+.reaction-cue{
+  position:absolute;
+  z-index:19;
+  left:50%;
+  top:49%;
+  transform:translate(-50%,-50%);
+  padding:8px 15px;
+  border:3px solid #fff;
+  border-radius:999px;
+  background:#ffcf33;
+  color:#052f58;
+  font-size:clamp(.75rem,2vw,1.1rem);
+  font-weight:1000;
+  letter-spacing:.1em;
+  box-shadow:0 6px 18px rgba(0,0,0,.3);
+  pointer-events:none;
+  animation:v24-react-pulse .34s ease infinite alternate
+}
+.reaction-cue[hidden]{display:none!important}
+@keyframes v24-react-pulse{to{transform:translate(-50%,-50%) scale(1.08)}}
+.goal .ball.reaction-flight{
+  left:var(--reaction-x)!important;
+  bottom:var(--reaction-y)!important;
+  transform:translateX(-50%) scale(.8) rotate(210deg)!important;
+  transition:
+    left .68s linear,
+    bottom .68s cubic-bezier(.18,.5,.3,1),
+    transform .68s linear!important
+}
+.goal .ball-shadow.reaction-shadow-flight{
+  left:var(--reaction-x)!important;
+  bottom:var(--reaction-y)!important;
+  transform:translateX(-50%) scale(.52)!important;
+  transition:left .68s linear,bottom .68s linear,transform .68s linear!important
+}
+.goal.reaction-resolving .ball,
+.goal.reaction-resolving .ball-shadow{
+  transition-delay:0s!important;
+  transition-duration:.42s!important
+}
+.stadium-scene.reaction-window .goal{
+  box-shadow:inset 0 0 0 3px rgba(255,207,51,.38),inset 0 -26px 46px rgba(255,207,51,.09)!important
+}
+
+.goal .keeper{
+  bottom:58.4%;
+  transform:translateX(-50%) scale(.6);
+  transition:transform .46s cubic-bezier(.13,.76,.22,1),filter .28s ease;
+  filter:drop-shadow(0 4px 3px rgba(0,0,0,.35))
+}
+.goal .keeper:before{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:50%;
+  bottom:-7px;
+  width:72px;
+  height:10px;
+  border-radius:50%;
+  background:rgba(0,0,0,.28);
+  filter:blur(3px);
+  transform:translateX(-50%) scaleX(.75)
+}
+.goal .keeper.feint-left{animation:v24-keeper-ready-left 1.12s ease-in-out infinite}
+.goal .keeper.feint-right{animation:v24-keeper-ready-right 1.12s ease-in-out infinite}
+.goal .keeper.feint-centre{animation:v24-keeper-ready-centre .92s ease-in-out infinite}
+.goal .keeper.keeper-committed.commit-top-left,
+.goal .keeper.keeper-committed.commit-middle-left,
+.goal .keeper.keeper-committed.commit-bottom-left{transform:translateX(-68%) translateY(-2px) rotate(-2deg) scale(.6)}
+.goal .keeper.keeper-committed.commit-top-right,
+.goal .keeper.keeper-committed.commit-middle-right,
+.goal .keeper.keeper-committed.commit-bottom-right{transform:translateX(-32%) translateY(-2px) rotate(2deg) scale(.6)}
+.goal .keeper.keeper-committed.commit-centre{transform:translateX(-50%) translateY(-5px) scale(.6)}
+.goal .keeper.dive-top-left{transform:translate(-410%,-78%) rotate(-57deg) scale(.59)}
+.goal .keeper.dive-top-right{transform:translate(310%,-78%) rotate(57deg) scale(.59)}
+.goal .keeper.dive-middle-left{transform:translate(-410%,-39%) rotate(-64deg) scale(.59)}
+.goal .keeper.dive-middle-right{transform:translate(310%,-39%) rotate(64deg) scale(.59)}
+.goal .keeper.dive-bottom-left{transform:translate(-395%,-3%) rotate(-71deg) scale(.59)}
+.goal .keeper.dive-bottom-right{transform:translate(295%,-3%) rotate(71deg) scale(.59)}
+.goal .keeper.dive-centre{transform:translate(-50%,-15%) scale(.62)}
+.goal .keeper.keeper-landed{filter:drop-shadow(0 3px 2px rgba(0,0,0,.42)) brightness(.98)}
+@keyframes v24-keeper-ready-left{
+  0%,100%{transform:translateX(-50%) scale(.6)}
+  38%{transform:translateX(-60%) translateY(-2px) scale(.6)}
+  64%{transform:translateX(-54%) translateY(-5px) scale(.6)}
+}
+@keyframes v24-keeper-ready-right{
+  0%,100%{transform:translateX(-50%) scale(.6)}
+  38%{transform:translateX(-40%) translateY(-2px) scale(.6)}
+  64%{transform:translateX(-46%) translateY(-5px) scale(.6)}
+}
+@keyframes v24-keeper-ready-centre{
+  0%,100%{transform:translateX(-50%) scale(.6)}
+  50%{transform:translateX(-50%) translateY(-6px) scale(.6)}
+}
+
+.crowd-bowl{
+  background:
+    radial-gradient(circle at 8% 25%,#fff 0 1px,transparent 2px) 0 0/19px 17px,
+    radial-gradient(circle at 72% 55%,#4cafea 0 1.5px,transparent 2px) 0 0/23px 21px,
+    linear-gradient(90deg,rgba(0,0,0,.26),transparent 11% 89%,rgba(0,0,0,.26)),
+    linear-gradient(#03162b,#063b70 54%,#052846)!important
+}
+.goal .ball-shadow{filter:blur(2.5px);opacity:.72}
+.goal .referee{filter:drop-shadow(0 4px 3px rgba(0,0,0,.32))}
+
+@media(max-width:760px){
+  .penalty-area-marking{left:4%;right:4%;height:50%}
+  .goal-area-marking{left:27%;right:27%;height:15%}
+  .goal.placing-ball .penalty-taker.place-ball{
+    --place-x:38px;
+    --place-y:-42px;
+    transform:scale(.7)!important
+  }
+  @keyframes v24-ball-place{
+    0%,22%{translate:-70px 33px;scale:.74}
+    40%{translate:-22px -9px;scale:.9}
+    47%,100%{translate:0 0;scale:1}
+  }
+  .goal .penalty-taker.run-up,
+  .goal .penalty-taker.runup-straight.run-up{
+    animation-name:v24-run-straight-mobile!important
+  }
+  .goal .penalty-taker.runup-angled.run-up{animation-name:v24-run-angled-mobile!important}
+  .goal .penalty-taker.runup-stutter.run-up{animation-name:v24-run-stutter-mobile!important}
+  .goal .keeper{transform:translateX(-50%) scale(.36)}
+  .goal .keeper.feint-left{animation:v24-keeper-ready-left-mobile 1.12s ease-in-out infinite}
+  .goal .keeper.feint-right{animation:v24-keeper-ready-right-mobile 1.12s ease-in-out infinite}
+  .goal .keeper.feint-centre{animation:v24-keeper-ready-centre-mobile .92s ease-in-out infinite}
+  .goal .keeper.keeper-committed.commit-top-left,
+  .goal .keeper.keeper-committed.commit-middle-left,
+  .goal .keeper.keeper-committed.commit-bottom-left{transform:translateX(-66%) translateY(-1px) scale(.36)}
+  .goal .keeper.keeper-committed.commit-top-right,
+  .goal .keeper.keeper-committed.commit-middle-right,
+  .goal .keeper.keeper-committed.commit-bottom-right{transform:translateX(-34%) translateY(-1px) scale(.36)}
+  .goal .keeper.keeper-committed.commit-centre{transform:translateX(-50%) translateY(-3px) scale(.36)}
+  .goal .keeper.dive-top-left{transform:translate(-210%,-62%) rotate(-55deg) scale(.36)}
+  .goal .keeper.dive-top-right{transform:translate(110%,-62%) rotate(55deg) scale(.36)}
+  .goal .keeper.dive-middle-left{transform:translate(-210%,-31%) rotate(-62deg) scale(.36)}
+  .goal .keeper.dive-middle-right{transform:translate(110%,-31%) rotate(62deg) scale(.36)}
+  .goal .keeper.dive-bottom-left{transform:translate(-200%,0) rotate(-69deg) scale(.36)}
+  .goal .keeper.dive-bottom-right{transform:translate(100%,0) rotate(69deg) scale(.36)}
+  .goal .keeper.dive-centre{transform:translate(-50%,-10%) scale(.38)}
+  .goal .keeper:before{width:58px}
+  .reaction-cue{top:48%;padding:5px 10px;border-width:2px}
+  .net-roof,.net-side{background-size:11px 9px}
+  @keyframes v24-run-straight-mobile{
+    0%{transform:translate(0,0) scale(.72)}
+    24%{transform:translate(9px,-7px) scale(.68)}
+    48%{transform:translate(20px,-18px) scale(.63)}
+    72%{transform:translate(31px,-30px) rotate(4deg) scale(.59)}
+    100%{transform:translate(42px,-42px) rotate(7deg) scale(.54)}
+  }
+  @keyframes v24-run-angled-mobile{
+    0%{transform:translate(-12px,1px) rotate(-6deg) scale(.72)}
+    28%{transform:translate(4px,-8px) rotate(-3deg) scale(.67)}
+    54%{transform:translate(21px,-20px) scale(.63)}
+    78%{transform:translate(34px,-33px) rotate(4deg) scale(.58)}
+    100%{transform:translate(42px,-42px) rotate(8deg) scale(.54)}
+  }
+  @keyframes v24-run-stutter-mobile{
+    0%{transform:translate(-3px,0) scale(.72)}
+    25%{transform:translate(9px,-8px) scale(.68)}
+    39%{transform:translate(11px,-10px) scale(.67)}
+    58%{transform:translate(24px,-23px) scale(.62)}
+    70%{transform:translate(26px,-25px) scale(.61)}
+    100%{transform:translate(42px,-42px) rotate(8deg) scale(.54)}
+  }
+  @keyframes v24-keeper-ready-left-mobile{
+    0%,100%{transform:translateX(-50%) scale(.36)}
+    45%{transform:translateX(-60%) translateY(-2px) scale(.36)}
+  }
+  @keyframes v24-keeper-ready-right-mobile{
+    0%,100%{transform:translateX(-50%) scale(.36)}
+    45%{transform:translateX(-40%) translateY(-2px) scale(.36)}
+  }
+  @keyframes v24-keeper-ready-centre-mobile{
+    0%,100%{transform:translateX(-50%) scale(.36)}
+    50%{transform:translateX(-50%) translateY(-4px) scale(.36)}
+  }
+}
+
+@media(max-height:680px){
+  .reaction-cue{top:47%}
+  .goal .keeper{bottom:58.1%}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .goal.placing-ball .penalty-taker.place-ball,
+  .goal.placing-ball .ball.ball-to-spot,
+  .reaction-cue,
+  .goal .keeper{animation:none!important}
+}

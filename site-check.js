@@ -69,6 +69,10 @@ if (/Personal matchday itinerary|id="itinerary/i.test(html))
   fail("personal matchday itinerary must remain removed");
 else pass("personal matchday itinerary is removed");
 
+if (/12 YARDS|twelve yards/i.test(html))
+  fail("penalty distance wording must remain hidden");
+else pass("penalty depth is visual rather than labelled");
+
 if (!/sussex-by-the-sea\.mp3/.test(html) || /sussex-by-the-sea-v17/.test(html))
   fail("anthem must use the canonical local audio asset");
 else pass("anthem uses the canonical local audio asset");
@@ -85,13 +89,13 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v23/.test(serviceWorker) ||
+  !/albion-fan-hub-v24/.test(serviceWorker) ||
   !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v23 release cache or anthem asset is incorrect");
-else pass("v23 cache includes the anthem and chant assets");
+  fail("v24 release cache or anthem asset is incorrect");
+else pass("v24 cache includes the anthem and chant assets");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
 if (
@@ -102,17 +106,18 @@ if (
   fail("sound controls have not been restored to the version-14 model");
 else pass("sound controls use the version-14 master-volume model");
 [
-  ["palaceRunStartedAt", "Palace reaction timing"],
+  ["palaceReactionStartedAt", "post-contact Palace reaction timing"],
+  ["openPalaceReactionWindow", "post-contact save window"],
   ["adjacentDives", "adjacent-zone saves"],
   ["shootoutDecision", "best-of-five early finish rules"],
-  ["commitPalaceDive", "committed keeper dives"],
+  ["commitPalaceDive", "reactive keeper dives"],
   ["Maxim De Cuyper", "left-footed Albion taker"],
   ["pointerdown", "instant penalty input"],
   ["chooseAimPoint", "free pointer aiming"],
   ["playChant", "match chant playback"],
   ["showTurnReady", "manual turn-ready stage"],
   ["startSaveCountdown", "Palace save countdown"],
-  ["goalOpening", "twelve-yard goal coordinate mapping"],
+  ["goalOpening", "goal coordinate mapping"],
   ["toStagePoint", "perspective shot destination mapping"],
 ].forEach(([needle, label]) => {
   if (!application.includes(needle)) fail(`${label} missing`);
@@ -127,17 +132,22 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
   ["placing-ball", "ball-placement sequence"],
   ["aim-pointer", "pointer aiming visuals"],
   ["chant-grid", "Albion chants player"],
-  ["v22-keeper-centre", "proportional goalkeeper sizing"],
+  ["v24-keeper-ready-centre", "proportional goalkeeper sizing"],
   ["meter-best{left:38%;width:24%}", "expanded green timing zone"],
-  ["pitch-perspective", "twelve-yard pitch perspective"],
+  ["pitch-perspective", "penalty pitch perspective"],
   ["aspect-ratio:16/10!important", "perspective penalty stage ratio"],
-  ["v23-player-run", "perspective player run-up"],
-  ["v23-net-depth", "depth-aware net animation"],
+  ["v24-run-straight", "rear-view multi-stage run-up"],
+  ["v24-side-net-left", "three-dimensional side-net animation"],
   ["tour-launch", "top-left first-visit tour"],
   ["height:calc(100dvh - 16px)", "single-screen desktop game layout"],
   ["max-height:100dvh", "single-screen mobile game layout"],
   ["first-kick-coach", "first-kick guidance"],
   ["v23-ref-goal", "referee outcome animation"],
+  ["penalty-area-marking", "penalty-area marking"],
+  ["goal-area-marking", "goal-area marking"],
+  ["v24-ball-place", "one-second ball placement"],
+  ["reaction-cue", "reaction-save cue"],
+  [".goal .player-eyes,.goal .player-mouth{display:none!important}", "rear-view taker presentation"],
 ].forEach(([needle, label]) => {
   if (!stylesheet.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -172,7 +182,7 @@ else pass("quiz supporter rating scale present");
   ["continueShootout", "manual next-turn control"],
   ["liveKeeperStats", "live goalkeeper performance panel"],
   ["pitch-perspective", "perspective pitch structure"],
-  ["player-eyes", "improved player facial graphics"],
+  ["reactionCue", "post-contact reaction prompt"],
   ["keeper-mouth", "improved goalkeeper facial graphics"],
   ["firstKickCoach", "first-kick guidance panel"],
 ].forEach(([needle, label]) => {
@@ -199,11 +209,7 @@ if (/chants\//.test(application) || /chants\//.test(serviceWorker))
   fail("chant recordings still rely on a nested upload folder");
 else pass("chant recordings use GitHub-friendly root paths");
 
-if (
-  !/exactChance = \{ early: 0\.35, perfect: 0\.5, late: 0\.28 \}/.test(
-    application,
-  )
-)
+if (!/exactChance = \{ perfect: 0\.5, late: 0\.32, none: 0 \}/.test(application))
   fail("Palace save probability is not capped at 50%");
 else pass("Palace save probability is capped at 50%");
 

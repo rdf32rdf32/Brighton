@@ -1243,6 +1243,9 @@
     let palaceRunStartedAt = 0;
     let palaceRunTimer = 0;
     let palaceShotTimer = 0;
+    let palaceReactionTimer = 0;
+    let palaceReactionStartedAt = 0;
+    let palaceReactionOpen = false;
     let placementTimer = 0;
     let replayAnimationTimer = 0;
     let replayContinuationTimer = 0;
@@ -1280,6 +1283,7 @@
     const continueShootoutButton = $("continueShootout");
     const readyCountdown = $("readyCountdown");
     const firstKickCoach = $("firstKickCoach");
+    const reactionCue = $("reactionCue");
     let aimPoint = { x: 50, y: 48 };
     let aimingPointerId = null;
     const clamp = (value, minimum, maximum) =>
@@ -1388,14 +1392,6 @@
       const deltaY = endY - startY;
       aimGuide.style.width = `${Math.hypot(deltaX, deltaY)}px`;
       aimGuide.style.transform = `rotate(${Math.atan2(deltaY, deltaX)}rad)`;
-      if (
-        phase === "save" &&
-        !locked &&
-        stadiumScene.classList.contains("aim-ready")
-      ) {
-        const shuffle = clamp((aimPoint.x - 50) * 0.08, -4, 4);
-        keeper.style.left = `${50 + shuffle}%`;
-      }
     }
     function aimFromEvent(event) {
       const rect = goalFrame.getBoundingClientRect();
@@ -1591,7 +1587,11 @@
     function clearMotion() {
       window.clearTimeout(palaceRunTimer);
       window.clearTimeout(palaceShotTimer);
+      window.clearTimeout(palaceReactionTimer);
       window.clearTimeout(placementTimer);
+      palaceReactionOpen = false;
+      palaceReactionStartedAt = 0;
+      reactionCue.hidden = true;
       ball.className = "ball";
       shadow.className = "ball-shadow";
       flash.className = "goal-flash";
@@ -1615,6 +1615,8 @@
         "goal-checking",
         "placing-ball",
         "boot-contact",
+        "reaction-launch",
+        "reaction-resolving",
       );
       stadiumScene.classList.remove(
         "camera-shoot",
@@ -1630,6 +1632,7 @@
         "pointer-saving",
         "aim-ready",
         "aim-dragging",
+        "reaction-window",
       );
       const decision = $("goalDecision");
       decision.hidden = true;
@@ -1643,9 +1646,10 @@
     }
     function startPalaceRun() {
       if (phase !== "save") return;
-      locked = false;
-      targets.forEach((button) => (button.disabled = false));
-      stadiumScene.classList.add("aim-ready");
+      locked = true;
+      palaceReactionOpen = false;
+      targets.forEach((button) => (button.disabled = true));
+      stadiumScene.classList.remove("aim-ready", "reaction-window");
       goalFrame.classList.remove("placing-ball");
       taker.classList.remove("place-ball");
       ball.classList.remove("ball-to-spot");
@@ -1653,13 +1657,56 @@
       palaceRunStartedAt = performance.now();
       stadiumScene.classList.add("palace-run-live", "crowd-hush");
       taker.classList.add("run-up", "palace-live-run");
+      taker.style.setProperty("--runup-duration", `${palaceStrikeDelay}ms`);
       announce(
         "Palace are running up",
-        "Read the body shape and commit Verbruggen now.",
+        "Watch the taker and wait for the ball to be struck.",
       );
       palaceShotTimer = window.setTimeout(
-        () => takePalacePenalty(null, true),
+        openPalaceReactionWindow,
         palaceStrikeDelay,
+      );
+    }
+    function openPalaceReactionWindow() {
+      if (phase !== "save" || palaceReactionOpen) return;
+      window.clearTimeout(palaceShotTimer);
+      palaceReactionOpen = true;
+      locked = false;
+      palaceReactionStartedAt = performance.now();
+      const destination = toStagePoint(
+        zonePoint[palacePlannedTarget].x,
+        zonePoint[palacePlannedTarget].y,
+      );
+      const startBottom = 100 - goalOpening.spot;
+      const destinationBottom = 100 - destination.y;
+      const revealProgress = 0.32;
+      const reactionX = 50 + (destination.x - 50) * revealProgress;
+      const reactionBottom =
+        startBottom + (destinationBottom - startBottom) * revealProgress;
+      ball.style.setProperty("--reaction-x", `${reactionX}%`);
+      ball.style.setProperty("--reaction-y", `${reactionBottom}%`);
+      shadow.style.setProperty("--reaction-x", `${reactionX}%`);
+      shadow.style.setProperty(
+        "--reaction-y",
+        `${100 - goalOpening.line}%`,
+      );
+      ball.className = "ball";
+      shadow.className = "ball-shadow";
+      void ball.offsetWidth;
+      ball.classList.add("reaction-flight");
+      shadow.classList.add("reaction-shadow-flight");
+      goalFrame.classList.add("reaction-launch", "boot-contact");
+      stadiumScene.classList.add("aim-ready", "reaction-window");
+      taker.classList.add("ball-struck");
+      targets.forEach((button) => (button.disabled = false));
+      reactionCue.hidden = false;
+      aimHint.textContent = "React to the ball and release";
+      playSfx("kick");
+      vibrate(18);
+      announce("BALL STRUCK — REACT!", "Dive towards the ball now.");
+      palaceReactionTimer = window.setTimeout(
+        () => takePalacePenalty(null, true, 700),
+        700,
       );
     }
     function startAlbionKick() {
@@ -1719,7 +1766,7 @@
         saving ? "pointer-saving" : "pointer-shooting",
       );
       aimHint.textContent = saving
-        ? "Move the glove and release to dive"
+        ? "Wait for the strike"
         : "Aim inside the goal and release";
       updateAimPointer(50, saving ? 52 : 46);
       targets.forEach((target) => {
@@ -1790,11 +1837,12 @@
         $("penaltyTakerName").textContent =
           `${palaceTaker.label} · ${palaceTaker.style} · Bart Verbruggen in goal`;
         $("penaltyShirt").textContent = palaceKicks + 1;
+        $("penaltyShirt").dataset.player = "PALACE";
         taker.style.setProperty("--player-skin", palaceTaker.skin);
         taker.style.setProperty("--player-hair", palaceTaker.hair);
         announce(
           "Watch the Palace taker",
-          `${pressurePrompt("save")} · The run-up speed changes. Commit Verbruggen before the strike.`,
+          `${pressurePrompt("save")} · The run-up speed changes. React only after contact.`,
         );
       } else {
         activeFoot = player.foot;
@@ -1802,6 +1850,8 @@
         $("penaltyTakerName").textContent =
           `${player.name} · No. ${player.number} · ${player.foot}-footed`;
         $("penaltyShirt").textContent = player.number;
+        $("penaltyShirt").dataset.player =
+          player.name.split(" ").slice(-1)[0].toUpperCase();
         taker.style.setProperty("--player-skin", player.skin);
         taker.style.setProperty("--player-hair", player.hair);
         taker.classList.add(
@@ -1836,7 +1886,7 @@
       } else {
         $("panenkaButton").disabled = true;
         if (waitForReady) showTurnReady("shoot");
-        else placementTimer = window.setTimeout(startAlbionKick, 780);
+        else placementTimer = window.setTimeout(startAlbionKick, 1750);
       }
     }
     function renderSummary() {
@@ -1991,6 +2041,7 @@
         foot = activeFoot,
         aimX = null,
         aimY = null,
+        kickSoundPlayed = false,
       },
       replay = false,
     ) {
@@ -2076,13 +2127,14 @@
         `dive-level-${diveLevel}`,
         `dive-${diveRelation}`,
       );
-      window.setTimeout(
-        () => {
-          playSfx("kick");
-          vibrate(18);
-        },
-        slow ? 620 : 380,
-      );
+      if (!kickSoundPlayed || replay)
+        window.setTimeout(
+          () => {
+            playSfx("kick");
+            vibrate(18);
+          },
+          slow ? 620 : 380,
+        );
       window.setTimeout(
         () => {
           flash.className = `goal-flash ${scored ? "scored" : "saved"}`;
@@ -2176,6 +2228,10 @@
             window.setTimeout(() => playSfx("crowd"), 100);
           vibrate(
             saved ? [35, 30, 55] : woodwork ? [65, 35, 65] : scored ? 35 : 50,
+          );
+          window.setTimeout(
+            () => keeper.classList.add("keeper-landed"),
+            slow ? 460 : 280,
           );
         },
         slow ? 1320 : 900,
@@ -2360,7 +2416,17 @@
     function takePalacePenalty(button, automatic = false, committedAt = null) {
       window.clearTimeout(palaceRunTimer);
       window.clearTimeout(palaceShotTimer);
+      window.clearTimeout(palaceReactionTimer);
+      palaceReactionOpen = false;
       locked = true;
+      reactionCue.hidden = true;
+      stadiumScene.classList.remove(
+        "aim-ready",
+        "aim-dragging",
+        "reaction-window",
+      );
+      goalFrame.classList.remove("reaction-launch", "boot-contact");
+      goalFrame.classList.add("reaction-resolving");
       targets.forEach((targetButton) => {
         targetButton.disabled = true;
         targetButton.classList.toggle(
@@ -2370,28 +2436,26 @@
       });
       const dive = button?.dataset.target || "centre";
       const target = palacePlannedTarget;
-      const reactionMs = palaceRunStartedAt
-        ? committedAt === null
-          ? Math.max(0, performance.now() - palaceRunStartedAt)
-          : committedAt
-        : 0;
-      const earlyCutoff = palaceStrikeDelay * 0.15;
-      const idealCutoff = palaceStrikeDelay * 0.82;
-      const reaction =
-        reactionMs < earlyCutoff
-          ? "early"
-          : reactionMs <= idealCutoff
-            ? "perfect"
-            : "late";
-      keeperStats.dives += 1;
-      if (dive === target) keeperStats.correctGuesses += 1;
+      const reactionMs =
+        committedAt === null
+          ? palaceReactionStartedAt
+            ? Math.max(0, performance.now() - palaceReactionStartedAt)
+            : 700
+          : committedAt;
+      const reaction = !button
+        ? "none"
+        : reactionMs <= 460
+          ? "perfect"
+          : "late";
+      if (button) keeperStats.dives += 1;
+      if (button && dive === target) keeperStats.correctGuesses += 1;
       const missed = Math.random() < 0.1;
       const woodwork = !missed && Math.random() < 0.07;
       const adjacent = adjacentDives[target]?.includes(dive);
-      const exactChance = { early: 0.35, perfect: 0.5, late: 0.28 }[
+      const exactChance = { perfect: 0.5, late: 0.32, none: 0 }[
         reaction
       ];
-      const adjacentChance = { early: 0.08, perfect: 0.18, late: 0.05 }[
+      const adjacentChance = { perfect: 0.18, late: 0.08, none: 0 }[
         reaction
       ];
       const saved =
@@ -2428,9 +2492,9 @@
         woodwork ||
         (saved && technique.key === "fingertips");
       const reactionText = {
-        early: "Early commitment",
-        perfect: "Perfect reaction",
-        late: button ? "Late reaction" : "No dive selected",
+        perfect: `Sharp reaction · ${Math.round(reactionMs)} ms`,
+        late: `Late reaction · ${Math.round(reactionMs)} ms`,
+        none: "No dive selected",
       }[reaction];
       announce("Palace strike…", `${reactionText}. Hold your nerve.`);
       animateShot({
@@ -2444,6 +2508,7 @@
         technique,
         shotStyle,
         foot: palaceTaker.foot,
+        kickSoundPlayed: true,
       });
       window.setTimeout(
         () => {
@@ -2507,13 +2572,17 @@
       );
     }
     function commitPalaceDive(button) {
-      if (locked || phase !== "save") return;
-      const reactionMs = palaceRunStartedAt
-        ? Math.max(0, performance.now() - palaceRunStartedAt)
+      if (
+        locked ||
+        phase !== "save" ||
+        !palaceReactionOpen
+      )
+        return;
+      const reactionMs = palaceReactionStartedAt
+        ? Math.max(0, performance.now() - palaceReactionStartedAt)
         : 0;
       locked = true;
-      stadiumScene.classList.remove("aim-ready", "aim-dragging");
-      window.clearTimeout(palaceShotTimer);
+      window.clearTimeout(palaceReactionTimer);
       targets.forEach((targetButton) => {
         targetButton.disabled = true;
         targetButton.classList.toggle(
@@ -2523,14 +2592,10 @@
       });
       keeper.className = `keeper user-keeper keeper-committed commit-${button.dataset.target}`;
       announce(
-        "Verbruggen commits",
-        "The taker is still moving — watch the strike.",
+        "Verbruggen reacts",
+        `${Math.round(reactionMs)} ms · reaching for the ball.`,
       );
-      const remaining = Math.max(90, palaceStrikeDelay - reactionMs);
-      palaceShotTimer = window.setTimeout(
-        () => takePalacePenalty(button, false, reactionMs),
-        remaining,
-      );
+      takePalacePenalty(button, false, reactionMs);
     }
     function chooseTarget(button) {
       if (locked) return;
