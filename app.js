@@ -157,7 +157,7 @@
   }
 
   let currentQuiz = []; let quizPage = 0; let quizScore = 0; let quizChecked = false;
-  const quizGroups = [[0, 1], [2, 3], [4]];
+  const quizGroups = [[0], [1], [2], [3], [4]];
   function poolKey() { return 'albionQuizSeen:medium-hard'; }
   function selectFreshQuestions(count = 5) {
     const pool = Q.filter(question => question.difficulty === 'Medium' || question.difficulty === 'Hard');
@@ -176,11 +176,11 @@
   }
   function renderQuizPage() {
     const group = quizGroups[quizPage]; const first = group[0] + 1; const last = group[group.length - 1] + 1;
-    $('quizContainer').innerHTML = `<div class="quiz-step"><div class="quiz-step-label"><b>Questions ${first}${first === last ? '' : `–${last}`} of 5</b><span>Medium &amp; hard</span></div><div class="quiz-progress-track"><i style="width:${last * 20}%"></i></div></div>
+    $('quizContainer').innerHTML = `<div class="quiz-step"><div class="quiz-step-label"><b>Question ${first} of 5</b><span>${last * 20}% complete</span></div><div class="quiz-progress-track"><i style="width:${last * 20}%"></i></div></div>
       <div class="quiz-pair">${group.map(index => { const question = currentQuiz[index]; return `<fieldset class="quiz-question" data-question="${index}"><legend><span>${index + 1}</span>${esc(question.question)}</legend>${question.choices.map((choice, choiceIndex) => `<label><input type="radio" name="quizQuestion${index}" value="${choiceIndex}"><span>${esc(choice.text)}</span></label>`).join('')}<div class="quiz-feedback"></div></fieldset>`; }).join('')}</div>`;
     const completed = quizGroups.slice(0, quizPage).flat().length;
     $('quizResult').textContent = `Score: ${quizScore}/${completed}`;
-    $('checkQuiz').textContent = 'Check answers'; $('checkQuiz').disabled = false; quizChecked = false;
+    $('checkQuiz').textContent = 'Check answer'; $('checkQuiz').disabled = false; quizChecked = false;
   }
   function newQuiz() {
     currentQuiz = selectFreshQuestions().map(prepareQuestion); quizPage = 0; quizScore = 0;
@@ -212,7 +212,7 @@
     });
     const completed = quizGroups.slice(0, quizPage + 1).flat().length;
     $('quizResult').textContent = `Score: ${quizScore}/${completed}`; quizChecked = true;
-    $('checkQuiz').textContent = quizPage === quizGroups.length - 1 ? 'See result' : 'Next questions';
+    $('checkQuiz').textContent = quizPage === quizGroups.length - 1 ? 'See result' : 'Next question';
   }
 
   function predictor() {
@@ -312,79 +312,171 @@
       {name:'Diego Gómez',number:25,skin:'#b87855',hair:'#20150f'},
       {name:'Kaoru Mitoma',number:22,skin:'#d5a077',hair:'#1b1715'}
     ];
-    let lineup = []; let results = []; let shots = 0; let goals = 0; let locked = false; let recentTargets = [];
+    let lineup = []; let albionResults = []; let palaceResults = []; let albionKicks = 0; let palaceKicks = 0;
+    let albionGoals = 0; let palaceGoals = 0; let phase = 'shoot'; let locked = false; let recentTargets = [];
     const ball = $('ball'); const shadow = $('ballShadow'); const keeper = $('keeper'); const taker = $('penaltyTaker'); const status = $('shootoutStatus'); const flash = $('goalFlash'); const goalFrame = $('goal');
     const targets = [...document.querySelectorAll('.target')];
-    const markers = [...document.querySelectorAll('#penaltyMarkers i')]; const accuracyMarker = document.querySelector('.accuracy-meter i');
+    const accuracyMarker = document.querySelector('.accuracy-meter i');
     const announce = (title, detail) => { status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`; };
     let liveAccuracy = 1; const accuracyStarted = Date.now();
     window.setInterval(() => { const phase = ((Date.now() - accuracyStarted) % 1800) / 1800; const position = phase < .5 ? phase * 2 : (1 - phase) * 2; accuracyMarker.style.left = `${1 + position * 97}%`; liveAccuracy = 1 - Math.abs(position - .5) * 2; }, 32);
+    function markerHtml(results) {
+      const suddenDeath = albionKicks >= 5 && palaceKicks >= 5 && albionGoals === palaceGoals;
+      const total = Math.max(5, results.length + (results.length > 5 || suddenDeath ? 1 : 0));
+      return Array.from({length: total}, (_, index) => `<i class="${index < results.length ? (results[index].scored ? 'goal-mark' : 'save-mark') : ''}"></i>`).join('');
+    }
+    function renderScore() {
+      $('albionGoalCount').textContent = String(albionGoals); $('palaceGoalCount').textContent = String(palaceGoals);
+      $('albionPenaltyMarkers').innerHTML = markerHtml(albionResults); $('palacePenaltyMarkers').innerHTML = markerHtml(palaceResults);
+      const round = Math.max(albionKicks, palaceKicks) + (phase === 'shoot' && albionKicks === palaceKicks ? 1 : 0);
+      $('shotCount').textContent = round <= 5 ? `${round}/5` : `SD ${round - 5}`;
+    }
     function renderLineup() {
-      $('penaltyLineup').innerHTML = lineup.map((player, index) => `<span class="${index < shots ? (results[index]?.scored ? 'converted' : 'missed') : index === shots ? 'current' : ''}"><b>${player.number}</b>${esc(player.name)}</span>`).join('');
+      $('penaltyLineup').innerHTML = lineup.map((player, index) => {
+        const result = albionResults[index];
+        const current = phase === 'shoot' && albionKicks % lineup.length === index;
+        return `<span class="${current ? 'current' : result ? (result.scored ? 'converted' : 'missed') : ''}"><b>${player.number}</b>${esc(player.name)}</span>`;
+      }).join('');
     }
-    function setTaker() {
-      const player = lineup[Math.min(shots, 4)]; if (!player) return;
-      $('penaltyTakerName').textContent = `${player.name} · No. ${player.number}`; $('penaltyShirt').textContent = player.number;
-      taker.style.setProperty('--player-skin', player.skin); taker.style.setProperty('--player-hair', player.hair); renderLineup();
+    function clearMotion() {
+      ball.className = 'ball'; shadow.className = 'ball-shadow'; flash.className = 'goal-flash';
+      taker.className = 'penalty-taker'; keeper.className = 'keeper';
+      goalFrame.classList.remove('slow-motion','net-goal','woodwork','saving-turn');
     }
-    function readyKeeper() { keeper.className = `keeper feint-${['left','right','centre'][Math.floor(Math.random() * 3)]}`; }
+    function readyKeeper() {
+      keeper.className = `keeper ${phase === 'save' ? 'user-keeper ' : ''}feint-${['left','right','centre'][Math.floor(Math.random() * 3)]}`;
+    }
+    function setScene() {
+      clearMotion();
+      const saving = phase === 'save'; const player = lineup[albionKicks % lineup.length];
+      $('turnBadge').textContent = saving ? 'PALACE PENALTY · YOU ARE IN GOAL' : 'ALBION PENALTY · YOU ARE SHOOTING';
+      $('turnBadge').className = `turn-badge ${saving ? 'palace-turn' : 'albion-turn'}`;
+      $('shotControls').classList.toggle('controls-disabled', saving);
+      $('shotPower').disabled = saving;
+      goalFrame.classList.toggle('saving-turn', saving);
+      taker.classList.toggle('palace-taker', saving);
+      keeper.classList.toggle('user-keeper', saving);
+      if (saving) {
+        $('penaltyTakerName').textContent = `Palace taker ${palaceKicks + 1}`;
+        $('penaltyShirt').textContent = palaceKicks + 1;
+        taker.style.setProperty('--player-skin', '#9b6548'); taker.style.setProperty('--player-hair', '#211611');
+        announce('Choose your dive', 'Tap a target to send the Albion goalkeeper that way.');
+      } else {
+        $('penaltyTakerName').textContent = `${player.name} · No. ${player.number}`;
+        $('penaltyShirt').textContent = player.number;
+        taker.style.setProperty('--player-skin', player.skin); taker.style.setProperty('--player-hair', player.hair);
+        announce(albionKicks >= 5 ? 'Sudden death: pick your spot' : 'Pick your spot', 'Red accuracy means an automatic miss.');
+      }
+      targets.forEach((button, index) => {
+        button.disabled = false;
+        button.setAttribute('aria-label', saving ? `Dive towards target ${index + 1}` : `Shoot towards target ${index + 1}`);
+      });
+      renderLineup(); renderScore(); readyKeeper();
+    }
     function renderSummary() {
-      $('shootoutSummary').innerHTML = `<h3>Shoot-out card</h3><ol>${results.map((result, index) => `<li><span>${esc(lineup[index].name)}</span><b class="${result.scored ? 'summary-goal' : 'summary-miss'}">${esc(result.label)}</b></li>`).join('')}</ol>`;
+      const rows = Array.from({length: Math.max(albionResults.length, palaceResults.length)}, (_, index) => {
+        const albion = albionResults[index]; const palace = palaceResults[index]; const player = lineup[index % lineup.length];
+        return `<li><span>${esc(player.name)}: <b class="${albion?.scored ? 'summary-goal' : 'summary-miss'}">${esc(albion?.label || '—')}</b></span><span>Palace: <b class="${palace?.scored ? 'summary-goal' : 'summary-miss'}">${esc(palace?.label || '—')}</b></span></li>`;
+      }).join('');
+      $('shootoutSummary').innerHTML = `<h3>Brighton v Palace shoot-out card</h3><ol>${rows}</ol>`;
     }
     function reset() {
-      shots = 0; goals = 0; locked = false; recentTargets = []; results = []; lineup = shuffle(takers);
-      $('shotCount').textContent = '1/5'; $('goalCount').textContent = '0'; announce('Pick your spot', 'The keeper is ready.');
-      ball.className = 'ball'; shadow.className = 'ball-shadow'; taker.className = 'penalty-taker'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal','woodwork');
+      albionKicks = 0; palaceKicks = 0; albionGoals = 0; palaceGoals = 0; phase = 'shoot'; locked = false;
+      recentTargets = []; albionResults = []; palaceResults = []; lineup = shuffle(takers);
       $('shootoutSummary').hidden = true; $('shootoutSummary').innerHTML = '';
-      markers.forEach(marker => marker.className = ''); targets.forEach(button => button.disabled = false);
-      setTaker(); readyKeeper();
+      setScene();
     }
-    function finish() {
+    function celebrationBurst() {
+      for (let index = 0; index < 28; index += 1) {
+        const piece = document.createElement('i'); piece.className = 'shootout-confetti';
+        piece.style.left = `${5 + Math.random() * 90}%`; piece.style.setProperty('--delay', `${Math.random() * .35}s`);
+        piece.style.setProperty('--drift', `${-70 + Math.random() * 140}px`); goalFrame.appendChild(piece);
+        window.setTimeout(() => piece.remove(), 2300);
+      }
+    }
+    function finish(albionWon) {
       targets.forEach(button => button.disabled = true);
-      announce(goals >= 3 ? 'Albion win the shoot-out!' : 'The goalkeeper wins', `Albion scored ${goals} from five.`);
-      $('shootoutSummary').hidden = false; renderSummary(); if (goals >= 3) playSfx('crowd');
+      $('shotPower').disabled = true;
+      announce(albionWon ? 'SEAGULLS WIN!' : 'Palace win the shoot-out', `Brighton ${albionGoals}–${palaceGoals} Palace.`);
+      $('shootoutSummary').hidden = false; renderSummary();
+      if (albionWon) { flash.className = 'goal-flash win'; celebrationBurst(); playSfx('crowd'); }
     }
-    function takePenalty(button) {
-      if (locked || shots >= 5) return;
+    function animateShot({target, dive, missed, woodwork, saved, scored, slow}) {
+      if (slow) goalFrame.classList.add('slow-motion');
+      taker.classList.add('run-up');
+      const postSide = target.includes('left') ? 'left' : target.includes('right') ? 'right' : Math.random() > .5 ? 'left' : 'right';
+      ball.className = `ball ${missed ? (postSide === 'left' ? 'shoot-wide-left' : 'shoot-wide-right') : woodwork ? `hit-post-${postSide}` : `shoot-${target}`}`;
+      shadow.className = `ball-shadow shadow-${missed ? 'wide' : woodwork ? 'post' : target}`;
+      keeper.className = `keeper ${phase === 'save' ? 'user-keeper ' : ''}dive-${dive}`;
+      playSfx('kick');
+      window.setTimeout(() => {
+        flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`;
+        if (scored) goalFrame.classList.add('net-goal');
+        if (woodwork) goalFrame.classList.add('woodwork');
+        playSfx(scored ? 'goal' : woodwork ? 'post' : missed ? 'miss' : 'save');
+      }, slow ? 1320 : 900);
+    }
+    function takeAlbionPenalty(button) {
       locked = true;
-      const player = lineup[shots]; const target = button.dataset.target;
+      targets.forEach(targetButton => { targetButton.disabled = true; });
+      const player = lineup[albionKicks % lineup.length]; const target = button.dataset.target;
       const power = Number($('shotPower').value); const accuracy = liveAccuracy;
       const predictable = recentTargets.length >= 2 && recentTargets.slice(-2).every(item => item === target);
       const readsShot = Math.random() < (predictable ? .75 : .36);
       const dive = readsShot ? target : positions[Math.floor(Math.random() * positions.length)];
-      const missed = (accuracy < .24 && power > 86) || (power < 67 && Math.random() < .22);
-      const woodwork = !missed && accuracy < .4 && power > 80 && Math.random() < .42;
+      const redZone = accuracy < .56;
+      const missed = redZone || (power < 68 && Math.random() < .26);
+      const woodwork = !missed && accuracy < .58 && power > 82 && Math.random() < .45;
       const sameSide = dive.split('-').pop() === target.split('-').pop();
-      const saveChance = dive === target ? Math.max(.42, .76 - (power - 60) / 180) : sameSide && target !== 'centre' ? .13 : 0;
+      const saveChance = dive === target ? Math.max(.5, .82 - (power - 60) / 170) : sameSide && target !== 'centre' ? .16 : 0;
       const saved = !missed && !woodwork && Math.random() < saveChance;
       const scored = !missed && !woodwork && !saved;
-      const label = scored ? 'Goal' : woodwork ? 'Woodwork' : missed ? 'Wide' : 'Saved';
-      recentTargets.push(target); results.push({scored,label,target}); shots += 1; if (scored) goals += 1;
-      const fifth = shots === 5; const flightTime = fifth ? 1750 : 1100;
-      if (fifth) goalFrame.classList.add('slow-motion');
-      announce(fifth ? `${player.name}: final kick…` : `${player.name} steps up…`, fifth ? 'Slow-motion decider!' : 'Come on Albion!'); flash.className = 'goal-flash';
-      taker.className = 'penalty-taker run-up';
-      const postSide = target.includes('left') ? 'left' : target.includes('right') ? 'right' : Math.random() > .5 ? 'left' : 'right';
-      ball.className = `ball ${missed ? (postSide === 'left' ? 'shoot-wide-left' : 'shoot-wide-right') : woodwork ? `hit-post-${postSide}` : `shoot-${target}`}`;
-      shadow.className = `ball-shadow shadow-${missed ? 'wide' : woodwork ? 'post' : target}`; keeper.className = `keeper dive-${dive}`;
-      playSfx('kick');
+      const label = scored ? 'Goal' : woodwork ? 'Woodwork' : missed ? (redZone ? 'Missed: red zone' : 'Wide') : 'Saved';
+      recentTargets.push(target); albionResults.push({scored,label,target}); albionKicks += 1; if (scored) albionGoals += 1;
+      const slow = albionKicks >= 5;
+      announce(`${player.name} steps up…`, slow ? 'The pressure is on.' : 'Come on Albion!');
+      animateShot({target,dive,missed,woodwork,saved,scored,slow});
       window.setTimeout(() => {
-        markers[shots - 1].className = scored ? 'goal-mark' : 'save-mark';
-        $('shotCount').textContent = shots < 5 ? `${shots + 1}/5` : '5/5'; $('goalCount').textContent = String(goals);
         const goalLines = [`${player.name} buries it!`,`${player.name} sends the keeper the wrong way.`,`A composed finish from ${player.name}.`,`The net ripples for ${player.name}!`];
-        const saveLines = [`The keeper gets a strong hand to ${player.name}'s kick.`,`A fingertip save denies ${player.name}.`,`The goalkeeper reads ${player.name}'s shot.`,`The keeper holds it from ${player.name}.`];
-        announce(scored ? 'GOAL!' : woodwork ? 'OFF THE POST!' : missed ? 'WIDE!' : 'SAVED!', scored ? goalLines[Math.floor(Math.random()*goalLines.length)] : woodwork ? `${player.name} hits the frame of the goal.` : missed ? `${player.name}'s timing was just off.` : saveLines[Math.floor(Math.random()*saveLines.length)]);
-        flash.className = `goal-flash ${scored ? 'scored' : 'saved'}`; if (scored) goalFrame.classList.add('net-goal');
-        if (woodwork) goalFrame.classList.add('woodwork'); playSfx(scored ? 'goal' : woodwork ? 'post' : missed ? 'miss' : 'save'); renderLineup();
-        if (shots === 5) finish();
-        else window.setTimeout(() => { ball.className = 'ball'; shadow.className = 'ball-shadow'; taker.className = 'penalty-taker'; flash.className = 'goal-flash'; goalFrame.classList.remove('slow-motion','net-goal','woodwork'); locked = false; setTaker(); readyKeeper(); announce(`${lineup[shots].name} is next`, `${5 - shots} ${5 - shots === 1 ? 'kick' : 'kicks'} remaining.`); }, 850);
-      }, flightTime);
+        announce(scored ? 'GOAL!' : woodwork ? 'OFF THE POST!' : missed ? (redZone ? 'RED ZONE: MISSED!' : 'WIDE!') : 'SAVED!', scored ? goalLines[Math.floor(Math.random()*goalLines.length)] : woodwork ? `${player.name} hits the frame of the goal.` : missed ? 'The accuracy marker was outside the safe area.' : `The Palace keeper denies ${player.name}.`);
+        renderLineup(); renderScore();
+        window.setTimeout(() => { phase = 'save'; locked = false; setScene(); }, 850);
+      }, slow ? 1550 : 1120);
     }
-    targets.forEach(button => button.addEventListener('click', () => takePenalty(button)));
+    function takePalacePenalty(button) {
+      locked = true; targets.forEach(targetButton => { targetButton.disabled = true; });
+      const dive = button.dataset.target;
+      const target = positions[Math.floor(Math.random() * positions.length)];
+      const missed = Math.random() < .1; const woodwork = !missed && Math.random() < .07;
+      const sameSide = dive.split('-').pop() === target.split('-').pop();
+      const saved = !missed && !woodwork && (dive === target ? Math.random() < .82 : sameSide && target !== 'centre' && Math.random() < .12);
+      const scored = !missed && !woodwork && !saved;
+      const label = scored ? 'Goal' : woodwork ? 'Woodwork' : missed ? 'Wide' : 'Saved by you';
+      palaceResults.push({scored,label,target}); palaceKicks += 1; if (scored) palaceGoals += 1;
+      const slow = palaceKicks >= 5;
+      announce('Palace run up…', 'Hold your nerve.');
+      animateShot({target,dive,missed,woodwork,saved,scored,slow});
+      window.setTimeout(() => {
+        announce(saved ? 'WHAT A SAVE!' : scored ? 'Palace score' : woodwork ? 'OFF THE POST!' : 'PALACE MISS!', saved ? 'You read the penalty perfectly.' : scored ? 'The Eagles level the pressure.' : 'The ball stays out.');
+        renderScore();
+        const canFinish = palaceKicks >= 5 && palaceKicks === albionKicks && palaceGoals !== albionGoals;
+        if (canFinish) finish(albionGoals > palaceGoals);
+        else window.setTimeout(() => {
+          phase = 'shoot'; locked = false;
+          if (palaceKicks >= 5) announce('Sudden death', 'Every kick matters now.');
+          setScene();
+        }, 850);
+      }, slow ? 1550 : 1120);
+    }
+    function chooseTarget(button) {
+      if (locked) return;
+      if (phase === 'shoot') takeAlbionPenalty(button); else takePalacePenalty(button);
+    }
+    targets.forEach(button => button.addEventListener('click', () => chooseTarget(button)));
     $('shotPower').addEventListener('input', () => { $('powerValue').textContent = `${$('shotPower').value}%`; });
     document.addEventListener('keydown', event => {
       if (event.repeat || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
-      const key = Number(event.key); if (key >= 1 && key <= 5) { event.preventDefault(); takePenalty(targets[key - 1]); }
+      const key = Number(event.key); if (key >= 1 && key <= 5) { event.preventDefault(); chooseTarget(targets[key - 1]); }
     });
     $('resetShootout').addEventListener('click', reset);
     reset();
@@ -417,12 +509,17 @@
 
   function soundAndInstall() {
     const audio = $('anthemAudio'); const toggle = $('soundToggle');
-    const updateSound = playing => { toggle.textContent = playing ? '🔊 Sound off' : '♪ Sound on'; toggle.setAttribute('aria-pressed', String(playing)); toggle.title = playing ? 'Mute Sussex by the Sea' : 'Play Sussex by the Sea'; };
+    const updateSound = playing => {
+      toggle.textContent = playing ? '🔊 Sound is on' : '🔇 Sound is off';
+      toggle.classList.toggle('sound-on', playing); toggle.classList.toggle('sound-off', !playing);
+      toggle.setAttribute('aria-pressed', String(playing));
+      toggle.title = playing ? 'Turn all site sound off' : 'Turn site sound on';
+    };
     let fadeTimer = 0; const fade = (target, done) => { window.clearInterval(fadeTimer); const step = target > audio.volume ? .08 : -.08; fadeTimer = window.setInterval(() => { const next = Math.max(0, Math.min(1, audio.volume + step)); audio.volume = next; if ((step > 0 && next >= target) || (step < 0 && next <= target)) { window.clearInterval(fadeTimer); audio.volume = target; if (done) done(); } }, 35); };
     const play = () => { audio.volume = 0; return audio.play().then(() => { localStorage.setItem('albionSound','on'); updateSound(true); fade(1); }).catch(() => updateSound(false)); };
     const pause = () => { localStorage.setItem('albionSound','off'); updateSound(false); fade(0, () => audio.pause()); };
-    toggle.addEventListener('click', () => audio.paused ? play() : pause()); audio.addEventListener('play', () => updateSound(true)); audio.addEventListener('pause', () => updateSound(false)); audio.addEventListener('ended', () => updateSound(false));
-    if (localStorage.getItem('albionSound') !== 'off') { play(); document.addEventListener('pointerdown', () => { if (audio.paused && localStorage.getItem('albionSound') !== 'off') play(); }, {once:true}); }
+    toggle.addEventListener('click', () => audio.paused ? play() : pause()); audio.addEventListener('play', () => { localStorage.setItem('albionSound','on'); updateSound(true); }); audio.addEventListener('pause', () => updateSound(false)); audio.addEventListener('ended', () => { localStorage.setItem('albionSound','off'); updateSound(false); });
+    localStorage.setItem('albionSound','off'); updateSound(false);
     let audioContext = null;
     playSfx = type => {
       if (localStorage.getItem('albionSound') === 'off') return;
@@ -446,10 +543,7 @@
     topButton.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
     const notice = $('cookieNotice'); if (localStorage.getItem('albionCookieNotice') === 'accepted') notice.hidden = true;
     $('acceptCookies').addEventListener('click', () => { localStorage.setItem('albionCookieNotice','accepted'); notice.hidden = true; });
-    const guide = $('welcomeGuide'); const closeGuide = () => { guide.hidden = true; document.body.classList.remove('guide-open'); localStorage.setItem('albionWelcomeSeen','yes'); };
-    if (!localStorage.getItem('albionWelcomeSeen')) { guide.hidden = false; document.body.classList.add('guide-open'); $('closeWelcome').focus(); }
-    $('closeWelcome').addEventListener('click', closeGuide); guide.querySelectorAll('[data-guide-close]').forEach(link => link.addEventListener('click', closeGuide));
-    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, prediction, fixture, sound and welcome choices?')) return; ['albionXI','albionPrediction','albionQuizBest','albionQuizSeen:medium-hard','albionFixtureMonth','albionSound','albionCookieNotice','albionWelcomeSeen'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
+    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, prediction, fixture, sound and cookie choices?')) return; ['albionXI','albionPrediction','albionQuizBest','albionQuizSeen:medium-hard','albionFixtureMonth','albionSound','albionCookieNotice'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
   }
 
   function ui() {
