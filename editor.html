@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0057a8" />
+    <title>Albion Fan Hub maintenance dashboard</title>
+    <link rel="icon" href="favicon.svg" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="editor-page">
+    <a class="skip-link" href="#editorMain">Skip to editor</a>
+    <header class="editor-hero">
+      <a class="brand" href="index.html"
+        ><img src="albion-safe-graphic.svg" alt="" /><span
+          >Albion Fan Hub</span
+        ></a
+      >
+      <div>
+        <p class="eyebrow">Local maintenance tool</p>
+        <h1>Site maintenance dashboard</h1>
+        <p>
+          Update the central content file without editing JavaScript by hand.
+          Nothing is uploaded automatically.
+        </p>
+      </div>
+    </header>
+    <main id="editorMain" class="editor-main">
+      <aside class="editor-warning">
+        <b>Safe workflow</b>
+        <p>
+          Make changes, run validation, then download
+          <code>content-data.js</code> and replace that one file in the GitHub
+          repository.
+        </p>
+      </aside>
+
+      <section class="card editor-section">
+        <div class="section-head">
+          <p class="eyebrow">Next match</p>
+          <h2>Fixture spotlight</h2>
+        </div>
+        <div class="editor-grid">
+          <label>Opponent<input id="editOpponent" /></label>
+          <label>Long date<input id="editDateLong" /></label>
+          <label>Short date<input id="editDateShort" /></label>
+          <label>Kick-off<input id="editTime" type="time" /></label>
+          <label>Venue<input id="editVenue" /></label>
+          <label
+            >ISO date and time<input
+              id="editDateISO"
+              placeholder="2026-08-23T14:00:00+01:00"
+          /></label>
+        </div>
+      </section>
+
+      <section class="card editor-section">
+        <div class="section-head">
+          <p class="eyebrow">Season database</p>
+          <h2>Progress and results</h2>
+        </div>
+        <div class="editor-grid compact">
+          <label>Season<input id="editSeason" /></label>
+          <label>Status<input id="editSeasonStatus" /></label>
+          <label
+            >Position<input id="editPosition" type="number" min="1" max="20"
+          /></label>
+          <label>Played<input id="editPlayed" type="number" min="0" /></label>
+          <label>Won<input id="editWon" type="number" min="0" /></label>
+          <label>Drawn<input id="editDrawn" type="number" min="0" /></label>
+          <label>Lost<input id="editLost" type="number" min="0" /></label>
+          <label
+            >Goals for<input id="editGoalsFor" type="number" min="0"
+          /></label>
+          <label
+            >Goals against<input id="editGoalsAgainst" type="number" min="0"
+          /></label>
+          <label>Points<input id="editPoints" type="number" min="0" /></label>
+        </div>
+        <label class="editor-wide"
+          >Results, one per line:
+          <code>date | opponent | H/A | Albion score-opponent score</code>
+          <textarea id="editResults" rows="7"></textarea>
+        </label>
+      </section>
+
+      <section class="card editor-section">
+        <div class="section-head">
+          <p class="eyebrow">Season schedule and squad</p>
+          <h2>Bulk editing</h2>
+        </div>
+        <div class="editor-columns">
+          <label
+            >Fixtures, one per line:
+            <code>date | H/A | opponent</code>
+            <textarea id="editFixtures" rows="18"></textarea>
+          </label>
+          <label
+            >Squad, one per line:
+            <code>position | player</code>
+            <textarea id="editSquad" rows="18"></textarea>
+          </label>
+        </div>
+      </section>
+
+      <section class="card editor-section">
+        <div class="section-head">
+          <p class="eyebrow">Accuracy</p>
+          <h2>Checked dates</h2>
+        </div>
+        <div class="editor-grid">
+          <label>Overall<input id="editLastUpdated" /></label>
+          <label>Fixtures<input id="editFreshFixtures" /></label>
+          <label>Squad<input id="editFreshSquad" /></label>
+          <label>Travel<input id="editFreshTravel" /></label>
+          <label>History<input id="editFreshHistory" /></label>
+        </div>
+      </section>
+
+      <section class="card editor-actions">
+        <div>
+          <h2>Validate and download</h2>
+          <p id="editorStatus" role="status">
+            Load complete. No changes have been downloaded.
+          </p>
+        </div>
+        <div class="button-row">
+          <button id="validateContent" type="button">Run validation</button>
+          <button id="downloadContent" type="button">
+            Download content-data.js
+          </button>
+          <a class="button-link secondary" href="index.html"
+            >Return to fan hub</a
+          >
+        </div>
+      </section>
+    </main>
+    <script src="content-data.js"></script>
+    <script src="editor.js"></script>
+  </body>
+</html>

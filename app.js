@@ -2140,24 +2140,8 @@
       )
         return;
       Object.keys(localStorage)
-        .filter((key) => key.startsWith("albionQuizSeen:"))
+        .filter((key) => key.startsWith("albion"))
         .forEach((key) => localStorage.removeItem(key));
-      [
-        "albionXI",
-        "albionPrediction",
-        "albionLeaguePosition",
-        "albionShootoutRecord",
-        "albionQuizBest",
-        "albionQuizProgress",
-        "albionQuizCategory",
-        "albionLastSection",
-        "albionFixtureMonth",
-        "albionPreferredStand",
-        "albionSound",
-        "albionSoundVolume",
-        "albionCookieNotice",
-        "albionTheme",
-      ].forEach((key) => localStorage.removeItem(key));
       window.location.reload();
     });
   }

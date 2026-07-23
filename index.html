@@ -155,6 +155,41 @@
           ><a href="#league-predictor">Move the slider</a>
         </article>
       </section>
+      <section class="card fan-control-centre" id="fan-control-centre">
+        <div class="section-head">
+          <p class="eyebrow">Your Albion day</p>
+          <h2>Fan control centre</h2>
+          <p>
+            A personal, device-only overview of the next match and the parts of
+            the site you have used.
+          </p>
+        </div>
+        <div class="control-centre-grid">
+          <article class="matchday-state">
+            <span id="matchdayPhase">Next match</span>
+            <h3 id="matchdayHeadline">Planning for Albion v Aston Villa</h3>
+            <p id="matchdayGuidance"></p>
+            <a href="#match-centre">Open matchday centre</a>
+          </article>
+          <article>
+            <span>Season progress</span>
+            <h3 id="seasonPosition">Season not started</h3>
+            <p id="seasonSummary">0 played · 0 points</p>
+            <a href="#fixtures">Open season centre</a>
+          </article>
+          <article>
+            <span>Continue</span>
+            <h3 id="returningHeadline">Start exploring</h3>
+            <div id="returningActions" class="returning-actions"></div>
+          </article>
+        </div>
+        <div class="guided-tour-row">
+          <button id="startTour" type="button">Start first-visit tour</button>
+          <span
+            >No opening window. The guide only starts when you ask for it.</span
+          >
+        </div>
+      </section>
       <section class="card quiz-card first-feature" id="quiz">
         <div class="section-head">
           <p class="eyebrow">First up: Albion quiz</p>
@@ -259,6 +294,10 @@
             five goes to sudden death.
           </p>
         </details>
+        <p id="gamepadStatus" class="gamepad-status">
+          Keyboard: 1–7 select a goal area and P tries a Panenka. Connect a game
+          controller for controller support.
+        </p>
         <div class="stadium-scene">
           <div class="crowd" aria-hidden="true">
             <span>SEAGULLS</span><span>BRIGHTON v PALACE</span
@@ -394,9 +433,9 @@
           <p class="eyebrow">Albion anthem and sound</p>
           <h2>Sussex by the Sea</h2>
           <p>
-            Sound never starts automatically. The anthem and match effects
-            share one master volume, while the sound switch controls game
-            effects independently.
+            Sound never starts automatically. The anthem and match effects share
+            one master volume, while the sound switch controls game effects
+            independently.
           </p>
           <div class="sound-settings">
             <button id="inlineSoundToggle" type="button" aria-pressed="false">
@@ -404,12 +443,7 @@
             </button>
             <label for="soundVolume"
               >Master volume
-              <input
-                id="soundVolume"
-                type="range"
-                min="0"
-                max="100"
-                value="75"
+              <input id="soundVolume" type="range" min="0" max="100" value="75"
             /></label>
             <button id="testSound" class="ghost" type="button">
               Test match sound
@@ -450,6 +484,25 @@
           </article>
           <article><span>Referee / TV</span><b>To be confirmed</b></article>
         </div>
+        <section
+          class="opponent-briefing"
+          aria-labelledby="opponentBriefingTitle"
+        >
+          <div>
+            <p class="eyebrow">Next-opponent briefing</p>
+            <h3 id="opponentBriefingTitle">Aston Villa</h3>
+            <p id="opponentBriefingText">
+              Confirmed fixture information only. Team news will not be guessed.
+            </p>
+          </div>
+          <div id="opponentBriefingFacts" class="opponent-briefing-facts"></div>
+          <a
+            href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
+            target="_blank"
+            rel="noopener"
+            >Check the official match page</a
+          >
+        </section>
         <div id="weatherPanel" class="weather-note">
           <b>Falmer weather</b>
           <p>
@@ -495,10 +548,21 @@
             change.
           </p>
         </div>
-        <div
-          class="next-home-away"
-          aria-label="Next home and away fixtures"
-        >
+        <div class="season-centre-head">
+          <label for="seasonSelector"
+            >Season
+            <select id="seasonSelector">
+              <option value="2026/27">2026/27</option>
+            </select>
+          </label>
+          <div class="season-stat-grid" aria-label="Season statistics">
+            <article><span>Played</span><b id="seasonPlayed">0</b></article>
+            <article><span>Points</span><b id="seasonPoints">0</b></article>
+            <article><span>Record</span><b id="seasonRecord">0-0-0</b></article>
+            <article><span>Goals</span><b id="seasonGoals">0-0</b></article>
+          </div>
+        </div>
+        <div class="next-home-away" aria-label="Next home and away fixtures">
           <article class="next-home">
             <span>Next home</span><b id="nextHomeFixture">To be confirmed</b
             ><small id="nextHomeDate"></small>
@@ -554,6 +618,12 @@
           Hide fixtures
         </button>
         <div id="fixtureList" class="fixtures-list"></div>
+        <details class="prediction-history-panel">
+          <summary>Your season prediction record</summary>
+          <div id="predictionHistory" aria-live="polite">
+            Save a match prediction to begin your record.
+          </div>
+        </details>
       </section>
 
       <section class="card" id="xi">
@@ -586,6 +656,35 @@
           ><button id="clearXI" class="ghost" type="button">Clear</button
           ><button id="shareXI" class="ghost" type="button">Share XI</button>
         </div>
+        <div class="xi-tactics" aria-label="Team leadership and tactics">
+          <label
+            >Captain<select id="xiCaptain">
+              <option value="">Choose after selecting your XI</option>
+            </select></label
+          ><label
+            >Penalty taker<select id="xiPenaltyTaker">
+              <option value="">Choose after selecting your XI</option>
+            </select></label
+          ><label
+            >Free-kick taker<select id="xiFreeKickTaker">
+              <option value="">Choose after selecting your XI</option>
+            </select></label
+          ><label
+            >Approach<select id="xiApproach">
+              <option>Balanced</option>
+              <option>Front-foot pressing</option>
+              <option>Patient possession</option>
+              <option>Direct and quick</option>
+              <option>Compact counter-attack</option>
+            </select></label
+          >
+          <button id="copyXILink" class="ghost" type="button">
+            Copy recreatable XI link
+          </button>
+        </div>
+        <p class="drag-hint">
+          Desktop: drag one selected player slot onto another to swap them.
+        </p>
         <div id="pitch" class="pitch" aria-live="polite"></div>
         <details class="bench-section" open>
           <summary id="benchTitle">Seven substitutes</summary>
@@ -664,6 +763,16 @@
             The club’s journey, the grounds that shaped it and people remembered
             across generations.
           </p>
+        </div>
+        <div class="history-explorer">
+          <label for="historySearch"
+            >Search the Albion archive
+            <input
+              id="historySearch"
+              type="search"
+              placeholder="Try Goldstone, promotion or Dunk"
+          /></label>
+          <div id="historySearchResults" aria-live="polite"></div>
         </div>
         <div class="story-tabs" role="tablist" aria-label="Albion Story">
           <button
@@ -1023,6 +1132,35 @@
             >
           </div>
         </div>
+        <section class="matchday-itinerary" aria-labelledby="itineraryTitle">
+          <div>
+            <p class="eyebrow">Personal matchday itinerary</p>
+            <h3 id="itineraryTitle">Plan your arrival</h3>
+          </div>
+          <div class="itinerary-controls">
+            <label
+              >Travel method<select id="itineraryTravel">
+                <option value="train">Train</option>
+                <option value="bus">Bus or coach</option>
+                <option value="park">Park and ride</option>
+                <option value="walk">Walk or cycle</option>
+              </select></label
+            ><label
+              >Aim to enter<select id="itineraryArrival">
+                <option value="75">75 minutes before kick-off</option>
+                <option value="60">60 minutes before kick-off</option>
+                <option value="45">45 minutes before kick-off</option>
+                <option value="30">30 minutes before kick-off</option>
+              </select></label
+            ><button id="buildItinerary" type="button">Build itinerary</button>
+          </div>
+          <ol id="itineraryResult" class="itinerary-result" aria-live="polite">
+            <li>Choose your travel method and preferred arrival time.</li>
+          </ol>
+          <button id="printItinerary" class="ghost" type="button">
+            Print matchday sheet
+          </button>
+        </section>
         <div class="cta-row stand-links">
           <a
             href="https://www.brightonandhovealbion.com/amex-matchday"
@@ -1186,6 +1324,65 @@
         </div>
       </section>
 
+      <section class="card supporter-settings" id="supporter-settings">
+        <div class="section-head">
+          <p class="eyebrow">Your device</p>
+          <h2>Accessibility, data and site health</h2>
+          <p>
+            These preferences stay on this device. No account or external
+            database is used.
+          </p>
+        </div>
+        <div class="settings-grid">
+          <section>
+            <h3>Display and controls</h3>
+            <label
+              ><input id="largeTextSetting" type="checkbox" /> Larger text and
+              controls</label
+            ><label
+              ><input id="highContrastSetting" type="checkbox" /> Stronger
+              contrast</label
+            ><label
+              ><input id="reduceMotionSetting" type="checkbox" /> Reduce
+              animations</label
+            ><label
+              ><input id="dataSaverSetting" type="checkbox" /> Reduced-data
+              mode</label
+            >
+          </section>
+          <section>
+            <h3>Save or move your choices</h3>
+            <p>
+              Export your quiz record, predictions, XI, stand and preferences,
+              then restore them on another device.
+            </p>
+            <div class="button-row">
+              <button id="exportFanData" type="button">Export my data</button>
+              <label class="button-file"
+                >Restore data<input
+                  id="importFanData"
+                  type="file"
+                  accept="application/json"
+              /></label>
+            </div>
+            <p id="dataTransferStatus" class="small" aria-live="polite"></p>
+          </section>
+          <section>
+            <h3>Information freshness</h3>
+            <div id="freshnessPanel" class="freshness-panel"></div>
+            <a href="editor.html">Open site maintenance dashboard</a>
+          </section>
+          <section>
+            <h3>Diagnostics</h3>
+            <p id="diagnosticStatus">Checking locally saved information…</p>
+            <button id="runDiagnostics" class="ghost" type="button">
+              Run site checks
+            </button>
+            <p id="connectionStatus" class="small" role="status"></p>
+          </section>
+        </div>
+      </section>
+
       <section class="card links">
         <h2>Useful links</h2>
         <div class="cta-row">
@@ -1207,8 +1404,10 @@
             rel="noopener"
             >Official fixtures</a
           ><button id="installApp" class="secondary" type="button" hidden>
-            Install Albion Hub
-          </button>
+            Install Albion Hub</button
+          ><a class="secondary" href="#supporter-settings"
+            >Accessibility and data</a
+          >
         </div>
       </section>
     </main>
@@ -1224,8 +1423,9 @@
       aria-pressed="false"
       title="Turn sound effects on"
     >
-      🔇 Sound effects off</button
-    ><div
+      🔇 Sound effects off
+    </button>
+    <div
       id="soundCaption"
       class="sound-caption"
       role="status"
@@ -1251,6 +1451,16 @@
       aria-live="polite"
       hidden
     ></div>
+    <aside id="tourCoach" class="tour-coach" hidden aria-live="polite">
+      <b id="tourTitle">Welcome</b>
+      <p id="tourText"></p>
+      <div>
+        <button id="tourPrevious" class="ghost" type="button">Previous</button>
+        <span id="tourPosition"></span>
+        <button id="tourNext" type="button">Next</button>
+        <button id="tourClose" class="ghost" type="button">Close</button>
+      </div>
+    </aside>
     <div id="cookieNotice" class="cookie-notice" role="status">
       <p>
         This fan site stores quiz progress, predictions and sound preferences on
@@ -1309,5 +1519,6 @@
     <script src="content-data.js"></script>
     <script src="quiz-data.js"></script>
     <script src="app.js"></script>
+    <script src="v16.js"></script>
   </body>
 </html>

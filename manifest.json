@@ -1,14 +1,50 @@
 {
   "name": "Albion Fan Hub",
   "short_name": "Albion Hub",
-  "description": "Unofficial Brighton & Hove Albion quiz, penalty shoot-out, fixtures and matchday fan hub.",
+  "description": "Unofficial Brighton & Hove Albion matchday, season, quiz, penalty shoot-out and supporter planning hub.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0057b8",
   "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Play Albion quiz",
+      "short_name": "Quiz",
+      "url": "./#quiz",
+      "icons": [
+        { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Brighton v Palace penalties",
+      "short_name": "Penalties",
+      "url": "./#shootout",
+      "icons": [
+        { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    },
+    {
+      "name": "Open matchday centre",
+      "short_name": "Matchday",
+      "url": "./#match-centre",
+      "icons": [
+        { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }
+      ]
+    }
   ]
 }
