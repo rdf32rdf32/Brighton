@@ -29,11 +29,12 @@
     const el = $('countdown');
     if (!el) return;
     const remaining = new Date(MATCH.dateISO) - new Date();
-    if (remaining <= 0) { el.textContent = 'Matchday'; return; }
+    if (remaining <= 0) { el.textContent = 'Matchday'; if ($('quickCountdown')) $('quickCountdown').textContent = 'Matchday'; return; }
     const days = Math.floor(remaining / 864e5);
     const hours = Math.floor((remaining % 864e5) / 36e5);
     const minutes = Math.floor((remaining % 36e5) / 6e4);
     el.innerHTML = `<b>${days}</b> days <b>${hours}</b> hrs <b>${minutes}</b> mins`;
+    if ($('quickCountdown')) $('quickCountdown').textContent = `${days}d ${hours}h ${minutes}m to kick-off`;
   }
 
   function matchConfiguration() {
@@ -49,6 +50,7 @@
     $('centreMatchTime').textContent = MATCH.time;
     $('centreMatchVenue').textContent = MATCH.venue;
     $('predictorMatchTitle').textContent = title;
+    if ($('quickNextFixture')) $('quickNextFixture').textContent = title;
     $('awayScoreLabel').textContent = `${shortOpponent} goals`;
     $('fixtureCheckedDate').textContent = `Fixture list checked: ${C.lastUpdated}. Dates and kick-off times may change.`;
     $('globalUpdated').textContent = `Information checked ${C.lastUpdated}.`;
@@ -108,6 +110,7 @@
     const chosen = [...values, ...bench].filter(Boolean); const unique = new Set(chosen);
     localStorage.setItem('albionXI', JSON.stringify({formation:$('formation').value, values, bench}));
     const startingComplete = values.filter(Boolean).length === 11; const benchComplete = bench.filter(Boolean).length === 7;
+    if ($('quickXIStatus')) $('quickXIStatus').textContent = startingComplete ? `${$('formation').value} selected` : `${values.filter(Boolean).length}/11 selected`;
     $('xiMessage').textContent = unique.size !== chosen.length ? 'Choose a different player for every starting and substitute place.'
       : startingComplete && benchComplete ? 'Your complete matchday squad is saved on this device.'
       : `${values.filter(Boolean).length}/11 starters · ${bench.filter(Boolean).length}/7 substitutes selected.`;
@@ -131,6 +134,8 @@
     try { saved = JSON.parse(localStorage.getItem('albionXI')) || {}; } catch {}
     if (saved.formation) $('formation').value = saved.formation;
     renderPitch(saved.values); renderBench(saved.bench);
+    const savedStarterCount = Array.isArray(saved.values) ? saved.values.filter(Boolean).length : 0;
+    if ($('quickXIStatus')) $('quickXIStatus').textContent = savedStarterCount === 11 ? `${$('formation').value} selected` : savedStarterCount ? `${savedStarterCount}/11 selected` : 'Not selected yet';
     $('formation').addEventListener('change', () => { const bench = [...document.querySelectorAll('#bench select')].map(select => select.value); renderPitch(); renderBench(bench); saveXI(); });
     $('loadPredicted').addEventListener('click', loadPredictedXI);
     $('clearXI').addEventListener('click', () => {
@@ -171,17 +176,22 @@
 
   let currentQuiz = []; let quizPage = 0; let quizScore = 0; let quizChecked = false; let quizAdvanceTimer = 0;
   const quizGroups = [[0], [1], [2], [3], [4]];
-  function poolKey() { return 'albionQuizSeen:medium-hard'; }
+  const quizProgressKey = 'albionQuizProgress';
+  function selectedQuizCategory() { return $('quizCategory')?.value || 'mixed'; }
+  function poolKey() { return `albionQuizSeen:medium-hard:${selectedQuizCategory()}`; }
   function questionCategory(question) {
-    const text = `${question.question} ${question.explanation}`.toLowerCase();
-    if (/amex|goldstone|withdean|priestfield|ground|stadium|falmer/.test(text)) return 'grounds';
-    if (/record|most |how many|goalscorer|appearance/.test(text)) return 'records';
-    if (/manager|season|promotion|relegation|founded|league|fa cup|charity shield|europe/.test(text)) return 'history';
-    if (/who |player|captain|goalkeeper|forward|midfielder|defender/.test(text)) return 'people';
+    const text = question.question.toLowerCase();
+    if (/amex|goldstone|withdean|priestfield|ground|stadium|falmer|home venue/.test(text)) return 'grounds';
+    if (/\bwho\b|which player|which goalkeeper|which forward|which midfielder|which defender|captain|goalscorer/.test(text)) return 'people';
+    if (/record|most |how many|appearance|highest|lowest|largest|biggest|fewest|total/.test(text)) return 'records';
+    if (/manager|managed|season|promotion|relegation|founded|league|fa cup|charity shield|europe|year|when|division|round|final/.test(text)) return 'history';
     return 'modern';
   }
   function selectFreshQuestions(count = 5) {
-    const pool = Q.filter(question => question.difficulty === 'Medium' || question.difficulty === 'Hard');
+    const basePool = Q.filter(question => question.difficulty === 'Medium' || question.difficulty === 'Hard');
+    const category = selectedQuizCategory();
+    const categoryPool = category === 'mixed' ? basePool : basePool.filter(question => questionCategory(question) === category);
+    const pool = categoryPool.length >= count ? categoryPool : basePool;
     let seen = [];
     try { seen = JSON.parse(localStorage.getItem(poolKey())) || []; } catch {}
     let available = pool.filter(question => !seen.includes(question.question));
@@ -206,12 +216,25 @@
     const completed = quizGroups.slice(0, quizPage).flat().length;
     $('quizResult').textContent = `Score: ${quizScore}/${completed}`;
     $('checkQuiz').textContent = 'Check answer'; $('checkQuiz').disabled = false; quizChecked = false;
+    localStorage.setItem(quizProgressKey, JSON.stringify({category:selectedQuizCategory(), currentQuiz, quizPage, quizScore}));
   }
   function newQuiz() {
     window.clearTimeout(quizAdvanceTimer);
     currentQuiz = selectFreshQuestions().map(prepareQuestion); quizPage = 0; quizScore = 0;
     $('shareQuiz').hidden = true;
     renderQuizPage();
+  }
+  function initialiseQuiz() {
+    const savedCategory = localStorage.getItem('albionQuizCategory') || 'mixed';
+    if ([...$('quizCategory').options].some(option => option.value === savedCategory)) $('quizCategory').value = savedCategory;
+    try {
+      const saved = JSON.parse(localStorage.getItem(quizProgressKey));
+      if (saved?.category === selectedQuizCategory() && saved?.currentQuiz?.length === 5 && Number.isInteger(saved.quizPage) && saved.quizPage >= 0 && saved.quizPage < 5) {
+        currentQuiz = saved.currentQuiz; quizPage = saved.quizPage; quizScore = Number(saved.quizScore) || 0;
+        renderQuizPage(); return;
+      }
+    } catch {}
+    newQuiz();
   }
   function showQuizResult() {
     const previousBest = Number(localStorage.getItem('albionQuizBest') || 0); const best = Math.max(previousBest, quizScore);
@@ -221,6 +244,7 @@
     $('quizContainer').innerHTML = `<div class="quiz-finish"><img src="albion-safe-graphic.svg" alt=""><b>${quizScore}/5</b><p>${verdict}</p></div><details class="quiz-review"><summary>Review answers · mistakes shown first</summary>${review.map(({question,index}) => `<article class="${question.userCorrect ? 'review-correct' : 'review-mistake'}"><b>${index + 1}. ${esc(question.question)}</b><p>${esc(question.choices[question.answer].text)} — ${esc(question.explanation)}</p></article>`).join('')}</details>`;
     $('quizResult').textContent = 'Round complete.'; $('checkQuiz').disabled = true; $('checkQuiz').textContent = 'Round complete';
     $('shareQuiz').hidden = false; $('shareQuiz').dataset.shareText = `I scored ${quizScore}/5 in the Albion Fan Hub quiz.`;
+    localStorage.removeItem(quizProgressKey);
   }
   function checkQuiz() {
     if (quizChecked) return;
@@ -244,7 +268,7 @@
     quizAdvanceTimer = window.setTimeout(() => {
       if (finalQuestion) showQuizResult();
       else { quizPage += 1; renderQuizPage(); }
-    }, 1700);
+    }, 3700);
   }
 
   function predictor() {
@@ -257,6 +281,44 @@
       $('predictionSummary').textContent = text;
     });
     $('predictionSummary').textContent = localStorage.getItem('albionPrediction') || 'Make and save your prediction.';
+  }
+
+  function leaguePredictor() {
+    const slider = $('leaguePosition'); const output = $('leaguePositionOutput'); const band = $('leagueBand'); const summary = $('leaguePredictionSummary');
+    const ordinal = value => {
+      const number = Number(value); const mod100 = number % 100;
+      if (mod100 >= 11 && mod100 <= 13) return `${number}th`;
+      return `${number}${number % 10 === 1 ? 'st' : number % 10 === 2 ? 'nd' : number % 10 === 3 ? 'rd' : 'th'}`;
+    };
+    const bandFor = position => position <= 4 ? 'Champions League places' : position <= 7 ? 'European places' : position <= 10 ? 'Top half' : position <= 16 ? 'Mid-table' : position <= 17 ? 'Lower table' : 'Relegation places';
+    const update = () => {
+      const label = ordinal(slider.value); output.value = label; output.textContent = label; band.textContent = bandFor(Number(slider.value));
+      if ($('quickLeaguePosition')) $('quickLeaguePosition').textContent = `${label} · ${band.textContent}`;
+    };
+    const saved = Number(localStorage.getItem('albionLeaguePosition'));
+    if (saved >= 1 && saved <= 20) slider.value = String(saved);
+    update();
+    if (!(saved >= 1 && saved <= 20) && $('quickLeaguePosition')) $('quickLeaguePosition').textContent = 'Not predicted yet';
+    if (saved >= 1 && saved <= 20) summary.textContent = `Your prediction: Albion to finish ${ordinal(saved)} (${bandFor(saved)}).`;
+    slider.addEventListener('input', update);
+    $('saveLeaguePrediction').addEventListener('click', () => {
+      localStorage.setItem('albionLeaguePosition', slider.value); update();
+      summary.textContent = `Saved: Albion to finish ${ordinal(slider.value)} (${band.textContent}).`;
+    });
+    $('shareLeaguePrediction').dataset.defaultLabel = 'Share prediction';
+    $('shareLeaguePrediction').addEventListener('click', () => shareText('My Albion league prediction', `I predict Brighton & Hove Albion will finish ${ordinal(slider.value)} in the 2026/27 Premier League.`, $('shareLeaguePrediction')));
+  }
+
+  function todayInAlbionHistory() {
+    const memories = [...(C.facts || []), ...(C.memories || [])];
+    const now = new Date(); let offset = 0;
+    const show = () => {
+      const dayNumber = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / 864e5);
+      $('todayHistoryDate').textContent = new Intl.DateTimeFormat(undefined, {day:'numeric',month:'long'}).format(now);
+      $('todayHistoryText').textContent = memories[(dayNumber + offset) % memories.length] || 'Albion history is made by the club and its supporters.';
+    };
+    $('anotherTodayHistory').addEventListener('click', () => { offset += 1; show(); });
+    show();
   }
 
   function randomContent() {
@@ -400,6 +462,7 @@
     }
     function setScene() {
       clearMotion();
+      $('shootout').classList.add('game-active');
       const saving = phase === 'save'; const player = lineup[albionKicks % lineup.length];
       $('turnBadge').textContent = saving ? 'PALACE SHOOTS · YOU CONTROL VERBRUGGEN' : 'ALBION PENALTY · YOU ARE SHOOTING';
       $('turnBadge').className = `turn-badge ${saving ? 'palace-turn' : 'albion-turn'}`;
@@ -437,7 +500,11 @@
         const albion = albionResults[index]; const palace = palaceResults[index]; const player = lineup[index % lineup.length];
         return `<li><span>${esc(player.name)}: <b class="${albion?.scored ? 'summary-goal' : 'summary-miss'}">${esc(albion?.label || '—')}</b></span><span>Palace: <b class="${palace?.scored ? 'summary-goal' : 'summary-miss'}">${esc(palace?.label || '—')}</b></span></li>`;
       }).join('');
-      $('shootoutSummary').innerHTML = `<h3>Brighton v Palace shoot-out card</h3><ol>${rows}</ol>`;
+      const shotMap = (title, results) => `<section class="shot-map-card"><h4>${esc(title)}</h4><div class="shot-map">${positions.map((position,index) => {
+        const shots = results.filter(result => result.target === position);
+        return `<div class="shot-map-zone ${position}"><b>${index + 1}</b><span>${shots.map(result => `<i class="${result.scored ? 'map-goal' : 'map-out'}" title="${esc(result.label)}"></i>`).join('')}</span></div>`;
+      }).join('')}</div></section>`;
+      $('shootoutSummary').innerHTML = `<h3>Brighton v Palace shoot-out card</h3><ol>${rows}</ol><div class="shot-map-legend"><span><i class="map-goal"></i> Goal</span><span><i class="map-out"></i> Saved or missed</span></div><div class="shot-maps">${shotMap('Albion shots', albionResults)}${shotMap('Palace shots', palaceResults)}</div>`;
     }
     function reset() {
       albionKicks = 0; palaceKicks = 0; albionGoals = 0; palaceGoals = 0; phase = 'shoot'; locked = false;
@@ -460,6 +527,7 @@
     function finish(albionWon) {
       targets.forEach(button => button.disabled = true);
       $('panenkaButton').disabled = true;
+      $('shootout').classList.remove('game-active');
       announce(albionWon ? 'SEAGULLS WIN!' : 'Palace win the shoot-out', `Brighton ${albionGoals}–${palaceGoals} Palace.`);
       status.classList.add(albionWon ? 'win-status' : 'loss-status');
       goalFrame.classList.add(albionWon ? 'albion-win' : 'palace-win');
@@ -525,7 +593,7 @@
       panenkaAttempts += 1; if (scored) { panenkaGoals += 1; albionGoals += 1; }
       albionResults.push({scored,label:scored ? 'Panenka goal' : 'Panenka saved',target}); albionKicks += 1;
       const slow = true;
-      announce(`${player.name} tries a Panenka…`, 'A brave one-in-three gamble.');
+      announce(`${player.name} tries a Panenka…`, 'A brave, delicate gamble.');
       animateShot({target,dive,missed:false,woodwork:false,saved,scored,slow,panenka:true});
       window.setTimeout(() => {
         announce(scored ? 'PANENKA GOAL!' : 'PANENKA SAVED!', scored ? `${player.name} delicately chips the keeper.` : 'The Palace goalkeeper stays central and catches it.');
@@ -680,14 +748,14 @@
     topButton.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
     const notice = $('cookieNotice'); if (localStorage.getItem('albionCookieNotice') === 'accepted') notice.hidden = true;
     $('acceptCookies').addEventListener('click', () => { localStorage.setItem('albionCookieNotice','accepted'); notice.hidden = true; });
-    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, prediction, fixture, sound, theme and cookie choices?')) return; ['albionXI','albionPrediction','albionQuizBest','albionQuizSeen:medium-hard','albionFixtureMonth','albionSound','albionCookieNotice','albionTheme'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
+    $('resetSite').addEventListener('click', () => { if (window.confirm && !window.confirm('Reset saved quiz, team, predictions, fixture, sound, theme and cookie choices?')) return; Object.keys(localStorage).filter(key => key.startsWith('albionQuizSeen:')).forEach(key => localStorage.removeItem(key)); ['albionXI','albionPrediction','albionLeaguePosition','albionQuizBest','albionQuizProgress','albionQuizCategory','albionLastSection','albionFixtureMonth','albionSound','albionCookieNotice','albionTheme'].forEach(key => localStorage.removeItem(key)); window.location.reload(); });
   }
 
   function siteExperience() {
     const search = $('siteSearch'); const results = $('siteSearchResults');
     const searchable = [
       ['quiz','Quiz'],['shootout','Penalty shoot-out'],['match-centre','Matchday'],['fixtures','Fixtures'],
-      ['xi','Pick your XI'],['predictor','Match predictor'],['story','Albion Story'],['records','Records & Honours'],
+      ['xi','Pick your XI'],['predictor','Match predictor'],['league-predictor','League position predictor'],['today-history','Today in Albion history'],['story','Albion Story'],['records','Records & Honours'],
       ['travel','Getting to the Amex'],['anthem','Sussex by the Sea']
     ];
     search.addEventListener('input', () => {
@@ -704,6 +772,21 @@
     };
     setTheme(localStorage.getItem('albionTheme') === 'night');
     theme.addEventListener('click', () => setTheme(!document.body.classList.contains('night-theme')));
+    const continueButton = $('continueButton'); const previousSection = localStorage.getItem('albionLastSection');
+    const previousMatch = searchable.find(([id]) => id === previousSection);
+    if (previousMatch) {
+      continueButton.hidden = false; continueButton.textContent = `Continue: ${previousMatch[1]}`;
+      continueButton.addEventListener('click', () => $(previousSection)?.scrollIntoView({behavior:'smooth',block:'start'}));
+    }
+    if ('IntersectionObserver' in window) {
+      window.setTimeout(() => {
+        const observer = new IntersectionObserver(entries => {
+          const visible = entries.filter(entry => entry.isIntersecting).sort((a,b) => b.intersectionRatio - a.intersectionRatio)[0];
+          if (visible?.target?.id) localStorage.setItem('albionLastSection', visible.target.id);
+        }, {threshold:[.35,.65]});
+        searchable.forEach(([id]) => { if ($(id)) observer.observe($(id)); });
+      }, 1200);
+    }
     $('shareXI').dataset.defaultLabel = 'Share XI';
     $('shareXI').addEventListener('click', () => {
       const players = [...document.querySelectorAll('#pitch select')].map(select => select.value).filter(Boolean);
@@ -721,12 +804,23 @@
     $('monthFilter').addEventListener('change', () => { $('monthButtons').querySelectorAll('button').forEach(button => button.classList.toggle('active', button.dataset.month === $('monthFilter').value)); localStorage.setItem('albionFixtureMonth', $('monthFilter').value); renderFixtures(); });
     $('toggleFixtures').addEventListener('click', () => { const hidden = $('fixtureList').toggleAttribute('hidden'); $('toggleFixtures').textContent = hidden ? 'Show fixtures' : 'Hide fixtures'; $('toggleFixtures').setAttribute('aria-expanded', String(!hidden)); });
     $('newQuiz').addEventListener('click', newQuiz);
+    $('quizCategory').addEventListener('change', () => { localStorage.setItem('albionQuizCategory', $('quizCategory').value); localStorage.removeItem(quizProgressKey); newQuiz(); });
     $('checkQuiz').addEventListener('click', checkQuiz);
     $('shareQuiz').dataset.defaultLabel = 'Share quiz result';
     $('shareQuiz').addEventListener('click', () => shareText('Albion Fan Hub quiz', $('shareQuiz').dataset.shareText, $('shareQuiz')));
     $('bestScore').textContent = `Best: ${localStorage.getItem('albionQuizBest') || 0}/5`;
   }
 
-  matchConfiguration(); countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); newQuiz(); predictor(); randomContent(); weather(); amex(); story(); historyDetails(); peopleDetails(); recordTabs(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); siteExperience(); ui();
-  if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('./service-worker.js').catch(() => {});
+  matchConfiguration(); countdown(); setInterval(countdown, 60000); renderSquad(); initXI(); initFixtureMonths(); renderFixtures(); predictor(); leaguePredictor(); todayInAlbionHistory(); randomContent(); weather(); amex(); story(); historyDetails(); peopleDetails(); recordTabs(); travelGuide(); shootout(); fixtureCarousel(); calendarDownload(); soundAndInstall(); pageUtilities(); siteExperience(); ui(); initialiseQuiz();
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    navigator.serviceWorker.register('./service-worker.js').then(registration => {
+      const showUpdate = () => { if (navigator.serviceWorker.controller) $('updateNotice').hidden = false; };
+      if (registration.waiting) showUpdate();
+      registration.addEventListener('updatefound', () => {
+        const worker = registration.installing;
+        worker?.addEventListener('statechange', () => { if (worker.state === 'installed') showUpdate(); });
+      });
+      $('reloadUpdate').addEventListener('click', () => window.location.reload());
+    }).catch(() => {});
+  }
 })();
