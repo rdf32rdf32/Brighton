@@ -407,7 +407,7 @@
           .map(
             (fixture) => `
       <article class="fixture-item ${fixture.venue === "H" ? "fixture-home" : "fixture-away"} ${fixture === nextFixture ? "fixture-next" : ""}"><div>${fixture === nextFixture ? '<span class="next-fixture-label">NEXT FIXTURE</span>' : ""}<b>${esc(fixture.date)}</b><span class="fixture-badge ${fixture.venue === "H" ? "home-badge" : "away-badge"}">${fixture.venue === "H" ? "HOME" : "AWAY"}</span><small>Premier League</small></div>
-      <div><strong>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === "H" ? "Amex Stadium" : "Away"} · Date provisional until confirmed by the club</small></div><button class="fixture-calendar ghost" type="button" data-calendar-index="${C.fixtures.indexOf(fixture)}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></article>`,
+      <div><strong>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === "H" ? "Amex Stadium" : "Away"} · Date provisional until confirmed by the club</small><div class="fixture-extra" id="fixture-extra-${C.fixtures.indexOf(fixture)}" hidden><span><b>Competition</b>Premier League</span><span><b>Venue</b>${fixture.venue === "H" ? "American Express Stadium" : `${esc(fixture.opponent)} away`}</span><span><b>Status</b>Check official listings before travelling</span></div></div><div class="fixture-actions"><button class="fixture-more ghost" type="button" data-fixture-expand="${C.fixtures.indexOf(fixture)}" aria-expanded="false" aria-controls="fixture-extra-${C.fixtures.indexOf(fixture)}">Details</button><button class="fixture-calendar ghost" type="button" data-calendar-index="${C.fixtures.indexOf(fixture)}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></div></article>`,
           )
           .join("")
       : "<p>No fixtures match that search.</p>";
@@ -482,6 +482,7 @@
   let quizAdvanceTimer = 0;
   let quizGroups = [[0], [1], [2], [3], [4]];
   const quizProgressKey = "albionQuizProgress";
+  const quizCategoryStatsKey = "albionQuizCategoryStats";
   const resetQuizGroups = () => {
     quizGroups = currentQuiz.map((_, index) => [index]);
   };
@@ -619,6 +620,7 @@
     quizScore = 0;
     $("shareQuiz").hidden = true;
     $("replayMistakes").hidden = true;
+    if ($("replayWeakCategory")) $("replayWeakCategory").hidden = true;
     renderQuizPage();
   }
   function initialiseQuiz() {
@@ -684,6 +686,14 @@
     $("shareQuiz").hidden = false;
     const mistakes = currentQuiz.filter((question) => !question.userCorrect);
     $("replayMistakes").hidden = mistakes.length === 0;
+    if ($("replayWeakCategory")) {
+      const weak = weakestQuizCategory();
+      $("replayWeakCategory").hidden = !weak;
+      $("replayWeakCategory").textContent = weak
+        ? `Practise weakest area: ${weak.label}`
+        : "Practise weakest area";
+      $("replayWeakCategory").dataset.category = weak?.key || "";
+    }
     $("shareQuiz").dataset.shareText =
       `I scored ${quizScore}/${currentQuiz.length} and earned “${verdict}” in the Albion Fan Hub quiz.`;
     localStorage.setItem(
@@ -713,6 +723,42 @@
     renderQuizPage();
     $("quizResult").textContent = "Mistakes round: your first choice is final.";
   }
+  function readQuizCategoryStats() {
+    try {
+      return JSON.parse(localStorage.getItem(quizCategoryStatsKey)) || {};
+    } catch {
+      return {};
+    }
+  }
+  function weakestQuizCategory() {
+    const labels = {
+      history: "History",
+      people: "Players",
+      grounds: "Amex & grounds",
+      records: "Records",
+      modern: "Modern Albion",
+    };
+    const entries = Object.entries(readQuizCategoryStats())
+      .filter(([, value]) => Number(value?.answered) >= 2)
+      .map(([key, value]) => ({
+        key,
+        label: labels[key] || key,
+        rate: Number(value.correct) / Math.max(1, Number(value.answered)),
+        answered: Number(value.answered),
+      }))
+      .sort((a, b) => a.rate - b.rate || b.answered - a.answered);
+    return entries[0] || null;
+  }
+  function replayWeakQuizCategory() {
+    const category = $("replayWeakCategory")?.dataset.category;
+    if (!category) return;
+    $("quizCategory").value = category;
+    localStorage.setItem("albionQuizCategory", category);
+    localStorage.removeItem(quizProgressKey);
+    newQuiz();
+    $("quizResult").textContent =
+      "Focused round: your weakest Albion category.";
+  }
   function checkQuiz() {
     if (quizChecked) return;
     const group = quizGroups[quizPage];
@@ -732,6 +778,19 @@
       const correct = selected === question.answer;
       question.userCorrect = correct;
       if (correct) quizScore += 1;
+      const category = questionCategory(question);
+      const categoryStats = readQuizCategoryStats();
+      const categoryRecord = categoryStats[category] || {
+        answered: 0,
+        correct: 0,
+      };
+      categoryRecord.answered += 1;
+      if (correct) categoryRecord.correct += 1;
+      categoryStats[category] = categoryRecord;
+      localStorage.setItem(
+        quizCategoryStatsKey,
+        JSON.stringify(categoryStats),
+      );
       const fieldset = document.querySelector(
         `.quiz-question[data-question="${index}"]`,
       );
@@ -1154,6 +1213,13 @@
       "centre",
       "middle-left",
     ];
+    const palaceTakers = [
+      { label: "Palace taker 1", style: "quick, straight run-up", skin: "#8e583f", hair: "#241712" },
+      { label: "Palace taker 2", style: "measured, angled approach", skin: "#c88b69", hair: "#322016" },
+      { label: "Palace taker 3", style: "short stutter step", skin: "#754633", hair: "#17110f" },
+      { label: "Palace taker 4", style: "long, composed approach", skin: "#a96f52", hair: "#251912" },
+      { label: "Palace taker 5", style: "fast final stride", skin: "#d09a76", hair: "#2b1c15" },
+    ];
     let lineup = [];
     let albionResults = [];
     let palaceResults = [];
@@ -1171,6 +1237,9 @@
     let panenkaGoals = 0;
     let bestSave = "No save recorded";
     let palacePlannedTarget = "centre";
+    let palaceRunStartedAt = 0;
+    let palaceRunTimer = 0;
+    let palaceShotTimer = 0;
     let lastKick = null;
     let keeperStats = {
       dives: 0,
@@ -1195,14 +1264,28 @@
     const announce = (title, detail) => {
       status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`;
     };
-    const saveTechnique = (target) =>
-      target.includes("top")
-        ? { key: "fingertips", label: "fingertip save" }
-        : target.includes("middle")
-          ? { key: "parries", label: "one-handed parry" }
-          : target === "centre"
-            ? { key: "catches", label: "held safely" }
-            : { key: "legs", label: "strong leg save" };
+    const saveTechnique = (target) => {
+      if (target.includes("top"))
+        return { key: "fingertips", label: "fingertip save" };
+      if (target === "centre")
+        return { key: "catches", label: "held safely" };
+      if (target.includes("bottom"))
+        return Math.random() < 0.22
+          ? { key: "legs", label: "strong trailing-leg save" }
+          : { key: "parries", label: "low two-handed parry" };
+      return Math.random() < 0.18
+        ? { key: "legs", label: "strong leg save" }
+        : { key: "parries", label: "one-handed parry" };
+    };
+    const adjacentDives = {
+      "top-left": ["middle-left"],
+      "middle-left": ["top-left", "bottom-left", "centre"],
+      "bottom-left": ["middle-left"],
+      centre: ["middle-left", "middle-right"],
+      "top-right": ["middle-right"],
+      "middle-right": ["top-right", "bottom-right", "centre"],
+      "bottom-right": ["middle-right"],
+    };
     let liveAccuracy = 1;
     let accuracyFrozen = false;
     const accuracyStarted = Date.now();
@@ -1283,6 +1366,8 @@
         .join("");
     }
     function clearMotion() {
+      window.clearTimeout(palaceRunTimer);
+      window.clearTimeout(palaceShotTimer);
       ball.className = "ball";
       shadow.className = "ball-shadow";
       flash.className = "goal-flash";
@@ -1304,6 +1389,7 @@
         "save-impact",
         "goal-checking",
       );
+      stadiumScene.classList.remove("camera-shoot", "camera-save", "palace-run-live");
       const decision = $("goalDecision");
       decision.hidden = true;
       decision.textContent = "";
@@ -1311,8 +1397,23 @@
     function readyKeeper() {
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${["left", "right", "centre"][Math.floor(Math.random() * 3)]}`;
     }
+    function startPalaceRun() {
+      if (phase !== "save" || locked) return;
+      palaceRunStartedAt = performance.now();
+      stadiumScene.classList.add("palace-run-live");
+      taker.classList.add("run-up", "palace-live-run");
+      announce(
+        "Palace are running up",
+        "Read the body shape and commit Verbruggen now.",
+      );
+      palaceShotTimer = window.setTimeout(
+        () => takePalacePenalty(null, true),
+        1120,
+      );
+    }
     function setScene() {
       clearMotion();
+      palaceRunStartedAt = 0;
       $("shootout").classList.add("game-active");
       const saving = phase === "save";
       const player = lineup[albionKicks % lineup.length];
@@ -1331,6 +1432,7 @@
       $("shotControls").classList.toggle("controls-disabled", saving);
       $("panenkaButton").disabled = saving;
       goalFrame.classList.toggle("saving-turn", saving);
+      stadiumScene.classList.add(saving ? "camera-save" : "camera-shoot");
       taker.classList.toggle("palace-taker", saving);
       keeper.classList.toggle("user-keeper", saving);
       $("keeperNameTag").hidden = !saving;
@@ -1338,7 +1440,13 @@
         "pressure-high",
         Math.max(albionKicks, palaceKicks) >= 4,
       );
+      stadiumScene.classList.toggle(
+        "decisive-kick",
+        Math.max(albionKicks, palaceKicks) >= 4 &&
+          Math.abs(albionGoals - palaceGoals) <= 1,
+      );
       if (saving) {
+        const palaceTaker = palaceTakers[palaceKicks % palaceTakers.length];
         const preferred =
           palacePreferences[palaceKicks % palacePreferences.length];
         palacePlannedTarget =
@@ -1361,13 +1469,13 @@
           ],
         );
         $("penaltyTakerName").textContent =
-          `Palace taker ${palaceKicks + 1} · Bart Verbruggen in goal`;
+          `${palaceTaker.label} · ${palaceTaker.style} · Bart Verbruggen in goal`;
         $("penaltyShirt").textContent = palaceKicks + 1;
-        taker.style.setProperty("--player-skin", "#9b6548");
-        taker.style.setProperty("--player-hair", "#211611");
+        taker.style.setProperty("--player-skin", palaceTaker.skin);
+        taker.style.setProperty("--player-hair", palaceTaker.hair);
         announce(
-          "Choose Verbruggen’s dive",
-          "The website takes Palace’s penalty when you tap a direction.",
+          "Watch the Palace taker",
+          "The run-up starts automatically. Choose Verbruggen’s dive before the strike.",
         );
       } else {
         $("penaltyTakerName").textContent =
@@ -1397,6 +1505,8 @@
       renderLineup();
       renderScore();
       readyKeeper();
+      if (saving)
+        palaceRunTimer = window.setTimeout(startPalaceRun, 520);
     }
     function renderSummary() {
       const rows = Array.from(
@@ -1571,6 +1681,23 @@
       ball.className = `ball ${panenka ? (scored ? "panenka-goal" : "panenka-saved") : missed ? (postSide === "left" ? "shoot-wide-left" : "shoot-wide-right") : woodwork ? `hit-post-${postSide}` : `shoot-${target}`} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : target}`;
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
+      const diveLevel = dive.includes("top")
+        ? "top"
+        : dive.includes("bottom")
+          ? "bottom"
+          : dive === "centre"
+            ? "centre"
+            : "middle";
+      const diveRelation =
+        dive === target
+          ? "exact"
+          : adjacentDives[target]?.includes(dive)
+            ? "adjacent"
+            : "wrong";
+      keeper.classList.add(
+        `dive-level-${diveLevel}`,
+        `dive-${diveRelation}`,
+      );
       playSfx("kick");
       vibrate(18);
       window.setTimeout(
@@ -1589,6 +1716,7 @@
             );
             taker.classList.add("taker-disappointed");
             goalFrame.classList.add("save-impact");
+            keeper.classList.add("ball-contact");
             if (phase === "save")
               bestSave =
                 resolvedTechnique.label[0].toUpperCase() +
@@ -1779,27 +1907,40 @@
       }, 1650);
     }
     function takePalacePenalty(button) {
+      window.clearTimeout(palaceRunTimer);
+      window.clearTimeout(palaceShotTimer);
       locked = true;
       targets.forEach((targetButton) => {
         targetButton.disabled = true;
         targetButton.classList.toggle(
           "selected-target",
-          targetButton === button,
+          Boolean(button) && targetButton === button,
         );
       });
-      const dive = button.dataset.target;
+      const dive = button?.dataset.target || "centre";
       const target = palacePlannedTarget;
+      const reactionMs = palaceRunStartedAt
+        ? Math.max(0, performance.now() - palaceRunStartedAt)
+        : 0;
+      const reaction =
+        reactionMs < 250 ? "early" : reactionMs <= 760 ? "perfect" : "late";
       keeperStats.dives += 1;
       if (dive === target) keeperStats.correctGuesses += 1;
       const missed = Math.random() < 0.1;
       const woodwork = !missed && Math.random() < 0.07;
-      const sameSide = dive.split("-").pop() === target.split("-").pop();
+      const adjacent = adjacentDives[target]?.includes(dive);
+      const exactChance = { early: 0.62, perfect: 0.9, late: 0.46 }[
+        reaction
+      ];
+      const adjacentChance = { early: 0.14, perfect: 0.3, late: 0.08 }[
+        reaction
+      ];
       const saved =
         !missed &&
         !woodwork &&
         (dive === target
-          ? Math.random() < 0.82
-          : sameSide && target !== "centre" && Math.random() < 0.12);
+          ? Math.random() < exactChance
+          : adjacent && Math.random() < adjacentChance);
       const scored = !missed && !woodwork && !saved;
       if (scored || saved) palaceShotsOnTarget += 1;
       if (saved) palaceSaves += 1;
@@ -1819,7 +1960,12 @@
         palaceKicks >= 5 ||
         woodwork ||
         (saved && technique.key === "fingertips");
-      announce("Palace run up…", "Hold your nerve.");
+      const reactionText = {
+        early: "Early commitment",
+        perfect: "Perfect reaction",
+        late: button ? "Late reaction" : "No dive selected",
+      }[reaction];
+      announce("Palace strike…", `${reactionText}. Hold your nerve.`);
       animateShot({
         target,
         dive,
@@ -1841,7 +1987,7 @@
                   ? "OFF THE POST!"
                   : "PALACE MISS!",
             saved
-              ? `${technique.label[0].toUpperCase()}${technique.label.slice(1)}.${technique.key === "fingertips" ? " Slow-motion replay follows." : ""}`
+              ? `${technique.label[0].toUpperCase()}${technique.label.slice(1)} · ${reactionText.toLowerCase()}.${technique.key === "fingertips" ? " Slow-motion replay follows." : ""}`
               : scored
                 ? "The Eagles level the pressure."
                 : "The ball stays out.",
@@ -2263,23 +2409,55 @@
         ? `Anthem volume set to ${anthemVolumeControl.value}%.`
         : `Anthem playing at ${anthemVolumeControl.value}%.`;
     });
-    testButton.addEventListener("click", () => {
+    testButton.addEventListener("click", async () => {
       if (!soundEnabled) updateSound(true);
+      const AudioEngine = window.AudioContext || window.webkitAudioContext;
+      try {
+        audioContext ||= AudioEngine ? new AudioEngine() : null;
+        if (audioContext?.state === "suspended") await audioContext.resume();
+      } catch {
+        soundStatus.textContent =
+          "Match effects could not start. Check this tab and your device volume.";
+        soundReliability.classList.remove("ready");
+        return;
+      }
       playSfx("save");
       window.setTimeout(() => playSfx("crowd"), 320);
+      soundStatus.textContent =
+        `Match effects test played at ${Math.round(masterVolume * 100)}%.`;
+      soundReliability.classList.add("ready");
+      soundReliability.innerHTML =
+        '<span aria-hidden="true">●</span> Match effects are working.';
     });
     playAnthemButton.addEventListener("click", async () => {
       if (!audio.paused) {
         audio.pause();
         return;
       }
+      soundStatus.textContent = "Loading the anthem…";
+      soundReliability.classList.remove("ready");
+      audio.muted = false;
       audio.volume = anthemVolume;
       try {
+        if (audio.ended) audio.currentTime = 0;
+        if (audio.networkState === HTMLMediaElement.NETWORK_NO_SOURCE) {
+          audio.src = "sussex-by-the-sea.mp3";
+          audio.load();
+        }
         await audio.play();
-      } catch {
+      } catch (error) {
         soundStatus.textContent =
-          "The browser blocked playback. Use the play control on the audio bar once.";
+          "Playback was blocked. Press the play triangle in the audio bar, then check your device volume.";
         soundReliability.classList.remove("ready");
+        soundReliability.innerHTML =
+          '<span aria-hidden="true">●</span> Anthem did not start. The native audio bar remains available.';
+      }
+    });
+    audio.addEventListener("canplay", () => {
+      if (audio.paused) {
+        soundReliability.classList.add("ready");
+        soundReliability.innerHTML =
+          '<span aria-hidden="true">●</span> Anthem loaded and ready to play.';
       }
     });
     audio.addEventListener("play", () => {
@@ -2482,6 +2660,16 @@
         : "Hide fixtures";
       $("toggleFixtures").setAttribute("aria-expanded", String(!hidden));
     });
+    $("fixtureList").addEventListener("click", (event) => {
+      const button = event.target.closest("[data-fixture-expand]");
+      if (!button) return;
+      const detail = $(`fixture-extra-${button.dataset.fixtureExpand}`);
+      if (!detail) return;
+      const opening = detail.hidden;
+      detail.hidden = !opening;
+      button.setAttribute("aria-expanded", String(opening));
+      button.textContent = opening ? "Hide details" : "Details";
+    });
     $("newQuiz").addEventListener("click", newQuiz);
     $("quizCategory").addEventListener("change", () => {
       localStorage.setItem("albionQuizCategory", $("quizCategory").value);
@@ -2490,6 +2678,11 @@
     });
     $("checkQuiz").addEventListener("click", checkQuiz);
     $("replayMistakes").addEventListener("click", replayQuizMistakes);
+    if ($("replayWeakCategory"))
+      $("replayWeakCategory").addEventListener(
+        "click",
+        replayWeakQuizCategory,
+      );
     $("shareQuiz").dataset.defaultLabel = "Share quiz result";
     $("shareQuiz").addEventListener("click", () =>
       shareText(
@@ -2544,9 +2737,18 @@
             if (worker.state === "installed") showUpdate();
           });
         });
-        $("reloadUpdate").addEventListener("click", () =>
-          window.location.reload(),
-        );
+        $("reloadUpdate").addEventListener("click", () => {
+          if (registration.waiting) {
+            registration.waiting.postMessage({ type: "SKIP_WAITING" });
+            $("reloadUpdate").textContent = "Updating…";
+          } else window.location.reload();
+        });
+        let reloading = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (reloading) return;
+          reloading = true;
+          window.location.reload();
+        });
       })
       .catch(() => {});
   }

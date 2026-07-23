@@ -1,7 +1,7 @@
-const CACHE_NAME = 'albion-fan-hub-v17';
+const CACHE_NAME = 'albion-fan-hub-v18';
 const FILES = [
-  './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './quiz-data.js', './content-data.js',
-  './manifest.json', './favicon.svg', './albion-safe-graphic.svg', './sussex-by-the-sea-v17.mp3',
+  './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './v18.js', './quiz-data.js', './content-data.js',
+  './manifest.json', './favicon.svg', './albion-safe-graphic.svg',
   './icon-192.png', './icon-512.png', './social-preview.png', './privacy.html', './cookies.html', './copyright.html', './contact.html', './offline.html',
   './editor.html', './editor.js'
 ];
@@ -14,5 +14,12 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 self.addEventListener('fetch', event => {
+  if (event.request.url.endsWith('/sussex-by-the-sea.mp3')) {
+    event.respondWith(fetch(event.request, { cache: 'no-store' }));
+    return;
+  }
   event.respondWith(fetch(event.request).catch(() => caches.match(event.request).then(cached => cached || (event.request.mode === 'navigate' ? caches.match('./offline.html') : Response.error()))));
+});
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });

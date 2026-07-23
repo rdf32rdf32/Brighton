@@ -246,6 +246,7 @@
               <option value="people">Players</option>
               <option value="grounds">Amex &amp; grounds</option>
               <option value="records">Records</option>
+              <option value="modern">Modern Albion</option>
             </select></label
           ><span id="bestScore" class="score-chip"></span>
         </div>
@@ -255,6 +256,9 @@
           ><button id="newQuiz" class="ghost" type="button">Play again</button
           ><button id="replayMistakes" class="ghost" type="button" hidden>
             Replay missed questions
+          </button
+          ><button id="replayWeakCategory" class="ghost" type="button" hidden>
+            Practise weakest area
           </button
           ><button id="shareQuiz" class="ghost" type="button" hidden>
             Share quiz result
@@ -495,8 +499,8 @@
           <p id="soundStatus" class="sound-status" role="status">
             Sound effects are off.
           </p>
-          <audio id="anthemAudio" controls preload="metadata" playsinline>
-            <source src="sussex-by-the-sea-v17.mp3" type="audio/mpeg" />
+          <audio id="anthemAudio" controls preload="none" playsinline>
+            <source src="sussex-by-the-sea.mp3" type="audio/mpeg" />
             Your browser does not support the audio player.
           </audio>
           <p id="soundReliability" class="sound-reliability">
@@ -583,6 +587,40 @@
             </button>
           </div>
         </div>
+      </section>
+
+      <section class="card head-to-head" id="head-to-head">
+        <div class="section-head">
+          <p class="eyebrow">Next opponent</p>
+          <h2>Recent Albion v Aston Villa meetings</h2>
+          <p>
+            A verified glance at the last three league meetings before the
+            2026/27 opener.
+          </p>
+        </div>
+        <div class="head-to-head-grid">
+          <article>
+            <time datetime="2026-02-11">11 Feb 2026</time>
+            <b>Aston Villa 1–0 Albion</b><span>Premier League · Villa Park</span>
+          </article>
+          <article>
+            <time datetime="2025-12-03">3 Dec 2025</time>
+            <b>Albion 3–4 Aston Villa</b><span>Premier League · Amex Stadium</span>
+          </article>
+          <article>
+            <time datetime="2025-04-02">2 Apr 2025</time>
+            <b>Albion 0–3 Aston Villa</b><span>Premier League · Amex Stadium</span>
+          </article>
+        </div>
+        <p class="verified-note">
+          Checked against official Albion and Premier League match reports.
+          <a
+            href="https://www.brightonandhovealbion.com/match-centre?gameId=2562145"
+            target="_blank"
+            rel="noopener"
+            >Latest meeting</a
+          >
+        </p>
       </section>
 
       <section class="card" id="fixtures">
@@ -1058,16 +1096,16 @@
             <span>First Premier League scorer</span><b>Pascal Groß</b>
           </article>
         </div>
-        <div id="honours" class="record-panel records" hidden>
-          <article>
+        <div id="honours" class="record-panel records honours-cabinet" hidden>
+          <article data-honour="shield">
             <span>Major honour</span><b>FA Charity Shield · 1910</b>
           </article>
-          <article>
+          <article data-honour="league">
             <span>League titles</span
             ><b>Third tier · 1957/58, 2001/02, 2010/11</b>
           </article>
-          <article><span>FA Cup</span><b>Runners-up · 1982/83</b></article>
-          <article>
+          <article data-honour="cup"><span>FA Cup</span><b>Runners-up · 1982/83</b></article>
+          <article data-honour="southern">
             <span>Southern League</span><b>Champions · 1909/10</b>
           </article>
         </div>
@@ -1344,6 +1382,40 @@
         </div>
       </section>
 
+      <section class="card glossary-card" id="glossary">
+        <div class="section-head">
+          <p class="eyebrow">New supporter guide</p>
+          <h2>Albion glossary</h2>
+          <p>Useful names and phrases heard around the club and the Amex.</p>
+        </div>
+        <div class="glossary-grid">
+          <details open>
+            <summary>Albion</summary>
+            <p>The traditional short name for Brighton &amp; Hove Albion.</p>
+          </details>
+          <details>
+            <summary>Seagulls</summary>
+            <p>The club nickname and the reply in the “Seagulls!” chant.</p>
+          </details>
+          <details>
+            <summary>The Amex</summary>
+            <p>The American Express Stadium at Falmer, Albion’s home since 2011.</p>
+          </details>
+          <details>
+            <summary>Sussex by the Sea</summary>
+            <p>The county song adopted as Albion’s anthem.</p>
+          </details>
+          <details>
+            <summary>North Stand</summary>
+            <p>The home end behind the goal, known for leading the atmosphere.</p>
+          </details>
+          <details>
+            <summary>M23 derby</summary>
+            <p>A common modern label for Albion’s rivalry with Crystal Palace.</p>
+          </details>
+        </div>
+      </section>
+
       <section class="card supporter-settings" id="supporter-settings">
         <div class="section-head">
           <p class="eyebrow">Your device</p>
@@ -1352,6 +1424,9 @@
             These preferences stay on this device. No account or external
             database is used.
           </p>
+          <button id="closeSettings" class="ghost settings-close" type="button">
+            Close settings
+          </button>
         </div>
         <div class="settings-grid">
           <section>
@@ -1489,6 +1564,15 @@
       ><a href="#story">Story</a>
     </nav>
     <button
+      id="settingsToggle"
+      class="settings-toggle"
+      type="button"
+      aria-controls="supporter-settings"
+      aria-expanded="false"
+    >
+      ⚙ Settings
+    </button>
+    <button
       id="soundToggle"
       class="sound-toggle sound-off"
       type="button"
@@ -1592,5 +1676,6 @@
     <script src="app.js"></script>
     <script src="v16.js"></script>
     <script src="v17.js"></script>
+    <script src="v18.js"></script>
   </body>
 </html>

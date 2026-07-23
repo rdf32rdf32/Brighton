@@ -15,6 +15,7 @@ const requiredFiles = [
   "app.js",
   "v16.js",
   "v17.js",
+  "v18.js",
   "content-data.js",
   "quiz-data.js",
   "editor.html",
@@ -22,7 +23,7 @@ const requiredFiles = [
   "service-worker.js",
   "manifest.json",
   "offline.html",
-  "sussex-by-the-sea-v17.mp3",
+  "sussex-by-the-sea.mp3",
 ];
 requiredFiles.forEach((file) => {
   if (!fs.existsSync(path.join(root, file))) fail(`missing ${file}`);
@@ -59,16 +60,50 @@ if (/Personal matchday itinerary|id="itinerary/i.test(html))
   fail("personal matchday itinerary must remain removed");
 else pass("personal matchday itinerary is removed");
 
-if (!/Are You a Secret Palace Fan\?/.test(fs.readFileSync(path.join(root, "app.js"), "utf8")))
+if (!/sussex-by-the-sea\.mp3/.test(html) || /sussex-by-the-sea-v17/.test(html))
+  fail("anthem must use the restored original audio asset");
+else pass("anthem uses the restored original audio asset");
+
+const serviceWorker = fs.readFileSync(
+  path.join(root, "service-worker.js"),
+  "utf8",
+);
+if (
+  !/albion-fan-hub-v18/.test(serviceWorker) ||
+  /FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
+    serviceWorker,
+  )
+)
+  fail("release cache or on-demand anthem loading is incorrect");
+else pass("v18 cache leaves anthem loading on demand");
+
+const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
+[
+  ["palaceRunStartedAt", "Palace reaction timing"],
+  ["adjacentDives", "adjacent-zone saves"],
+].forEach(([needle, label]) => {
+  if (!application.includes(needle)) fail(`${label} missing`);
+  else pass(`${label} present`);
+});
+const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
+[
+  ["dive-level-top", "high-dive animation classes"],
+  ["dive-level-bottom", "low-dive animation classes"],
+].forEach(([needle, label]) => {
+  if (!stylesheet.includes(needle)) fail(`${label} missing`);
+  else pass(`${label} present`);
+});
+
+if (!/Are You a Secret Palace Fan\?/.test(application))
   fail("quiz supporter rating scale is missing");
 else pass("quiz supporter rating scale present");
 
-const anthemPath = path.join(root, "sussex-by-the-sea-v17.mp3");
+const anthemPath = path.join(root, "sussex-by-the-sea.mp3");
 if (fs.existsSync(anthemPath) && fs.statSync(anthemPath).size < 100000)
   fail("anthem audio file is unexpectedly small");
 else if (fs.existsSync(anthemPath)) pass("anthem audio file is present");
 
-["app.js", "v16.js", "v17.js", "editor.js", "service-worker.js"].forEach((file) => {
+["app.js", "v16.js", "v17.js", "v18.js", "editor.js", "service-worker.js"].forEach((file) => {
   try {
     new Function(fs.readFileSync(path.join(root, file), "utf8"));
     pass(`${file} parses`);
