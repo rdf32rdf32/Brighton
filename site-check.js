@@ -85,13 +85,13 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v22/.test(serviceWorker) ||
+  !/albion-fan-hub-v23/.test(serviceWorker) ||
   !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v22 release cache or anthem asset is incorrect");
-else pass("v22 cache includes the anthem and chant assets");
+  fail("v23 release cache or anthem asset is incorrect");
+else pass("v23 cache includes the anthem and chant assets");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
 if (
@@ -112,6 +112,8 @@ else pass("sound controls use the version-14 master-volume model");
   ["playChant", "match chant playback"],
   ["showTurnReady", "manual turn-ready stage"],
   ["startSaveCountdown", "Palace save countdown"],
+  ["goalOpening", "twelve-yard goal coordinate mapping"],
+  ["toStagePoint", "perspective shot destination mapping"],
 ].forEach(([needle, label]) => {
   if (!application.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -127,6 +129,15 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
   ["chant-grid", "Albion chants player"],
   ["v22-keeper-centre", "proportional goalkeeper sizing"],
   ["meter-best{left:38%;width:24%}", "expanded green timing zone"],
+  ["pitch-perspective", "twelve-yard pitch perspective"],
+  ["aspect-ratio:16/10!important", "perspective penalty stage ratio"],
+  ["v23-player-run", "perspective player run-up"],
+  ["v23-net-depth", "depth-aware net animation"],
+  ["tour-launch", "top-left first-visit tour"],
+  ["height:calc(100dvh - 16px)", "single-screen desktop game layout"],
+  ["max-height:100dvh", "single-screen mobile game layout"],
+  ["first-kick-coach", "first-kick guidance"],
+  ["v23-ref-goal", "referee outcome animation"],
 ].forEach(([needle, label]) => {
   if (!stylesheet.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -160,6 +171,10 @@ else pass("quiz supporter rating scale present");
   ["skipReplay", "slow-motion replay skip control"],
   ["continueShootout", "manual next-turn control"],
   ["liveKeeperStats", "live goalkeeper performance panel"],
+  ["pitch-perspective", "perspective pitch structure"],
+  ["player-eyes", "improved player facial graphics"],
+  ["keeper-mouth", "improved goalkeeper facial graphics"],
+  ["firstKickCoach", "first-kick guidance panel"],
 ].forEach(([needle, label]) => {
   if (!html.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);

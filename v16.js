@@ -238,6 +238,11 @@
     ];
     let index = 0;
     const coach = $("tourCoach");
+    const tourLaunch = $("startTour");
+    tourLaunch?.classList.toggle(
+      "first-visit",
+      localStorage.getItem("albionTourCompleted") !== "yes",
+    );
     const clearHighlight = () =>
       document
         .querySelectorAll(".tour-highlight")
@@ -256,6 +261,7 @@
         index === steps.length - 1 ? "Finish" : "Next";
     };
     $("startTour")?.addEventListener("click", () => {
+      tourLaunch?.classList.remove("first-visit");
       index = 0;
       coach.hidden = false;
       render();

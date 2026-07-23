@@ -1279,6 +1279,7 @@
     const turnReadyText = $("turnReadyText");
     const continueShootoutButton = $("continueShootout");
     const readyCountdown = $("readyCountdown");
+    const firstKickCoach = $("firstKickCoach");
     let aimPoint = { x: 50, y: 48 };
     let aimingPointerId = null;
     const clamp = (value, minimum, maximum) =>
@@ -1292,6 +1293,18 @@
       "middle-right": { x: 86, y: 49 },
       "bottom-right": { x: 83, y: 80 },
     };
+    const goalOpening = {
+      left: 16,
+      width: 68,
+      top: 7,
+      height: 35,
+      line: 42,
+      spot: 75,
+    };
+    const toStagePoint = (x, y) => ({
+      x: goalOpening.left + (clamp(x, 0, 100) / 100) * goalOpening.width,
+      y: goalOpening.top + (clamp(y, 0, 100) / 100) * goalOpening.height,
+    });
     function clearReplaySkip() {
       window.clearTimeout(replayAnimationTimer);
       window.clearTimeout(replayContinuationTimer);
@@ -1362,14 +1375,15 @@
         y: clamp(y, 5, 96),
         outside,
       };
-      aimPointer.style.left = `${aimPoint.x}%`;
-      aimPointer.style.top = `${aimPoint.y}%`;
+      const stagePoint = toStagePoint(aimPoint.x, aimPoint.y);
+      aimPointer.style.left = `${stagePoint.x}%`;
+      aimPointer.style.top = `${stagePoint.y}%`;
       aimPointer.classList.toggle("outside-goal", outside);
       const rect = goalFrame.getBoundingClientRect();
       const startX = rect.width * 0.5;
-      const startY = rect.height * 0.91;
-      const endX = (rect.width * aimPoint.x) / 100;
-      const endY = (rect.height * aimPoint.y) / 100;
+      const startY = rect.height * (goalOpening.spot / 100);
+      const endX = (rect.width * stagePoint.x) / 100;
+      const endY = (rect.height * stagePoint.y) / 100;
       const deltaX = endX - startX;
       const deltaY = endY - startY;
       aimGuide.style.width = `${Math.hypot(deltaX, deltaY)}px`;
@@ -1385,9 +1399,15 @@
     }
     function aimFromEvent(event) {
       const rect = goalFrame.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 100;
-      const y = ((event.clientY - rect.top) / rect.height) * 100;
-      const outside = x < 3 || x > 97 || y < 6 || y > 92;
+      const stageX = ((event.clientX - rect.left) / rect.width) * 100;
+      const stageY = ((event.clientY - rect.top) / rect.height) * 100;
+      const x = ((stageX - goalOpening.left) / goalOpening.width) * 100;
+      const y = ((stageY - goalOpening.top) / goalOpening.height) * 100;
+      const outside =
+        stageX < goalOpening.left ||
+        stageX > goalOpening.left + goalOpening.width ||
+        stageY < goalOpening.top ||
+        stageY > goalOpening.top + goalOpening.height;
       updateAimPointer(x, y, outside);
     }
     function chooseAimPoint() {
@@ -1594,6 +1614,7 @@
         "save-impact",
         "goal-checking",
         "placing-ball",
+        "boot-contact",
       );
       stadiumScene.classList.remove(
         "camera-shoot",
@@ -1690,6 +1711,10 @@
       $("shootout").classList.add("game-active");
       const saving = phase === "save";
       const player = lineup[albionKicks % lineup.length];
+      firstKickCoach.hidden =
+        saving ||
+        albionKicks > 0 ||
+        localStorage.getItem("albionShootoutGuideSeen") === "yes";
       stadiumScene.classList.add(
         saving ? "pointer-saving" : "pointer-shooting",
       );
@@ -1987,7 +2012,11 @@
           aimY,
         };
       if (slow) goalFrame.classList.add("slow-motion");
-      goalFrame.classList.add("kick-in-flight");
+      goalFrame.classList.add("kick-in-flight", "boot-contact");
+      window.setTimeout(
+        () => goalFrame.classList.remove("boot-contact"),
+        slow ? 520 : 310,
+      );
       taker.classList.add("run-up");
       taker.classList.add(`foot-${foot}`, `strike-${shotStyle}`);
       const postSide = target.includes("left")
@@ -2005,15 +2034,16 @@
             : "flight-straight";
       const destination =
         aimX === null || aimY === null ? zonePoint[target] : { x: aimX, y: aimY };
-      ball.style.setProperty("--shot-x", `${clamp(destination.x, 5, 95)}%`);
+      const stageDestination = toStagePoint(destination.x, destination.y);
+      ball.style.setProperty("--shot-x", `${stageDestination.x}%`);
       ball.style.setProperty(
         "--shot-y",
-        `${100 - clamp(destination.y, 7, 91)}%`,
+        `${100 - stageDestination.y}%`,
       );
-      shadow.style.setProperty("--shot-x", `${clamp(destination.x, 5, 95)}%`);
+      shadow.style.setProperty("--shot-x", `${stageDestination.x}%`);
       shadow.style.setProperty(
         "--shot-y",
-        `${96 - clamp(destination.y, 7, 91)}%`,
+        `${100 - goalOpening.line}%`,
       );
       const flightClass = panenka
         ? scored
@@ -2046,8 +2076,13 @@
         `dive-level-${diveLevel}`,
         `dive-${diveRelation}`,
       );
-      playSfx("kick");
-      vibrate(18);
+      window.setTimeout(
+        () => {
+          playSfx("kick");
+          vibrate(18);
+        },
+        slow ? 620 : 380,
+      );
       window.setTimeout(
         () => {
           flash.className = `goal-flash ${scored ? "scored" : "saved"}`;
@@ -2147,6 +2182,8 @@
       );
     }
     function takeAlbionPenalty(button) {
+      firstKickCoach.hidden = true;
+      localStorage.setItem("albionShootoutGuideSeen", "yes");
       locked = true;
       stadiumScene.classList.remove("aim-ready", "aim-dragging");
       freezeAccuracy(button);
@@ -2253,6 +2290,8 @@
     }
     function takePanenka() {
       if (locked || phase !== "shoot") return;
+      firstKickCoach.hidden = true;
+      localStorage.setItem("albionShootoutGuideSeen", "yes");
       locked = true;
       stadiumScene.classList.remove("aim-ready", "aim-dragging");
       freezeAccuracy(

@@ -36,6 +36,9 @@
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <button id="startTour" class="tour-launch" type="button">
+      New here? Tour the site
+    </button>
     <header class="hero" id="top">
       <nav class="topbar" aria-label="Main navigation">
         <a class="brand" href="#top"
@@ -184,9 +187,8 @@
           </article>
         </div>
         <div class="guided-tour-row">
-          <button id="startTour" type="button">Start first-visit tour</button>
           <span
-            >No opening window. The guide only starts when you ask for it.</span
+            >The guide at the top left only starts when you ask for it.</span
           >
         </div>
       </section>
@@ -387,7 +389,25 @@
             <span class="crowd-flag flag-palace">CP</span>
             <span class="crowd-scarf">SEAGULLS • SEAGULLS • SEAGULLS</span>
           </div>
-          <div class="goal" id="goal">
+          <div
+            class="goal"
+            id="goal"
+            aria-label="Penalty pitch with a goal twelve yards beyond the spot"
+          >
+            <div class="pitch-perspective" aria-hidden="true">
+              <i class="pitch-line pitch-line-left"></i
+              ><i class="pitch-line pitch-line-right"></i
+              ><i class="pitch-line penalty-area-left"></i
+              ><i class="pitch-line penalty-area-right"></i
+              ><span class="penalty-arc"></span
+              ><span class="distance-cue">12 YARDS</span>
+            </div>
+            <div class="goal-advert goal-advert-left" aria-hidden="true">
+              ALBION
+            </div>
+            <div class="goal-advert goal-advert-right" aria-hidden="true">
+              SEAGULLS
+            </div>
             <div class="goal-depth" aria-hidden="true"></div>
             <div class="net"></div>
             <div class="goal-line" aria-hidden="true"></div>
@@ -419,7 +439,9 @@
               >You control: Bart Verbruggen</span
             >
             <div class="keeper" id="keeper" aria-hidden="true">
-              <span class="keeper-head"><i></i><b class="keeper-eyes"></b></span
+              <span class="keeper-head"
+                ><i></i><b class="keeper-eyes"></b
+                ><em class="keeper-mouth"></em></span
               ><span class="keeper-arms"></span
               ><span class="keeper-glove left-glove"></span
               ><span class="keeper-glove right-glove"></span
@@ -432,7 +454,9 @@
               ><span class="keeper-boot keeper-boot-right"></span>
             </div>
             <div class="penalty-taker" id="penaltyTaker" aria-hidden="true">
-              <span class="player-head"></span
+              <span class="player-head"
+                ><i class="player-eyes"></i
+                ><b class="player-mouth"></b></span
               ><span class="player-shirt" id="penaltyShirt">9</span
               ><span class="player-arm player-arm-left"></span
               ><span class="player-arm player-arm-right"></span
@@ -448,6 +472,10 @@
             </div>
             <div id="aimHint" class="aim-hint" aria-hidden="true">
               Aim and release
+            </div>
+            <div id="firstKickCoach" class="first-kick-coach" hidden>
+              <b>Your first kick</b>
+              <span>Aim inside the distant goal and release. Red timing misses.</span>
             </div>
             <button
               class="target top-left"
