@@ -1247,6 +1247,7 @@
     let replayAnimationTimer = 0;
     let replayContinuationTimer = 0;
     let replaySkipContinue = null;
+    let turnCountdownTimer = 0;
     let palaceStrikeDelay = 1120;
     let activeFoot = "right";
     let activeTrait = "placed";
@@ -1274,6 +1275,10 @@
     const accuracyMeter = document.querySelector(".accuracy-meter");
     const accuracyMarker = accuracyMeter.querySelector("i");
     const accuracyVerdict = $("accuracyVerdict");
+    const turnReadyPanel = $("turnReadyPanel");
+    const turnReadyText = $("turnReadyText");
+    const continueShootoutButton = $("continueShootout");
+    const readyCountdown = $("readyCountdown");
     let aimPoint = { x: 50, y: 48 };
     let aimingPointerId = null;
     const clamp = (value, minimum, maximum) =>
@@ -1307,6 +1312,40 @@
       $("skipReplay").hidden = false;
       replayContinuationTimer = window.setTimeout(finishReplay, delay);
     }
+    function hideTurnReady() {
+      window.clearTimeout(turnCountdownTimer);
+      turnCountdownTimer = 0;
+      turnReadyPanel.hidden = true;
+      readyCountdown.hidden = true;
+      readyCountdown.textContent = "";
+      continueShootoutButton.disabled = false;
+      delete continueShootoutButton.dataset.action;
+    }
+    function showTurnReady(action) {
+      window.clearTimeout(turnCountdownTimer);
+      turnReadyPanel.hidden = false;
+      continueShootoutButton.disabled = false;
+      continueShootoutButton.dataset.action = action;
+      if (action === "save") {
+        turnReadyText.textContent =
+          "Palace will not begin their run-up until you are ready.";
+        continueShootoutButton.textContent =
+          "Ready to save Palace’s penalty";
+        announce(
+          "Your goal, your moment",
+          "Press Ready when you want the Palace run-up to begin.",
+        );
+      } else {
+        turnReadyText.textContent =
+          "Your next Albion taker is waiting at the penalty spot.";
+        continueShootoutButton.textContent =
+          "Take Albion’s next penalty";
+        announce(
+          "Albion are ready",
+          "Continue when you are ready to take the next kick.",
+        );
+      }
+    }
     function targetForPoint(x, y) {
       let position;
       if (x >= 36 && x <= 64) position = "centre";
@@ -1335,6 +1374,14 @@
       const deltaY = endY - startY;
       aimGuide.style.width = `${Math.hypot(deltaX, deltaY)}px`;
       aimGuide.style.transform = `rotate(${Math.atan2(deltaY, deltaX)}rad)`;
+      if (
+        phase === "save" &&
+        !locked &&
+        stadiumScene.classList.contains("aim-ready")
+      ) {
+        const shuffle = clamp((aimPoint.x - 50) * 0.08, -4, 4);
+        keeper.style.left = `${50 + shuffle}%`;
+      }
     }
     function aimFromEvent(event) {
       const rect = goalFrame.getBoundingClientRect();
@@ -1456,6 +1503,9 @@
           ? "Sudden death · next pair decides it"
           : "Sudden death · Palace must respond"
         : `${albionRemaining} Albion ${albionRemaining === 1 ? "kick" : "kicks"} left · ${palaceRemaining} Palace ${palaceRemaining === 1 ? "kick" : "kicks"} left`;
+      $("liveKeeperStats").innerHTML =
+        `<span>Saves <b>${palaceSaves}</b></span><span>Correct dives <b>${keeperStats.correctGuesses}</b></span><span>Catches <b>${keeperStats.catches}</b></span><span>Fingertips <b>${keeperStats.fingertips}</b></span>`;
+      $("liveKeeperStats").classList.toggle("active", phase === "save");
     }
     function shootoutDecision() {
       const albionRemaining = Math.max(0, 5 - albionKicks);
@@ -1527,6 +1577,7 @@
       flash.className = "goal-flash";
       taker.className = "penalty-taker";
       keeper.className = "keeper";
+      keeper.style.left = "";
       goalFrame.classList.remove(
         "slow-motion",
         "net-goal",
@@ -1590,7 +1641,50 @@
         palaceStrikeDelay,
       );
     }
-    function setScene() {
+    function startAlbionKick() {
+      if (phase !== "shoot") return;
+      goalFrame.classList.remove("placing-ball");
+      taker.classList.remove("place-ball");
+      ball.classList.remove("ball-to-spot");
+      targets.forEach((button) => (button.disabled = false));
+      $("panenkaButton").disabled = false;
+      accuracyFrozen = false;
+      locked = false;
+      stadiumScene.classList.add("aim-ready");
+      accuracyVerdict.textContent = "Time your strike";
+      playSfx("whistle");
+      announce(
+        albionKicks >= 5 ? "Sudden death: pick your spot" : "Pick your spot",
+        `${pressurePrompt("shoot")} · Green timing gives the best finish.`,
+      );
+    }
+    function startSaveCountdown() {
+      hideTurnReady();
+      locked = true;
+      const sequence = ["3", "2", "1", "SAVE!"];
+      let index = 0;
+      readyCountdown.hidden = false;
+      const advance = () => {
+        readyCountdown.textContent = sequence[index];
+        readyCountdown.classList.toggle(
+          "go",
+          sequence[index] === "SAVE!",
+        );
+        if (index < sequence.length - 1) {
+          index += 1;
+          turnCountdownTimer = window.setTimeout(advance, 750);
+        } else {
+          turnCountdownTimer = window.setTimeout(() => {
+            readyCountdown.hidden = true;
+            readyCountdown.classList.remove("go");
+            startPalaceRun();
+          }, 420);
+        }
+      };
+      advance();
+    }
+    function setScene(waitForReady = false) {
+      hideTurnReady();
       clearMotion();
       palaceRunStartedAt = 0;
       $("shootout").classList.add("game-active");
@@ -1712,25 +1806,12 @@
       renderScore();
       readyKeeper();
       if (saving) {
-        palaceRunTimer = window.setTimeout(startPalaceRun, 520);
+        if (waitForReady) showTurnReady("save");
+        else palaceRunTimer = window.setTimeout(startPalaceRun, 520);
       } else {
         $("panenkaButton").disabled = true;
-        placementTimer = window.setTimeout(() => {
-          goalFrame.classList.remove("placing-ball");
-          taker.classList.remove("place-ball");
-          ball.classList.remove("ball-to-spot");
-          targets.forEach((button) => (button.disabled = false));
-          $("panenkaButton").disabled = false;
-          accuracyFrozen = false;
-          locked = false;
-          stadiumScene.classList.add("aim-ready");
-          accuracyVerdict.textContent = "Time your strike";
-          playSfx("whistle");
-          announce(
-            albionKicks >= 5 ? "Sudden death: pick your spot" : "Pick your spot",
-            `${pressurePrompt("shoot")} · Green timing gives the best finish.`,
-          );
-        }, 780);
+        if (waitForReady) showTurnReady("shoot");
+        else placementTimer = window.setTimeout(startAlbionKick, 780);
       }
     }
     function renderSummary() {
@@ -1757,6 +1838,7 @@
     }
     function reset() {
       clearReplaySkip();
+      hideTurnReady();
       albionKicks = 0;
       palaceKicks = 0;
       albionGoals = 0;
@@ -2161,15 +2243,9 @@
             return;
           }
           window.setTimeout(() => {
-            announce(
-              "Palace step up…",
-              "Get ready to control Bart Verbruggen.",
-            );
-            window.setTimeout(() => {
-              phase = "save";
-              locked = false;
-              setScene();
-            }, 650);
+            phase = "save";
+            locked = true;
+            setScene(true);
           }, 850);
         },
         slow ? 1550 : 1120,
@@ -2236,12 +2312,9 @@
           return;
         }
         window.setTimeout(() => {
-          announce("Palace step up…", "Get ready to control Bart Verbruggen.");
-          window.setTimeout(() => {
-            phase = "save";
-            locked = false;
-            setScene();
-          }, 650);
+          phase = "save";
+          locked = true;
+          setScene(true);
         }, 900);
       }, 1650);
     }
@@ -2263,8 +2336,8 @@
           ? Math.max(0, performance.now() - palaceRunStartedAt)
           : committedAt
         : 0;
-      const earlyCutoff = palaceStrikeDelay * 0.22;
-      const idealCutoff = palaceStrikeDelay * 0.72;
+      const earlyCutoff = palaceStrikeDelay * 0.15;
+      const idealCutoff = palaceStrikeDelay * 0.82;
       const reaction =
         reactionMs < earlyCutoff
           ? "early"
@@ -2276,10 +2349,10 @@
       const missed = Math.random() < 0.1;
       const woodwork = !missed && Math.random() < 0.07;
       const adjacent = adjacentDives[target]?.includes(dive);
-      const exactChance = { early: 0.62, perfect: 0.9, late: 0.46 }[
+      const exactChance = { early: 0.35, perfect: 0.5, late: 0.28 }[
         reaction
       ];
-      const adjacentChance = { early: 0.14, perfect: 0.3, late: 0.08 }[
+      const adjacentChance = { early: 0.08, perfect: 0.18, late: 0.05 }[
         reaction
       ];
       const saved =
@@ -2355,10 +2428,10 @@
             if (decision.finished) finish(decision.albionWon);
             else {
               phase = "shoot";
-              locked = false;
+              locked = true;
               if (palaceKicks >= 5)
                 announce("Sudden death", "Every kick matters now.");
-              setScene();
+              setScene(true);
             }
           };
           const reducedMotion = window.matchMedia?.(
@@ -2472,6 +2545,16 @@
     });
     $("panenkaButton").addEventListener("click", (event) => {
       if (event.detail === 0) takePanenka();
+    });
+    continueShootoutButton.addEventListener("click", () => {
+      const action = continueShootoutButton.dataset.action;
+      if (action === "save") {
+        startSaveCountdown();
+      } else if (action === "shoot") {
+        hideTurnReady();
+        locked = true;
+        placementTimer = window.setTimeout(startAlbionKick, 260);
+      }
     });
     document.addEventListener("keydown", (event) => {
       if (
@@ -2779,8 +2862,9 @@
       window.clearTimeout(chantClipTimer);
       if (!audio.paused) audio.pause();
       if (chantAudio.dataset.currentChant !== key) {
-        chantAudio.src = `chants/${key}.mp3`;
+        chantAudio.src = new URL(`${key}.mp3`, document.baseURI).href;
         chantAudio.dataset.currentChant = key;
+        chantAudio.load();
       }
       chantAudio.currentTime = 0;
       chantAudio.volume = masterVolume;

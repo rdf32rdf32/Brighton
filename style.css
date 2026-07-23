@@ -767,6 +767,185 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
   #chantPulse.playing i,.aim-pointer{animation:none!important;transition:none!important}
 }
 
+/* v22: deliberate turn pacing, full-width timing and proportional keeper */
+.penalty-choice-controls,
+.shootout-card.game-active>.penalty-choice-controls{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  width:100%;
+  gap:8px
+}
+.penalty-choice-controls .accuracy-control{width:100%;min-width:0}
+.penalty-choice-controls .panenka-button{
+  justify-self:end;
+  width:min(230px,100%);
+  min-height:42px
+}
+.accuracy-meter{
+  width:100%;
+  background:linear-gradient(90deg,#c8313d 0 28%,#eca91d 28% 38%,#239a55 38% 62%,#eca91d 62% 72%,#c8313d 72% 100%)
+}
+.meter-miss-left{left:0;width:28%}
+.meter-risk-left{left:28%;width:10%}
+.meter-best{left:38%;width:24%}
+.meter-risk-right{left:62%;width:10%}
+.meter-miss-right{left:72%;width:28%}
+.turn-ready-panel{
+  display:grid;
+  gap:7px;
+  margin:10px 0 0;
+  padding:12px;
+  border:3px solid #ffcf33;
+  border-radius:13px;
+  background:linear-gradient(135deg,#052f58,#087bc1);
+  color:#fff;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(4,45,83,.24)
+}
+.turn-ready-panel[hidden]{display:none!important}
+.turn-ready-panel p{margin:0;font-size:.78rem;font-weight:800}
+.turn-ready-panel button{
+  min-height:50px;
+  border:2px solid #fff;
+  background:#ffcf33;
+  color:#052f58;
+  font-size:.94rem;
+  font-weight:950
+}
+.ready-countdown{
+  position:absolute;
+  z-index:25;
+  left:50%;
+  top:46%;
+  transform:translate(-50%,-50%);
+  min-width:110px;
+  padding:12px 20px;
+  border:4px solid #fff;
+  border-radius:16px;
+  background:rgba(3,37,68,.93);
+  color:#ffcf33;
+  text-align:center;
+  font-size:clamp(2rem,7vw,4.5rem);
+  font-weight:1000;
+  line-height:1;
+  box-shadow:0 12px 28px rgba(0,0,0,.4)
+}
+.ready-countdown[hidden]{display:none!important}
+.ready-countdown.go{background:#16814a;color:#fff}
+.live-keeper-stats{
+  display:none;
+  position:relative;
+  z-index:8;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  margin:0 0 5px;
+  padding:5px;
+  border-radius:9px;
+  background:#052f58;
+  color:#fff
+}
+.live-keeper-stats.active{display:grid}
+.live-keeper-stats span{
+  display:grid;
+  padding:4px;
+  border-radius:6px;
+  background:rgba(255,255,255,.1);
+  text-align:center;
+  font-size:.58rem;
+  font-weight:800
+}
+.live-keeper-stats b{color:#ffcf33;font-size:.9rem}
+.goal .keeper{
+  left:50%;
+  bottom:7%;
+  width:64px;
+  height:150px;
+  transform:translateX(-50%);
+  transform-origin:bottom center
+}
+.goal .keeper-head{width:34px;height:34px}
+.goal .keeper-head i{left:7px;top:14px;width:18px}
+.goal .keeper-head:before{height:10px}
+.goal .keeper-eyes{left:7px;top:14px;width:18px}
+.goal .keeper-body{
+  width:64px;
+  height:72px;
+  margin:auto
+}
+.goal .keeper-arms{left:-20px;top:40px;width:104px;height:12px}
+.goal .keeper-glove{top:36px;width:15px;height:18px}
+.goal .left-glove{left:-26px}
+.goal .right-glove{right:-26px}
+.goal .keeper-shorts{left:8px;top:101px;width:48px;height:18px}
+.goal .keeper-leg{top:116px;width:12px;height:28px}
+.goal .keeper-leg-left{left:12px}
+.goal .keeper-leg-right{right:12px}
+.goal .keeper-boot{top:140px;width:18px;height:8px}
+.goal .keeper-boot-left{left:4px}
+.goal .keeper-boot-right{right:4px}
+.goal .keeper.feint-left{animation:v22-keeper-left 1.05s ease-in-out infinite}
+.goal .keeper.feint-right{animation:v22-keeper-right 1.05s ease-in-out infinite}
+.goal .keeper.feint-centre{animation:v22-keeper-centre .9s ease-in-out infinite}
+.goal .keeper.keeper-committed.commit-top-left,
+.goal .keeper.keeper-committed.commit-middle-left,
+.goal .keeper.keeper-committed.commit-bottom-left{
+  transform:translateX(-72%) rotate(-3deg)
+}
+.goal .keeper.keeper-committed.commit-top-right,
+.goal .keeper.keeper-committed.commit-middle-right,
+.goal .keeper.keeper-committed.commit-bottom-right{
+  transform:translateX(-28%) rotate(3deg)
+}
+.goal .keeper.keeper-committed.commit-centre{
+  transform:translateX(-50%) translateY(-7px) scale(1.04)
+}
+.goal .keeper.dive-top-left{transform:translate(-440%,-72%) rotate(-58deg) scale(.9)}
+.goal .keeper.dive-top-right{transform:translate(340%,-72%) rotate(58deg) scale(.9)}
+.goal .keeper.dive-middle-left{transform:translate(-440%,-35%) rotate(-65deg) scale(.9)}
+.goal .keeper.dive-middle-right{transform:translate(340%,-35%) rotate(65deg) scale(.9)}
+.goal .keeper.dive-bottom-left{transform:translate(-420%,-2%) rotate(-72deg) scale(.9)}
+.goal .keeper.dive-bottom-right{transform:translate(320%,-2%) rotate(72deg) scale(.9)}
+.goal .keeper.dive-centre{transform:translate(-50%,-16%) scale(1.08)}
+@keyframes v22-keeper-left{50%{transform:translateX(-68%) translateY(-2px)}}
+@keyframes v22-keeper-right{50%{transform:translateX(-32%) translateY(-2px)}}
+@keyframes v22-keeper-centre{50%{transform:translateX(-50%) translateY(-7px) scale(1.03)}}
+@media(min-width:1000px) and (min-height:720px){
+  .shootout-card.game-active{
+    grid-template-columns:minmax(300px,.62fr) minmax(620px,1.38fr);
+    grid-template-areas:"controls controls" "turn game" "taker game" "status game" "ready game" "actions game"
+  }
+  .shootout-card.game-active>.turn-ready-panel{grid-area:ready;margin:0}
+  .shootout-card.game-active>.penalty-choice-controls{
+    grid-area:controls;
+    padding:10px 12px
+  }
+}
+@media(max-width:760px){
+  .penalty-choice-controls .panenka-button{justify-self:stretch;width:100%}
+  .live-keeper-stats{grid-template-columns:repeat(4,1fr)}
+  .goal .keeper{transform:translateX(-50%) scale(.78)}
+  .goal .keeper.feint-left{animation:v22-keeper-left-mobile 1.05s ease-in-out infinite}
+  .goal .keeper.feint-right{animation:v22-keeper-right-mobile 1.05s ease-in-out infinite}
+  .goal .keeper.feint-centre{animation:v22-keeper-centre-mobile .9s ease-in-out infinite}
+  .goal .keeper.keeper-committed.commit-top-left,
+  .goal .keeper.keeper-committed.commit-middle-left,
+  .goal .keeper.keeper-committed.commit-bottom-left{transform:translateX(-70%) rotate(-3deg) scale(.78)}
+  .goal .keeper.keeper-committed.commit-top-right,
+  .goal .keeper.keeper-committed.commit-middle-right,
+  .goal .keeper.keeper-committed.commit-bottom-right{transform:translateX(-30%) rotate(3deg) scale(.78)}
+  .goal .keeper.keeper-committed.commit-centre{transform:translateX(-50%) translateY(-5px) scale(.82)}
+  .goal .keeper.dive-top-left{transform:translate(-210%,-58%) rotate(-56deg) scale(.72)}
+  .goal .keeper.dive-top-right{transform:translate(110%,-58%) rotate(56deg) scale(.72)}
+  .goal .keeper.dive-middle-left{transform:translate(-210%,-27%) rotate(-63deg) scale(.72)}
+  .goal .keeper.dive-middle-right{transform:translate(110%,-27%) rotate(63deg) scale(.72)}
+  .goal .keeper.dive-bottom-left{transform:translate(-200%,0) rotate(-70deg) scale(.72)}
+  .goal .keeper.dive-bottom-right{transform:translate(100%,0) rotate(70deg) scale(.72)}
+  .goal .keeper.dive-centre{transform:translate(-50%,-12%) scale(.84)}
+  @keyframes v22-keeper-left-mobile{50%{transform:translateX(-68%) translateY(-2px) scale(.78)}}
+  @keyframes v22-keeper-right-mobile{50%{transform:translateX(-32%) translateY(-2px) scale(.78)}}
+  @keyframes v22-keeper-centre-mobile{50%{transform:translateX(-50%) translateY(-6px) scale(.82)}}
+}
+
 /* Amex orientation correction: North and South swapped */
 .amex-map .north{grid-column:3;grid-row:2}
 .amex-map .south{grid-column:1;grid-row:2}

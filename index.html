@@ -322,8 +322,9 @@
           <p>
             <b>Albion kick:</b> move the pointer or drag towards your chosen
             spot, then release to shoot. <b>Palace kick:</b> move the glove
-            pointer and release to commit Verbruggen. Palace’s target remains
-            secret. Level after five goes to sudden death.
+            pointer and release to commit Verbruggen. Palace never starts until
+            you press Ready, and their target remains secret. Level after five
+            goes to sudden death.
           </p>
         </details>
         <p id="gamepadStatus" class="gamepad-status">
@@ -362,6 +363,15 @@
           >
             5 Albion kicks left · 5 Palace kicks left
           </div>
+          <div
+            id="liveKeeperStats"
+            class="live-keeper-stats"
+            aria-live="polite"
+          >
+            <span>Saves <b>0</b></span><span>Correct dives <b>0</b></span
+            ><span>Catches <b>0</b></span
+            ><span>Fingertips <b>0</b></span>
+          </div>
           <div class="crowd-bowl" aria-hidden="true">
             <div class="crowd-tier crowd-tier-back">
               <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
@@ -393,6 +403,12 @@
             <div
               id="kickDecision"
               class="kick-decision"
+              hidden
+              aria-live="assertive"
+            ></div>
+            <div
+              id="readyCountdown"
+              class="ready-countdown"
               hidden
               aria-live="assertive"
             ></div>
@@ -486,6 +502,12 @@
         >
           <b>Pick your spot</b
           ><span>Red accuracy means an automatic miss.</span>
+        </div>
+        <div id="turnReadyPanel" class="turn-ready-panel" hidden>
+          <p id="turnReadyText">The next player is ready.</p>
+          <button id="continueShootout" type="button">
+            Continue shoot-out
+          </button>
         </div>
         <div id="shootoutSummary" class="shootout-summary" hidden></div>
         <div class="button-row shootout-actions">

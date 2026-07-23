@@ -24,15 +24,15 @@ const requiredFiles = [
   "manifest.json",
   "offline.html",
   "sussex-by-the-sea.mp3",
-  "chants/albion-albion-albion.mp3",
-  "chants/seagulls.mp3",
-  "chants/we-are-brighton.mp3",
-  "chants/come-on-brighton.mp3",
-  "chants/we-all-follow-albion.mp3",
-  "chants/brighton-aces.mp3",
-  "chants/b-r-i-g-h-t-o-n.mp3",
-  "chants/great-escape.mp3",
-  "chants/glory-glory.mp3",
+  "albion-albion-albion.mp3",
+  "seagulls.mp3",
+  "we-are-brighton.mp3",
+  "come-on-brighton.mp3",
+  "we-all-follow-albion.mp3",
+  "brighton-aces.mp3",
+  "b-r-i-g-h-t-o-n.mp3",
+  "great-escape.mp3",
+  "glory-glory.mp3",
 ];
 requiredFiles.forEach((file) => {
   if (!fs.existsSync(path.join(root, file))) fail(`missing ${file}`);
@@ -85,13 +85,13 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v21/.test(serviceWorker) ||
+  !/albion-fan-hub-v22/.test(serviceWorker) ||
   !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v21 release cache or anthem asset is incorrect");
-else pass("v21 cache includes the anthem and chant assets");
+  fail("v22 release cache or anthem asset is incorrect");
+else pass("v22 cache includes the anthem and chant assets");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
 if (
@@ -110,6 +110,8 @@ else pass("sound controls use the version-14 master-volume model");
   ["pointerdown", "instant penalty input"],
   ["chooseAimPoint", "free pointer aiming"],
   ["playChant", "match chant playback"],
+  ["showTurnReady", "manual turn-ready stage"],
+  ["startSaveCountdown", "Palace save countdown"],
 ].forEach(([needle, label]) => {
   if (!application.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -123,6 +125,8 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
   ["placing-ball", "ball-placement sequence"],
   ["aim-pointer", "pointer aiming visuals"],
   ["chant-grid", "Albion chants player"],
+  ["v22-keeper-centre", "proportional goalkeeper sizing"],
+  ["meter-best{left:38%;width:24%}", "expanded green timing zone"],
 ].forEach(([needle, label]) => {
   if (!stylesheet.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -154,6 +158,8 @@ else pass("quiz supporter rating scale present");
   ["aimPointer", "free-aim pointer"],
   ["chantAudio", "chant audio player"],
   ["skipReplay", "slow-motion replay skip control"],
+  ["continueShootout", "manual next-turn control"],
+  ["liveKeeperStats", "live goalkeeper performance panel"],
 ].forEach(([needle, label]) => {
   if (!html.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -164,13 +170,27 @@ if (fs.existsSync(anthemPath) && fs.statSync(anthemPath).size < 100000)
   fail("anthem audio file is unexpectedly small");
 else if (fs.existsSync(anthemPath)) pass("anthem audio file is present");
 
-const chantFiles = requiredFiles.filter((file) => file.startsWith("chants/"));
+const chantFiles = requiredFiles.filter(
+  (file) => file.endsWith(".mp3") && file !== "sussex-by-the-sea.mp3",
+);
 const smallChants = chantFiles.filter(
   (file) => fs.existsSync(path.join(root, file)) && fs.statSync(path.join(root, file)).size < 100000,
 );
 if (smallChants.length)
   fail(`chant recordings are unexpectedly small: ${smallChants.join(", ")}`);
 else pass(`${chantFiles.length} Brighton chant recordings are present`);
+
+if (/chants\//.test(application) || /chants\//.test(serviceWorker))
+  fail("chant recordings still rely on a nested upload folder");
+else pass("chant recordings use GitHub-friendly root paths");
+
+if (
+  !/exactChance = \{ early: 0\.35, perfect: 0\.5, late: 0\.28 \}/.test(
+    application,
+  )
+)
+  fail("Palace save probability is not capped at 50%");
+else pass("Palace save probability is capped at 50%");
 
 ["app.js", "v16.js", "v17.js", "v18.js", "editor.js", "service-worker.js"].forEach((file) => {
   try {
