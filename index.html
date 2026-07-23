@@ -56,7 +56,7 @@
         </button>
         <div id="navLinks" class="nav-links">
           <a href="#quiz">Quiz</a><a href="#shootout">Shoot-out</a
-          ><a href="#match-centre">Matchday</a><a href="#xi">Pick XI</a
+          ><a href="#chants">Chants</a><a href="#match-centre">Matchday</a><a href="#xi">Pick XI</a
           ><a href="#story">Albion Story</a>
         </div>
       </nav>
@@ -103,7 +103,7 @@
       <section class="fan-dashboard" aria-label="Fan dashboard">
         <div class="quick-actions">
           <a href="#quiz">Play quiz</a><a href="#shootout">Penalty shoot-out</a
-          ><a href="#fixtures">Fixtures</a><a href="#xi">Pick your XI</a
+          ><a href="#chants">Albion chants</a><a href="#fixtures">Fixtures</a><a href="#xi">Pick your XI</a
           ><a href="#story">Albion Story</a
           ><button
             id="continueButton"
@@ -275,10 +275,9 @@
           <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
           <h2>Seagulls v Eagles</h2>
           <p>
-            Take Albion’s penalty, then become Bart Verbruggen. For each Palace
-            kick, the website secretly chooses the shot and you only guess where
-            to dive. Red timing on an Albion kick always misses. Keyboard: keys
-            1–7 or P for a Panenka.
+            Take Albion’s penalty by aiming freely inside the goal, then become
+            Bart Verbruggen. Palace’s destination remains secret: you only
+            choose where and when to dive. Red timing always misses.
           </p>
         </div>
         <div id="turnBadge" class="turn-badge albion-turn">
@@ -312,9 +311,7 @@
             </div>
             <strong id="accuracyVerdict" class="accuracy-verdict"
               >Time your strike</strong
-            ><small
-              >Choose one of seven goal areas. Red = automatic miss.</small
-            >
+            ><small>Point or drag inside the goal, then release. Red = automatic miss.</small>
           </div>
           <button id="panenkaButton" class="panenka-button" type="button">
             <b>Try a Panenka</b><small>Risky slow central chip</small>
@@ -323,15 +320,15 @@
         <details class="how-to-play">
           <summary>How to play</summary>
           <p>
-            <b>Albion kick:</b> time the accuracy bar and select one of seven
-            targets, or risk a Panenka. <b>Palace kick:</b> the website secretly
-            selects the shot; you only choose Verbruggen’s dive. Level after
-            five goes to sudden death.
+            <b>Albion kick:</b> move the pointer or drag towards your chosen
+            spot, then release to shoot. <b>Palace kick:</b> move the glove
+            pointer and release to commit Verbruggen. Palace’s target remains
+            secret. Level after five goes to sudden death.
           </p>
         </details>
         <p id="gamepadStatus" class="gamepad-status">
-          Keyboard: 1–7 select a goal area and P tries a Panenka. Connect a game
-          controller for controller support.
+          Keyboard: arrow keys move the pointer, Enter shoots or dives, and P
+          tries a Panenka. Connect a game controller for controller support.
         </p>
         <div class="stadium-scene">
           <div class="crowd" aria-hidden="true">
@@ -429,6 +426,13 @@
             <div class="penalty-spot" aria-hidden="true"><i></i></div>
             <div class="ball-shadow" id="ballShadow" aria-hidden="true"></div>
             <div class="ball" id="ball" aria-hidden="true"><span></span></div>
+            <div id="aimGuide" class="aim-guide" aria-hidden="true"></div>
+            <div id="aimPointer" class="aim-pointer" aria-hidden="true">
+              <i></i>
+            </div>
+            <div id="aimHint" class="aim-hint" aria-hidden="true">
+              Aim and release
+            </div>
             <button
               class="target top-left"
               data-target="top-left"
@@ -489,6 +493,8 @@
             Restart Brighton v Palace</button
           ><button id="replayKick" class="ghost" type="button" hidden>
             Replay last kick</button
+          ><button id="skipReplay" class="ghost" type="button" hidden>
+            Skip slow-motion replay</button
           ><button id="fullscreenShootout" class="ghost" type="button">
             Full-screen game</button
           ><button id="shareShootout" class="ghost" type="button" hidden>
@@ -508,9 +514,8 @@
           <p class="eyebrow">Albion anthem and sound</p>
           <h2>Sussex by the Sea</h2>
           <p>
-            Sound never starts automatically. The anthem and match effects
-            share one master volume, while the sound switch controls game
-            effects independently.
+            Sound never starts automatically. The anthem, chants and match
+            effects share one master volume and one clear sound switch.
           </p>
           <div class="sound-settings">
             <button id="inlineSoundToggle" type="button" aria-pressed="false">
@@ -525,17 +530,118 @@
             </button>
           </div>
           <p id="soundStatus" class="sound-status" role="status">
-            Sound effects are off.
+            Site sound is off.
           </p>
           <audio id="anthemAudio" controls preload="none" playsinline>
             <source src="sussex-by-the-sea.mp3" type="audio/mpeg" />
             Your browser does not support the audio player.
           </audio>
           <p class="audio-credit">
-            Music by William Ward-Higgs. Instrumental audio provided by
-            FluteTunes.com.
+            Music by William Ward-Higgs. This recording is provided by the
+            <a
+              href="https://sfhg.uk/resources/all-other-reference/sussex-by-the-sea"
+              target="_blank"
+              rel="noopener noreferrer"
+              >Sussex Family History Group</a
+            >
+            and used with permission.
           </p>
         </div>
+      </section>
+
+      <section class="card chants-card" id="chants">
+        <div class="section-head">
+          <p class="eyebrow">The Albion songbook</p>
+          <h2>Brighton favourite chants</h2>
+          <p>
+            Choose a terrace classic. Only one recording plays at a time and
+            the site’s master sound control governs every chant.
+          </p>
+        </div>
+        <div class="chant-now-playing" aria-live="polite">
+          <span id="chantPulse" aria-hidden="true"
+            ><i></i><i></i><i></i><i></i
+          ></span>
+          <div>
+            <small>Now playing</small
+            ><b id="chantNowPlaying">Choose a chant</b>
+          </div>
+          <button id="stopChant" class="ghost" type="button" disabled>
+            Stop
+          </button>
+        </div>
+        <div class="chant-grid">
+          <button
+            type="button"
+            data-chant="albion-albion-albion"
+            data-title="Albion, Albion, Albion"
+          >
+            <span>Terrace classic</span><b>Albion, Albion, Albion</b
+            ><small>Play chant</small></button
+          ><button type="button" data-chant="seagulls" data-title="Seagulls">
+            <span>Club call</span><b>Seagulls</b><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="we-are-brighton"
+            data-title="We Are Brighton"
+          >
+            <span>Anthem</span><b>We Are Brighton</b
+            ><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="come-on-brighton"
+            data-title="Come On Brighton"
+          >
+            <span>Matchday</span><b>Come On Brighton</b
+            ><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="we-all-follow-albion"
+            data-title="We All Follow the Albion"
+          >
+            <span>Classic</span><b>We All Follow the Albion</b
+            ><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="brighton-aces"
+            data-title="Brighton Aces"
+          >
+            <span>Classic</span><b>Brighton Aces</b
+            ><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="b-r-i-g-h-t-o-n"
+            data-title="B-R-I-G-H-T-O-N"
+          >
+            <span>Spelling chant</span><b>B-R-I-G-H-T-O-N</b
+            ><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="great-escape"
+            data-title="The Great Escape"
+          >
+            <span>Matchday classic</span><b>The Great Escape</b
+            ><small>Play chant</small></button
+          ><button
+            type="button"
+            data-chant="glory-glory"
+            data-title="Glory Glory Brighton and Hove Albion"
+          >
+            <span>Anthem</span><b>Glory Glory Brighton and Hove Albion</b
+            ><small>Play chant</small>
+          </button>
+        </div>
+        <audio id="chantAudio" preload="metadata" playsinline></audio>
+        <p class="audio-credit">
+          Recordings supplied by
+          <a
+            href="https://www.fanchants.com/football-team/brighton/"
+            target="_blank"
+            rel="noopener"
+            >FanChants</a
+          >
+          and used with permission.
+        </p>
       </section>
 
       <section class="card" id="match-centre">
@@ -1601,9 +1707,9 @@
       class="sound-toggle sound-off"
       type="button"
       aria-pressed="false"
-      title="Turn sound effects on"
+      title="Turn site sound on"
     >
-      🔇 Sound effects off
+      🔇 Site sound off
     </button>
     <div
       id="soundCaption"

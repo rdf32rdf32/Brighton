@@ -13,6 +13,7 @@
     dateISO: "2026-08-23T14:00:00+01:00",
   };
   let playSfx = () => {};
+  let playChant = () => {};
   let toastTimer = 0;
   function showToast(message) {
     const toast = $("siteToast");
@@ -1243,6 +1244,9 @@
     let palaceRunTimer = 0;
     let palaceShotTimer = 0;
     let placementTimer = 0;
+    let replayAnimationTimer = 0;
+    let replayContinuationTimer = 0;
+    let replaySkipContinue = null;
     let palaceStrikeDelay = 1120;
     let activeFoot = "right";
     let activeTrait = "placed";
@@ -1264,9 +1268,93 @@
     const goalFrame = $("goal");
     const stadiumScene = goalFrame.closest(".stadium-scene");
     const targets = [...document.querySelectorAll(".target")];
+    const aimPointer = $("aimPointer");
+    const aimGuide = $("aimGuide");
+    const aimHint = $("aimHint");
     const accuracyMeter = document.querySelector(".accuracy-meter");
     const accuracyMarker = accuracyMeter.querySelector("i");
     const accuracyVerdict = $("accuracyVerdict");
+    let aimPoint = { x: 50, y: 48 };
+    let aimingPointerId = null;
+    const clamp = (value, minimum, maximum) =>
+      Math.max(minimum, Math.min(maximum, value));
+    const zonePoint = {
+      "top-left": { x: 16, y: 18 },
+      "middle-left": { x: 14, y: 49 },
+      "bottom-left": { x: 17, y: 80 },
+      centre: { x: 50, y: 51 },
+      "top-right": { x: 84, y: 18 },
+      "middle-right": { x: 86, y: 49 },
+      "bottom-right": { x: 83, y: 80 },
+    };
+    function clearReplaySkip() {
+      window.clearTimeout(replayAnimationTimer);
+      window.clearTimeout(replayContinuationTimer);
+      replayAnimationTimer = 0;
+      replayContinuationTimer = 0;
+      replaySkipContinue = null;
+      $("skipReplay").hidden = true;
+    }
+    function offerReplaySkip(continueShootout, delay) {
+      let completed = false;
+      const finishReplay = () => {
+        if (completed) return;
+        completed = true;
+        clearReplaySkip();
+        continueShootout();
+      };
+      replaySkipContinue = finishReplay;
+      $("skipReplay").hidden = false;
+      replayContinuationTimer = window.setTimeout(finishReplay, delay);
+    }
+    function targetForPoint(x, y) {
+      let position;
+      if (x >= 36 && x <= 64) position = "centre";
+      else {
+        const side = x < 50 ? "left" : "right";
+        const height = y < 34 ? "top" : y > 68 ? "bottom" : "middle";
+        position = `${height}-${side}`;
+      }
+      return targets.find((target) => target.dataset.target === position);
+    }
+    function updateAimPointer(x, y, outside = false) {
+      aimPoint = {
+        x: clamp(x, -8, 108),
+        y: clamp(y, 5, 96),
+        outside,
+      };
+      aimPointer.style.left = `${aimPoint.x}%`;
+      aimPointer.style.top = `${aimPoint.y}%`;
+      aimPointer.classList.toggle("outside-goal", outside);
+      const rect = goalFrame.getBoundingClientRect();
+      const startX = rect.width * 0.5;
+      const startY = rect.height * 0.91;
+      const endX = (rect.width * aimPoint.x) / 100;
+      const endY = (rect.height * aimPoint.y) / 100;
+      const deltaX = endX - startX;
+      const deltaY = endY - startY;
+      aimGuide.style.width = `${Math.hypot(deltaX, deltaY)}px`;
+      aimGuide.style.transform = `rotate(${Math.atan2(deltaY, deltaX)}rad)`;
+    }
+    function aimFromEvent(event) {
+      const rect = goalFrame.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      const outside = x < 3 || x > 97 || y < 6 || y > 92;
+      updateAimPointer(x, y, outside);
+    }
+    function chooseAimPoint() {
+      if (locked) return;
+      const button = targetForPoint(
+        clamp(aimPoint.x, 4, 96),
+        clamp(aimPoint.y, 7, 91),
+      );
+      if (!button) return;
+      button.dataset.aimX = String(aimPoint.x);
+      button.dataset.aimY = String(aimPoint.y);
+      button.dataset.aimMiss = String(Boolean(aimPoint.outside));
+      chooseTarget(button);
+    }
     const announce = (title, detail) => {
       status.innerHTML = `<b>${esc(title)}</b><span>${esc(detail)}</span>`;
     };
@@ -1466,6 +1554,10 @@
         "crowd-miss",
         "crowd-win",
         "crowd-loss",
+        "pointer-shooting",
+        "pointer-saving",
+        "aim-ready",
+        "aim-dragging",
       );
       const decision = $("goalDecision");
       decision.hidden = true;
@@ -1481,6 +1573,7 @@
       if (phase !== "save") return;
       locked = false;
       targets.forEach((button) => (button.disabled = false));
+      stadiumScene.classList.add("aim-ready");
       goalFrame.classList.remove("placing-ball");
       taker.classList.remove("place-ball");
       ball.classList.remove("ball-to-spot");
@@ -1503,7 +1596,19 @@
       $("shootout").classList.add("game-active");
       const saving = phase === "save";
       const player = lineup[albionKicks % lineup.length];
-      targets.forEach((target) => target.classList.remove("selected-target"));
+      stadiumScene.classList.add(
+        saving ? "pointer-saving" : "pointer-shooting",
+      );
+      aimHint.textContent = saving
+        ? "Move the glove and release to dive"
+        : "Aim inside the goal and release";
+      updateAimPointer(50, saving ? 52 : 46);
+      targets.forEach((target) => {
+        target.classList.remove("selected-target");
+        delete target.dataset.aimX;
+        delete target.dataset.aimY;
+        delete target.dataset.aimMiss;
+      });
       if (!saving) {
         locked = true;
         accuracyFrozen = true;
@@ -1618,6 +1723,7 @@
           $("panenkaButton").disabled = false;
           accuracyFrozen = false;
           locked = false;
+          stadiumScene.classList.add("aim-ready");
           accuracyVerdict.textContent = "Time your strike";
           playSfx("whistle");
           announce(
@@ -1650,6 +1756,7 @@
         `<h3>Brighton v Palace shoot-out card</h3><ol>${rows}</ol><div class="shot-map-legend"><span><i class="map-goal"></i> Goal</span><span><i class="map-out"></i> Saved or missed</span></div><div class="shot-maps">${shotMap("Albion shots", albionResults)}${shotMap("Palace shots", palaceResults)}</div>`;
     }
     function reset() {
+      clearReplaySkip();
       albionKicks = 0;
       palaceKicks = 0;
       albionGoals = 0;
@@ -1758,7 +1865,7 @@
       if (albionWon) {
         flash.className = "goal-flash win";
         celebrationBurst();
-        playSfx("crowd");
+        playChant("seagulls", { title: "Seagulls", win: true });
       } else playSfx("miss");
       window.dispatchEvent(new Event("albion:progress"));
     }
@@ -1775,6 +1882,8 @@
         technique = null,
         shotStyle = "driven",
         foot = activeFoot,
+        aimX = null,
+        aimY = null,
       },
       replay = false,
     ) {
@@ -1792,6 +1901,8 @@
           technique: resolvedTechnique,
           shotStyle,
           foot,
+          aimX,
+          aimY,
         };
       if (slow) goalFrame.classList.add("slow-motion");
       goalFrame.classList.add("kick-in-flight");
@@ -1810,8 +1921,31 @@
           : target.includes("right")
             ? "flight-swerve-right"
             : "flight-straight";
-      ball.className = `ball ball-spin shot-${shotStyle} ${panenka ? (scored ? "panenka-goal" : "panenka-saved") : missed ? (postSide === "left" ? "shoot-wide-left" : "shoot-wide-right") : woodwork ? `hit-post-${postSide}` : `shoot-${target}`} ${swerve}`;
-      shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : target}`;
+      const destination =
+        aimX === null || aimY === null ? zonePoint[target] : { x: aimX, y: aimY };
+      ball.style.setProperty("--shot-x", `${clamp(destination.x, 5, 95)}%`);
+      ball.style.setProperty(
+        "--shot-y",
+        `${100 - clamp(destination.y, 7, 91)}%`,
+      );
+      shadow.style.setProperty("--shot-x", `${clamp(destination.x, 5, 95)}%`);
+      shadow.style.setProperty(
+        "--shot-y",
+        `${96 - clamp(destination.y, 7, 91)}%`,
+      );
+      const flightClass = panenka
+        ? scored
+          ? "panenka-goal"
+          : "panenka-saved"
+        : missed
+          ? postSide === "left"
+            ? "shoot-wide-left"
+            : "shoot-wide-right"
+          : woodwork
+            ? `hit-post-${postSide}`
+            : "shoot-custom";
+      ball.className = `ball ball-spin shot-${shotStyle} ${flightClass} ${swerve}`;
+      shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : "custom"}`;
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       const diveLevel = dive.includes("top")
         ? "top"
@@ -1904,7 +2038,24 @@
           playSfx(
             scored ? "goal" : woodwork ? "post" : missed ? "miss" : "save",
           );
-          if (scored || (saved && phase === "save"))
+          if (scored && phase === "shoot" && !replay) {
+            const goalChants = [
+              ["albion-albion-albion", "Albion, Albion, Albion"],
+              ["come-on-brighton", "Come On Brighton"],
+              ["we-are-brighton", "We Are Brighton"],
+            ];
+            const chant =
+              goalChants[Math.floor(Math.random() * goalChants.length)];
+            window.setTimeout(
+              () =>
+                playChant(chant[0], {
+                  title: chant[1],
+                  clipMs: 5200,
+                  game: true,
+                }),
+              120,
+            );
+          } else if (saved && phase === "save")
             window.setTimeout(() => playSfx("crowd"), 100);
           vibrate(
             saved ? [35, 30, 55] : woodwork ? [65, 35, 65] : scored ? 35 : 50,
@@ -1915,12 +2066,16 @@
     }
     function takeAlbionPenalty(button) {
       locked = true;
+      stadiumScene.classList.remove("aim-ready", "aim-dragging");
       freezeAccuracy(button);
       targets.forEach((targetButton) => {
         targetButton.disabled = true;
       });
       const player = lineup[albionKicks % lineup.length];
       const target = button.dataset.target;
+      const aimX = Number(button.dataset.aimX || zonePoint[target].x);
+      const aimY = Number(button.dataset.aimY || zonePoint[target].y);
+      const pointerMiss = button.dataset.aimMiss === "true";
       const accuracy = liveAccuracy;
       const predictable =
         recentTargets.length >= 2 &&
@@ -1930,7 +2085,7 @@
         ? target
         : positions[Math.floor(Math.random() * positions.length)];
       const redZone = accuracy < 0.56;
-      const missed = redZone;
+      const missed = redZone || pointerMiss;
       const woodwork = !missed && accuracy < 0.64 && Math.random() < 0.32;
       const sameSide = dive.split("-").pop() === target.split("-").pop();
       const saveChance =
@@ -1945,7 +2100,7 @@
           : missed
             ? redZone
               ? "Missed: red zone"
-              : "Wide"
+              : "Missed: outside goal"
             : "Saved";
       if (redZone) albionRedMisses += 1;
       recentTargets.push(target);
@@ -1967,6 +2122,8 @@
         slow,
         shotStyle,
         foot: player.foot,
+        aimX,
+        aimY,
       });
       window.setTimeout(
         () => {
@@ -1991,7 +2148,9 @@
               : woodwork
                 ? `${player.name} hits the frame of the goal.`
                 : missed
-                  ? "The accuracy marker was outside the safe area."
+                  ? redZone
+                    ? "The accuracy marker was outside the safe area."
+                    : "The pointer was dragged beyond the frame of the goal."
                   : `The Palace keeper denies ${player.name}.`,
           );
           renderLineup();
@@ -2019,6 +2178,7 @@
     function takePanenka() {
       if (locked || phase !== "shoot") return;
       locked = true;
+      stadiumScene.classList.remove("aim-ready", "aim-dragging");
       freezeAccuracy(
         targets.find((target) => target.dataset.target === "centre"),
         true,
@@ -2209,7 +2369,7 @@
             technique.key === "fingertips" &&
             !reducedMotion
           ) {
-            window.setTimeout(() => {
+            replayAnimationTimer = window.setTimeout(() => {
               clearMotion();
               taker.classList.add("palace-taker");
               animateShot(
@@ -2228,7 +2388,7 @@
                 true,
               );
             }, 320);
-            window.setTimeout(continueShootout, 2200);
+            offerReplaySkip(continueShootout, 2200);
           } else window.setTimeout(continueShootout, 850);
         },
         slow ? 1550 : 1120,
@@ -2240,6 +2400,7 @@
         ? Math.max(0, performance.now() - palaceRunStartedAt)
         : 0;
       locked = true;
+      stadiumScene.classList.remove("aim-ready", "aim-dragging");
       window.clearTimeout(palaceShotTimer);
       targets.forEach((targetButton) => {
         targetButton.disabled = true;
@@ -2264,6 +2425,36 @@
       if (phase === "shoot") takeAlbionPenalty(button);
       else commitPalaceDive(button);
     }
+    goalFrame.addEventListener("pointerdown", (event) => {
+      if (locked || !stadiumScene.classList.contains("aim-ready")) return;
+      if (event.button !== undefined && event.button !== 0) return;
+      event.preventDefault();
+      aimingPointerId = event.pointerId;
+      goalFrame.setPointerCapture?.(event.pointerId);
+      stadiumScene.classList.add("aim-dragging");
+      aimFromEvent(event);
+    });
+    goalFrame.addEventListener("pointermove", (event) => {
+      if (locked || !stadiumScene.classList.contains("aim-ready")) return;
+      if (
+        aimingPointerId === event.pointerId ||
+        (aimingPointerId === null && event.pointerType === "mouse")
+      )
+        aimFromEvent(event);
+    });
+    goalFrame.addEventListener("pointerup", (event) => {
+      if (aimingPointerId !== event.pointerId || locked) return;
+      event.preventDefault();
+      aimFromEvent(event);
+      goalFrame.releasePointerCapture?.(event.pointerId);
+      aimingPointerId = null;
+      stadiumScene.classList.remove("aim-dragging");
+      chooseAimPoint();
+    });
+    goalFrame.addEventListener("pointercancel", () => {
+      aimingPointerId = null;
+      stadiumScene.classList.remove("aim-dragging");
+    });
     targets.forEach((button) => {
       button.addEventListener("pointerdown", (event) => {
         if (event.button !== undefined && event.button !== 0) return;
@@ -2292,6 +2483,23 @@
       if (key >= 1 && key <= 7) {
         event.preventDefault();
         chooseTarget(targets[key - 1]);
+      }
+      const movement = {
+        ArrowLeft: [-7, 0],
+        ArrowRight: [7, 0],
+        ArrowUp: [0, -7],
+        ArrowDown: [0, 7],
+      }[event.key];
+      if (movement && !locked) {
+        event.preventDefault();
+        updateAimPointer(
+          aimPoint.x + movement[0],
+          aimPoint.y + movement[1],
+        );
+      }
+      if ((event.key === "Enter" || event.key === " ") && !locked) {
+        event.preventDefault();
+        chooseAimPoint();
       }
       if (event.key.toLowerCase() === "p") {
         event.preventDefault();
@@ -2344,6 +2552,9 @@
         },
         lastKick.slow ? 1700 : 1250,
       );
+    });
+    $("skipReplay").addEventListener("click", () => {
+      replaySkipContinue?.();
     });
     $("shareShootout").dataset.defaultLabel = "Share result";
     $("shareShootout").addEventListener("click", () =>
@@ -2481,6 +2692,11 @@
 
   function soundAndInstall() {
     const audio = $("anthemAudio");
+    const chantAudio = $("chantAudio");
+    const chantButtons = [...document.querySelectorAll("[data-chant]")];
+    const chantNowPlaying = $("chantNowPlaying");
+    const chantPulse = $("chantPulse");
+    const stopChantButton = $("stopChant");
     const toggle = $("soundToggle");
     const inlineToggle = $("inlineSoundToggle");
     const volume = $("soundVolume");
@@ -2496,8 +2712,29 @@
       : 0.75;
     let audioContext = null;
     let captionTimer = 0;
+    let chantClipTimer = 0;
     volume.value = String(Math.round(masterVolume * 100));
     audio.volume = masterVolume;
+    chantAudio.volume = masterVolume;
+    const setChantState = (key = "", title = "Choose a chant") => {
+      chantNowPlaying.textContent = title;
+      chantPulse.classList.toggle("playing", Boolean(key));
+      stopChantButton.disabled = !key;
+      chantButtons.forEach((button) => {
+        const active = button.dataset.chant === key;
+        button.classList.toggle("playing", active);
+        button.setAttribute("aria-pressed", String(active));
+        button.querySelector("small").textContent = active
+          ? "Playing"
+          : "Play chant";
+      });
+    };
+    const stopChant = (message = "Choose a chant") => {
+      window.clearTimeout(chantClipTimer);
+      chantAudio.pause();
+      chantAudio.currentTime = 0;
+      setChantState("", message);
+    };
     const showCaption = (text) => {
       window.clearTimeout(captionTimer);
       caption.textContent = text;
@@ -2510,8 +2747,8 @@
       soundEnabled = enabled;
       localStorage.setItem("albionSound", enabled ? "on" : "off");
       toggle.textContent = enabled
-        ? "🔊 Sound effects on"
-        : "🔇 Sound effects off";
+        ? "🔊 Site sound on"
+        : "🔇 Site sound off";
       inlineToggle.textContent = enabled ? "Turn sound off" : "Turn sound on";
       [toggle, inlineToggle].forEach((button) =>
         button.setAttribute("aria-pressed", String(enabled)),
@@ -2520,15 +2757,47 @@
       toggle.classList.toggle("sound-off", !enabled);
       toggle.title = enabled
         ? "Turn all site sound off"
-        : "Turn sound effects on";
+        : "Turn site sound on";
       soundStatus.textContent = enabled
-        ? `Sound effects are on at ${Math.round(masterVolume * 100)}% volume.`
-        : "Sound effects are off.";
+        ? `Site sound is on at ${Math.round(masterVolume * 100)}% volume.`
+        : "Site sound is off.";
       if (!enabled) {
         if (!audio.paused) audio.pause();
+        if (!chantAudio.paused) stopChant("Chants paused");
         if (audioContext?.state === "running")
           audioContext.suspend().catch(() => {});
       }
+    };
+    playChant = (key, options = {}) => {
+      const button = chantButtons.find(
+        (item) => item.dataset.chant === key,
+      );
+      const title =
+        options.title || button?.dataset.title || "Albion chant";
+      if (!soundEnabled && !options.user) return;
+      if (!soundEnabled) updateSound(true);
+      window.clearTimeout(chantClipTimer);
+      if (!audio.paused) audio.pause();
+      if (chantAudio.dataset.currentChant !== key) {
+        chantAudio.src = `chants/${key}.mp3`;
+        chantAudio.dataset.currentChant = key;
+      }
+      chantAudio.currentTime = 0;
+      chantAudio.volume = masterVolume;
+      setChantState(key, options.win ? `${title} · Shoot-out winners!` : title);
+      soundStatus.textContent = options.win
+        ? "Seagulls victory chant playing."
+        : `${title} playing.`;
+      chantAudio.play().catch(() => {
+        setChantState("", "Tap a chant to play");
+        soundStatus.textContent =
+          "Your browser needs one tap on a chant before match chants can play.";
+      });
+      if (options.clipMs)
+        chantClipTimer = window.setTimeout(
+          () => stopChant("Goal chant finished"),
+          options.clipMs,
+        );
     };
     playSfx = (type) => {
       const captions = {
@@ -2609,9 +2878,10 @@
       masterVolume = Number(volume.value) / 100;
       localStorage.setItem("albionSoundVolume", volume.value);
       audio.volume = masterVolume;
+      chantAudio.volume = masterVolume;
       if (soundEnabled)
         soundStatus.textContent =
-          `Sound effects are on at ${volume.value}% volume.`;
+          `Site sound is on at ${volume.value}% volume.`;
     });
     volume.addEventListener("change", () => {
       if (soundEnabled) playSfx("confirm");
@@ -2621,23 +2891,43 @@
       playSfx("save");
       window.setTimeout(() => playSfx("crowd"), 320);
     });
+    chantButtons.forEach((button) =>
+      button.addEventListener("click", () =>
+        playChant(button.dataset.chant, {
+          title: button.dataset.title,
+          user: true,
+        }),
+      ),
+    );
+    stopChantButton.addEventListener("click", () => stopChant());
     audio.addEventListener("play", () => {
       if (!soundEnabled) updateSound(true);
+      if (!chantAudio.paused) stopChant("Choose a chant");
       audio.volume = masterVolume;
-      soundStatus.textContent = "Anthem playing. Sound effects are also on.";
+      soundStatus.textContent = "Anthem playing. Site sound is on.";
     });
     audio.addEventListener("pause", () => {
       soundStatus.textContent = soundEnabled
-        ? `Anthem paused. Sound effects remain on at ${Math.round(masterVolume * 100)}% volume.`
-        : "Sound effects are off.";
+        ? `Anthem paused. Site sound remains on at ${Math.round(masterVolume * 100)}% volume.`
+        : "Site sound is off.";
     });
     audio.addEventListener("ended", () => {
       soundStatus.textContent =
-        `Anthem finished. Sound effects remain on at ${Math.round(masterVolume * 100)}% volume.`;
+        `Anthem finished. Site sound remains on at ${Math.round(masterVolume * 100)}% volume.`;
     });
     audio.addEventListener("error", () => {
       soundStatus.textContent =
         "The anthem is unavailable, but generated match effects still work.";
+    });
+    chantAudio.addEventListener("ended", () => {
+      setChantState("", "Choose another chant");
+      soundStatus.textContent =
+        `Chant finished. Site sound remains on at ${Math.round(masterVolume * 100)}% volume.`;
+    });
+    chantAudio.addEventListener("error", () => {
+      setChantState("", "Recording unavailable");
+      soundStatus.textContent =
+        "That chant could not be played. Please try another recording.";
     });
     updateSound(soundEnabled);
     let installPrompt = null;

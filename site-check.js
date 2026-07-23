@@ -24,6 +24,15 @@ const requiredFiles = [
   "manifest.json",
   "offline.html",
   "sussex-by-the-sea.mp3",
+  "chants/albion-albion-albion.mp3",
+  "chants/seagulls.mp3",
+  "chants/we-are-brighton.mp3",
+  "chants/come-on-brighton.mp3",
+  "chants/we-all-follow-albion.mp3",
+  "chants/brighton-aces.mp3",
+  "chants/b-r-i-g-h-t-o-n.mp3",
+  "chants/great-escape.mp3",
+  "chants/glory-glory.mp3",
 ];
 requiredFiles.forEach((file) => {
   if (!fs.existsSync(path.join(root, file))) fail(`missing ${file}`);
@@ -61,21 +70,28 @@ if (/Personal matchday itinerary|id="itinerary/i.test(html))
 else pass("personal matchday itinerary is removed");
 
 if (!/sussex-by-the-sea\.mp3/.test(html) || /sussex-by-the-sea-v17/.test(html))
-  fail("anthem must use the restored original audio asset");
-else pass("anthem uses the restored original audio asset");
+  fail("anthem must use the canonical local audio asset");
+else pass("anthem uses the canonical local audio asset");
+
+if (
+  !/sfhg\.uk\/resources\/all-other-reference\/sussex-by-the-sea/.test(html) ||
+  !/Sussex Family History Group/.test(html)
+)
+  fail("anthem source credit is missing");
+else pass("anthem recording credits the licensed SFHG source");
 
 const serviceWorker = fs.readFileSync(
   path.join(root, "service-worker.js"),
   "utf8",
 );
 if (
-  !/albion-fan-hub-v20/.test(serviceWorker) ||
+  !/albion-fan-hub-v21/.test(serviceWorker) ||
   !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v20 release cache or anthem asset is incorrect");
-else pass("v20 cache includes the proven version-14 anthem asset");
+  fail("v21 release cache or anthem asset is incorrect");
+else pass("v21 cache includes the anthem and chant assets");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
 if (
@@ -92,6 +108,8 @@ else pass("sound controls use the version-14 master-volume model");
   ["commitPalaceDive", "committed keeper dives"],
   ["Maxim De Cuyper", "left-footed Albion taker"],
   ["pointerdown", "instant penalty input"],
+  ["chooseAimPoint", "free pointer aiming"],
+  ["playChant", "match chant playback"],
 ].forEach(([needle, label]) => {
   if (!application.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -103,10 +121,18 @@ const stylesheet = fs.readFileSync(path.join(root, "style.css"), "utf8");
   ["crowd-bowl", "behind-goal crowd"],
   ["kick-decision", "clear goal and save decisions"],
   ["placing-ball", "ball-placement sequence"],
+  ["aim-pointer", "pointer aiming visuals"],
+  ["chant-grid", "Albion chants player"],
 ].forEach(([needle, label]) => {
   if (!stylesheet.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
 });
+if (
+  !/\.amex-map \.north\{grid-column:3;grid-row:2\}/.test(stylesheet) ||
+  !/\.amex-map \.south\{grid-column:1;grid-row:2\}/.test(stylesheet)
+)
+  fail("North and South stand map positions have not been swapped");
+else pass("North and South stand map positions are corrected");
 [
   ["position:static!important", "non-overlapping mobile score bar"],
   ["grid-template-columns:minmax(0,1fr) 98px!important", "compact mobile timing controls"],
@@ -125,6 +151,9 @@ else pass("quiz supporter rating scale present");
   ["kickDecision", "large kick decision"],
   ["crowd-bowl", "crowd bowl"],
   ["referee", "shoot-out referee"],
+  ["aimPointer", "free-aim pointer"],
+  ["chantAudio", "chant audio player"],
+  ["skipReplay", "slow-motion replay skip control"],
 ].forEach(([needle, label]) => {
   if (!html.includes(needle)) fail(`${label} missing`);
   else pass(`${label} present`);
@@ -134,6 +163,14 @@ const anthemPath = path.join(root, "sussex-by-the-sea.mp3");
 if (fs.existsSync(anthemPath) && fs.statSync(anthemPath).size < 100000)
   fail("anthem audio file is unexpectedly small");
 else if (fs.existsSync(anthemPath)) pass("anthem audio file is present");
+
+const chantFiles = requiredFiles.filter((file) => file.startsWith("chants/"));
+const smallChants = chantFiles.filter(
+  (file) => fs.existsSync(path.join(root, file)) && fs.statSync(path.join(root, file)).size < 100000,
+);
+if (smallChants.length)
+  fail(`chant recordings are unexpectedly small: ${smallChants.join(", ")}`);
+else pass(`${chantFiles.length} Brighton chant recordings are present`);
 
 ["app.js", "v16.js", "v17.js", "v18.js", "editor.js", "service-worker.js"].forEach((file) => {
   try {

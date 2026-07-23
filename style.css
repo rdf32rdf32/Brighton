@@ -495,3 +495,296 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,su
 @media(prefers-reduced-motion:reduce){
   .crowd-flag,.crowd-tier i,.kick-decision,.referee,.ball.ball-spin,.keeper.ball-contact:after{animation:none!important}
 }
+
+/* v21 penalty rebuild and Albion chants */
+.accuracy-meter{
+  height:48px;
+  margin-top:9px;
+  border-width:3px;
+  border-radius:12px;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.48),0 5px 12px rgba(4,45,83,.2)
+}
+.accuracy-meter i{
+  top:-7px;
+  width:10px;
+  height:58px;
+  border-radius:6px;
+  box-shadow:0 0 0 4px #fff,0 2px 9px rgba(0,0,0,.5)
+}
+.meter-label{font-size:.72rem;letter-spacing:.06em}
+.accuracy-verdict{font-size:.82rem}
+.goal .target{
+  opacity:0!important;
+  pointer-events:none!important;
+  border:0!important;
+  background:transparent!important
+}
+.stadium-scene.aim-ready .goal{
+  cursor:crosshair;
+  touch-action:none;
+  user-select:none
+}
+.aim-pointer{
+  position:absolute;
+  z-index:14;
+  left:50%;
+  top:46%;
+  width:48px;
+  height:48px;
+  transform:translate(-50%,-50%) scale(.72);
+  border:4px solid #ffcf33;
+  border-radius:50%;
+  background:rgba(4,43,78,.22);
+  box-shadow:0 0 0 3px rgba(255,255,255,.9),0 0 19px rgba(255,207,51,.8);
+  opacity:0;
+  pointer-events:none;
+  transition:left .06s linear,top .06s linear,transform .15s ease,opacity .15s ease
+}
+.aim-pointer:before,.aim-pointer:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:50%;
+  background:#fff;
+  transform:translate(-50%,-50%)
+}
+.aim-pointer:before{width:66px;height:3px}
+.aim-pointer:after{width:3px;height:66px}
+.aim-pointer i{
+  position:absolute;
+  inset:12px;
+  border:2px solid #ffcf33;
+  border-radius:50%
+}
+.pointer-saving .aim-pointer{
+  width:55px;
+  height:55px;
+  border-color:#65dda1;
+  background:rgba(13,113,68,.35);
+  box-shadow:0 0 0 3px #fff,0 0 20px rgba(101,221,161,.8)
+}
+.pointer-saving .aim-pointer i:after{
+  content:"🧤";
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:1.35rem
+}
+.pointer-saving .aim-pointer:before,.pointer-saving .aim-pointer:after{display:none}
+.stadium-scene.aim-ready .aim-pointer{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.stadium-scene.aim-dragging .aim-pointer{transform:translate(-50%,-50%) scale(1.13)}
+.aim-pointer.outside-goal{
+  border-color:#ef3848;
+  box-shadow:0 0 0 3px #fff,0 0 20px rgba(239,56,72,.85)
+}
+.aim-guide{
+  position:absolute;
+  z-index:12;
+  left:50%;
+  top:91%;
+  width:0;
+  height:4px;
+  transform-origin:left center;
+  border-radius:999px;
+  background:linear-gradient(90deg,rgba(255,255,255,.16),#ffcf33);
+  opacity:0;
+  pointer-events:none;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.55))
+}
+.aim-guide:after{
+  content:"";
+  position:absolute;
+  right:-2px;
+  top:50%;
+  width:11px;
+  height:11px;
+  transform:translateY(-50%) rotate(45deg);
+  border-top:4px solid #ffcf33;
+  border-right:4px solid #ffcf33
+}
+.pointer-saving .aim-guide{background:linear-gradient(90deg,rgba(255,255,255,.12),#65dda1)}
+.pointer-saving .aim-guide:after{border-color:#65dda1}
+.stadium-scene.aim-ready .aim-guide{opacity:.9}
+.aim-hint{
+  position:absolute;
+  z-index:13;
+  left:50%;
+  top:4%;
+  transform:translateX(-50%);
+  padding:5px 11px;
+  border:2px solid rgba(255,255,255,.85);
+  border-radius:999px;
+  background:rgba(3,34,64,.84);
+  color:#fff;
+  font-size:.65rem;
+  font-weight:900;
+  letter-spacing:.04em;
+  opacity:0;
+  pointer-events:none
+}
+.stadium-scene.aim-ready .aim-hint{opacity:1}
+.shoot-custom{
+  left:var(--shot-x)!important;
+  bottom:var(--shot-y)!important;
+  transform:translateX(-50%) scale(.43) rotate(520deg)!important
+}
+.shadow-custom{
+  left:var(--shot-x)!important;
+  bottom:var(--shot-y)!important;
+  transform:translateX(-50%) scale(.24)!important
+}
+.ball,.ball-shadow{transition-delay:.12s}
+.penalty-taker.run-up{animation-duration:.44s}
+.penalty-spot{
+  width:27px!important;
+  height:11px!important;
+  bottom:1%!important;
+  border:2px solid rgba(255,255,255,.95);
+  background:#f7fbf7!important;
+  box-shadow:0 0 0 7px rgba(30,93,43,.36),0 3px 3px rgba(0,0,0,.3)!important
+}
+.penalty-spot i{inset:-12px;border:3px dashed rgba(238,248,238,.7)}
+.crowd-bowl{
+  background:
+    radial-gradient(circle at 10% 28%,#78c5f2 0 2px,transparent 2.5px) 0 0/19px 17px,
+    radial-gradient(circle at 55% 62%,#e9f5ff 0 1.5px,transparent 2px) 0 0/15px 14px,
+    linear-gradient(90deg,rgba(0,0,0,.45),transparent 15% 85%,rgba(0,0,0,.45)),
+    linear-gradient(#010d19,#052d53 55%,#031b32)
+}
+.crowd-tier i{
+  width:12px;
+  height:23px;
+  border-radius:5px 5px 2px 2px;
+  opacity:.88;
+  filter:drop-shadow(0 2px 1px rgba(0,0,0,.55))
+}
+.crowd-tier i:before{left:3px;width:7px;height:8px;background:#bd8b69}
+.crowd-tier-back{opacity:.45;filter:blur(.35px)}
+.crowd-scarf{box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.stadium-scene.crowd-hush .crowd-bowl{filter:brightness(.64) saturate(.75)}
+.stadium-scene.crowd-goal .crowd-bowl,.stadium-scene.crowd-win .crowd-bowl{filter:brightness(1.12) saturate(1.25)}
+.kick-decision{
+  top:7%;
+  min-width:165px;
+  padding:7px 12px;
+  border-width:3px;
+  background:rgba(4,36,66,.94)
+}
+.kick-decision b{font-size:1.05rem}
+.kick-decision span{font-size:.63rem}
+.chants-card{
+  overflow:hidden;
+  background:linear-gradient(145deg,#fff 0 48%,#e9f5ff 100%)
+}
+.chant-now-playing{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  gap:13px;
+  align-items:center;
+  margin-bottom:15px;
+  padding:13px 15px;
+  border-radius:14px;
+  background:linear-gradient(120deg,#052f58,#087bc1);
+  color:#fff
+}
+.chant-now-playing small,.chant-now-playing b{display:block}
+.chant-now-playing small{color:#bee4ff;font-size:.66rem;text-transform:uppercase;letter-spacing:.08em}
+.chant-now-playing b{font-size:1.05rem}
+.chant-now-playing .ghost{border-color:#fff;color:#fff}
+#chantPulse{display:flex;align-items:end;gap:3px;width:31px;height:28px}
+#chantPulse i{display:block;width:5px;height:6px;border-radius:3px;background:#ffcf33}
+#chantPulse.playing i{animation:chant-level .55s ease-in-out infinite alternate}
+#chantPulse.playing i:nth-child(2){animation-delay:.13s}
+#chantPulse.playing i:nth-child(3){animation-delay:.27s}
+#chantPulse.playing i:nth-child(4){animation-delay:.39s}
+.chant-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.chant-grid button{
+  display:grid;
+  gap:4px;
+  min-height:112px;
+  padding:15px;
+  border:2px solid #d3e1ee;
+  border-radius:14px;
+  background:#fff;
+  color:#052f58;
+  text-align:left;
+  box-shadow:0 5px 14px rgba(4,49,89,.08);
+  transition:transform .15s ease,border-color .15s ease,background .15s ease
+}
+.chant-grid button:hover,.chant-grid button:focus-visible{transform:translateY(-2px);border-color:#087bc1;filter:none}
+.chant-grid button.playing{border-color:#ffcf33;background:#fff8d9;box-shadow:0 0 0 3px rgba(255,207,51,.3)}
+.chant-grid button span{color:#087bc1;font-size:.64rem;font-weight:900;text-transform:uppercase;letter-spacing:.07em}
+.chant-grid button b{font-size:.95rem}
+.chant-grid button small{align-self:end;color:#536a80;font-weight:800}
+.chants-card>audio{display:none}
+.shootout-card.game-active>.section-head,
+.shootout-card.game-active>.penalty-lineup,
+.shootout-card.game-active>.shootout-records,
+.shootout-card.game-active>.how-to-play,
+.shootout-card.game-active>.gamepad-status{display:none}
+@keyframes chant-level{to{height:27px}}
+@media(min-width:1000px) and (min-height:720px){
+  .shootout-card.game-active{
+    grid-template-columns:minmax(300px,.62fr) minmax(620px,1.38fr);
+    grid-template-areas:"turn game" "taker game" "controls game" "status game" "actions game";
+    min-height:auto
+  }
+  .shootout-card.game-active>.section-head,
+  .shootout-card.game-active>.penalty-lineup,
+  .shootout-card.game-active>.shootout-records,
+  .shootout-card.game-active>.how-to-play,
+  .shootout-card.game-active>.gamepad-status{display:none}
+  .shootout-card.game-active .stadium-scene .goal{max-height:calc(100vh - 170px)}
+}
+@media(max-width:760px){
+  .accuracy-meter{height:38px!important;border-radius:9px}
+  .accuracy-meter i{top:-6px;height:49px}
+  .meter-label{font-size:.58rem}
+  .aim-pointer{width:40px;height:40px}
+  .aim-pointer:before{width:54px}.aim-pointer:after{height:54px}
+  .pointer-saving .aim-pointer{width:46px;height:46px}
+  .aim-hint{top:2%;padding:3px 8px;font-size:.55rem}
+  .chant-grid{grid-template-columns:1fr 1fr}
+  .chant-grid button{min-height:96px;padding:12px}
+}
+@media(max-width:430px){
+  .shootout-card.game-active>.section-head,
+  .shootout-card.game-active>.penalty-lineup,
+  .shootout-card.game-active>.shootout-records,
+  .shootout-card.game-active>.how-to-play,
+  .shootout-card.game-active>.gamepad-status{display:none}
+  .shootout-card.game-active>.penalty-choice-controls{grid-template-columns:minmax(0,1fr) 92px!important}
+  .shootout-card.game-active .accuracy-meter{height:36px!important}
+  .shootout-card.game-active .accuracy-meter i{height:47px}
+  .shootout-card.game-active .panenka-button{min-height:48px}
+  .chant-grid{grid-template-columns:1fr}
+  .chant-grid button{min-height:82px}
+  .chant-now-playing{grid-template-columns:auto 1fr;gap:9px}
+  .chant-now-playing button{grid-column:1/-1;width:100%}
+}
+@media(prefers-reduced-motion:reduce){
+  #chantPulse.playing i,.aim-pointer{animation:none!important;transition:none!important}
+}
+
+/* Amex orientation correction: North and South swapped */
+.amex-map .north{grid-column:3;grid-row:2}
+.amex-map .south{grid-column:1;grid-row:2}
+.amex-map .north-goal{
+  left:auto;
+  right:111px;
+  transform:translate(50%,-50%)
+}
+.amex-map .south-goal{
+  left:111px;
+  right:auto;
+  transform:translate(-50%,-50%) rotate(180deg)
+}
+@media(max-width:700px){
+  .amex-map .north-goal{left:auto;right:78px}
+  .amex-map .south-goal{left:78px;right:auto}
+}
+@media(max-width:460px){
+  .amex-map .north-goal{left:auto;right:74px}
+  .amex-map .south-goal{left:74px;right:auto}
+}
