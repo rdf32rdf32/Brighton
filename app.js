@@ -1705,8 +1705,8 @@
       vibrate(18);
       announce("BALL STRUCK — REACT!", "Dive towards the ball now.");
       palaceReactionTimer = window.setTimeout(
-        () => takePalacePenalty(null, true, 700),
-        700,
+        () => takePalacePenalty(null, true, 1000),
+        1000,
       );
     }
     function startAlbionKick() {
@@ -1729,6 +1729,13 @@
     function startSaveCountdown() {
       hideTurnReady();
       locked = true;
+      keeper.classList.add("keeper-bar-check");
+      goalFrame.classList.add("crossbar-wobble");
+      announce("Verbruggen checks the goal", "He touches the bar, resets on the line and gets ready.");
+      window.setTimeout(() => {
+        keeper.classList.remove("keeper-bar-check");
+        goalFrame.classList.remove("crossbar-wobble");
+      }, 980);
       const sequence = ["3", "2", "1", "SAVE!"];
       let index = 0;
       readyCountdown.hidden = false;
@@ -2259,12 +2266,12 @@
       const dive = readsShot
         ? target
         : positions[Math.floor(Math.random() * positions.length)];
-      const redZone = accuracy < 0.56;
+      const redZone = accuracy < 0.46;
       const missed = redZone || pointerMiss;
-      const woodwork = !missed && accuracy < 0.64 && Math.random() < 0.32;
+      const woodwork = !missed && accuracy < 0.58 && Math.random() < 0.18;
       const sameSide = dive.split("-").pop() === target.split("-").pop();
       const saveChance =
-        dive === target ? 0.62 : sameSide && target !== "centre" ? 0.1 : 0;
+        dive === target ? 0.42 : sameSide && target !== "centre" ? 0.06 : 0;
       const saved = !missed && !woodwork && Math.random() < saveChance;
       const scored = !missed && !woodwork && !saved;
       const shotStyle = shotStyleFor(accuracy, target);
@@ -2440,22 +2447,22 @@
         committedAt === null
           ? palaceReactionStartedAt
             ? Math.max(0, performance.now() - palaceReactionStartedAt)
-            : 700
+            : 1000
           : committedAt;
       const reaction = !button
         ? "none"
-        : reactionMs <= 460
+        : reactionMs <= 550
           ? "perfect"
-          : "late";
+          : "good";
       if (button) keeperStats.dives += 1;
       if (button && dive === target) keeperStats.correctGuesses += 1;
-      const missed = Math.random() < 0.1;
-      const woodwork = !missed && Math.random() < 0.07;
+      const missed = Math.random() < 0.12;
+      const woodwork = !missed && Math.random() < 0.06;
       const adjacent = adjacentDives[target]?.includes(dive);
-      const exactChance = { perfect: 0.5, late: 0.32, none: 0 }[
+      const exactChance = { perfect: 0.86, good: 0.72, none: 0 }[
         reaction
       ];
-      const adjacentChance = { perfect: 0.18, late: 0.08, none: 0 }[
+      const adjacentChance = { perfect: 0.42, good: 0.28, none: 0 }[
         reaction
       ];
       const saved =
@@ -2493,7 +2500,7 @@
         (saved && technique.key === "fingertips");
       const reactionText = {
         perfect: `Sharp reaction · ${Math.round(reactionMs)} ms`,
-        late: `Late reaction · ${Math.round(reactionMs)} ms`,
+        good: `Good reaction · ${Math.round(reactionMs)} ms`,
         none: "No dive selected",
       }[reaction];
       announce("Palace strike…", `${reactionText}. Hold your nerve.`);
@@ -2751,7 +2758,15 @@
         $("shareShootout"),
       ),
     );
-    $("resetShootout").addEventListener("click", reset);
+    $("resetShootout").addEventListener("click", () => {
+      const replaying = $("resetShootout").textContent.includes("again");
+      reset();
+      if (replaying) {
+        window.requestAnimationFrame(() => {
+          shootoutCard.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+    });
     reset();
   }
 

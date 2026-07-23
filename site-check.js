@@ -89,13 +89,13 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v24/.test(serviceWorker) ||
+  !/albion-fan-hub-v25/.test(serviceWorker) ||
   !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v24 release cache or anthem asset is incorrect");
-else pass("v24 cache includes the anthem and chant assets");
+  fail("v25 release cache or anthem asset is incorrect");
+else pass("v25 cache includes the anthem and chant assets");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
 if (
@@ -209,9 +209,9 @@ if (/chants\//.test(application) || /chants\//.test(serviceWorker))
   fail("chant recordings still rely on a nested upload folder");
 else pass("chant recordings use GitHub-friendly root paths");
 
-if (!/exactChance = \{ perfect: 0\.5, late: 0\.32, none: 0 \}/.test(application))
-  fail("Palace save probability is not capped at 50%");
-else pass("Palace save probability is capped at 50%");
+if (!/exactChance = \{ perfect: 0\.86, good: 0\.72, none: 0 \}/.test(application))
+  fail("Forgiving Palace save probability is missing");
+else pass("Forgiving Palace save probability present");
 
 ["app.js", "v16.js", "v17.js", "v18.js", "editor.js", "service-worker.js"].forEach((file) => {
   try {

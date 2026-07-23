@@ -1987,3 +1987,54 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
   .reaction-cue,
   .goal .keeper{animation:none!important}
 }
+
+
+/* v25: forgiving one-second saves, goalkeeper bar routine and mobile polish */
+.goal.crossbar-wobble{animation:goal-frame-wobble .7s .2s ease-in-out}
+.goal .keeper.keeper-bar-check{animation:keeper-check-bar .95s ease-in-out both}
+.goal .keeper.keeper-bar-check .keeper-arms{animation:keeper-reach-bar .95s ease-in-out both}
+.goal .keeper.keeper-bar-check .keeper-glove{animation:keeper-glove-tap .95s ease-in-out both}
+@keyframes keeper-check-bar{
+  0%{transform:translateX(-50%)}
+  28%{transform:translateX(-94%) translateY(-8px) scale(.98)}
+  48%{transform:translateX(-62%) translateY(-31px) scale(1.02)}
+  68%{transform:translateX(-8%) translateY(-8px) scale(.98)}
+  100%{transform:translateX(-50%)}
+}
+@keyframes keeper-reach-bar{
+  0%,20%,78%,100%{transform:rotate(0)}
+  38%,58%{transform:translateY(-18px) rotate(-8deg) scaleX(1.06)}
+}
+@keyframes keeper-glove-tap{
+  0%,34%,64%,100%{filter:none}
+  45%,55%{filter:drop-shadow(0 0 5px #ffcf33);transform:translateY(-15px)}
+}
+@keyframes goal-frame-wobble{
+  0%,30%,100%{transform:translateZ(0) rotate(0)}
+  38%{transform:translateZ(0) rotate(.35deg)}
+  46%{transform:translateZ(0) rotate(-.28deg)}
+  55%{transform:translateZ(0) rotate(.18deg)}
+  66%{transform:translateZ(0) rotate(-.1deg)}
+}
+.reaction-cue{font-size:clamp(1.25rem,5vw,2.5rem);letter-spacing:.08em}
+@media(max-width:760px){
+  .shootout-card.game-active .goal .keeper{width:70px;height:158px;transform:translateX(-50%) scale(.86)}
+  .shootout-card.game-active .goal .keeper-head{width:36px;height:36px}
+  .shootout-card.game-active .goal .keeper-body{width:68px;height:76px}
+  .shootout-card.game-active .goal .keeper-arms{width:112px}
+  .shootout-card.game-active .goal .keeper-glove{width:17px;height:20px}
+  .shootout-card.game-active .goal .keeper.keeper-bar-check{animation-name:keeper-check-bar-mobile}
+}
+@media(orientation:landscape) and (max-height:600px){
+  .shootout-card.game-active .goal .keeper{transform:translateX(-50%) scale(.92)}
+}
+@keyframes keeper-check-bar-mobile{
+  0%{transform:translateX(-50%) scale(.86)}
+  28%{transform:translateX(-82%) translateY(-5px) scale(.84)}
+  48%{transform:translateX(-60%) translateY(-24px) scale(.88)}
+  68%{transform:translateX(-18%) translateY(-5px) scale(.84)}
+  100%{transform:translateX(-50%) scale(.86)}
+}
+@media(prefers-reduced-motion:reduce){
+  .goal.crossbar-wobble,.goal .keeper.keeper-bar-check,.goal .keeper.keeper-bar-check .keeper-arms,.goal .keeper.keeper-bar-check .keeper-glove{animation:none!important}
+}
