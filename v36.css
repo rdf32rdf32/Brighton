@@ -1,0 +1,43 @@
+/* v36 single articulated character layer */
+#penaltyTaker.taker-v36,#keeper.keeper-v36{transform-origin:50% 100%;will-change:transform;contain:layout style}
+.taker-v36 span,.keeper-v36 span{box-sizing:border-box}
+.taker-v36 .player-pelvis,.keeper-v36 .keeper-pelvis{position:absolute;inset:0;transform-origin:50% 82%}
+.taker-v36 .player-torso,.keeper-v36 .keeper-torso{position:absolute;left:50%;top:18%;width:34%;height:43%;transform:translateX(-50%);transform-origin:50% 90%}
+.taker-v36 .player-shirt,.keeper-v36 .keeper-body{position:absolute;inset:0;border-radius:42% 42% 24% 24%}
+.taker-v36 .player-neck,.keeper-v36 .keeper-neck{position:absolute;left:42%;top:-9%;width:16%;height:14%;background:#c98f6c;border-radius:40%}
+.taker-v36 .player-head,.keeper-v36 .keeper-head{position:absolute;left:50%;top:-38%;width:46%;height:34%;transform:translateX(-50%);border-radius:48% 48% 44% 44%}
+.taker-v36 .player-arm,.keeper-v36 .keeper-arm{position:absolute;top:8%;width:19%;height:52%;transform-origin:50% 8%}
+.taker-v36 .player-arm-left,.keeper-v36 .keeper-arm.left{left:-13%;transform:rotate(12deg)}
+.taker-v36 .player-arm-right,.keeper-v36 .keeper-arm.right{right:-13%;transform:rotate(-12deg)}
+.taker-v36 .player-upper-arm,.keeper-v36 .keeper-upper-arm{position:absolute;left:25%;top:0;width:50%;height:54%;border-radius:999px;background:#c98f6c}
+.taker-v36 .player-forearm,.keeper-v36 .keeper-forearm{position:absolute;left:25%;top:46%;width:50%;height:52%;border-radius:999px;background:#c98f6c;transform-origin:50% 8%}
+.taker-v36 .player-hand,.keeper-v36 .keeper-glove{position:absolute;left:-18%;bottom:-20%;width:136%;height:28%;border-radius:50%}
+.taker-v36 .player-hand{background:#c98f6c}.keeper-v36 .keeper-glove{background:#f4f7ff;border:1px solid #1b4f9c}
+.taker-v36 .player-shorts,.keeper-v36 .keeper-shorts{position:absolute;left:35%;top:56%;width:30%;height:16%;border-radius:22% 22% 38% 38%}
+.taker-v36 .player-leg,.keeper-v36 .keeper-thigh{position:absolute;top:66%;width:16%;height:31%;transform-origin:50% 5%}
+.taker-v36 .player-leg-left,.keeper-v36 .keeper-thigh.left{left:33%}.taker-v36 .player-leg-right,.keeper-v36 .keeper-thigh.right{right:33%}
+.taker-v36 .player-thigh,.keeper-v36 .keeper-thigh:before{position:absolute;inset:0 10% 44%;content:"";background:#c98f6c;border-radius:999px}
+.taker-v36 .player-shin,.keeper-v36 .keeper-shin{position:absolute;left:18%;top:48%;width:64%;height:50%;background:#c98f6c;border-radius:999px;transform-origin:50% 6%}
+.taker-v36 .player-boot,.keeper-v36 .keeper-boot{position:absolute;left:5%;bottom:-6%;width:110%;height:18%;border-radius:60% 25% 35% 45%;background:#17191e}
+/* suppress all legacy disconnected pieces */
+.keeper-v36>.keeper-arms,.keeper-v36>.keeper-glove,.keeper-v36>.keeper-body,.keeper-v36>.keeper-head,.keeper-v36>.keeper-shorts,.keeper-v36>.keeper-leg,.keeper-v36>.keeper-boot{display:none!important}
+/* Smooth, bounded goalkeeper dives. Root never scales and never leaves goal mouth. */
+#keeper.keeper-v36{transition:transform .16s cubic-bezier(.2,.8,.2,1);left:50%!important}
+#keeper.keeper-v36[class*="dive-"]{animation-duration:.66s!important;animation-timing-function:cubic-bezier(.18,.72,.28,1)!important;animation-fill-mode:forwards!important}
+#keeper.keeper-v36.dive-top-left,#keeper.keeper-v36.commit-top-left{transform:translate(-82%,-34%) rotate(-38deg)!important}
+#keeper.keeper-v36.dive-middle-left,#keeper.keeper-v36.commit-middle-left{transform:translate(-76%,-10%) rotate(-30deg)!important}
+#keeper.keeper-v36.dive-bottom-left,#keeper.keeper-v36.commit-bottom-left{transform:translate(-72%,12%) rotate(-24deg)!important}
+#keeper.keeper-v36.dive-top-right,#keeper.keeper-v36.commit-top-right{transform:translate(-18%,-34%) rotate(38deg)!important}
+#keeper.keeper-v36.dive-middle-right,#keeper.keeper-v36.commit-middle-right{transform:translate(-24%,-10%) rotate(30deg)!important}
+#keeper.keeper-v36.dive-bottom-right,#keeper.keeper-v36.commit-bottom-right{transform:translate(-28%,12%) rotate(24deg)!important}
+#keeper.keeper-v36.dive-centre,#keeper.keeper-v36.commit-centre{transform:translate(-50%,-10%) rotate(0)!important}
+#keeper.keeper-v36[class*="dive-left"] .keeper-torso,#keeper.keeper-v36[class*="commit-left"] .keeper-torso{transform:translateX(-50%) rotate(-8deg)}
+#keeper.keeper-v36[class*="dive-right"] .keeper-torso,#keeper.keeper-v36[class*="commit-right"] .keeper-torso{transform:translateX(-50%) rotate(8deg)}
+#keeper.keeper-v36[class*="left"] .keeper-arm.left{transform:rotate(86deg)}
+#keeper.keeper-v36[class*="left"] .keeper-arm.right{transform:rotate(58deg)}
+#keeper.keeper-v36[class*="right"] .keeper-arm.right{transform:rotate(-86deg)}
+#keeper.keeper-v36[class*="right"] .keeper-arm.left{transform:rotate(-58deg)}
+#keeper.keeper-v36[class*="bottom"] .keeper-thigh.left,#keeper.keeper-v36[class*="bottom"] .keeper-thigh.right{transform:rotate(22deg)}
+.v36-placement-active .target{pointer-events:none}
+@media(max-width:700px){#keeper.keeper-v36{max-width:76px}.taker-v36{max-width:68px}}
+@media(prefers-reduced-motion:reduce){#keeper.keeper-v36[class*="dive-"]{animation:none!important;transition:none!important}}

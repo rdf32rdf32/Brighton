@@ -33,7 +33,8 @@
       type="image/svg+xml"
     />
     <link rel="stylesheet" href="style.css" />
-  </head>
+    <link rel="stylesheet" href="v36.css">
+</head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <button id="startTour" class="tour-launch" type="button">
@@ -442,30 +443,28 @@
             <span id="keeperNameTag" class="keeper-name-tag" hidden
               >You control: Bart Verbruggen</span
             >
-            <div class="keeper" id="keeper" aria-hidden="true">
-              <span class="keeper-head"
-                ><i></i><b class="keeper-eyes"></b
-                ><em class="keeper-mouth"></em></span
-              ><span class="keeper-arms"></span
-              ><span class="keeper-glove left-glove"></span
-              ><span class="keeper-glove right-glove"></span
-              ><span class="keeper-body"
-                ><i class="keeper-shirt-detail">1</i></span
-              ><span class="keeper-shorts"></span
-              ><span class="keeper-leg keeper-leg-left"></span
-              ><span class="keeper-leg keeper-leg-right"></span
-              ><span class="keeper-boot keeper-boot-left"></span
-              ><span class="keeper-boot keeper-boot-right"></span>
+            <div class="keeper keeper-v36" id="keeper" aria-hidden="true">
+              <span class="keeper-pelvis">
+                <span class="keeper-torso"><span class="keeper-body"><i class="keeper-shirt-detail">1</i></span>
+                  <span class="keeper-neck"></span><span class="keeper-head"><i></i><b class="keeper-eyes"></b><em class="keeper-mouth"></em></span>
+                  <span class="keeper-arm left"><span class="keeper-upper-arm"></span><span class="keeper-forearm"></span><span class="keeper-glove left-glove"></span></span>
+                  <span class="keeper-arm right"><span class="keeper-upper-arm"></span><span class="keeper-forearm"></span><span class="keeper-glove right-glove"></span></span>
+                </span>
+                <span class="keeper-shorts"></span>
+                <span class="keeper-thigh left"><span class="keeper-shin"></span><span class="keeper-boot keeper-boot-left"></span></span>
+                <span class="keeper-thigh right"><span class="keeper-shin"></span><span class="keeper-boot keeper-boot-right"></span></span>
+              </span>
             </div>
-            <div class="penalty-taker" id="penaltyTaker" aria-hidden="true">
-              <span class="player-head"
-                ><i class="player-eyes"></i
-                ><b class="player-mouth"></b></span
-              ><span class="player-shirt" id="penaltyShirt">9</span
-              ><span class="player-arm player-arm-left"></span
-              ><span class="player-arm player-arm-right"></span
-              ><span class="player-leg player-leg-left"></span
-              ><span class="player-leg player-leg-right"></span>
+            <div class="penalty-taker taker-v36" id="penaltyTaker" aria-hidden="true">
+              <span class="player-pelvis">
+                <span class="player-torso"><span class="player-shirt" id="penaltyShirt">9</span><span class="player-neck"></span><span class="player-head"><i class="player-eyes"></i><b class="player-mouth"></b></span>
+                  <span class="player-arm player-arm-left"><span class="player-upper-arm"></span><span class="player-forearm left"><span class="player-hand left"></span></span></span>
+                  <span class="player-arm player-arm-right"><span class="player-upper-arm"></span><span class="player-forearm right"><span class="player-hand right"></span></span></span>
+                </span>
+                <span class="player-shorts"></span>
+                <span class="player-leg player-leg-left"><span class="player-thigh"></span><span class="player-shin"></span><span class="player-boot"></span></span>
+                <span class="player-leg player-leg-right"><span class="player-thigh"></span><span class="player-shin"></span><span class="player-boot"></span></span>
+              </span>
             </div>
             <div class="penalty-spot" aria-hidden="true"><i></i></div>
             <div class="ball-shadow" id="ballShadow" aria-hidden="true"></div>
@@ -1882,12 +1881,6 @@
     <script src="content-data.js"></script>
     <script src="quiz-data.js"></script>
     <script src="app.js"></script>
-    <script src="v16.js"></script>
-    <script src="v17.js"></script>
-    <script src="v18.js"></script>
-    <script src="v30.js"></script>
-    <script src="v31.js"></script>
-    <script src="v32.js"></script>
-    <script src="v34.js"></script>
+    <script src="v36.js"></script>
   </body>
 </html>
