@@ -34,7 +34,7 @@
     />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="clean.css" />
-    <link rel="stylesheet" href="rebuild.css?v=1" />
+    <link rel="stylesheet" href="rebuild.css?v=2" />
     <meta name="release" content="rollback-5-professional-rebuild" />
 </head>
   <body>
@@ -279,9 +279,7 @@
           <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
           <h2>Seagulls v Eagles</h2>
           <p>
-            Take Albion’s penalty by aiming freely inside the goal, then become
-            Bart Verbruggen. Palace’s destination remains secret until the ball
-            is struck: react to its flight and dive. Aim with the pointer and choose your spot. The keeper reacts only after the strike.
+            Take Albion’s penalty by aiming inside the recessed goal, then become Bart Verbruggen. Palace’s destination stays secret until the ball is struck, so react to the flight and dive. The pointer is the only control.
           </p>
         </div>
         <div id="turnBadge" class="turn-badge albion-turn">
@@ -300,23 +298,6 @@
           aria-live="polite"
         ></div>
         <div id="shotControls" class="penalty-controls penalty-choice-controls">
-          <div class="accuracy-control">
-            <span>Normal penalty accuracy</span>
-            <div
-              class="accuracy-meter"
-              aria-label="Moving accuracy meter: red miss, amber risky, green best chance"
-            >
-              <span class="meter-label meter-miss-left">MISS</span
-              ><span class="meter-label meter-risk-left">RISKY</span
-              ><span class="meter-label meter-best">BEST</span
-              ><span class="meter-label meter-risk-right">RISKY</span
-              ><span class="meter-label meter-miss-right">MISS</span><i></i
-              ><b></b>
-            </div>
-            <strong id="accuracyVerdict" class="accuracy-verdict"
-              >Time your strike</strong
-            ><small>Point or drag inside the goal, then release. Red = automatic miss.</small>
-          </div>
           <button id="panenkaButton" class="panenka-button" type="button">
             <b>Try a Panenka</b><small>Risky slow central chip</small>
           </button>
@@ -324,9 +305,7 @@
         <details class="how-to-play">
           <summary>How to play</summary>
           <p>
-            <b>Albion kick:</b> move the pointer or drag towards your chosen
-            spot, then release to shoot. <b>Palace kick:</b> move the glove
-            pointer and release after the ball is struck. Verbruggen cannot
+            <b>Albion kick:</b> move the pointer inside the goal mouth and click or tap to shoot. <b>Palace kick:</b> move the glove pointer and click or tap where Verbruggen should dive after the ball is struck. Verbruggen cannot
             commit early. Palace never starts until you press Ready, and their
             target remains secret during the run-up. Level after five goes to
             sudden death.
@@ -483,7 +462,7 @@
             </div>
             <div id="firstKickCoach" class="first-kick-coach" hidden>
               <b>Your first kick</b>
-              <span>Aim inside the distant goal and release. Red timing misses.</span>
+              <span>Aim inside the distant goal and release. </span>
             </div>
             <button
               class="target top-left"
@@ -537,7 +516,7 @@
           aria-live="polite"
         >
           <b>Pick your spot</b
-          ><span>Red accuracy means an automatic miss.</span>
+          ><span>Aim inside the goal frame.</span>
         </div>
         <div id="turnReadyPanel" class="turn-ready-panel" hidden>
           <p id="turnReadyText">The next player is ready.</p>
@@ -560,29 +539,7 @@
           </button>
         </div>
       </section>
-
-
-      <section class="card guess-player-card" id="guess-player">
-        <div class="section-head">
-          <p class="eyebrow">Albion challenge</p>
-          <h2>Guess the Albion player</h2>
-          <p>Identify the player from three progressively easier clues.</p>
-        </div>
-        <div class="guess-player-stage">
-          <div class="guess-silhouette" aria-hidden="true"><img id="guessPlayerImage" alt="" decoding="async"><span>?</span></div>
-          <div class="guess-player-content">
-            <p id="guessClue" class="guess-clue">Press start for your first clue.</p>
-            <div class="button-row">
-              <button id="guessStart" type="button">Start challenge</button>
-              <button id="guessNextClue" class="ghost" type="button" disabled>Next clue</button>
-            </div>
-            <div id="guessChoices" class="guess-choices" aria-live="polite"></div>
-            <p id="guessResult" class="result" aria-live="polite"></p>
-          </div>
-        </div>
-      </section>
-
-      <section class="card anthem-card" id="anthem">
+<section class="card anthem-card" id="anthem">
         <img
           src="albion-safe-graphic.svg"
           alt=""
@@ -1884,6 +1841,6 @@
     <script src="quiz-data.js"></script>
     <script src="app.js"></script>
     <script src="clean.js"></script>
-    <script src="rebuild.js?v=1"></script>
+    <script src="rebuild.js?v=2"></script>
   </body>
 </html>
