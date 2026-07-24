@@ -561,6 +561,27 @@
         </div>
       </section>
 
+
+      <section class="card guess-player-card" id="guess-player">
+        <div class="section-head">
+          <p class="eyebrow">Albion challenge</p>
+          <h2>Guess the Albion player</h2>
+          <p>Identify the player from three progressively easier clues.</p>
+        </div>
+        <div class="guess-player-stage">
+          <div class="guess-silhouette" aria-hidden="true"><span>?</span></div>
+          <div class="guess-player-content">
+            <p id="guessClue" class="guess-clue">Press start for your first clue.</p>
+            <div class="button-row">
+              <button id="guessStart" type="button">Start challenge</button>
+              <button id="guessNextClue" class="ghost" type="button" disabled>Next clue</button>
+            </div>
+            <div id="guessChoices" class="guess-choices" aria-live="polite"></div>
+            <p id="guessResult" class="result" aria-live="polite"></p>
+          </div>
+        </div>
+      </section>
+
       <section class="card anthem-card" id="anthem">
         <img
           src="albion-safe-graphic.svg"
@@ -1866,5 +1887,7 @@
     <script src="v17.js"></script>
     <script src="v18.js"></script>
     <script src="v30.js"></script>
+    <script src="v31.js"></script>
+    <script src="v32.js"></script>
   </body>
 </html>

@@ -1907,11 +1907,11 @@
       readyKeeper();
       if (saving) {
         if (waitForReady) showTurnReady("save");
-        else palaceRunTimer = window.setTimeout(startPalaceRun, 520);
+        else palaceRunTimer = window.setTimeout(startPalaceRun, 2350);
       } else {
         $("panenkaButton").disabled = true;
         if (waitForReady) showTurnReady("shoot");
-        else placementTimer = window.setTimeout(startAlbionKick, 2200);
+        else placementTimer = window.setTimeout(startAlbionKick, 2350);
       }
     }
     function renderSummary() {
