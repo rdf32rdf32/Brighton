@@ -1,23 +1,15 @@
-# Albion Fan Hub
+# Brighton Fan Hub — clean release
 
-Unofficial static Brighton & Hove Albion supporter site for GitHub Pages.
+This release removes the historical version patch files and legacy service-worker caching.
 
-Version 22 gives the shoot-out a full-width accuracy bar with a larger green zone, a proportional Verbruggen, a manual Ready stage before every Palace run-up, a manual next-kick stage, a wider reaction window and a maximum 50% save probability. All chant MP3s now sit in the upload root so GitHub Pages can serve them without a nested audio folder.
+Active application files:
+- `index.html`
+- `style.css`
+- `clean.css`
+- `content-data.js`
+- `quiz-data.js`
+- `app.js`
+- `clean.js`
 
-Version 23 rebuilt the penalty view as a single perspective pitch. The distant goal, foreground taker and spot, converging pitch markings, depth-scaled ball flight, goal-line goalkeeper, layered posts and net, improved faces and contact-timed sound form one scene. The timing bar and complete pitch are designed to remain visible together, while the first-visit tour is fixed clearly at the top left.
-
-Version 24 changes Palace penalties into true reaction saves. Verbruggen cannot dive during the run-up: the ball begins moving at contact and the player then has a short mouse, touch or keyboard reaction window. The release also adds rear-view multi-stage run-ups, a one-second ball-placement pause, correctly ordered goal-area, spot and penalty-area markings, a smaller goal-line goalkeeper, natural preparation and landing movement, reaction-time feedback, enhanced ball shadows, solid post depth, separate roof, side and rear netting, local net impacts and deeper crowd presentation. No distance wording is shown on the pitch.
-
-Features include a category-based five-question quiz where the first choice is final, explanations remain visible before automatic progression, supporter ratings run from “Are You a Secret Palace Fan?” to “Seagulls Expert”, and missed or weak areas can be replayed. There is no visible Check answer step. The Brighton v Palace shoot-out uses free mouse, touch or keyboard pointer aiming rather than visible numbered zones, with a much larger accuracy bar, a clearer penalty spot and smoother placement, strike and ball-flight sequences. Palace’s destination remains secret through the run-up and Verbruggen reacts only after contact. The game retains proper best-of-five early-finish rules, sudden death, match-point pressure, left-footed takers, varied Palace run-up speeds, adjacent saves, local net and woodwork reactions, selective replays and post-match reports.
-
-The v21 site adds a nine-recording Brighton chants section, with FanChants recordings used with permission. Albion goals trigger a short rotating chant and a shoot-out win triggers the full Seagulls chant. The anthem, chants and match effects share the restored master volume and site sound switch. Automatic slow-motion fingertip-save replays can now be skipped, while the last kick can still be replayed on demand. It also includes a dynamic matchday and returning-supporter dashboard, an Albion supporter profile, a season database and progress centre, grouped search, verified recent head-to-head results, expandable fixture cards, prediction history, an expanded XI builder with captain, set pieces, tactics, drag swapping and recreatable links, interactive Albion history and glossary sections, an honours cabinet, active navigation, a settings drawer, selective reset controls, local data export and restore, automatic performance and update recovery, and an opt-in guided tour. The former personal itinerary remains removed.
-
-The site also includes compact mobile and landscape game layouts, full-screen play, clearly differentiated white away-fixture cards, next-home and next-away cards, calendar downloads, local kick-off time, match and league-position predictions, filtered Albion Story eras and Palace rivalry sections, Records & Honours, a corrected Amex stand map with capacity and accessibility guidance, detailed travel guidance, the proven version-14 sound controls with one master volume and the licensed SFHG anthem recording, an optional night-match theme, update notifications and strengthened offline support. On mobile, the timing bar, score and goal now use a compact non-sticky layout designed to fit comfortably together.
-
-Run `node site-check.js` before publishing. The included GitHub Actions workflow runs the same release checks automatically after uploads.
-
-Upload every file in the release ZIP directly to the GitHub Pages repository root.
-
-
-## Release 34
-Working visible diagnostics, corrected 1983 replay item, stronger accessibility, mobile polish and improved silhouette reward feedback.
+Upload the contents of this folder directly to the root of the GitHub Pages repository.
+After deployment, refresh once with Ctrl+F5 so Edge discards any previously cached page assets.

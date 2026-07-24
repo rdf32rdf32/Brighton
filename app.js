@@ -1612,8 +1612,8 @@
       ball.className = "ball";
       shadow.className = "ball-shadow";
       flash.className = "goal-flash";
-      taker.className = "penalty-taker taker-v38";
-      keeper.className = "keeper keeper-v38";
+      taker.className = "penalty-taker clean-player-rig";
+      keeper.className = "keeper clean-keeper-rig";
       keeper.style.left = "";
       goalFrame.classList.remove(
         "slow-motion",
@@ -1663,7 +1663,7 @@
       const mindGame = phase === "save" && Math.random() < 0.28
         ? ` mindgame-point-${Math.random() < 0.5 ? "left" : "right"}`
         : "";
-      keeper.className = `keeper keeper-v38 ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
+      keeper.className = `keeper clean-keeper-rig ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
     }
     function playVerifiedPlacement(onComplete) {
       const runId = ++placementRunId;
@@ -1671,63 +1671,61 @@
       placementAnimations = [];
       stadiumScene.classList.add("placement-active");
       goalFrame.classList.add("placing-ball");
-      taker.classList.add("placement-sequence");
+      taker.classList.add("placement-sequence", "place-ball");
       ball.classList.add("ball-carried");
       const reduced = document.documentElement.classList.contains("reduce-motion") || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const duration = reduced ? 650 : 3600;
+      const duration = reduced ? 450 : 2400;
       const easing = "cubic-bezier(.22,.72,.24,1)";
+      const pelvis = taker.querySelector(".player-pelvis");
       const animate = (el, frames) => {
-        if (!el) return null;
+        if (!el || typeof el.animate !== "function") return null;
         const animation = el.animate(frames, { duration, fill: "both", easing });
         placementAnimations.push(animation);
         return animation;
       };
-      const torso = taker.querySelector(".player-torso");
-      const leftArm = taker.querySelector(".player-arm-left");
-      const rightArm = taker.querySelector(".player-arm-right");
-      const leftForearm = taker.querySelector(".player-forearm.left");
-      const rightForearm = taker.querySelector(".player-forearm.right");
-      animate(taker, [
-        { offset: 0, transform: "translate3d(-72px,0,0)" },
-        { offset: .30, transform: "translate3d(-24px,0,0)" },
-        { offset: .46, transform: "translate3d(-8px,8px,0)" },
-        { offset: .62, transform: "translate3d(0,18px,0)" },
-        { offset: .72, transform: "translate3d(0,18px,0)" },
-        { offset: .82, transform: "translate3d(0,0,0)" },
-        { offset: 1, transform: "translate3d(-28px,0,0)" }
+      const master = animate(taker, [
+        { offset: 0, transform: "translate3d(-58px,0,0)" },
+        { offset: .34, transform: "translate3d(-18px,0,0)" },
+        { offset: .55, transform: "translate3d(0,8px,0)" },
+        { offset: .72, transform: "translate3d(0,8px,0)" },
+        { offset: .86, transform: "translate3d(0,0,0)" },
+        { offset: 1, transform: "translate3d(-25px,0,0)" }
       ]);
-      animate(torso, [
-        { offset: 0, transform: "translateX(-50%) rotate(0deg)" },
-        { offset: .42, transform: "translateX(-50%) rotate(0deg)" },
-        { offset: .60, transform: "translateX(-50%) rotate(28deg)" },
-        { offset: .72, transform: "translateX(-50%) rotate(28deg)" },
-        { offset: .84, transform: "translateX(-50%) rotate(0deg)" },
-        { offset: 1, transform: "translateX(-50%) rotate(0deg)" }
+      animate(pelvis, [
+        { offset: 0, transform: "rotate(0deg) translateY(0)" },
+        { offset: .42, transform: "rotate(0deg) translateY(0)" },
+        { offset: .62, transform: "rotate(16deg) translateY(8px)" },
+        { offset: .72, transform: "rotate(16deg) translateY(8px)" },
+        { offset: .86, transform: "rotate(0deg) translateY(0)" },
+        { offset: 1, transform: "rotate(0deg) translateY(0)" }
       ]);
-      animate(leftArm, [{offset:0,transform:"rotate(18deg)"},{offset:.42,transform:"rotate(18deg)"},{offset:.62,transform:"rotate(58deg)"},{offset:.74,transform:"rotate(58deg)"},{offset:.84,transform:"rotate(18deg)"},{offset:1,transform:"rotate(18deg)"}]);
-      animate(rightArm,[{offset:0,transform:"rotate(-18deg)"},{offset:.42,transform:"rotate(-18deg)"},{offset:.62,transform:"rotate(-58deg)"},{offset:.74,transform:"rotate(-58deg)"},{offset:.84,transform:"rotate(-18deg)"},{offset:1,transform:"rotate(-18deg)"}]);
-      animate(leftForearm,[{offset:0,transform:"rotate(18deg)"},{offset:.42,transform:"rotate(18deg)"},{offset:.62,transform:"rotate(42deg)"},{offset:.74,transform:"rotate(42deg)"},{offset:.84,transform:"rotate(18deg)"},{offset:1,transform:"rotate(18deg)"}]);
-      animate(rightForearm,[{offset:0,transform:"rotate(-18deg)"},{offset:.42,transform:"rotate(-18deg)"},{offset:.62,transform:"rotate(-42deg)"},{offset:.74,transform:"rotate(-42deg)"},{offset:.84,transform:"rotate(-18deg)"},{offset:1,transform:"rotate(-18deg)"}]);
       animate(ball, [
-        { offset: 0, transform: "translate3d(-72px,-55px,0)", opacity: 1 },
-        { offset: .30, transform: "translate3d(-24px,-55px,0)", opacity: 1 },
-        { offset: .46, transform: "translate3d(-8px,-48px,0)", opacity: 1 },
-        { offset: .64, transform: "translate3d(0,-12px,0)", opacity: 1 },
+        { offset: 0, transform: "translate3d(-58px,-48px,0)", opacity: 1 },
+        { offset: .34, transform: "translate3d(-18px,-48px,0)", opacity: 1 },
+        { offset: .56, transform: "translate3d(0,-25px,0)", opacity: 1 },
         { offset: .72, transform: "translate3d(0,0,0)", opacity: 1 },
         { offset: 1, transform: "translate3d(0,0,0)", opacity: 1 }
       ]);
-      animate(shadow,[{offset:0,transform:"translateX(-72px) scale(.55)",opacity:.22},{offset:.46,transform:"translateX(-8px) scale(.55)",opacity:.22},{offset:.72,transform:"translateX(0) scale(1)",opacity:.5},{offset:1,transform:"translateX(0) scale(1)",opacity:.5}]);
-      const master = placementAnimations[0];
-      master.finished.then(() => {
+      animate(shadow, [
+        { offset: 0, transform: "translateX(-58px) scale(.65)", opacity: .2 },
+        { offset: .56, transform: "translateX(0) scale(.75)", opacity: .3 },
+        { offset: .72, transform: "translateX(0) scale(1)", opacity: .5 },
+        { offset: 1, transform: "translateX(0) scale(1)", opacity: .5 }
+      ]);
+      const finish = () => {
         if (runId !== placementRunId) return;
         placementAnimations = [];
         stadiumScene.classList.remove("placement-active");
         goalFrame.classList.remove("placing-ball");
-        taker.classList.remove("placement-sequence");
+        taker.classList.remove("placement-sequence", "place-ball");
         ball.classList.remove("ball-carried");
-        [taker, ball, shadow, torso, leftArm, rightArm, leftForearm, rightForearm].forEach(el => { if (el) { el.style.removeProperty("transform"); el.style.removeProperty("opacity"); } });
+        [taker, pelvis, ball, shadow].forEach((el) => {
+          if (el) { el.style.removeProperty("transform"); el.style.removeProperty("opacity"); }
+        });
         onComplete();
-      }).catch(() => {});
+      };
+      if (master?.finished) master.finished.then(finish).catch(() => {});
+      else window.setTimeout(finish, duration);
     }
 
     function startPalaceRun() {
@@ -2215,7 +2213,7 @@
             : "shoot-custom";
       ball.className = `ball shot-${shotStyle} ${flightClass} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : "custom"}`;
-      keeper.className = `keeper keeper-v38 ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
+      keeper.className = `keeper clean-keeper-rig ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       const diveLevel = dive.includes("top")
         ? "top"
         : dive.includes("bottom")
@@ -2702,7 +2700,7 @@
           targetButton === button,
         );
       });
-      keeper.className = `keeper keeper-v38 user-keeper keeper-committed commit-${button.dataset.target}`;
+      keeper.className = `keeper clean-keeper-rig user-keeper keeper-committed commit-${button.dataset.target}`;
       keeper.style.removeProperty("--track-x");
       keeper.style.removeProperty("--track-y");
       announce(
@@ -3479,34 +3477,13 @@
   siteExperience();
   ui();
   initialiseQuiz();
-  if ("serviceWorker" in navigator && location.protocol === "https:") {
-    navigator.serviceWorker
-      .register("./service-worker.js")
-      .then((registration) => {
-        const showUpdate = () => {
-          if (navigator.serviceWorker.controller)
-            $("updateNotice").hidden = false;
-        };
-        if (registration.waiting) showUpdate();
-        registration.addEventListener("updatefound", () => {
-          const worker = registration.installing;
-          worker?.addEventListener("statechange", () => {
-            if (worker.state === "installed") showUpdate();
-          });
-        });
-        $("reloadUpdate").addEventListener("click", () => {
-          if (registration.waiting) {
-            registration.waiting.postMessage({ type: "SKIP_WAITING" });
-            $("reloadUpdate").textContent = "Updating…";
-          } else window.location.reload();
-        });
-        let reloading = false;
-        navigator.serviceWorker.addEventListener("controllerchange", () => {
-          if (reloading) return;
-          reloading = true;
-          window.location.reload();
-        });
-      })
-      .catch(() => {});
+  // Clean release: remove legacy service workers and caches.
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) =>
+      registrations.forEach((registration) => registration.unregister()),
+    ).catch(() => {});
+  }
+  if ("caches" in window) {
+    caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))).catch(() => {});
   }
 })();
