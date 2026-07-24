@@ -1,64 +1,61 @@
-/* Penalty-only stability layer. Self-contained SVG rigs cannot be separated by legacy limb rules. */
-#penaltyTaker.clean-player-rig,
-#keeper.clean-keeper-rig {
-  position: absolute;
-  pointer-events: none;
-  contain: layout paint style;
-  transform-origin: 50% 100% !important;
-  backface-visibility: hidden;
-  filter: none !important;
-  will-change: transform;
+/* v42 professional penalty presentation: one authoritative visual system. */
+#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{
+  position:absolute!important;pointer-events:none!important;contain:layout paint style!important;
+  transform-origin:50% 100%!important;backface-visibility:hidden!important;isolation:isolate!important;
+  will-change:transform!important;filter:drop-shadow(0 6px 5px rgba(0,0,0,.28))!important;
 }
-#penaltyTaker.clean-player-rig { left: 34%; bottom: -5%; width: 78px !important; height: 164px !important; z-index: 8; }
-#keeper.clean-keeper-rig { left: 50%; bottom: 26%; width: 58px !important; height: 112px !important; z-index: 7; transform: translateX(-50%); }
-#penaltyTaker .player-pelvis { position:absolute!important; inset:0!important; display:block!important; transform-origin:50% 70%!important; }
-#penaltyTaker .taker-svg, #keeper .keeper-svg { display:block; width:100%; height:100%; overflow:visible; }
-#penaltyTaker *, #keeper * { box-sizing:border-box; }
-
-.rig-skin{fill:#b87956}.rig-hair{fill:#21170f}.rig-feature{fill:#2b1d18}.rig-mouth{stroke:#4b2b22;stroke-width:2}.rig-boot{fill:#151515}.rig-shadow{fill:rgba(0,0,0,.22)}
-.taker-jersey{fill:url(#unused)}
-#penaltyTaker .taker-jersey{fill:#fff;stroke:#0b5da7;stroke-width:12;stroke-dasharray:10 8}
-#penaltyTaker .taker-arm-fill{fill:#b87956;stroke:#0b5da7;stroke-width:8;stroke-dasharray:28 24}
-#penaltyTaker .taker-shorts{fill:#1764aa}.taker-sock{fill:#fff}.taker-number{fill:#082c54;font:800 19px system-ui,sans-serif}
-#penaltyTaker.palace-taker .taker-jersey,#penaltyTaker[data-team="palace"] .taker-jersey{fill:#17458f;stroke:#d71920}
-#penaltyTaker.palace-taker .taker-arm-fill,#penaltyTaker[data-team="palace"] .taker-arm-fill{stroke:#d71920}
-#penaltyTaker.palace-taker .taker-shorts,#penaltyTaker[data-team="palace"] .taker-shorts{fill:#172e58}
-#penaltyTaker.palace-taker .taker-sock,#penaltyTaker[data-team="palace"] .taker-sock{fill:#d71920}
-#penaltyTaker.palace-taker .taker-number,#penaltyTaker[data-team="palace"] .taker-number{fill:#fff}
-
-.keeper-jersey,.keeper-sleeve{fill:#f0c514}.keeper-shorts{fill:#d4aa00}.keeper-sock{fill:#f0c514}.keeper-glove-fill{fill:#fff;stroke:#b7c2cc;stroke-width:2}.keeper-number{fill:#152235;font:800 21px system-ui,sans-serif}
-#keeper.user-keeper .keeper-jersey,#keeper.user-keeper .keeper-sleeve{fill:#24a86e}#keeper.user-keeper .keeper-shorts{fill:#177b50}#keeper.user-keeper .keeper-sock{fill:#24a86e}
-
-/* Root motion only. Internal SVG geometry remains locked together. */
-#penaltyTaker.run-up{animation:pen-run .72s cubic-bezier(.2,.72,.22,1) both!important}
-#penaltyTaker.ball-struck{animation:pen-follow .42s ease-out both!important}
-@keyframes pen-run{0%{transform:translate3d(-28px,0,0) rotate(-2deg)}72%{transform:translate3d(13px,0,0) rotate(3deg)}100%{transform:translate3d(21px,-1px,0) rotate(7deg)}}
-@keyframes pen-follow{from{transform:translate3d(21px,-1px,0) rotate(7deg)}to{transform:translate3d(31px,-3px,0) rotate(10deg)}}
-#keeper[class*="dive-left"]{animation:pen-keeper-left .52s cubic-bezier(.18,.78,.28,1) both!important}
-#keeper[class*="dive-right"]{animation:pen-keeper-right .52s cubic-bezier(.18,.78,.28,1) both!important}
-#keeper.dive-centre{animation:pen-keeper-centre .42s ease-out both!important}
-@keyframes pen-keeper-left{to{transform:translate3d(-118px,-18px,0) rotate(-52deg)}}
-@keyframes pen-keeper-right{to{transform:translate3d(62px,-18px,0) rotate(52deg)}}
-@keyframes pen-keeper-centre{50%{transform:translate(-50%,-20px) scale(1.04)}}
-
-/* Disable every historical descendant animation, including placement and celebration patches. */
-#penaltyTaker svg *,#keeper svg *{animation:none!important;transition:none!important;filter:none!important}
-.goal.placing-ball #penaltyTaker{animation:none!important}
-
-.stadium-scene,.goal,#ball,#ballShadow{filter:none!important}
-@media(max-width:700px){#penaltyTaker.clean-player-rig{left:28%;bottom:-4%;width:64px!important;height:136px!important}#keeper.clean-keeper-rig{width:49px!important;height:95px!important}}
-@media(prefers-reduced-motion:reduce){#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{animation-duration:.12s!important}}
-
-/* v41 usability polish */
-#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{isolation:isolate}
-#penaltyTaker .taker-svg,#keeper .keeper-svg{transform:none!important}
-#penaltyTaker .taker-figure,#keeper .keeper-figure{transform-box:fill-box;transform-origin:center bottom}
-#penalty-game button{touch-action:manipulation}
-#penalty-game button:active,.guess-choice:active{transform:scale(.98)}
-.guess-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.65rem;margin-top:1rem}
-.guess-choice{min-height:48px}
-.correct-choice{outline:3px solid #2f9e62!important;background:#e9f8ef!important;color:#123d25!important}
-.wrong-choice{outline:3px solid #c84b4b!important;background:#fff0f0!important;color:#5d1919!important}
-.clue-count{display:block;font-size:.78rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;opacity:.7;margin-bottom:.35rem}
-.guess-silhouette.revealed span{font-size:1.1rem;letter-spacing:.08em}
-@media(max-width:620px){.guess-choices{grid-template-columns:1fr}.guess-choice{min-height:52px}#penalty-game button{min-height:46px}}
+#penaltyTaker.clean-player-rig{left:27%!important;bottom:-1.5%!important;width:86px!important;height:178px!important;z-index:12!important;transform:none}
+#keeper.clean-keeper-rig{left:50%!important;bottom:58.1%!important;width:64px!important;height:119px!important;z-index:10!important;transform:translateX(-50%)!important}
+#penaltyTaker .player-pelvis{position:absolute!important;inset:0!important;display:block!important}
+#penaltyTaker .taker-svg,#keeper .keeper-svg{display:block!important;width:100%!important;height:100%!important;overflow:visible!important;transform:none!important}
+#penaltyTaker svg *,#keeper svg *{animation:none!important;transition:none!important;filter:none!important;box-sizing:border-box}
+.rig-skin{fill:#b87956}.rig-hair{fill:#21170f}.rig-feature{fill:#2b1d18}.rig-mouth{stroke:#4b2b22;stroke-width:2}.rig-boot{fill:#111820}.rig-shadow{fill:rgba(0,0,0,.24)}
+/* Brighton rear-view home kit */
+#penaltyTaker .taker-jersey{fill:#fff;stroke:#0868b8;stroke-width:15;stroke-dasharray:13 9}
+#penaltyTaker .taker-sleeve{fill:#0870c2;stroke:#fff;stroke-width:4}
+#penaltyTaker .taker-shorts{fill:#075da7;stroke:#fff;stroke-width:2}
+#penaltyTaker .taker-sock{fill:#fff;stroke:#0870c2;stroke-width:3}
+#penaltyTaker .taker-number{fill:#082d55;paint-order:stroke;stroke:#fff;stroke-width:2;font:900 27px Arial,sans-serif}
+#penaltyTaker .taker-name{fill:#082d55;font:800 8px Arial,sans-serif;letter-spacing:.08em}
+/* Palace rear-view away player */
+#penaltyTaker.palace-taker .taker-jersey,#penaltyTaker[data-team="palace"] .taker-jersey{fill:#17458f;stroke:#d91d2b;stroke-width:15;stroke-dasharray:13 9}
+#penaltyTaker.palace-taker .taker-sleeve,#penaltyTaker[data-team="palace"] .taker-sleeve{fill:#d91d2b;stroke:#17458f;stroke-width:4}
+#penaltyTaker.palace-taker .taker-shorts,#penaltyTaker[data-team="palace"] .taker-shorts{fill:#17366e;stroke:#d91d2b}
+#penaltyTaker.palace-taker .taker-sock,#penaltyTaker[data-team="palace"] .taker-sock{fill:#d91d2b;stroke:#17458f}
+#penaltyTaker.palace-taker .taker-number,#penaltyTaker[data-team="palace"] .taker-number,#penaltyTaker.palace-taker .taker-name,#penaltyTaker[data-team="palace"] .taker-name{fill:#fff;stroke:#17366e}
+/* Keeper faces the taker and stays on the line */
+#keeper .keeper-jersey,#keeper .keeper-sleeve{fill:url(#keeperTop)}#keeper .keeper-shorts{fill:#bf9700}#keeper .keeper-sock{fill:#efca13}
+#keeper .keeper-glove-fill{fill:#fff;stroke:#aab7c4;stroke-width:2}#keeper .keeper-number{fill:#162238;font:900 23px Arial,sans-serif}
+#keeper.user-keeper .keeper-jersey,#keeper.user-keeper .keeper-sleeve{fill:url(#keeperGreen)}#keeper.user-keeper .keeper-shorts{fill:#126543}#keeper.user-keeper .keeper-sock{fill:#31b87a}
+/* Root-only motions keep every body part locked together. */
+#penaltyTaker.place-ball{animation:v42-place 1.45s cubic-bezier(.26,.7,.22,1) both!important}
+#penaltyTaker.run-up{animation:v42-run var(--runup-duration,.82s) cubic-bezier(.24,.72,.2,1) both!important}
+#penaltyTaker.ball-struck{animation:v42-follow .42s ease-out both!important}
+#penaltyTaker.taker-celebrate{animation:v42-celebrate .8s ease both!important}
+#penaltyTaker.taker-disappointed{animation:v42-disappointed .75s ease both!important}
+@keyframes v42-place{0%{transform:translate3d(-32px,8px,0) rotate(-2deg)}42%,70%{transform:translate3d(clamp(54px,8vw,92px),clamp(-72px,-7vw,-48px),0) rotate(7deg) scale(.88)}100%{transform:none}}
+@keyframes v42-run{0%{transform:translate3d(-30px,3px,0) rotate(-3deg)}68%{transform:translate3d(clamp(48px,7vw,78px),clamp(-52px,-5vw,-34px),0) rotate(4deg) scale(.93)}100%{transform:translate3d(clamp(66px,9vw,102px),clamp(-66px,-6vw,-42px),0) rotate(10deg) scale(.89)}}
+@keyframes v42-follow{from{transform:translate3d(clamp(66px,9vw,102px),clamp(-66px,-6vw,-42px),0) rotate(10deg) scale(.89)}to{transform:translate3d(clamp(78px,10vw,116px),clamp(-70px,-6.5vw,-46px),0) rotate(14deg) scale(.87)}}
+@keyframes v42-celebrate{45%{transform:translateY(-10px) scale(1.03)}70%{transform:translateY(0)}85%{transform:translateY(-5px)}}
+@keyframes v42-disappointed{45%{transform:translateY(4px) rotate(-3deg)}100%{transform:translateY(2px) rotate(2deg)}}
+#keeper.feint-left{animation:v42-feint-left 1.1s ease-in-out infinite!important}#keeper.feint-right{animation:v42-feint-right 1.1s ease-in-out infinite!important}#keeper.feint-centre{animation:v42-ready 1.1s ease-in-out infinite!important}
+@keyframes v42-feint-left{50%{transform:translateX(-58%) translateY(-2px)}}@keyframes v42-feint-right{50%{transform:translateX(-42%) translateY(-2px)}}@keyframes v42-ready{50%{transform:translateX(-50%) translateY(-3px) scale(1.02)}}
+#keeper[class*="dive-left"]{animation:v42-dive-left .54s cubic-bezier(.18,.78,.24,1) both!important}
+#keeper[class*="dive-right"]{animation:v42-dive-right .54s cubic-bezier(.18,.78,.24,1) both!important}
+#keeper.dive-centre{animation:v42-dive-centre .46s ease-out both!important}
+#keeper.keeper-landed{animation-fill-mode:forwards!important}
+@keyframes v42-dive-left{to{transform:translate3d(clamp(-152px,-18vw,-92px),-18px,0) rotate(-63deg) scale(.96)}}
+@keyframes v42-dive-right{to{transform:translate3d(clamp(28px,12vw,98px),-18px,0) rotate(63deg) scale(.96)}}
+@keyframes v42-dive-centre{50%{transform:translateX(-50%) translateY(-24px) scale(1.06)}100%{transform:translateX(-50%) translateY(-8px)}}
+.goal.placing-ball #penaltyTaker{animation-name:v42-place!important}
+.goal .penalty-taker.runup-straight.run-up,.goal .penalty-taker.runup-angled.run-up,.goal .penalty-taker.runup-stutter.run-up{animation-name:v42-run!important}
+.goal .keeper{bottom:58.1%!important}
+.goal .keeper:before,.goal .keeper:after{display:none!important}
+/* More professional pitch balance */
+.stadium-scene .goal{min-height:clamp(310px,51vw,520px)!important;background:linear-gradient(#7dbce2 0 8%,#29465b 8% 11%,#2e9148 11% 100%)!important}
+.goal .penalty-spot{bottom:22.8%!important}.ball{z-index:14!important}.ball-shadow{z-index:8!important}
+.shootout-status{min-height:54px}.penalty-controls button,.save-grid button{touch-action:manipulation;min-height:46px}
+/* Harder Guess the Player */
+.guess-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;margin-top:1rem}.guess-choice{min-height:50px;text-align:left;padding:.8rem 1rem}.clue-count{display:block;font-size:.76rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.68;margin-bottom:.35rem}.correct-choice{outline:3px solid #2f9e62!important;background:#e9f8ef!important}.wrong-choice{outline:3px solid #c84b4b!important;background:#fff0f0!important}
+@media(max-width:700px){#penaltyTaker.clean-player-rig{left:20%!important;bottom:-1%!important;width:70px!important;height:148px!important}#keeper.clean-keeper-rig{bottom:58.1%!important;width:52px!important;height:98px!important}.guess-choices{grid-template-columns:1fr}.stadium-scene .goal{min-height:330px!important}}
+@media(prefers-reduced-motion:reduce){#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{animation-duration:.16s!important}}
