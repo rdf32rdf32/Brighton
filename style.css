@@ -2338,3 +2338,116 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
   .goal .keeper-arms:before,.goal .keeper-arms:after{width:49px;height:14px}
   .goal .left-glove{left:-52px!important}.goal .right-glove{right:-52px!important}
 }
+
+/* v30 — articulated penalty graphics and smoother play */
+.goal .penalty-area-marking,
+.goal .six-yard-marking{
+  border-color:#fff!important;
+  opacity:1!important;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.38));
+}
+.goal .penalty-area-marking{border-width:3px!important}
+.goal .six-yard-marking{border-width:3px!important}
+
+/* Deeper, clearer goal frame */
+.goal .goal-depth{
+  border-color:#fff!important;
+  border-radius:3px 3px 0 0;
+  box-shadow:0 5px 0 rgba(0,0,0,.24),inset 7px 0 7px rgba(0,25,48,.13),inset -7px 0 7px rgba(0,25,48,.13)!important;
+}
+.goal .net{opacity:.9!important;background-size:24px 18px!important}
+
+/* Articulated goalkeeper */
+.goal .keeper{will-change:transform;contain:layout style;backface-visibility:hidden}
+.goal .keeper-arms{display:none!important}
+.goal .keeper-upper-arm,.goal .keeper-forearm{
+  position:absolute;z-index:3;width:13px;border-radius:9px;background:var(--keeper-shirt,#f2cb1d);transform-origin:50% 5px;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)
+}
+.goal .keeper-upper-arm{top:43px;height:38px}
+.goal .keeper-forearm{top:72px;height:34px}
+.goal .keeper-upper-arm.left{left:5px;transform:rotate(32deg)}
+.goal .keeper-upper-arm.right{right:5px;transform:rotate(-32deg)}
+.goal .keeper-forearm.left{left:-5px;transform:rotate(54deg)}
+.goal .keeper-forearm.right{right:-5px;transform:rotate(-54deg)}
+.goal .keeper-glove{
+  z-index:5!important;width:23px!important;height:25px!important;top:93px!important;border:3px solid rgba(255,255,255,.96)!important;border-radius:45% 45% 52% 52%!important;
+  background:linear-gradient(135deg,#fff 0 35%,#ffcf33 36% 65%,#102f51 66%)!important;
+  box-shadow:0 2px 4px rgba(0,0,0,.42),inset 0 0 0 2px rgba(0,0,0,.12)!important
+}
+.goal .left-glove{left:-23px!important;transform:rotate(-18deg)}
+.goal .right-glove{right:-23px!important;transform:rotate(18deg)}
+.goal .keeper-ready-deep .keeper-body{transform:translateY(8px) scaleY(.9)}
+.goal .keeper-ready-deep .keeper-head{transform:translateY(5px)}
+.goal .keeper-ready-deep .keeper-leg-left{transform:translateX(-7px) rotate(18deg)}
+.goal .keeper-ready-deep .keeper-leg-right{transform:translateX(7px) rotate(-18deg)}
+.goal .keeper-ready-deep .keeper-upper-arm.left{transform:rotate(48deg)}
+.goal .keeper-ready-deep .keeper-upper-arm.right{transform:rotate(-48deg)}
+.goal .keeper-ready-deep .keeper-forearm.left{transform:rotate(68deg)}
+.goal .keeper-ready-deep .keeper-forearm.right{transform:rotate(-68deg)}
+.goal .keeper.keeper-live-track{
+  transition:none!important;
+  transform:translate3d(calc(-50% + (var(--track-x,0) * 82px)),calc(var(--track-y,0) * -25px),0) rotate(calc(var(--track-x,0) * 7deg))!important
+}
+.goal .keeper.dive-top-left .keeper-upper-arm.left,.goal .keeper.dive-middle-left .keeper-upper-arm.left,.goal .keeper.dive-bottom-left .keeper-upper-arm.left{transform:rotate(92deg)}
+.goal .keeper.dive-top-left .keeper-forearm.left,.goal .keeper.dive-middle-left .keeper-forearm.left,.goal .keeper.dive-bottom-left .keeper-forearm.left{transform:rotate(97deg)}
+.goal .keeper.dive-top-right .keeper-upper-arm.right,.goal .keeper.dive-middle-right .keeper-upper-arm.right,.goal .keeper.dive-bottom-right .keeper-upper-arm.right{transform:rotate(-92deg)}
+.goal .keeper.dive-top-right .keeper-forearm.right,.goal .keeper.dive-middle-right .keeper-forearm.right,.goal .keeper.dive-bottom-right .keeper-forearm.right{transform:rotate(-97deg)}
+.goal .keeper-point-left .keeper-upper-arm.left{transform:rotate(82deg)}
+.goal .keeper-point-left .keeper-forearm.left{transform:rotate(90deg)}
+.goal .keeper-point-right .keeper-upper-arm.right{transform:rotate(-82deg)}
+.goal .keeper-point-right .keeper-forearm.right{transform:rotate(-90deg)}
+
+/* Articulated taker and reliable ball placement */
+.penalty-taker .player-forearm,.penalty-taker .player-hand{
+  position:absolute;display:block;z-index:4;transform-origin:top center
+}
+.penalty-taker .player-forearm{width:9px;height:31px;border-radius:8px;background:var(--player-skin,#b87956);top:48px}
+.penalty-taker .player-hand{width:13px;height:14px;border-radius:50%;background:var(--player-skin,#b87956);top:75px}
+.penalty-taker .player-forearm.left{left:7px}.penalty-taker .player-forearm.right{right:7px}
+.penalty-taker .player-hand.left{left:4px}.penalty-taker .player-hand.right{right:4px}
+.goal.placing-ball .penalty-taker.place-ball{
+  animation:v30-place-player 2.45s linear both!important;transform-origin:center bottom!important
+}
+.goal.placing-ball .penalty-taker.place-ball .player-head{animation:v30-place-head 2.45s linear both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-shirt{animation:v30-place-torso 2.45s linear both!important;transform-origin:center bottom}
+.goal.placing-ball .penalty-taker.place-ball .player-arm-left{animation:v30-upper-left 2.45s linear both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-arm-right{animation:v30-upper-right 2.45s linear both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-forearm.left{animation:v30-fore-left 2.45s linear both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-forearm.right{animation:v30-fore-right 2.45s linear both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-hand.left{animation:v30-hand-left 2.45s linear both!important}
+.goal.placing-ball .penalty-taker.place-ball .player-hand.right{animation:v30-hand-right 2.45s linear both!important}
+.goal.placing-ball .ball.ball-to-spot{
+  animation:v30-place-ball 2.45s linear both!important;z-index:8!important;will-change:left,bottom,transform
+}
+@keyframes v30-place-player{
+  0%{transform:translate3d(-82px,0,0)}
+  18%{transform:translate3d(-34px,0,0)}
+  34%{transform:translate3d(-28px,7px,0) rotate(5deg)}
+  46%{transform:translate3d(-25px,8px,0) rotate(6deg)}
+  65%{transform:translate3d(2px,4px,0)}
+  79%{transform:translate3d(12px,7px,0) rotate(4deg)}
+  90%{transform:translate3d(12px,0,0)}
+  100%{transform:translate3d(-56px,0,0)}
+}
+@keyframes v30-place-head{0%,20%,88%,100%{transform:none}34%,48%,78%{transform:translateY(10px) rotate(12deg)}}
+@keyframes v30-place-torso{0%,20%,88%,100%{transform:none}34%,48%,78%{transform:skewX(-7deg) scaleY(.9)}}
+@keyframes v30-upper-left{0%,20%,88%,100%{transform:rotate(12deg)}32%,48%,78%{transform:rotate(-48deg)}}
+@keyframes v30-upper-right{0%,20%,88%,100%{transform:rotate(-12deg)}32%,48%,78%{transform:rotate(48deg)}}
+@keyframes v30-fore-left{0%,20%,88%,100%{transform:rotate(8deg)}32%,48%,78%{transform:rotate(-28deg)}}
+@keyframes v30-fore-right{0%,20%,88%,100%{transform:rotate(-8deg)}32%,48%,78%{transform:rotate(28deg)}}
+@keyframes v30-hand-left{0%,20%,88%,100%{transform:none}32%,78%{transform:translate(9px,8px)}}
+@keyframes v30-hand-right{0%,20%,88%,100%{transform:none}32%,78%{transform:translate(-9px,8px)}}
+@keyframes v30-place-ball{
+  0%,18%{left:37%;bottom:13%;transform:translate3d(-50%,0,0) scale(.82)}
+  31%{left:38%;bottom:16%;transform:translate3d(-50%,0,0) scale(.82)}
+  40%{left:39%;bottom:27%;transform:translate3d(-50%,0,0) scale(.79)}
+  55%{left:46%;bottom:31%;transform:translate3d(-50%,0,0) scale(.76)}
+  68%{left:50%;bottom:27%;transform:translate3d(-50%,0,0) scale(.75)}
+  79%,100%{left:50%;bottom:23.5%;transform:translate3d(-50%,0,0) scale(.74)}
+}
+
+@media(max-width:760px){
+  .goal .keeper.keeper-live-track{transform:translate3d(calc(-50% + (var(--track-x,0) * 52px)),calc(var(--track-y,0) * -16px),0) rotate(calc(var(--track-x,0) * 6deg)) scale(.78)!important}
+  .goal .keeper-glove{width:21px!important;height:23px!important}
+}
+.goal .goal-area-marking{border-color:#fff!important;border-width:3px!important;opacity:1!important;filter:drop-shadow(0 1px 1px rgba(0,0,0,.38))}
