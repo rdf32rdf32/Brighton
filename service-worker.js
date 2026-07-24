@@ -1,24 +1,6 @@
-const CACHE_NAME = 'albion-v35';
-const FILES = [
-  './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './v18.js', './v30.js', './v31.js', './v32.js', './v34.js', './quiz-data.js', './content-data.js',
-  './manifest.json', './favicon.svg', './albion-safe-graphic.svg', './sussex-by-the-sea.mp3',
-  './albion-albion-albion.mp3', './seagulls.mp3', './we-are-brighton.mp3',
-  './come-on-brighton.mp3', './we-all-follow-albion.mp3', './brighton-aces.mp3',
-  './b-r-i-g-h-t-o-n.mp3', './great-escape.mp3', './glory-glory.mp3',
-  './icon-192.png', './icon-512.png', './social-preview.png', './privacy.html', './cookies.html', './copyright.html', './contact.html', './offline.html',
-  './editor.html', './editor.js'
-];
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES)));
-  self.skipWaiting();
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key)))));
-  self.clients.claim();
-});
-self.addEventListener('fetch', event => {
-  event.respondWith(fetch(event.request).catch(() => caches.match(event.request).then(cached => cached || (event.request.mode === 'navigate' ? caches.match('./offline.html') : Response.error()))));
-});
-self.addEventListener('message', event => {
-  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
-});
+const CACHE_NAME='albion-v37';
+const CORE=['./','./index.html','./style.css','./v37.css','./app.js','./v37.js','./quiz-data.js','./content-data.js','./manifest.json','./favicon.svg','./offline.html'];
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(CORE)));self.skipWaiting()});
+self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return; if(e.request.mode==='navigate'){e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy));return r}).catch(()=>caches.match('./index.html').then(r=>r||caches.match('./offline.html'))));return} e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,copy))}return r}))) });
+self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting()});

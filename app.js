@@ -1612,8 +1612,8 @@
       ball.className = "ball";
       shadow.className = "ball-shadow";
       flash.className = "goal-flash";
-      taker.className = "penalty-taker";
-      keeper.className = "keeper";
+      taker.className = "penalty-taker taker-v37";
+      keeper.className = "keeper keeper-v37";
       keeper.style.left = "";
       goalFrame.classList.remove(
         "slow-motion",
@@ -1663,61 +1663,71 @@
       const mindGame = phase === "save" && Math.random() < 0.28
         ? ` mindgame-point-${Math.random() < 0.5 ? "left" : "right"}`
         : "";
-      keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
+      keeper.className = `keeper keeper-v37 ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
     }
     function playVerifiedPlacement(onComplete) {
       const runId = ++placementRunId;
       placementAnimations.forEach((animation) => { try { animation.cancel(); } catch {} });
       placementAnimations = [];
-      stadiumScene.classList.add("v36-placement-active");
+      stadiumScene.classList.add("placement-active");
       goalFrame.classList.add("placing-ball");
-      taker.classList.add("place-ball");
-      ball.classList.add("ball-to-spot");
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      const duration = reduced ? 500 : 4100;
-      const opts = {duration, fill:"both", easing:"linear"};
-      const run=(el,frames)=>{ if(!el) return null; const x=el.animate(frames,opts); placementAnimations.push(x); return x; };
-      const L=taker.querySelector('.player-arm-left');
-      const R=taker.querySelector('.player-arm-right');
-      const LF=taker.querySelector('.player-forearm.left');
-      const RF=taker.querySelector('.player-forearm.right');
-      const LL=taker.querySelector('.player-leg-left');
-      const RL=taker.querySelector('.player-leg-right');
-      run(taker,[
-        {offset:0,transform:'translate(-74px,0) rotate(0deg)'},
-        {offset:.18,transform:'translate(-48px,0) rotate(0deg)'},
-        {offset:.29,transform:'translate(-30px,1px) rotate(0deg)'},
-        {offset:.40,transform:'translate(-25px,13px) rotate(12deg)'},
-        {offset:.50,transform:'translate(-24px,21px) rotate(18deg)'},
-        {offset:.60,transform:'translate(-2px,10px) rotate(8deg)'},
-        {offset:.70,transform:'translate(10px,16px) rotate(14deg)'},
-        {offset:.78,transform:'translate(12px,18px) rotate(16deg)'},
-        {offset:.84,transform:'translate(12px,2px) rotate(0deg)'},
-        {offset:1,transform:'translate(-24px,0) rotate(0deg)'}]);
-      run(ball,[
-        {offset:0,transform:'translate(-78px,8px)',opacity:1},
-        {offset:.38,transform:'translate(-78px,8px)',opacity:1},
-        {offset:.49,transform:'translate(-54px,-42px)',opacity:1},
-        {offset:.60,transform:'translate(-24px,-44px)',opacity:1},
-        {offset:.70,transform:'translate(-4px,-34px)',opacity:1},
-        {offset:.78,transform:'translate(0,-4px)',opacity:1},
-        {offset:.82,transform:'translate(0,0)',opacity:1},
-        {offset:1,transform:'translate(0,0)',opacity:1}]);
-      run(shadow,[{offset:0,transform:'translateX(-78px) scale(1)',opacity:.5},{offset:.42,transform:'translateX(-78px) scale(.45)',opacity:.2},{offset:.65,transform:'translateX(-20px) scale(.45)',opacity:.2},{offset:.82,transform:'translateX(0) scale(1)',opacity:.5},{offset:1,transform:'translateX(0) scale(1)',opacity:.5}]);
-      run(L,[{offset:0,transform:'rotate(12deg)'},{offset:.34,transform:'rotate(12deg)'},{offset:.47,transform:'rotate(66deg)'},{offset:.62,transform:'rotate(42deg)'},{offset:.76,transform:'rotate(68deg)'},{offset:.84,transform:'rotate(12deg)'},{offset:1,transform:'rotate(12deg)'}]);
-      run(R,[{offset:0,transform:'rotate(-12deg)'},{offset:.34,transform:'rotate(-12deg)'},{offset:.47,transform:'rotate(-66deg)'},{offset:.62,transform:'rotate(-42deg)'},{offset:.76,transform:'rotate(-68deg)'},{offset:.84,transform:'rotate(-12deg)'},{offset:1,transform:'rotate(-12deg)'}]);
-      run(LF,[{offset:0,transform:'rotate(-8deg)'},{offset:.38,transform:'rotate(-8deg)'},{offset:.49,transform:'rotate(72deg)'},{offset:.64,transform:'rotate(58deg)'},{offset:.78,transform:'rotate(76deg)'},{offset:.84,transform:'rotate(-8deg)'},{offset:1,transform:'rotate(-8deg)'}]);
-      run(RF,[{offset:0,transform:'rotate(8deg)'},{offset:.38,transform:'rotate(8deg)'},{offset:.49,transform:'rotate(-72deg)'},{offset:.64,transform:'rotate(-58deg)'},{offset:.78,transform:'rotate(-76deg)'},{offset:.84,transform:'rotate(8deg)'},{offset:1,transform:'rotate(8deg)'}]);
-      run(LL,[{offset:0,transform:'rotate(2deg)'},{offset:.18,transform:'rotate(-15deg)'},{offset:.29,transform:'rotate(5deg)'},{offset:.46,transform:'rotate(18deg)'},{offset:.60,transform:'rotate(-8deg)'},{offset:.72,transform:'rotate(12deg)'},{offset:.84,transform:'rotate(0deg)'},{offset:1,transform:'rotate(0deg)'}]);
-      run(RL,[{offset:0,transform:'rotate(-2deg)'},{offset:.18,transform:'rotate(14deg)'},{offset:.29,transform:'rotate(-5deg)'},{offset:.46,transform:'rotate(-12deg)'},{offset:.60,transform:'rotate(10deg)'},{offset:.72,transform:'rotate(-8deg)'},{offset:.84,transform:'rotate(0deg)'},{offset:1,transform:'rotate(0deg)'}]);
-      const master=placementAnimations[0];
-      master.finished.then(()=>{
-        if(runId!==placementRunId) return;
-        placementAnimations=[];
-        stadiumScene.classList.remove('v36-placement-active'); goalFrame.classList.remove('placing-ball'); taker.classList.remove('place-ball'); ball.classList.remove('ball-to-spot');
-        [taker,ball,shadow,...taker.querySelectorAll('.player-arm,.player-forearm,.player-leg')].forEach(el=>{el.style.removeProperty('transform');el.style.removeProperty('opacity')});
+      taker.classList.add("placement-sequence");
+      ball.classList.add("ball-carried");
+      const reduced = document.documentElement.classList.contains("reduce-motion") || window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const duration = reduced ? 650 : 3600;
+      const easing = "cubic-bezier(.22,.72,.24,1)";
+      const animate = (el, frames) => {
+        if (!el) return null;
+        const animation = el.animate(frames, { duration, fill: "both", easing });
+        placementAnimations.push(animation);
+        return animation;
+      };
+      const torso = taker.querySelector(".player-torso");
+      const leftArm = taker.querySelector(".player-arm-left");
+      const rightArm = taker.querySelector(".player-arm-right");
+      const leftForearm = taker.querySelector(".player-forearm.left");
+      const rightForearm = taker.querySelector(".player-forearm.right");
+      animate(taker, [
+        { offset: 0, transform: "translate3d(-72px,0,0)" },
+        { offset: .30, transform: "translate3d(-24px,0,0)" },
+        { offset: .46, transform: "translate3d(-8px,8px,0)" },
+        { offset: .62, transform: "translate3d(0,18px,0)" },
+        { offset: .72, transform: "translate3d(0,18px,0)" },
+        { offset: .82, transform: "translate3d(0,0,0)" },
+        { offset: 1, transform: "translate3d(-28px,0,0)" }
+      ]);
+      animate(torso, [
+        { offset: 0, transform: "translateX(-50%) rotate(0deg)" },
+        { offset: .42, transform: "translateX(-50%) rotate(0deg)" },
+        { offset: .60, transform: "translateX(-50%) rotate(28deg)" },
+        { offset: .72, transform: "translateX(-50%) rotate(28deg)" },
+        { offset: .84, transform: "translateX(-50%) rotate(0deg)" },
+        { offset: 1, transform: "translateX(-50%) rotate(0deg)" }
+      ]);
+      animate(leftArm, [{offset:0,transform:"rotate(18deg)"},{offset:.42,transform:"rotate(18deg)"},{offset:.62,transform:"rotate(58deg)"},{offset:.74,transform:"rotate(58deg)"},{offset:.84,transform:"rotate(18deg)"},{offset:1,transform:"rotate(18deg)"}]);
+      animate(rightArm,[{offset:0,transform:"rotate(-18deg)"},{offset:.42,transform:"rotate(-18deg)"},{offset:.62,transform:"rotate(-58deg)"},{offset:.74,transform:"rotate(-58deg)"},{offset:.84,transform:"rotate(-18deg)"},{offset:1,transform:"rotate(-18deg)"}]);
+      animate(leftForearm,[{offset:0,transform:"rotate(18deg)"},{offset:.42,transform:"rotate(18deg)"},{offset:.62,transform:"rotate(42deg)"},{offset:.74,transform:"rotate(42deg)"},{offset:.84,transform:"rotate(18deg)"},{offset:1,transform:"rotate(18deg)"}]);
+      animate(rightForearm,[{offset:0,transform:"rotate(-18deg)"},{offset:.42,transform:"rotate(-18deg)"},{offset:.62,transform:"rotate(-42deg)"},{offset:.74,transform:"rotate(-42deg)"},{offset:.84,transform:"rotate(-18deg)"},{offset:1,transform:"rotate(-18deg)"}]);
+      animate(ball, [
+        { offset: 0, transform: "translate3d(-72px,-55px,0)", opacity: 1 },
+        { offset: .30, transform: "translate3d(-24px,-55px,0)", opacity: 1 },
+        { offset: .46, transform: "translate3d(-8px,-48px,0)", opacity: 1 },
+        { offset: .64, transform: "translate3d(0,-12px,0)", opacity: 1 },
+        { offset: .72, transform: "translate3d(0,0,0)", opacity: 1 },
+        { offset: 1, transform: "translate3d(0,0,0)", opacity: 1 }
+      ]);
+      animate(shadow,[{offset:0,transform:"translateX(-72px) scale(.55)",opacity:.22},{offset:.46,transform:"translateX(-8px) scale(.55)",opacity:.22},{offset:.72,transform:"translateX(0) scale(1)",opacity:.5},{offset:1,transform:"translateX(0) scale(1)",opacity:.5}]);
+      const master = placementAnimations[0];
+      master.finished.then(() => {
+        if (runId !== placementRunId) return;
+        placementAnimations = [];
+        stadiumScene.classList.remove("placement-active");
+        goalFrame.classList.remove("placing-ball");
+        taker.classList.remove("placement-sequence");
+        ball.classList.remove("ball-carried");
+        [taker, ball, shadow, torso, leftArm, rightArm, leftForearm, rightForearm].forEach(el => { if (el) { el.style.removeProperty("transform"); el.style.removeProperty("opacity"); } });
         onComplete();
-      }).catch(()=>{});
+      }).catch(() => {});
     }
 
     function startPalaceRun() {
@@ -2205,7 +2215,7 @@
             : "shoot-custom";
       ball.className = `ball shot-${shotStyle} ${flightClass} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : "custom"}`;
-      keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
+      keeper.className = `keeper keeper-v37 ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       const diveLevel = dive.includes("top")
         ? "top"
         : dive.includes("bottom")
@@ -2692,7 +2702,7 @@
           targetButton === button,
         );
       });
-      keeper.className = `keeper user-keeper keeper-committed commit-${button.dataset.target}`;
+      keeper.className = `keeper keeper-v37 user-keeper keeper-committed commit-${button.dataset.target}`;
       keeper.style.removeProperty("--track-x");
       keeper.style.removeProperty("--track-y");
       announce(

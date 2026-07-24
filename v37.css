@@ -1,0 +1,36 @@
+/* v37: stable articulated figures and interface polish */
+#penaltyTaker.taker-v37,#keeper.keeper-v37{transform-origin:50% 100%;will-change:transform;contain:layout style paint}
+.taker-v37 .player-pelvis,.keeper-v37 .keeper-pelvis{position:absolute;inset:0}
+.taker-v37 .player-torso,.keeper-v37 .keeper-torso{position:absolute!important;left:50%!important;top:20%!important;width:36%!important;height:40%!important;transform:translateX(-50%);transform-origin:50% 92%;z-index:4}
+.taker-v37 .player-shirt,.keeper-v37 .keeper-body{position:absolute!important;inset:0!important;border-radius:32% 32% 20% 20%!important;display:flex!important;align-items:center;justify-content:center;overflow:hidden}
+.taker-v37 .player-shirt{background:repeating-linear-gradient(90deg,#fff 0 28%,#1769b0 28% 56%)!important;color:#102d52!important;font-weight:900;font-size:.72em}
+.taker-v37 .player-neck,.keeper-v37 .keeper-neck{position:absolute;left:40%;top:-9%;width:20%;height:14%;background:#c98f6c;border-radius:40%;z-index:2}
+.taker-v37 .player-head,.keeper-v37 .keeper-head{position:absolute!important;left:50%!important;top:-43%!important;width:48%!important;height:38%!important;transform:translateX(-50%)!important;background:#c98f6c!important;border-radius:48% 48% 44% 44%!important;z-index:3}
+.taker-v37 .player-arm,.keeper-v37 .keeper-arm{position:absolute;top:8%;width:20%;height:55%;transform-origin:50% 8%;z-index:1}
+.taker-v37 .player-arm-left,.keeper-v37 .keeper-arm.left{left:-14%;transform:rotate(18deg)}
+.taker-v37 .player-arm-right,.keeper-v37 .keeper-arm.right{right:-14%;transform:rotate(-18deg)}
+.taker-v37 .player-upper-arm,.keeper-v37 .keeper-upper-arm{position:absolute;left:24%;top:0;width:52%;height:54%;border-radius:999px;background:#c98f6c}
+.taker-v37 .player-forearm,.keeper-v37 .keeper-forearm{position:absolute;left:24%;top:46%;width:52%;height:54%;border-radius:999px;background:#c98f6c;transform-origin:50% 8%}
+.taker-v37 .player-hand,.keeper-v37 .keeper-glove{position:absolute;left:-18%;bottom:-18%;width:136%;height:25%;border-radius:50%;background:#c98f6c}
+.keeper-v37 .keeper-glove{background:#f5f7ff;border:1px solid #174f91}
+.taker-v37 .player-shorts,.keeper-v37 .keeper-shorts{position:absolute!important;left:34%!important;top:58%!important;width:32%!important;height:15%!important;border-radius:18% 18% 38% 38%!important;z-index:3}
+.taker-v37 .player-shorts{background:#fff!important}
+.taker-v37 .player-leg,.keeper-v37 .keeper-thigh{position:absolute;top:68%;width:17%;height:29%;transform-origin:50% 5%}
+.taker-v37 .player-leg-left,.keeper-v37 .keeper-thigh.left{left:32%}.taker-v37 .player-leg-right,.keeper-v37 .keeper-thigh.right{right:32%}
+.taker-v37 .player-thigh,.keeper-v37 .keeper-thigh:before{position:absolute;inset:0 10% 44%;content:"";background:#c98f6c;border-radius:999px}
+.taker-v37 .player-shin,.keeper-v37 .keeper-shin{position:absolute;left:18%;top:48%;width:64%;height:50%;background:#c98f6c;border-radius:999px;transform-origin:50% 6%}
+.taker-v37 .player-boot,.keeper-v37 .keeper-boot{position:absolute;left:5%;bottom:-6%;width:110%;height:18%;border-radius:60% 25% 35% 45%;background:#17191e}
+.keeper-v37>.keeper-arms,.keeper-v37>.keeper-glove,.keeper-v37>.keeper-body,.keeper-v37>.keeper-head,.keeper-v37>.keeper-shorts,.keeper-v37>.keeper-leg,.keeper-v37>.keeper-boot{display:none!important}
+#keeper.keeper-v37{left:50%!important;transition:transform .2s cubic-bezier(.2,.8,.2,1)}
+#keeper.keeper-v37.dive-top-left,#keeper.keeper-v37.commit-top-left{transform:translate(-82%,-30%) rotate(-34deg)!important}
+#keeper.keeper-v37.dive-middle-left,#keeper.keeper-v37.commit-middle-left{transform:translate(-76%,-8%) rotate(-27deg)!important}
+#keeper.keeper-v37.dive-bottom-left,#keeper.keeper-v37.commit-bottom-left{transform:translate(-72%,10%) rotate(-22deg)!important}
+#keeper.keeper-v37.dive-top-right,#keeper.keeper-v37.commit-top-right{transform:translate(-18%,-30%) rotate(34deg)!important}
+#keeper.keeper-v37.dive-middle-right,#keeper.keeper-v37.commit-middle-right{transform:translate(-24%,-8%) rotate(27deg)!important}
+#keeper.keeper-v37.dive-bottom-right,#keeper.keeper-v37.commit-bottom-right{transform:translate(-28%,10%) rotate(22deg)!important}
+#keeper.keeper-v37.dive-centre,#keeper.keeper-v37.commit-centre{transform:translate(-50%,-8%)!important}
+.placement-active .target{pointer-events:none}
+html.large-controls{font-size:112%} html.high-contrast{filter:contrast(1.12)} html.reduce-motion *,html.reduce-motion *::before,html.reduce-motion *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+.settings-open #supporter-settings{outline:4px solid rgba(23,105,176,.28);scroll-margin-top:90px}
+.diagnostic-report{margin-top:.7rem;padding:.8rem;border-radius:12px;background:rgba(0,0,0,.05);font-size:.92rem;line-height:1.5}
+@media(max-width:700px){#keeper.keeper-v37{max-width:72px}#penaltyTaker.taker-v37{max-width:64px}.mobile-jump-nav a:nth-child(4){display:none}}
