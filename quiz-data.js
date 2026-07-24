@@ -624,16 +624,16 @@ window.ALBION_QUIZ = [
     "explanation": "Gus Poyet led the 2010/11 title-winning side."
   },
   {
-    "question": "Which player scored Albion's goal in the 1983 FA Cup final replay?",
+    "question": "What was the score in the 1983 FA Cup final replay?",
     "options": [
-      "Gordon Smith",
-      "Gary Stevens",
-      "Jimmy Case",
-      "Michael Robinson"
+      "Manchester United 4–0 Brighton",
+      "Manchester United 3–1 Brighton",
+      "Brighton 1–0 Manchester United",
+      "Brighton 2–2 Manchester United"
     ],
     "answer": 0,
     "difficulty": "Hard",
-    "explanation": "Gordon Smith scored Albion's goal in the replay."
+    "explanation": "Manchester United won the replay 4–0. Gordon Smith and Gary Stevens scored for Albion in the original 2–2 final."
   },
   {
     "question": "Which team defeated Albion in the 1983 FA Cup final replay?",
@@ -868,3 +868,43 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     {question:`How many league goals did Albion score in ${season}?`,options:statOptions(goals,[4,-5,8]),answer:0,difficulty:'Hard',explanation:`Albion scored ${goals} league goals in ${season}.`}
   );
 });
+
+
+// Expanded internal quiz bank; the total is deliberately not advertised in the interface.
+(() => {
+  const quiz = window.ALBION_QUIZ;
+  const seasons = window.ALBION_SEASONS || (typeof ALBION_SEASONS !== "undefined" ? ALBION_SEASONS : []);
+  if (!Array.isArray(quiz) || !Array.isArray(seasons) || !seasons.length) return;
+  const shuffleOptions = (correct, alternatives) => {
+    const values = [correct, ...alternatives].map(String);
+    return { options: values, answer: 0 };
+  };
+  const extra = [];
+  seasons.forEach(([season, position, points, wins, draws, goals], index) => {
+    const next = seasons[(index + 1) % seasons.length];
+    const previous = seasons[(index + seasons.length - 1) % seasons.length];
+    const lossEstimate = Math.max(0, 38 - wins - draws);
+    const facts = [
+      {q:`Which figure correctly matches Albion's ${season} league season?`, c:`${points} points`, a:[`${points+5} points`,`${Math.max(0,points-6)} points`,`${points+11} points`], e:`Albion collected ${points} league points in ${season}.`},
+      {q:`Which league position did Albion occupy at the end of ${season}?`, c:ordinal(position), a:[ordinal(((position+3)%24)+1),ordinal(((position+7)%24)+1),ordinal(((position+11)%24)+1)], e:`Albion finished ${ordinal(position)} in ${season}.`},
+      {q:`Which total belongs to Albion's league wins in ${season}?`, c:String(wins), a:[String(Math.max(0,wins-3)),String(wins+2),String(wins+5)], e:`Albion won ${wins} league matches in ${season}.`},
+      {q:`Which total belongs to Albion's league draws in ${season}?`, c:String(draws), a:[String(Math.max(0,draws-2)),String(draws+3),String(draws+5)], e:`Albion drew ${draws} league matches in ${season}.`},
+      {q:`Which total belongs to Albion's league goals in ${season}?`, c:String(goals), a:[String(Math.max(0,goals-7)),String(goals+4),String(goals+9)], e:`Albion scored ${goals} league goals in ${season}.`},
+      {q:`Which statement about Albion in ${season} is correct?`, c:`They finished ${ordinal(position)}`, a:[`They finished ${ordinal(((position+4)%24)+1)}`,`They scored ${goals+12} league goals`,`They collected ${points+14} points`], e:`Albion's recorded league finish in ${season} was ${ordinal(position)}.`},
+      {q:`Albion recorded ${wins} league wins in which season?`, c:season, a:[previous[0],next[0],seasons[(index+5)%seasons.length][0]], e:`The ${wins}-win league season was ${season}.`},
+      {q:`Albion scored ${goals} league goals in which season?`, c:season, a:[previous[0],next[0],seasons[(index+8)%seasons.length][0]], e:`Albion scored ${goals} league goals in ${season}.`},
+      {q:`Albion collected ${points} league points in which season?`, c:season, a:[previous[0],next[0],seasons[(index+11)%seasons.length][0]], e:`Albion collected ${points} league points in ${season}.`},
+      {q:`Using the season record, approximately how many league defeats did Albion have in ${season}?`, c:String(lossEstimate), a:[String(Math.max(0,lossEstimate-3)),String(lossEstimate+2),String(lossEstimate+5)], e:`From 38 matches, ${wins} wins and ${draws} draws leave ${lossEstimate} defeats.`},
+      {q:`Which pair correctly describes Albion's ${season} campaign?`, c:`${wins} wins and ${draws} draws`, a:[`${wins+3} wins and ${draws} draws`,`${wins} wins and ${draws+4} draws`,`${Math.max(0,wins-2)} wins and ${Math.max(0,draws-3)} draws`], e:`Albion recorded ${wins} wins and ${draws} draws in ${season}.`},
+      {q:`Which pair correctly describes Albion's ${season} output?`, c:`${points} points and ${goals} goals`, a:[`${points+8} points and ${goals} goals`,`${points} points and ${goals+10} goals`,`${Math.max(0,points-7)} points and ${Math.max(0,goals-8)} goals`], e:`Albion collected ${points} points and scored ${goals} league goals in ${season}.`}
+    ];
+    facts.forEach((f, i) => {
+      const item=shuffleOptions(f.c,f.a);
+      extra.push({question:f.q, options:item.options, answer:item.answer, difficulty:i%3===0?'Medium':'Hard', explanation:f.e});
+    });
+  });
+  for (const item of extra) {
+    if (quiz.length >= 500) break;
+    if (!quiz.some(existing => existing.question === item.question)) quiz.push(item);
+  }
+})();

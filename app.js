@@ -1247,6 +1247,8 @@
     let palaceReactionStartedAt = 0;
     let palaceReactionOpen = false;
     let placementTimer = 0;
+    let placementRunId = 0;
+    let placementAnimations = [];
     let replayAnimationTimer = 0;
     let replayContinuationTimer = 0;
     let replaySkipContinue = null;
@@ -1596,6 +1598,14 @@
       window.clearTimeout(palaceShotTimer);
       window.clearTimeout(palaceReactionTimer);
       window.clearTimeout(placementTimer);
+      placementRunId += 1;
+      placementAnimations.forEach((animation) => { try { animation.cancel(); } catch {} });
+      placementAnimations = [];
+      [taker, ball, shadow, ...taker.querySelectorAll(".player-arm,.player-forearm,.player-hand,.player-head,.player-shirt,.player-leg")].forEach((element) => {
+        element.style.removeProperty("transform");
+        element.style.removeProperty("opacity");
+      });
+      stadiumScene.classList.remove("v35-placement-active");
       palaceReactionOpen = false;
       palaceReactionStartedAt = 0;
       reactionCue.hidden = true;
@@ -1655,6 +1665,94 @@
         : "";
       keeper.className = `keeper ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
     }
+    function playVerifiedPlacement(onComplete) {
+      const runId = ++placementRunId;
+      placementAnimations.forEach((animation) => { try { animation.cancel(); } catch {} });
+      placementAnimations = [];
+      stadiumScene.classList.add("v35-placement-active");
+      goalFrame.classList.add("placing-ball");
+      taker.classList.add("place-ball");
+      ball.classList.add("ball-to-spot");
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const duration = reduced ? 450 : 3000;
+      const options = { duration, fill: "both", easing: "linear" };
+      const animate = (element, frames) => {
+        const animation = element.animate(frames, options);
+        placementAnimations.push(animation);
+        return animation;
+      };
+
+      animate(taker, [
+        { offset: 0, transform: "translate(-58px, 5px) rotate(0deg)" },
+        { offset: .20, transform: "translate(-28px, 2px) rotate(0deg)" },
+        { offset: .34, transform: "translate(-16px, 9px) rotate(12deg)" },
+        { offset: .46, transform: "translate(-10px, 17px) rotate(25deg)" },
+        { offset: .58, transform: "translate(2px, 9px) rotate(13deg)" },
+        { offset: .72, transform: "translate(15px, 7px) rotate(17deg)" },
+        { offset: .82, transform: "translate(18px, 1px) rotate(0deg)" },
+        { offset: 1, transform: "translate(-18px, 0) rotate(0deg)" },
+      ]);
+      animate(ball, [
+        { offset: 0, transform: "translate(-70px, 8px) scale(1)", opacity: 1 },
+        { offset: .33, transform: "translate(-70px, 8px) scale(1)", opacity: 1 },
+        { offset: .45, transform: "translate(-48px, -48px) scale(.98)", opacity: 1 },
+        { offset: .58, transform: "translate(-20px, -52px) scale(.98)", opacity: 1 },
+        { offset: .71, transform: "translate(0, -20px) scale(1)", opacity: 1 },
+        { offset: .79, transform: "translate(0, 0) scale(1)", opacity: 1 },
+        { offset: 1, transform: "translate(0, 0) scale(1)", opacity: 1 },
+      ]);
+      animate(shadow, [
+        { offset: 0, transform: "translateX(-70px) scale(1)", opacity: .55 },
+        { offset: .42, transform: "translateX(-70px) scale(.45)", opacity: .2 },
+        { offset: .60, transform: "translateX(-20px) scale(.42)", opacity: .18 },
+        { offset: .79, transform: "translateX(0) scale(1)", opacity: .55 },
+        { offset: 1, transform: "translateX(0) scale(1)", opacity: .55 },
+      ]);
+
+      const leftUpper = taker.querySelector(".player-arm-left");
+      const rightUpper = taker.querySelector(".player-arm-right");
+      const leftFore = taker.querySelector(".player-forearm.left");
+      const rightFore = taker.querySelector(".player-forearm.right");
+      const leftHand = taker.querySelector(".player-hand.left");
+      const rightHand = taker.querySelector(".player-hand.right");
+      const armFramesLeft = [
+        { offset: 0, transform: "rotate(16deg)" },
+        { offset: .32, transform: "rotate(16deg)" },
+        { offset: .45, transform: "rotate(78deg)" },
+        { offset: .62, transform: "rotate(56deg)" },
+        { offset: .76, transform: "rotate(76deg)" },
+        { offset: .86, transform: "rotate(18deg)" },
+        { offset: 1, transform: "rotate(16deg)" },
+      ];
+      const armFramesRight = armFramesLeft.map(frame => ({...frame, transform: frame.transform.replace(/(-?\d+)/, m => String(-Number(m)))}));
+      if (leftUpper) animate(leftUpper, armFramesLeft);
+      if (rightUpper) animate(rightUpper, armFramesRight);
+      if (leftFore) animate(leftFore, [
+        {offset:0,transform:"rotate(-8deg)"},{offset:.36,transform:"rotate(-8deg)"},{offset:.47,transform:"rotate(58deg)"},{offset:.62,transform:"rotate(38deg)"},{offset:.78,transform:"rotate(62deg)"},{offset:.88,transform:"rotate(-8deg)"},{offset:1,transform:"rotate(-8deg)"}
+      ]);
+      if (rightFore) animate(rightFore, [
+        {offset:0,transform:"rotate(8deg)"},{offset:.36,transform:"rotate(8deg)"},{offset:.47,transform:"rotate(-58deg)"},{offset:.62,transform:"rotate(-38deg)"},{offset:.78,transform:"rotate(-62deg)"},{offset:.88,transform:"rotate(8deg)"},{offset:1,transform:"rotate(8deg)"}
+      ]);
+      if (leftHand) animate(leftHand, [{offset:0,transform:"translate(0,0)"},{offset:.45,transform:"translate(20px,18px)"},{offset:.62,transform:"translate(25px,10px)"},{offset:.78,transform:"translate(22px,19px)"},{offset:.88,transform:"translate(0,0)"},{offset:1,transform:"translate(0,0)"}]);
+      if (rightHand) animate(rightHand, [{offset:0,transform:"translate(0,0)"},{offset:.45,transform:"translate(-20px,18px)"},{offset:.62,transform:"translate(-25px,10px)"},{offset:.78,transform:"translate(-22px,19px)"},{offset:.88,transform:"translate(0,0)"},{offset:1,transform:"translate(0,0)"}]);
+
+      const master = placementAnimations[0];
+      master.finished.then(() => {
+        if (runId !== placementRunId) return;
+        placementAnimations = [];
+        stadiumScene.classList.remove("v35-placement-active");
+        goalFrame.classList.remove("placing-ball");
+        taker.classList.remove("place-ball");
+        ball.classList.remove("ball-to-spot");
+        [taker, ball, shadow, ...taker.querySelectorAll(".player-arm,.player-forearm,.player-hand")].forEach((element) => {
+          element.style.removeProperty("transform");
+          element.style.removeProperty("opacity");
+        });
+        onComplete();
+      }).catch(() => {});
+    }
+
     function startPalaceRun() {
       if (phase !== "save") return;
       locked = true;
@@ -1906,12 +2004,18 @@
       renderScore();
       readyKeeper();
       if (saving) {
-        if (waitForReady) showTurnReady("save");
-        else palaceRunTimer = window.setTimeout(startPalaceRun, 2350);
+        playVerifiedPlacement(() => {
+          if (phase !== "save") return;
+          if (waitForReady) showTurnReady("save");
+          else startPalaceRun();
+        });
       } else {
         $("panenkaButton").disabled = true;
-        if (waitForReady) showTurnReady("shoot");
-        else placementTimer = window.setTimeout(startAlbionKick, 2350);
+        playVerifiedPlacement(() => {
+          if (phase !== "shoot") return;
+          if (waitForReady) showTurnReady("shoot");
+          else startAlbionKick();
+        });
       }
     }
     function renderSummary() {

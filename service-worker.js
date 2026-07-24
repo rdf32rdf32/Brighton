@@ -1,6 +1,6 @@
-const CACHE_NAME = 'albion-fan-hub-v29';
+const CACHE_NAME = 'albion-v35';
 const FILES = [
-  './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './v18.js', './quiz-data.js', './content-data.js',
+  './', './index.html', './style.css', './app.js', './v16.js', './v17.js', './v18.js', './v30.js', './v31.js', './v32.js', './v34.js', './quiz-data.js', './content-data.js',
   './manifest.json', './favicon.svg', './albion-safe-graphic.svg', './sussex-by-the-sea.mp3',
   './albion-albion-albion.mp3', './seagulls.mp3', './we-are-brighton.mp3',
   './come-on-brighton.mp3', './we-all-follow-albion.mp3', './brighton-aces.mp3',

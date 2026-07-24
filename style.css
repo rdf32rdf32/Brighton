@@ -2492,3 +2492,31 @@ body:has(.shootout-card.game-active:fullscreen) .tour-launch,
 .goal .penalty-area-marking,.goal .goal-area-marking{border-color:#fff!important;border-width:3px!important;box-shadow:0 1px 0 rgba(0,0,0,.35),0 0 2px rgba(255,255,255,.75)!important}
 @media(max-width:640px){.goal .keeper-glove{width:12px!important;height:15px!important}.goal .keeper-live-track{transform:translate(calc(-50% + var(--smooth-track-x,0)*42px),calc(var(--smooth-track-y,0)*-14px)) rotate(calc(var(--smooth-track-x,0)*6deg)) scale(.68)!important}}
 @media(prefers-reduced-motion:reduce){.goal .keeper-live-track{transition:none!important}.v32-placement-live *{animation-duration:.01ms!important}}
+
+/* v34 overall polish and working diagnostics */
+.diagnostic-report{margin-top:14px;border:1px solid rgba(0,93,168,.24);border-radius:16px;padding:14px;background:rgba(255,255,255,.88)}
+.diagnostic-summary{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:10px;flex-wrap:wrap}.diagnostic-summary span{color:#405268;font-size:.92rem}
+.diagnostic-report ul{list-style:none;padding:0;margin:0;display:grid;gap:8px}.diagnostic-report li{display:grid;grid-template-columns:minmax(180px,.7fr) 1fr;gap:12px;padding:9px 10px;border-radius:10px;background:#f6f9fc}.diagnostic-report li.pass b{color:#17643a}.diagnostic-report li.fail{background:#fff3f1}.diagnostic-report li.fail b{color:#9b2c1f}.diagnostic-report li span{color:#4b5e72}
+#runDiagnostics:disabled{opacity:.65;cursor:progress}
+:where(button,a,input,select,textarea):focus-visible{outline:3px solid #ffd400!important;outline-offset:3px!important}
+main>section{scroll-margin-top:86px}
+.card,.panel,.feature-card{transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+@media (hover:hover) and (prefers-reduced-motion:no-preference){.card:hover,.panel:hover,.feature-card:hover{transform:translateY(-2px)}}
+.guess-correct-celebration .guess-silhouette{animation:guessReward 1.1s cubic-bezier(.2,.8,.2,1);box-shadow:0 0 0 5px rgba(255,212,0,.35),0 18px 36px rgba(0,74,140,.28)}
+@keyframes guessReward{0%{transform:scale(.96)}35%{transform:scale(1.06) rotate(-1deg)}70%{transform:scale(1.02) rotate(1deg)}100%{transform:scale(1)}}
+@media(max-width:650px){.diagnostic-report li{grid-template-columns:1fr;gap:3px}.diagnostic-summary{align-items:flex-start}.button-row button,.button-row .button-file{min-height:46px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+
+/* v35: verified penalty placement. JavaScript owns the entire sequence. */
+.v35-placement-active .penalty-taker,
+.v35-placement-active .ball,
+.v35-placement-active .ball-shadow,
+.v35-placement-active .player-arm,
+.v35-placement-active .player-forearm,
+.v35-placement-active .player-hand{
+  animation:none!important;
+  transition:none!important;
+  will-change:transform,opacity;
+}
+.v35-placement-active .ball{z-index:16!important}
+.v35-placement-active .penalty-taker{z-index:15!important}
