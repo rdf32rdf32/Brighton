@@ -59,3 +59,30 @@
 .guess-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;margin-top:1rem}.guess-choice{min-height:50px;text-align:left;padding:.8rem 1rem}.clue-count{display:block;font-size:.76rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.68;margin-bottom:.35rem}.correct-choice{outline:3px solid #2f9e62!important;background:#e9f8ef!important}.wrong-choice{outline:3px solid #c84b4b!important;background:#fff0f0!important}
 @media(max-width:700px){#penaltyTaker.clean-player-rig{left:20%!important;bottom:-1%!important;width:70px!important;height:148px!important}#keeper.clean-keeper-rig{bottom:58.1%!important;width:52px!important;height:98px!important}.guess-choices{grid-template-columns:1fr}.stadium-scene .goal{min-height:330px!important}}
 @media(prefers-reduced-motion:reduce){#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{animation-duration:.16s!important}}
+
+/* v43 refinement: subtler fabric, stricter goal-line anchoring and shot-timed keeper reactions. */
+#penaltyTaker .taker-jersey{
+  fill:#f8fbff!important;
+  stroke:#1b73b9!important;
+  stroke-width:10!important;
+  stroke-dasharray:9 11!important;
+}
+#penaltyTaker .taker-sleeve{fill:#287fc0!important;stroke:#f6fbff!important;stroke-width:3!important}
+#penaltyTaker .taker-shorts{fill:#1768a9!important;stroke:#eaf5ff!important;stroke-width:1.5!important}
+#penaltyTaker .taker-sock{fill:#f8fbff!important;stroke:#3886bf!important;stroke-width:2!important}
+#penaltyTaker.palace-taker .taker-jersey,#penaltyTaker[data-team="palace"] .taker-jersey{
+  fill:#254b88!important;stroke:#c83945!important;stroke-width:10!important;stroke-dasharray:9 11!important;
+}
+#keeper.clean-keeper-rig{bottom:58.1%!important;transform-origin:50% 100%!important}
+#keeper.clean-keeper-rig:not(.user-keeper)[class*="dive-"]{animation-delay:.30s!important}
+#keeper.clean-keeper-rig.user-keeper[class*="dive-"]{animation-delay:0s!important}
+#keeper.keeper-glove-check .keeper-body-rig{animation:v43-gloves .75s ease both!important}
+#keeper.keeper-point-left .keeper-body-rig{animation:v43-point-left .85s ease both!important}
+#keeper.keeper-point-right .keeper-body-rig{animation:v43-point-right .85s ease both!important}
+@keyframes v43-gloves{35%{transform:translateY(2px) scale(.98)}65%{transform:translateY(-1px) scale(1.01)}}
+@keyframes v43-point-left{40%{transform:rotate(-4deg) translateX(-2px)}75%{transform:rotate(1deg)}}
+@keyframes v43-point-right{40%{transform:rotate(4deg) translateX(2px)}75%{transform:rotate(-1deg)}}
+.goal .goal-line{z-index:9!important;opacity:.95!important}
+.goal.kick-in-flight #keeper.clean-keeper-rig:not(.user-keeper)[class*="dive-"]{animation-play-state:running!important}
+.guess-player-card .guess-clue{line-height:1.62}
+.guess-player-card .difficulty-chip{display:inline-flex;margin-left:.45rem;padding:.12rem .42rem;border-radius:999px;background:#162f50;color:#fff;font-size:.68rem;vertical-align:middle}
