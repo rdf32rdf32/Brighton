@@ -1,0 +1,23 @@
+ALBION FAN HUB — ROLLBACK 5 PROFESSIONAL REBUILD
+
+Foundation
+- Restored from Brighton-main (5).zip.
+- Existing quiz, fixtures, Albion Story, audio and site content retained.
+
+Penalty shoot-out
+- Working full-width accuracy/power bar retained.
+- Alternating Brighton shooting and Verbruggen saving retained.
+- Keeper visual scale corrected and anchored to the goal line.
+- New bounded top, middle, low and centre dive paths.
+- No keeper growth during dives.
+- Whole-body animation prevents detached arms and gloves.
+- Smoother run-up and follow-through.
+- Aiming guide made much subtler.
+- Touch controls protected against double activation.
+
+Site stability
+- Cookie OK button uses a dedicated persistent consent key.
+- Service-worker cache version renewed to prevent stale GitHub Pages files.
+- JavaScript syntax checks passed.
+
+Upload all files in this ZIP directly to the repository root.

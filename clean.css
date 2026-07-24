@@ -1,88 +1,282 @@
-/* v42 professional penalty presentation: one authoritative visual system. */
-#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{
-  position:absolute!important;pointer-events:none!important;contain:layout paint style!important;
-  transform-origin:50% 100%!important;backface-visibility:hidden!important;isolation:isolate!important;
-  will-change:transform!important;filter:drop-shadow(0 6px 5px rgba(0,0,0,.28))!important;
+/* Clean release: one coherent penalty rig, loaded after the legacy site stylesheet. */
+#penaltyTaker.clean-player-rig,
+#keeper.clean-keeper-rig {
+  contain: layout paint;
+  transform-origin: 50% 100% !important;
+  backface-visibility: hidden;
 }
-#penaltyTaker.clean-player-rig{left:27%!important;bottom:-1.5%!important;width:86px!important;height:178px!important;z-index:12!important;transform:none}
-#keeper.clean-keeper-rig{left:50%!important;bottom:58.1%!important;width:64px!important;height:119px!important;z-index:10!important;transform:translateX(-50%)!important}
-#penaltyTaker .player-pelvis{position:absolute!important;inset:0!important;display:block!important}
-#penaltyTaker .taker-svg,#keeper .keeper-svg{display:block!important;width:100%!important;height:100%!important;overflow:visible!important;transform:none!important}
-#penaltyTaker svg *,#keeper svg *{animation:none!important;transition:none!important;filter:none!important;box-sizing:border-box}
-.rig-skin{fill:#b87956}.rig-hair{fill:#21170f}.rig-feature{fill:#2b1d18}.rig-mouth{stroke:#4b2b22;stroke-width:2}.rig-boot{fill:#111820}.rig-shadow{fill:rgba(0,0,0,.24)}
-/* Brighton rear-view home kit */
-#penaltyTaker .taker-jersey{fill:#fff;stroke:#0868b8;stroke-width:15;stroke-dasharray:13 9}
-#penaltyTaker .taker-sleeve{fill:#0870c2;stroke:#fff;stroke-width:4}
-#penaltyTaker .taker-shorts{fill:#075da7;stroke:#fff;stroke-width:2}
-#penaltyTaker .taker-sock{fill:#fff;stroke:#0870c2;stroke-width:3}
-#penaltyTaker .taker-number{fill:#082d55;paint-order:stroke;stroke:#fff;stroke-width:2;font:900 27px Arial,sans-serif}
-#penaltyTaker .taker-name{fill:#082d55;font:800 8px Arial,sans-serif;letter-spacing:.08em}
-/* Palace rear-view away player */
-#penaltyTaker.palace-taker .taker-jersey,#penaltyTaker[data-team="palace"] .taker-jersey{fill:#17458f;stroke:#d91d2b;stroke-width:15;stroke-dasharray:13 9}
-#penaltyTaker.palace-taker .taker-sleeve,#penaltyTaker[data-team="palace"] .taker-sleeve{fill:#d91d2b;stroke:#17458f;stroke-width:4}
-#penaltyTaker.palace-taker .taker-shorts,#penaltyTaker[data-team="palace"] .taker-shorts{fill:#17366e;stroke:#d91d2b}
-#penaltyTaker.palace-taker .taker-sock,#penaltyTaker[data-team="palace"] .taker-sock{fill:#d91d2b;stroke:#17458f}
-#penaltyTaker.palace-taker .taker-number,#penaltyTaker[data-team="palace"] .taker-number,#penaltyTaker.palace-taker .taker-name,#penaltyTaker[data-team="palace"] .taker-name{fill:#fff;stroke:#17366e}
-/* Keeper faces the taker and stays on the line */
-#keeper .keeper-jersey,#keeper .keeper-sleeve{fill:url(#keeperTop)}#keeper .keeper-shorts{fill:#bf9700}#keeper .keeper-sock{fill:#efca13}
-#keeper .keeper-glove-fill{fill:#fff;stroke:#aab7c4;stroke-width:2}#keeper .keeper-number{fill:#162238;font:900 23px Arial,sans-serif}
-#keeper.user-keeper .keeper-jersey,#keeper.user-keeper .keeper-sleeve{fill:url(#keeperGreen)}#keeper.user-keeper .keeper-shorts{fill:#126543}#keeper.user-keeper .keeper-sock{fill:#31b87a}
-/* Root-only motions keep every body part locked together. */
-#penaltyTaker.place-ball{animation:v42-place 1.45s cubic-bezier(.26,.7,.22,1) both!important}
-#penaltyTaker.run-up{animation:v42-run var(--runup-duration,.82s) cubic-bezier(.24,.72,.2,1) both!important}
-#penaltyTaker.ball-struck{animation:v42-follow .42s ease-out both!important}
-#penaltyTaker.taker-celebrate{animation:v42-celebrate .8s ease both!important}
-#penaltyTaker.taker-disappointed{animation:v42-disappointed .75s ease both!important}
-@keyframes v42-place{0%{transform:translate3d(-32px,8px,0) rotate(-2deg)}42%,70%{transform:translate3d(clamp(54px,8vw,92px),clamp(-72px,-7vw,-48px),0) rotate(7deg) scale(.88)}100%{transform:none}}
-@keyframes v42-run{0%{transform:translate3d(-30px,3px,0) rotate(-3deg)}68%{transform:translate3d(clamp(48px,7vw,78px),clamp(-52px,-5vw,-34px),0) rotate(4deg) scale(.93)}100%{transform:translate3d(clamp(66px,9vw,102px),clamp(-66px,-6vw,-42px),0) rotate(10deg) scale(.89)}}
-@keyframes v42-follow{from{transform:translate3d(clamp(66px,9vw,102px),clamp(-66px,-6vw,-42px),0) rotate(10deg) scale(.89)}to{transform:translate3d(clamp(78px,10vw,116px),clamp(-70px,-6.5vw,-46px),0) rotate(14deg) scale(.87)}}
-@keyframes v42-celebrate{45%{transform:translateY(-10px) scale(1.03)}70%{transform:translateY(0)}85%{transform:translateY(-5px)}}
-@keyframes v42-disappointed{45%{transform:translateY(4px) rotate(-3deg)}100%{transform:translateY(2px) rotate(2deg)}}
-#keeper.feint-left{animation:v42-feint-left 1.1s ease-in-out infinite!important}#keeper.feint-right{animation:v42-feint-right 1.1s ease-in-out infinite!important}#keeper.feint-centre{animation:v42-ready 1.1s ease-in-out infinite!important}
-@keyframes v42-feint-left{50%{transform:translateX(-58%) translateY(-2px)}}@keyframes v42-feint-right{50%{transform:translateX(-42%) translateY(-2px)}}@keyframes v42-ready{50%{transform:translateX(-50%) translateY(-3px) scale(1.02)}}
-#keeper[class*="dive-left"]{animation:v42-dive-left .54s cubic-bezier(.18,.78,.24,1) both!important}
-#keeper[class*="dive-right"]{animation:v42-dive-right .54s cubic-bezier(.18,.78,.24,1) both!important}
-#keeper.dive-centre{animation:v42-dive-centre .46s ease-out both!important}
-#keeper.keeper-landed{animation-fill-mode:forwards!important}
-@keyframes v42-dive-left{to{transform:translate3d(clamp(-152px,-18vw,-92px),-18px,0) rotate(-63deg) scale(.96)}}
-@keyframes v42-dive-right{to{transform:translate3d(clamp(28px,12vw,98px),-18px,0) rotate(63deg) scale(.96)}}
-@keyframes v42-dive-centre{50%{transform:translateX(-50%) translateY(-24px) scale(1.06)}100%{transform:translateX(-50%) translateY(-8px)}}
-.goal.placing-ball #penaltyTaker{animation-name:v42-place!important}
-.goal .penalty-taker.runup-straight.run-up,.goal .penalty-taker.runup-angled.run-up,.goal .penalty-taker.runup-stutter.run-up{animation-name:v42-run!important}
-.goal .keeper{bottom:58.1%!important}
-.goal .keeper:before,.goal .keeper:after{display:none!important}
-/* More professional pitch balance */
-.stadium-scene .goal{min-height:clamp(310px,51vw,520px)!important;background:linear-gradient(#7dbce2 0 8%,#29465b 8% 11%,#2e9148 11% 100%)!important}
-.goal .penalty-spot{bottom:22.8%!important}.ball{z-index:14!important}.ball-shadow{z-index:8!important}
-.shootout-status{min-height:54px}.penalty-controls button,.save-grid button{touch-action:manipulation;min-height:46px}
-/* Harder Guess the Player */
-.guess-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.7rem;margin-top:1rem}.guess-choice{min-height:50px;text-align:left;padding:.8rem 1rem}.clue-count{display:block;font-size:.76rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.68;margin-bottom:.35rem}.correct-choice{outline:3px solid #2f9e62!important;background:#e9f8ef!important}.wrong-choice{outline:3px solid #c84b4b!important;background:#fff0f0!important}
-@media(max-width:700px){#penaltyTaker.clean-player-rig{left:20%!important;bottom:-1%!important;width:70px!important;height:148px!important}#keeper.clean-keeper-rig{bottom:58.1%!important;width:52px!important;height:98px!important}.guess-choices{grid-template-columns:1fr}.stadium-scene .goal{min-height:330px!important}}
-@media(prefers-reduced-motion:reduce){#penaltyTaker.clean-player-rig,#keeper.clean-keeper-rig{animation-duration:.16s!important}}
 
-/* v43 refinement: subtler fabric, stricter goal-line anchoring and shot-timed keeper reactions. */
-#penaltyTaker .taker-jersey{
-  fill:#f8fbff!important;
-  stroke:#1b73b9!important;
-  stroke-width:10!important;
-  stroke-dasharray:9 11!important;
+/* Stop the many historical limb animations from competing. */
+#penaltyTaker.clean-player-rig *,
+#keeper.clean-keeper-rig * {
+  animation: none !important;
+  transition: none !important;
+  box-sizing: border-box;
 }
-#penaltyTaker .taker-sleeve{fill:#287fc0!important;stroke:#f6fbff!important;stroke-width:3!important}
-#penaltyTaker .taker-shorts{fill:#1768a9!important;stroke:#eaf5ff!important;stroke-width:1.5!important}
-#penaltyTaker .taker-sock{fill:#f8fbff!important;stroke:#3886bf!important;stroke-width:2!important}
-#penaltyTaker.palace-taker .taker-jersey,#penaltyTaker[data-team="palace"] .taker-jersey{
-  fill:#254b88!important;stroke:#c83945!important;stroke-width:10!important;stroke-dasharray:9 11!important;
+
+#penaltyTaker.clean-player-rig {
+  width: 74px !important;
+  height: 158px !important;
 }
-#keeper.clean-keeper-rig{bottom:58.1%!important;transform-origin:50% 100%!important}
-#keeper.clean-keeper-rig:not(.user-keeper)[class*="dive-"]{animation-delay:.30s!important}
-#keeper.clean-keeper-rig.user-keeper[class*="dive-"]{animation-delay:0s!important}
-#keeper.keeper-glove-check .keeper-body-rig{animation:v43-gloves .75s ease both!important}
-#keeper.keeper-point-left .keeper-body-rig{animation:v43-point-left .85s ease both!important}
-#keeper.keeper-point-right .keeper-body-rig{animation:v43-point-right .85s ease both!important}
-@keyframes v43-gloves{35%{transform:translateY(2px) scale(.98)}65%{transform:translateY(-1px) scale(1.01)}}
-@keyframes v43-point-left{40%{transform:rotate(-4deg) translateX(-2px)}75%{transform:rotate(1deg)}}
-@keyframes v43-point-right{40%{transform:rotate(4deg) translateX(2px)}75%{transform:rotate(-1deg)}}
-.goal .goal-line{z-index:9!important;opacity:.95!important}
-.goal.kick-in-flight #keeper.clean-keeper-rig:not(.user-keeper)[class*="dive-"]{animation-play-state:running!important}
-.guess-player-card .guess-clue{line-height:1.62}
-.guess-player-card .difficulty-chip{display:inline-flex;margin-left:.45rem;padding:.12rem .42rem;border-radius:999px;background:#162f50;color:#fff;font-size:.68rem;vertical-align:middle}
+#penaltyTaker.clean-player-rig .player-pelvis {
+  position: absolute !important;
+  inset: 0 !important;
+  transform-origin: 50% 78% !important;
+}
+#penaltyTaker.clean-player-rig .player-torso {
+  position: absolute !important;
+  left: 50% !important;
+  top: 38px !important;
+  width: 42px !important;
+  height: 58px !important;
+  transform: translateX(-50%) !important;
+  transform-origin: 50% 92% !important;
+  z-index: 4 !important;
+}
+#penaltyTaker.clean-player-rig .player-shirt {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  border-radius: 9px 9px 5px 5px !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  color: #062a4e !important;
+  background: repeating-linear-gradient(90deg,#fff 0 10px,#1764aa 10px 21px) !important;
+  border: 1px solid rgba(0,0,0,.12) !important;
+  transform: none !important;
+  z-index: 3 !important;
+}
+#penaltyTaker.clean-player-rig.palace-taker .player-shirt,
+#penaltyTaker.clean-player-rig[data-team="palace"] .player-shirt {
+  color: #fff !important;
+  background: repeating-linear-gradient(90deg,#d71920 0 10px,#17458f 10px 21px) !important;
+}
+#penaltyTaker.clean-player-rig .player-neck {
+  position: absolute !important;
+  left: 50% !important;
+  top: -8px !important;
+  width: 12px !important;
+  height: 12px !important;
+  transform: translateX(-50%) !important;
+  background: var(--player-skin,#b87956) !important;
+  z-index: 2 !important;
+}
+#penaltyTaker.clean-player-rig .player-head {
+  position: absolute !important;
+  left: 50% !important;
+  top: -34px !important;
+  width: 28px !important;
+  height: 34px !important;
+  transform: translateX(-50%) !important;
+  border-radius: 48% 48% 44% 44% !important;
+  background: var(--player-skin,#b87956) !important;
+  z-index: 5 !important;
+}
+#penaltyTaker.clean-player-rig .player-arm {
+  position: absolute !important;
+  top: 5px !important;
+  width: 12px !important;
+  height: 56px !important;
+  transform-origin: 50% 7% !important;
+  z-index: 1 !important;
+}
+#penaltyTaker.clean-player-rig .player-arm-left { left: -9px !important; transform: rotate(12deg) !important; }
+#penaltyTaker.clean-player-rig .player-arm-right { right: -9px !important; transform: rotate(-12deg) !important; }
+#penaltyTaker.clean-player-rig .player-upper-arm,
+#penaltyTaker.clean-player-rig .player-forearm {
+  position: absolute !important;
+  left: 50% !important;
+  width: 10px !important;
+  transform: translateX(-50%) !important;
+  background: var(--player-skin,#b87956) !important;
+  border-radius: 8px !important;
+}
+#penaltyTaker.clean-player-rig .player-upper-arm { top: 0 !important; height: 28px !important; }
+#penaltyTaker.clean-player-rig .player-forearm { top: 24px !important; height: 28px !important; }
+#penaltyTaker.clean-player-rig .player-hand {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: -8px !important;
+  width: 12px !important;
+  height: 13px !important;
+  transform: translateX(-50%) !important;
+  border-radius: 50% !important;
+  background: var(--player-skin,#b87956) !important;
+}
+#penaltyTaker.clean-player-rig .player-shorts {
+  position: absolute !important;
+  left: 50% !important;
+  top: 91px !important;
+  width: 42px !important;
+  height: 24px !important;
+  transform: translateX(-50%) !important;
+  border-radius: 4px 4px 8px 8px !important;
+  background: #1764aa !important;
+  z-index: 3 !important;
+}
+#penaltyTaker.clean-player-rig.palace-taker .player-shorts,
+#penaltyTaker.clean-player-rig[data-team="palace"] .player-shorts { background: #172e58 !important; }
+#penaltyTaker.clean-player-rig .player-leg {
+  position: absolute !important;
+  top: 108px !important;
+  width: 15px !important;
+  height: 48px !important;
+  transform-origin: 50% 4% !important;
+}
+#penaltyTaker.clean-player-rig .player-leg-left { left: 23px !important; }
+#penaltyTaker.clean-player-rig .player-leg-right { right: 23px !important; }
+#penaltyTaker.clean-player-rig .player-thigh,
+#penaltyTaker.clean-player-rig .player-shin {
+  position: absolute !important;
+  left: 0 !important;
+  width: 15px !important;
+  border-radius: 8px !important;
+}
+#penaltyTaker.clean-player-rig .player-thigh { top: 0 !important; height: 24px !important; background: var(--player-skin,#b87956) !important; }
+#penaltyTaker.clean-player-rig .player-shin { top: 21px !important; height: 28px !important; background: #fff !important; }
+#penaltyTaker.clean-player-rig.palace-taker .player-shin,
+#penaltyTaker.clean-player-rig[data-team="palace"] .player-shin { background: #d71920 !important; }
+#penaltyTaker.clean-player-rig .player-boot {
+  position: absolute !important;
+  left: -2px !important;
+  bottom: -4px !important;
+  width: 21px !important;
+  height: 8px !important;
+  border-radius: 7px 3px 3px 7px !important;
+  background: #161616 !important;
+}
+
+/* Whole-body motion only: descendants remain attached. */
+#penaltyTaker.clean-player-rig.run-up { animation: clean-run-up .72s cubic-bezier(.22,.7,.25,1) both !important; }
+#penaltyTaker.clean-player-rig.ball-struck { animation: clean-follow-through .42s ease-out both !important; }
+@keyframes clean-run-up { from { transform: translate3d(-30px,0,0) rotate(-2deg); } 70% { transform: translate3d(12px,0,0) rotate(4deg); } to { transform: translate3d(20px,0,0) rotate(7deg); } }
+@keyframes clean-follow-through { from { transform: translate3d(20px,0,0) rotate(7deg); } to { transform: translate3d(30px,-2px,0) rotate(11deg); } }
+
+/* Keeper also moves as one object to avoid detached gloves/limbs. */
+#keeper.clean-keeper-rig { transform-origin: 50% 100% !important; }
+#keeper.clean-keeper-rig[class*="dive-left"] { animation: clean-keeper-left .56s cubic-bezier(.18,.8,.3,1) both !important; }
+#keeper.clean-keeper-rig[class*="dive-right"] { animation: clean-keeper-right .56s cubic-bezier(.18,.8,.3,1) both !important; }
+#keeper.clean-keeper-rig.dive-centre { animation: clean-keeper-centre .45s ease-out both !important; }
+@keyframes clean-keeper-left { to { transform: translate3d(-82px,-20px,0) rotate(-42deg); } }
+@keyframes clean-keeper-right { to { transform: translate3d(82px,-20px,0) rotate(42deg); } }
+@keyframes clean-keeper-centre { 50% { transform: translateY(-18px) scale(1.03); } }
+
+/* Keep the game light on Edge and mobile. */
+.stadium-scene, .goal, #penaltyTaker, #keeper, #ball { filter: none !important; }
+@media (max-width: 700px) {
+  #penaltyTaker.clean-player-rig { transform: scale(.82); transform-origin: 50% 100% !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #penaltyTaker.clean-player-rig,
+  #keeper.clean-keeper-rig { animation-duration: .12s !important; }
+}
+
+/* Rollback rebuild: stable professional penalty presentation. */
+#aimGuide.aim-guide{
+  opacity:.10!important;
+  height:1px!important;
+  background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.6))!important;
+  box-shadow:none!important;
+  border:0!important;
+}
+.stadium-scene.aim-dragging #aimGuide.aim-guide{opacity:.16!important}
+#aimPointer{opacity:.42!important;transform:translate(-50%,-50%) scale(.72)!important}
+.stadium-scene.aim-dragging #aimPointer{opacity:.62!important}
+.accuracy-meter{height:18px!important;border:1px solid rgba(9,46,82,.22)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.18)!important}
+.accuracy-meter i{width:4px!important;height:22px!important;top:-3px!important;box-shadow:0 0 0 2px #fff,0 2px 5px rgba(0,0,0,.3)!important}
+
+/* A proportionate keeper on the goal line. The whole rig moves together. */
+#keeper.clean-keeper-rig{
+  bottom:29.5%!important;
+  width:72px!important;
+  height:142px!important;
+  left:50%!important;
+  transform:translate3d(-50%,0,0) scale(.72)!important;
+  transform-origin:50% 100%!important;
+  will-change:transform!important;
+}
+#keeper.clean-keeper-rig:not([class*="dive-"]):not(.keeper-committed){
+  animation:pro-keeper-set 1.35s ease-in-out infinite!important;
+}
+@keyframes pro-keeper-set{
+  0%,100%{transform:translate3d(-50%,0,0) scale(.72)}
+  50%{transform:translate3d(-50%,-3px,0) scale(.72)}
+}
+#keeper.clean-keeper-rig[class*="dive-"]{
+  animation-duration:.62s!important;
+  animation-timing-function:cubic-bezier(.16,.76,.25,1)!important;
+  animation-fill-mode:both!important;
+}
+#keeper.clean-keeper-rig.dive-top-left{animation-name:pro-dive-top-left!important}
+#keeper.clean-keeper-rig.dive-top-right{animation-name:pro-dive-top-right!important}
+#keeper.clean-keeper-rig.dive-middle-left{animation-name:pro-dive-mid-left!important}
+#keeper.clean-keeper-rig.dive-middle-right{animation-name:pro-dive-mid-right!important}
+#keeper.clean-keeper-rig.dive-bottom-left{animation-name:pro-dive-low-left!important}
+#keeper.clean-keeper-rig.dive-bottom-right{animation-name:pro-dive-low-right!important}
+#keeper.clean-keeper-rig.dive-centre{animation-name:pro-dive-centre!important}
+@keyframes pro-dive-top-left{
+  0%{transform:translate3d(-50%,0,0) scale(.72) rotate(0)}
+  18%{transform:translate3d(-70%,-3px,0) scale(.72) rotate(-4deg)}
+  55%{transform:translate3d(-145px,-44px,0) scale(.72) rotate(-34deg)}
+  100%{transform:translate3d(-202px,-63px,0) scale(.72) rotate(-54deg)}
+}
+@keyframes pro-dive-top-right{
+  0%{transform:translate3d(-50%,0,0) scale(.72) rotate(0)}
+  18%{transform:translate3d(-30%,-3px,0) scale(.72) rotate(4deg)}
+  55%{transform:translate3d(73px,-44px,0) scale(.72) rotate(34deg)}
+  100%{transform:translate3d(130px,-63px,0) scale(.72) rotate(54deg)}
+}
+@keyframes pro-dive-mid-left{
+  0%{transform:translate3d(-50%,0,0) scale(.72) rotate(0)}
+  20%{transform:translate3d(-72%,-2px,0) scale(.72) rotate(-5deg)}
+  58%{transform:translate3d(-142px,-20px,0) scale(.72) rotate(-38deg)}
+  100%{transform:translate3d(-198px,-29px,0) scale(.72) rotate(-59deg)}
+}
+@keyframes pro-dive-mid-right{
+  0%{transform:translate3d(-50%,0,0) scale(.72) rotate(0)}
+  20%{transform:translate3d(-28%,-2px,0) scale(.72) rotate(5deg)}
+  58%{transform:translate3d(70px,-20px,0) scale(.72) rotate(38deg)}
+  100%{transform:translate3d(126px,-29px,0) scale(.72) rotate(59deg)}
+}
+@keyframes pro-dive-low-left{
+  0%{transform:translate3d(-50%,0,0) scale(.72) rotate(0)}
+  22%{transform:translate3d(-74%,1px,0) scale(.72) rotate(-6deg)}
+  62%{transform:translate3d(-137px,3px,0) scale(.72) rotate(-43deg)}
+  100%{transform:translate3d(-190px,5px,0) scale(.72) rotate(-66deg)}
+}
+@keyframes pro-dive-low-right{
+  0%{transform:translate3d(-50%,0,0) scale(.72) rotate(0)}
+  22%{transform:translate3d(-26%,1px,0) scale(.72) rotate(6deg)}
+  62%{transform:translate3d(65px,3px,0) scale(.72) rotate(43deg)}
+  100%{transform:translate3d(118px,5px,0) scale(.72) rotate(66deg)}
+}
+@keyframes pro-dive-centre{
+  0%{transform:translate3d(-50%,0,0) scale(.72)}
+  42%{transform:translate3d(-50%,-18px,0) scale(.76)}
+  100%{transform:translate3d(-50%,-10px,0) scale(.73)}
+}
+
+/* Natural run-up and follow-through without detached limbs or apparent growth. */
+#penaltyTaker.clean-player-rig.run-up{animation:pro-run-up .84s cubic-bezier(.2,.7,.23,1) both!important}
+#penaltyTaker.clean-player-rig.ball-struck{animation:pro-follow-through .46s cubic-bezier(.18,.72,.25,1) both!important}
+@keyframes pro-run-up{
+  0%{transform:translate3d(-46px,2px,0) rotate(-1deg)}
+  45%{transform:translate3d(-17px,0,0) rotate(1deg)}
+  78%{transform:translate3d(7px,-1px,0) rotate(3deg)}
+  100%{transform:translate3d(18px,0,0) rotate(5deg)}
+}
+@keyframes pro-follow-through{
+  0%{transform:translate3d(18px,0,0) rotate(5deg)}
+  55%{transform:translate3d(27px,-3px,0) rotate(8deg)}
+  100%{transform:translate3d(31px,-1px,0) rotate(7deg)}
+}
+#penaltyTaker .player-eyes,#penaltyTaker .player-mouth{opacity:.16!important}
+
+@media(max-width:700px){
+  #keeper.clean-keeper-rig{transform:translate3d(-50%,0,0) scale(.60)!important}
+  @keyframes pro-keeper-set{0%,100%{transform:translate3d(-50%,0,0) scale(.60)}50%{transform:translate3d(-50%,-2px,0) scale(.60)}}
+  #aimGuide.aim-guide{opacity:.07!important}
+  .penalty-controls{padding:12px!important;gap:12px!important}
+}

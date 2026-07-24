@@ -3268,12 +3268,10 @@
       window.scrollTo({ top: 0, behavior: "smooth" }),
     );
     const notice = $("cookieNotice");
-    const acceptCookies = $("acceptCookies");
-    try {
-      if (notice && localStorage.getItem("albionCookieNotice") === "accepted") notice.hidden = true;
-    } catch (_) {}
-    if (notice && acceptCookies) acceptCookies.addEventListener("click", () => {
-      try { localStorage.setItem("albionCookieNotice", "accepted"); } catch (_) {}
+    if (localStorage.getItem("albionCookieNotice") === "accepted")
+      notice.hidden = true;
+    $("acceptCookies").addEventListener("click", () => {
+      localStorage.setItem("albionCookieNotice", "accepted");
       notice.hidden = true;
     });
     $("resetSite").addEventListener("click", () => {
@@ -3471,7 +3469,7 @@
   peopleDetails();
   recordTabs();
   travelGuide();
-  if (document.getElementById("goal")) shootout();
+  shootout();
   fixtureCarousel();
   calendarDownload();
   soundAndInstall();
@@ -3489,11 +3487,3 @@
     caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))).catch(() => {});
   }
 })();
-
-  // Independent cookie notice fallback: never depends on another feature initialising.
-  document.addEventListener("DOMContentLoaded", () => {
-    const n=document.getElementById("cookieNotice"), a=document.getElementById("acceptCookies");
-    if(!n||!a)return;
-    try{if(localStorage.getItem("albionCookieNotice")==="accepted")n.hidden=true;}catch(_){}
-    a.addEventListener("click",()=>{try{localStorage.setItem("albionCookieNotice","accepted");}catch(_){} n.hidden=true;},{once:true});
-  });
