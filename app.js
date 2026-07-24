@@ -1612,8 +1612,8 @@
       ball.className = "ball";
       shadow.className = "ball-shadow";
       flash.className = "goal-flash";
-      taker.className = "penalty-taker taker-v37";
-      keeper.className = "keeper keeper-v37";
+      taker.className = "penalty-taker taker-v38";
+      keeper.className = "keeper keeper-v38";
       keeper.style.left = "";
       goalFrame.classList.remove(
         "slow-motion",
@@ -1663,7 +1663,7 @@
       const mindGame = phase === "save" && Math.random() < 0.28
         ? ` mindgame-point-${Math.random() < 0.5 ? "left" : "right"}`
         : "";
-      keeper.className = `keeper keeper-v37 ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
+      keeper.className = `keeper keeper-v38 ${phase === "save" ? "user-keeper " : ""}feint-${feint}${mindGame}`;
     }
     function playVerifiedPlacement(onComplete) {
       const runId = ++placementRunId;
@@ -2215,7 +2215,7 @@
             : "shoot-custom";
       ball.className = `ball shot-${shotStyle} ${flightClass} ${swerve}`;
       shadow.className = `ball-shadow shadow-${missed ? "wide" : woodwork ? "post" : "custom"}`;
-      keeper.className = `keeper keeper-v37 ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
+      keeper.className = `keeper keeper-v38 ${phase === "save" ? "user-keeper " : ""}dive-${dive}`;
       const diveLevel = dive.includes("top")
         ? "top"
         : dive.includes("bottom")
@@ -2702,7 +2702,7 @@
           targetButton === button,
         );
       });
-      keeper.className = `keeper keeper-v37 user-keeper keeper-committed commit-${button.dataset.target}`;
+      keeper.className = `keeper keeper-v38 user-keeper keeper-committed commit-${button.dataset.target}`;
       keeper.style.removeProperty("--track-x");
       keeper.style.removeProperty("--track-y");
       announce(

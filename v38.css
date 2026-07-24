@@ -1,0 +1,70 @@
+/* Albion Fan Hub v38: stable game rig, correct kits and supporter-first polish */
+:root{--albion-blue:#0057b8;--albion-white:#fff;--palace-red:#c41230;--palace-blue:#1b458f;--keeper-lime:#c8ef37;--keeper-orange:#ff7a21}
+
+/* Technical health checks remain available to code but are not supporter-facing. */
+#diagnosticStatus,.diagnostic-panel,.site-health-output,[data-diagnostic]{display:none!important}
+
+/* The whole player is one transformable rig. Internal parts never receive layout animation. */
+#penaltyTaker.taker-v38,#keeper.keeper-v38{contain:layout paint;transform-origin:50% 100%;will-change:transform;backface-visibility:hidden;perspective:800px}
+#penaltyTaker.taker-v38 .player-pelvis,#keeper.keeper-v38 .keeper-pelvis{position:absolute;inset:0;transform-origin:50% 100%;will-change:transform}
+#penaltyTaker.taker-v38 .player-torso,#penaltyTaker.taker-v38 .player-shirt,#penaltyTaker.taker-v38 .player-neck,#penaltyTaker.taker-v38 .player-head,#penaltyTaker.taker-v38 .player-shorts{animation:none!important;transition:none!important}
+#penaltyTaker.taker-v38 .player-shirt{inset:0!important;transform:none!important;filter:none!important;background:repeating-linear-gradient(90deg,var(--albion-white) 0 24%,var(--albion-blue) 24% 50%)!important;color:#092c50!important;border:1px solid rgba(0,0,0,.08);box-shadow:inset 0 -8px 12px rgba(0,45,95,.13)}
+#penaltyTaker.taker-v38[data-team="brighton"] .player-shorts{background:#1764aa!important}
+#penaltyTaker.taker-v38[data-team="brighton"] .player-shin{box-shadow:inset 0 -18px 0 #fff}
+#penaltyTaker.taker-v38[data-team="palace"] .player-shirt{background:repeating-linear-gradient(90deg,var(--palace-red) 0 25%,var(--palace-blue) 25% 50%)!important;color:#fff!important;text-shadow:0 1px 2px #09182c}
+#penaltyTaker.taker-v38[data-team="palace"] .player-shorts{background:#172e58!important}
+#penaltyTaker.taker-v38[data-team="palace"] .player-shin{box-shadow:inset 0 -18px 0 var(--palace-red)}
+#keeper.keeper-v38[data-team="brighton"] .keeper-body,#keeper.keeper-v38[data-team="brighton"] .keeper-shorts{background:var(--keeper-lime)!important;color:#10220b}
+#keeper.keeper-v38[data-team="brighton"] .keeper-glove{background:#fff!important;border:2px solid #15283b}
+#keeper.keeper-v38[data-team="palace"] .keeper-body,#keeper.keeper-v38[data-team="palace"] .keeper-shorts{background:var(--keeper-orange)!important;color:#2b1603}
+#keeper.keeper-v38[data-team="palace"] .keeper-glove{background:#181d24!important;border:2px solid #fff}
+
+/* Smooth movement: animate the rig and joints, never the shirt as a separate object. */
+#penaltyTaker.taker-v38 .player-arm,#penaltyTaker.taker-v38 .player-forearm,#penaltyTaker.taker-v38 .player-leg,#penaltyTaker.taker-v38 .player-shin,
+#keeper.keeper-v38 .keeper-arm,#keeper.keeper-v38 .keeper-forearm,#keeper.keeper-v38 .keeper-thigh,#keeper.keeper-v38 .keeper-shin{will-change:transform;backface-visibility:hidden}
+.goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-pelvis{animation:v38-place-rig 2.35s cubic-bezier(.38,.02,.22,1) both!important}
+.goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-torso{transform:translateX(-50%)!important}
+.goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-arm-left{animation:v38-place-left-arm 2.35s cubic-bezier(.38,.02,.22,1) both!important}
+.goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-arm-right{animation:v38-place-right-arm 2.35s cubic-bezier(.38,.02,.22,1) both!important}
+.goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-leg-left{animation:v38-place-left-leg 2.35s cubic-bezier(.38,.02,.22,1) both!important}
+.goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-leg-right{animation:v38-place-right-leg 2.35s cubic-bezier(.38,.02,.22,1) both!important}
+@keyframes v38-place-rig{0%{transform:translate(72px,-3px) rotate(0)}28%{transform:translate(30px,0) rotate(-2deg)}48%{transform:translate(5px,8px) rotate(9deg) scaleY(.94)}66%{transform:translate(0,0) rotate(0) scaleY(1)}100%{transform:translate(-54px,0) rotate(0)}}
+@keyframes v38-place-left-arm{0%,30%,100%{transform:rotate(18deg)}45%,55%{transform:rotate(58deg)}}
+@keyframes v38-place-right-arm{0%,30%,100%{transform:rotate(-18deg)}45%,55%{transform:rotate(-72deg)}}
+@keyframes v38-place-left-leg{0%,30%,70%,100%{transform:rotate(0)}45%,58%{transform:rotate(13deg)}}
+@keyframes v38-place-right-leg{0%,30%,70%,100%{transform:rotate(0)}45%,58%{transform:rotate(-18deg)}}
+
+/* More stable frame-rate and less visual clutter during play. */
+.shootout-card.game-active{isolation:isolate}
+.shootout-card.game-active .goal,.shootout-card.game-active .stadium-scene{transform:translateZ(0)}
+.shootout-card.game-active .target span{transition:transform .14s ease,background-color .14s ease,opacity .14s ease}
+.shootout-card.game-active .ball{will-change:transform,left,bottom;backface-visibility:hidden}
+.shootout-card.game-active .crowd{animation-duration:3.6s!important}
+
+/* Guess the Player */
+.guess-player-card{background:linear-gradient(145deg,#fff,#f2f7fc)}
+.guess-player-stage{align-items:stretch}
+.guess-player-content{display:flex;flex-direction:column;justify-content:center}
+.guess-clue{display:grid;gap:8px;align-content:center;padding:16px;border-left:4px solid var(--albion-blue);background:#fff;border-radius:0 14px 14px 0}
+.clue-count{display:block;color:#557087;font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.guess-choice{min-height:48px;text-align:left;padding-inline:16px}
+.guess-choice.correct-choice{background:#177947!important;border-color:#177947!important;color:#fff!important}
+.guess-choice.wrong-choice{background:#b83b3b!important;border-color:#b83b3b!important;color:#fff!important}
+.guess-silhouette{transition:background .25s ease}
+.guess-silhouette.revealed{background:linear-gradient(180deg,#0057b8,#06345f)}
+.guess-silhouette.revealed:before{opacity:.28}
+.guess-correct{border-left:4px solid #177947;padding-left:12px}.guess-wrong{border-left:4px solid #b83b3b;padding-left:12px}
+
+/* Mature supporter-first spacing and typography. */
+.card{scroll-margin-top:82px}
+.section-head h2{letter-spacing:-.025em}
+.matchday-quick-view,.fan-dashboard{gap:12px}
+@media(max-width:700px){
+  #penaltyTaker.taker-v38,#keeper.keeper-v38{transform-origin:50% 100%}
+  .goal.placing-ball #penaltyTaker.taker-v38.place-ball .player-pelvis{animation-duration:2.05s!important}
+  .guess-player-stage{gap:14px}.guess-clue{min-height:92px}.guess-choice{min-height:50px}
+}
+@media(prefers-reduced-motion:reduce){
+  #penaltyTaker.taker-v38 *,#keeper.keeper-v38 *{animation-duration:.01ms!important;animation-iteration-count:1!important}
+  .shootout-card.game-active .crowd{animation:none!important}
+}
