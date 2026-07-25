@@ -22,7 +22,7 @@
     const steps = [
       ["fan-dashboard", "Welcome to Albion Fan Hub", "Your quiz record, shoot-out record and saved predictions are collected here."],
       ["quiz", "Test your Albion knowledge", "Play five medium and difficult questions, one at a time."],
-      ["shootout", "Seagulls v Eagles", "Aim, press Shoot, then take control of Bart Verbruggen for the Palace kick."],
+      ["shootout", "Seagulls v Eagles", "Aim and click to shoot, then react as Bart Verbruggen after Palace strike the ball."],
       ["fixtures", "Follow the season", "Search and filter fixtures by venue and month."],
       ["xi", "Build your Albion XI", "Choose a formation, players and set-piece takers."],
       ["story", "Explore the Albion story", "Browse the club journey, grounds, people, rivalry and memories."],
@@ -189,7 +189,7 @@
       const checks = [
         ["Main page controls", Boolean($("startTour") && $("settingsToggle"))],
         ["Quiz bank", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.length >= 5],
-        ["Penalty game", Boolean($("shootButton") && $("penaltyTaker") && $("keeper"))],
+        ["Penalty game", Boolean($("penaltyStage") && $("keeperFigure") && $("takerFigure"))],
         ["Fixtures", Boolean($("fixtureList") && $("monthFilter"))],
         ["Local storage", storage],
         ["Audio controls", Boolean($("soundToggle"))],

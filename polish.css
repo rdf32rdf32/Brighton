@@ -1,0 +1,30 @@
+/* Albion Fan Hub v10 interaction and visual polish. */
+html{scroll-padding-top:92px}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main>section[id]{scroll-margin-top:92px}
+.nav-links a,.mobile-jump-nav a{position:relative;border-radius:8px;transition:background-color .18s ease,color .18s ease,transform .18s ease}
+.nav-links a.active{background:rgba(255,255,255,.17);padding:5px 9px;margin:-5px -9px}
+.mobile-jump-nav a.active{background:#0057b8;color:#fff}
+button,input,select,a{transition:filter .16s ease,transform .16s ease,box-shadow .16s ease}
+button:active,.cta-row a:active{transform:translateY(1px)}
+button[disabled]{cursor:not-allowed;opacity:.55;filter:none}
+.card{transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+@media(hover:hover) and (pointer:fine){.card:not(.shootout-v10):hover{border-color:#c5d9eb;box-shadow:0 10px 27px rgba(5,55,107,.075)}}
+.card.reveal-ready{opacity:0;transform:translateY(12px)}.card.reveal-ready.in-view{opacity:1;transform:none}
+.quiz-card .button-row{min-height:44px}.quiz-card #newQuiz[hidden]{display:none}.quiz-card .quiz-question{box-shadow:0 6px 18px rgba(5,55,107,.045)}
+.quiz-card .quiz-question label{min-height:45px;display:flex;align-items:center;gap:9px;cursor:pointer}.quiz-card .quiz-question input{width:18px;height:18px;flex:0 0 auto;accent-color:#0057b8}
+.quiz-card .quiz-feedback:empty{display:none}.quiz-card .quiz-progress-track{height:8px;overflow:hidden}.quiz-card .quiz-progress-track i{transition:width .25s ease}
+.quiz-card.quiz-complete{border-color:#9fcdb2}.quiz-card.quiz-complete .quiz-banner{background:#f1fbf5}
+.settings-toggle,.sound-toggle,.back-to-top{backdrop-filter:blur(10px)}
+.mobile-jump-nav{box-shadow:0 -5px 22px rgba(5,55,107,.14)}
+[data-polish-label]{position:relative}
+.visually-hidden-polish{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.site-smooth-status{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;color:var(--muted)}
+.site-smooth-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#36a269}
+@media(max-width:760px){html{scroll-padding-top:68px}main>section[id]{scroll-margin-top:68px}.card{content-visibility:auto;contain-intrinsic-size:700px}.card:first-of-type,.quiz-card,.shootout-v10{content-visibility:visible}.nav-links a.active{background:#eaf4ff;color:#05376b;margin:0;padding:7px 9px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.card,.nav-links a,.mobile-jump-nav a,button,input,select,a,.quiz-card .quiz-progress-track i{transition:none!important}.card.reveal-ready{opacity:1;transform:none}}
+.user-reduce-motion .card,.user-reduce-motion .nav-links a,.user-reduce-motion .mobile-jump-nav a,.user-reduce-motion button,.user-reduce-motion input,.user-reduce-motion select,.user-reduce-motion a{transition:none!important}.user-reduce-motion .card.reveal-ready{opacity:1;transform:none}
+@media(max-width:760px){body.shootout-in-view .sound-toggle,body.shootout-in-view .settings-toggle{opacity:0;pointer-events:none;transform:translateY(10px)}body.shootout-in-view .back-to-top{opacity:0!important;pointer-events:none!important}}
+.penalty-stage.palace-kick .taker-shirt{fill:#b51f35}.penalty-stage.palace-kick .taker-sleeve{fill:#1b58a7}.penalty-stage.palace-kick .taker-shorts{fill:#173d74}.penalty-stage.palace-kick .taker-sock{fill:#d9e7f4}
+body.shootout-in-view .sound-toggle{opacity:0;pointer-events:none;transform:translateY(10px)}
+@media(min-width:761px){body.shootout-in-view .settings-toggle{opacity:.55}}

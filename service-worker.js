@@ -1,6 +1,90 @@
-const CACHE_NAME='albion-v11-repaired-20260725';
-const CORE=['./','./index.html','./style.css?v=20260725-r5fix','./clean.css?v=20260725-r5fix','./app.js?v=20260725-r5fix','./clean.js?v=20260725-r5fix','./rollback-rebuild.js?v=20260725-r5fix','./quiz-data.js?v=20260725-r5fix','./content-data.js?v=20260725-r5fix','./manifest.json','./favicon.svg','./offline.html'];
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(CORE)));self.skipWaiting()});
-self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))));self.clients.claim()});
-self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return; if(e.request.mode==='navigate'){e.respondWith(fetch(e.request).then(r=>{const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put('./index.html',copy));return r}).catch(()=>caches.match('./index.html').then(r=>r||caches.match('./offline.html'))));return} e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{if(r.ok){const copy=r.clone();caches.open(CACHE_NAME).then(c=>c.put(e.request,copy))}return r}))) });
-self.addEventListener('message',e=>{if(e.data?.type==='SKIP_WAITING')self.skipWaiting()});
+const CACHE_NAME = "albion-production-r10-20260725";
+const CORE = [
+  "./",
+  "./index.html",
+  "./style.css?v=20260725-r10",
+  "./release-fixes.css?v=20260725-r10",
+  "./shootout.css?v=20260725-r10",
+  "./polish.css?v=20260725-r10",
+  "./content-data.js?v=20260725-r10",
+  "./quiz-data.js?v=20260725-r10",
+  "./app.js?v=20260725-r10",
+  "./release-fixes.js?v=20260725-r10",
+  "./shootout.js?v=20260725-r10",
+  "./polish.js?v=20260725-r10",
+  "./manifest.json",
+  "./favicon.svg",
+  "./albion-safe-graphic.svg",
+  "./icon-192.png",
+  "./icon-512.png",
+  "./social-preview.png",
+  "./offline.html",
+  "./contact.html",
+  "./cookies.html",
+  "./copyright.html",
+  "./privacy.html"
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE)));
+  self.skipWaiting();
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) =>
+      Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))),
+    ),
+  );
+  self.clients.claim();
+});
+
+self.addEventListener("fetch", (event) => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== self.location.origin) return;
+
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
+          return response;
+        })
+        .catch(async () =>
+          (await caches.match(request)) ||
+          (await caches.match("./index.html")) ||
+          (await caches.match("./offline.html")),
+        ),
+    );
+    return;
+  }
+
+  const isAudio = /\.(mp3|wav|ogg)$/i.test(url.pathname);
+  if (isAudio) {
+    event.respondWith(
+      caches.match(request).then((cached) => cached || fetch(request).then((response) => {
+        if (response.ok) caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
+        return response;
+      })),
+    );
+    return;
+  }
+
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      const network = fetch(request)
+        .then((response) => {
+          if (response.ok && response.type === "basic") caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
+          return response;
+        })
+        .catch(() => cached);
+      return cached || network;
+    }),
+  );
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+});

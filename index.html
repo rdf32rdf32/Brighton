@@ -32,10 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260725-r7" />
-    <link rel="stylesheet" href="clean.css?v=20260725-r7" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260725-r7" />
-    <meta name="release" content="production-r7-20260725" />
+    <link rel="stylesheet" href="style.css?v=20260725-r10" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260725-r10" />
+    <link rel="stylesheet" href="shootout.css?v=20260725-r10" />
+    <link rel="stylesheet" href="polish.css?v=20260725-r10" />
+    <meta name="release" content="production-r10-20260725" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -274,283 +275,172 @@
         <div id="quizResult" class="result" aria-live="polite"></div>
       </section>
 
-      <section class="card shootout-card" id="shootout">
-        <div class="section-head">
-          <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
-          <h2>Seagulls v Eagles</h2>
-          <p>
-            Take Albion’s penalty by aiming freely inside the goal, then become
-            Bart Verbruggen. Palace’s destination remains secret until the ball
-            is struck: react to its flight and dive. Choose your placement carefully. The goalkeeper reacts only after the strike.
-          </p>
-        </div>
-        <div id="turnBadge" class="turn-badge albion-turn">
-          ALBION PENALTY · YOU ARE SHOOTING
-        </div>
-        <div class="penalty-lineup">
-          <span>Albion takers</span>
-          <div id="penaltyLineup"></div>
-        </div>
-        <div class="current-taker">
-          <span>Now taking</span><b id="penaltyTakerName"></b>
-        </div>
-        <div
-          id="shootoutRecords"
-          class="shootout-records"
-          aria-live="polite"
-        ></div>
-        <div id="shotControls" class="penalty-controls penalty-choice-controls simple-penalty-controls">
-          <div class="direct-aim-control">
-            <span>Choose your placement inside the goal</span>
-            <small id="aimSelectionStatus" aria-live="polite">Move the target, then press Shoot.</small>
+      <section class="card shootout-card shootout-v10" id="shootout">
+        <div class="section-head shootout-intro">
+          <div>
+            <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
+            <h2>Seagulls v Eagles</h2>
+            <p class="shootout-lead">
+              Aim inside the goal and click to shoot. When Palace step up, wait for the strike, then click where Bart Verbruggen should dive.
+            </p>
           </div>
-          <button id="shootButton" class="shoot-button" type="button" disabled>
-            <b>Shoot</b><small>Take the penalty</small>
-          </button>
-          <button id="panenkaButton" class="panenka-button" type="button">
-            <b>Try a Panenka</b><small>Risky slow central chip</small>
-          </button>
-        </div>
-        <details class="how-to-play">
-          <summary>How to play</summary>
-          <p>
-            <b>Albion kick:</b> move or tap the target inside the goal, then
-            press Shoot. <b>Palace kick:</b> move the glove pointer and release
-            after the ball is struck. Verbruggen cannot
-            commit early. Palace never starts until you press Ready, and their
-            target remains secret during the run-up. Level after five goes to
-            sudden death.
-          </p>
-        </details>
-        <p id="gamepadStatus" class="gamepad-status">
-          Keyboard: arrow keys move the pointer, Enter shoots or dives, and P
-          tries a Panenka. Connect a game controller for controller support.
-        </p>
-        <div class="stadium-scene">
-          <div class="crowd" aria-hidden="true">
-            <span>SEAGULLS</span><span>BRIGHTON v PALACE</span
-            ><span>EAGLES</span>
+          <div class="shootout-top-controls" aria-label="Penalty game options">
+            <label for="shootoutDifficulty">Difficulty</label>
+            <select id="shootoutDifficulty">
+              <option value="supporter">Supporter</option>
+              <option value="premier" selected>Premier League</option>
+              <option value="european">European Night</option>
+            </select>
+            <button id="shootoutSound" class="ghost compact-control" type="button" aria-pressed="true">Sound on</button>
           </div>
-          <div class="shootout-score" aria-label="Shoot-out score">
-            <div class="team-score albion-score">
-              <span>SEAGULLS <b id="albionGoalCount">0</b></span>
-              <div
-                id="albionPenaltyMarkers"
-                class="penalty-markers"
-                aria-label="Brighton penalties"
-              ></div>
+        </div>
+
+        <div class="shootout-shell">
+          <div class="shootout-scoreboard" aria-label="Shoot-out score">
+            <div class="shootout-team albion">
+              <span>SEAGULLS</span>
+              <b id="albionGoalCount">0</b>
+              <div id="albionPenaltyMarkers" class="penalty-markers" aria-label="Brighton penalties"></div>
             </div>
-            <b class="score-divider">v</b>
-            <div class="team-score palace-score">
-              <span>EAGLES <b id="palaceGoalCount">0</b></span>
-              <div
-                id="palacePenaltyMarkers"
-                class="penalty-markers"
-                aria-label="Palace penalties"
-              ></div>
+            <div class="shootout-round">
+              <span>Round</span>
+              <b id="shotCount">1/5</b>
             </div>
-            <span class="kick-count">Round <b id="shotCount">1/5</b></span>
+            <div class="shootout-team palace">
+              <span>EAGLES</span>
+              <b id="palaceGoalCount">0</b>
+              <div id="palacePenaltyMarkers" class="penalty-markers" aria-label="Palace penalties"></div>
+            </div>
           </div>
+
+          <div class="shootout-match-strip">
+            <div id="turnBadge" class="turn-badge albion-turn">ALBION PENALTY</div>
+            <p id="penaltyTakerName">Danny Welbeck</p>
+            <p id="shootoutSituation">Five kicks each</p>
+          </div>
+
           <div
-            id="shootoutSituation"
-            class="shootout-situation"
-            aria-live="polite"
+            id="penaltyStage"
+            class="penalty-stage is-aiming"
+            tabindex="0"
+            role="application"
+            aria-label="Penalty shoot-out. Move the pointer inside the goal and click to shoot."
           >
-            5 Albion kicks left · 5 Palace kicks left
-          </div>
-          <div
-            id="liveKeeperStats"
-            class="live-keeper-stats"
-            aria-live="polite"
-          >
-            <span>Saves <b>0</b></span><span>Correct dives <b>0</b></span
-            ><span>Catches <b>0</b></span
-            ><span>Fingertips <b>0</b></span>
-          </div>
-          <div class="crowd-bowl" aria-hidden="true">
-            <div class="crowd-tier crowd-tier-back">
-              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-              ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-              ><i></i><i></i><i></i><i></i>
+            <div class="stadium-backdrop" aria-hidden="true">
+              <span class="crowd-banner">SEAGULLS</span>
+              <span class="crowd-banner derby">BRIGHTON v PALACE</span>
+              <span class="crowd-banner palace-banner">EAGLES</span>
+              <div class="crowd-dots"></div>
             </div>
-            <div class="crowd-tier crowd-tier-front">
-              <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-              ><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i
-              ><i></i><i></i><i></i><i></i>
+
+            <div id="goalMouth" class="goal-mouth" aria-hidden="true">
+              <div class="goal-net"></div>
+              <span class="goal-post left-post"></span>
+              <span class="goal-post right-post"></span>
+              <span class="goal-crossbar"></span>
+              <span class="goal-line"></span>
             </div>
-            <span class="crowd-flag flag-albion">BHA</span>
-            <span class="crowd-flag flag-palace">CP</span>
-            <span class="crowd-scarf">SEAGULLS • SEAGULLS • SEAGULLS</span>
-          </div>
-          <div
-            class="goal"
-            id="goal"
-            aria-label="Penalty pitch with the goal, goal area, penalty spot and penalty area"
-          >
-            <div class="pitch-perspective" aria-hidden="true">
-              <span class="penalty-area-marking"></span>
-              <span class="goal-area-marking"></span>
+            <div class="pitch-lines" aria-hidden="true">
+              <span class="six-yard-box"></span>
+              <span class="penalty-area"></span>
               <span class="penalty-arc"></span>
+              <span class="penalty-spot"></span>
             </div>
-            <div class="goal-advert goal-advert-left" aria-hidden="true">
-              ALBION
-            </div>
-            <div class="goal-advert goal-advert-right" aria-hidden="true">
-              SEAGULLS
-            </div>
-            <div class="goal-depth" aria-hidden="true"></div>
-            <div class="net-structure" aria-hidden="true">
-              <span class="net-roof"></span>
-              <span class="net-side net-side-left"></span>
-              <span class="net-side net-side-right"></span>
-              <span class="net-support net-support-left"></span>
-              <span class="net-support net-support-right"></span>
-            </div>
-            <div class="net" aria-hidden="true"></div>
-            <div class="goal-line" aria-hidden="true"></div>
-            <div class="turf-detail" aria-hidden="true">
-              <i></i><i></i><i></i><i></i><i></i><i></i>
-            </div>
-            <div
-              id="goalDecision"
-              class="goal-decision"
-              hidden
-              aria-live="polite"
-            ></div>
-            <div
-              id="kickDecision"
-              class="kick-decision"
-              hidden
-              aria-live="assertive"
-            ></div>
-            <div
-              id="readyCountdown"
-              class="ready-countdown"
-              hidden
-              aria-live="assertive"
-            ></div>
-            <div class="referee" aria-hidden="true">
-              <span></span><i></i><b></b>
-            </div>
-            <span id="keeperNameTag" class="keeper-name-tag" hidden
-              >You control: Bart Verbruggen</span
-            >
-            <div class="keeper clean-keeper-rig" id="keeper" aria-hidden="true">
-              <span class="keeper-pelvis">
-                <span class="keeper-torso"><span class="keeper-body"><i class="keeper-shirt-detail">1</i></span>
-                  <span class="keeper-neck"></span><span class="keeper-head"><i></i><b class="keeper-eyes"></b><em class="keeper-mouth"></em></span>
-                  <span class="keeper-arm left"><span class="keeper-upper-arm"></span><span class="keeper-forearm"></span><span class="keeper-glove left-glove"></span></span>
-                  <span class="keeper-arm right"><span class="keeper-upper-arm"></span><span class="keeper-forearm"></span><span class="keeper-glove right-glove"></span></span>
-                </span>
-                <span class="keeper-shorts"></span>
-                <span class="keeper-thigh left"><span class="keeper-shin"></span><span class="keeper-boot keeper-boot-left"></span></span>
-                <span class="keeper-thigh right"><span class="keeper-shin"></span><span class="keeper-boot keeper-boot-right"></span></span>
-              </span>
-            </div>
-            <div class="penalty-taker clean-player-rig" id="penaltyTaker" aria-hidden="true">
-              <span class="player-pelvis">
-                <span class="player-torso"><span class="player-shirt" id="penaltyShirt">9</span><span class="player-neck"></span><span class="player-head"><i class="player-eyes"></i><b class="player-mouth"></b></span>
-                  <span class="player-arm player-arm-left"><span class="player-upper-arm"></span><span class="player-forearm left"><span class="player-hand left"></span></span></span>
-                  <span class="player-arm player-arm-right"><span class="player-upper-arm"></span><span class="player-forearm right"><span class="player-hand right"></span></span></span>
-                </span>
-                <span class="player-shorts"></span>
-                <span class="player-leg player-leg-left"><span class="player-thigh"></span><span class="player-shin"></span><span class="player-boot"></span></span>
-                <span class="player-leg player-leg-right"><span class="player-thigh"></span><span class="player-shin"></span><span class="player-boot"></span></span>
-              </span>
-            </div>
-            <div class="penalty-spot" aria-hidden="true"><i></i></div>
-            <div class="ball-shadow" id="ballShadow" aria-hidden="true"></div>
-            <div class="ball" id="ball" aria-hidden="true"><span></span></div>
-            <div id="aimGuide" class="aim-guide" aria-hidden="true"></div>
-            <div id="aimPointer" class="aim-pointer" aria-hidden="true">
-              <i></i>
-            </div>
-            <div id="aimHint" class="aim-hint" aria-hidden="true">
-              Choose your spot
-            </div>
-            <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">
-              REACT!
-            </div>
-            <div id="firstKickCoach" class="first-kick-coach" hidden>
-              <b>Your first kick</b>
-              <span>Aim inside the distant goal, then press Shoot.</span>
-            </div>
-            <button
-              class="target top-left"
-              data-target="top-left"
-              aria-label="Top left"
-            >
-              <span>1</span></button
-            ><button
-              class="target middle-left"
-              data-target="middle-left"
-              aria-label="Middle left"
-            >
-              <span>2</span></button
-            ><button
-              class="target bottom-left"
-              data-target="bottom-left"
-              aria-label="Bottom left"
-            >
-              <span>3</span></button
-            ><button
-              class="target centre"
-              data-target="centre"
-              aria-label="Centre"
-            >
-              <span>4</span></button
-            ><button
-              class="target top-right"
-              data-target="top-right"
-              aria-label="Top right"
-            >
-              <span>5</span></button
-            ><button
-              class="target middle-right"
-              data-target="middle-right"
-              aria-label="Middle right"
-            >
-              <span>6</span></button
-            ><button
-              class="target bottom-right"
-              data-target="bottom-right"
-              aria-label="Bottom right"
-            >
-              <span>7</span>
-            </button>
-            <div id="goalFlash" class="goal-flash" aria-hidden="true"></div>
+
+            <svg id="keeperFigure" class="penalty-figure keeper-figure" viewBox="0 0 180 250" aria-hidden="true">
+              <g class="keeper-root">
+                <ellipse class="figure-shadow" cx="90" cy="233" rx="55" ry="9" />
+                <g class="keeper-body-group">
+                  <circle class="skin" cx="90" cy="43" r="23" />
+                  <path class="hair" d="M68 39c4-20 37-28 46-3-11-6-31-7-46 3z" />
+                  <rect class="keeper-neck skin" x="82" y="61" width="16" height="15" rx="7" />
+                  <path class="keeper-shirt" d="M57 76Q90 64 123 76l-8 74H65z" />
+                  <path class="keeper-number" d="M86 91h9v36h-9z" />
+                  <path class="keeper-shorts" d="M65 145h50l-5 31H92l-2-18-2 18H70z" />
+                  <g class="keeper-arm keeper-arm-left">
+                    <rect class="keeper-sleeve" x="34" y="78" width="34" height="19" rx="9" />
+                    <rect class="skin" x="13" y="86" width="34" height="15" rx="8" />
+                    <ellipse class="keeper-glove" cx="11" cy="94" rx="13" ry="15" />
+                  </g>
+                  <g class="keeper-arm keeper-arm-right">
+                    <rect class="keeper-sleeve" x="112" y="78" width="34" height="19" rx="9" />
+                    <rect class="skin" x="133" y="86" width="34" height="15" rx="8" />
+                    <ellipse class="keeper-glove" cx="169" cy="94" rx="13" ry="15" />
+                  </g>
+                  <g class="keeper-leg keeper-leg-left">
+                    <rect class="keeper-sock" x="68" y="169" width="18" height="53" rx="9" />
+                    <path class="keeper-boot" d="M64 215h30v13H60q-3-8 4-13z" />
+                  </g>
+                  <g class="keeper-leg keeper-leg-right">
+                    <rect class="keeper-sock" x="94" y="169" width="18" height="53" rx="9" />
+                    <path class="keeper-boot" d="M88 215h30q7 5 4 13H88z" />
+                  </g>
+                </g>
+              </g>
+            </svg>
+
+            <svg id="takerFigure" class="penalty-figure taker-figure" viewBox="0 0 150 260" aria-hidden="true">
+              <g class="taker-root">
+                <ellipse class="figure-shadow" cx="75" cy="245" rx="45" ry="8" />
+                <circle class="skin" cx="75" cy="38" r="21" />
+                <path class="hair" d="M55 35c3-19 34-24 41-2-11-5-27-6-41 2z" />
+                <rect class="skin" x="68" y="56" width="14" height="15" rx="7" />
+                <path class="taker-shirt" d="M45 69Q75 59 105 69l-7 79H52z" />
+                <text id="penaltyShirt" class="taker-number" x="75" y="113" text-anchor="middle">18</text>
+                <path class="taker-shorts" d="M52 143h46l-5 30H78l-3-17-3 17H57z" />
+                <g class="taker-arm taker-arm-left">
+                  <rect class="taker-sleeve" x="27" y="72" width="29" height="18" rx="9" />
+                  <rect class="skin" x="17" y="87" width="14" height="58" rx="7" />
+                </g>
+                <g class="taker-arm taker-arm-right">
+                  <rect class="taker-sleeve" x="94" y="72" width="29" height="18" rx="9" />
+                  <rect class="skin" x="119" y="87" width="14" height="58" rx="7" />
+                </g>
+                <g class="taker-leg taker-leg-left">
+                  <rect class="taker-sock" x="55" y="166" width="17" height="62" rx="8" />
+                  <path class="taker-boot" d="M50 220h29v14H47q-3-9 3-14z" />
+                </g>
+                <g class="taker-leg taker-leg-right">
+                  <rect class="taker-sock" x="79" y="166" width="17" height="62" rx="8" />
+                  <path class="taker-boot" d="M75 220h29q7 5 4 14H75z" />
+                </g>
+              </g>
+            </svg>
+
+            <div id="penaltyBall" class="penalty-ball" aria-hidden="true"><span></span></div>
+            <div id="aimReticle" class="aim-reticle" aria-hidden="true"><i></i></div>
+            <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">REACT!</div>
+            <div id="kickDecision" class="kick-decision-v10" hidden aria-live="assertive"></div>
+            <div id="stageInstruction" class="stage-instruction">Aim and click to shoot</div>
           </div>
-        </div>
-        <div
-          id="shootoutStatus"
-          class="result shootout-status"
-          aria-live="polite"
-        >
-          <b>Pick your spot</b
-          ><span>Move the target inside the goal, then press Shoot.</span>
-        </div>
-        <div id="turnReadyPanel" class="turn-ready-panel" hidden>
-          <p id="turnReadyText">The next player is ready.</p>
-          <button id="continueShootout" type="button">
-            Continue shoot-out
-          </button>
-        </div>
-        <div id="shootoutSummary" class="shootout-summary" hidden></div>
-        <div class="button-row shootout-actions">
-          <button id="resetShootout" class="ghost" type="button">
-            Restart Brighton v Palace</button
-          ><button id="replayKick" class="ghost" type="button" hidden>
-            Replay last kick</button
-          ><button id="skipReplay" class="ghost" type="button" hidden>
-            Skip slow-motion replay</button
-          ><button id="fullscreenShootout" class="ghost" type="button">
-            Full-screen game</button
-          ><button id="shareShootout" class="ghost" type="button" hidden>
-            Share result
-          </button>
+
+          <div id="shootoutStatus" class="shootout-status-v10" aria-live="polite">
+            <b>Pick your spot</b>
+            <span>Move inside the goal and click once.</span>
+          </div>
+
+          <div id="palaceReadyPanel" class="palace-ready-panel" hidden>
+            <p>Palace are ready. They will not begin until you are set.</p>
+            <button id="palaceReadyButton" type="button">Ready for Palace</button>
+          </div>
+
+          <div class="shootout-option-row">
+            <label class="form-check panenka-choice" for="panenkaChoice">
+              <input id="panenkaChoice" class="form-check-input" type="checkbox" />
+              <span class="form-check-label">Try a Panenka on the next Albion kick</span>
+            </label>
+            <span id="keyboardHint">Keyboard: arrows aim, Enter shoots or dives.</span>
+          </div>
+
+          <div id="shootoutSummary" class="shootout-summary-v10" hidden></div>
+          <div class="button-row shootout-actions-v10">
+            <button id="resetShootout" class="ghost" type="button">Restart shoot-out</button>
+            <button id="fullscreenShootout" class="ghost" type="button">Full-screen game</button>
+            <button id="shareShootout" class="ghost" type="button" hidden>Share result</button>
+          </div>
+          <p id="shootoutRecords" class="shootout-records-v10" aria-live="polite"></p>
         </div>
       </section>
-
 
       <section class="card anthem-card" id="anthem">
         <img
@@ -1850,11 +1740,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260725-r7"></script>
-    <script src="quiz-data.js?v=20260725-r7"></script>
-    <script src="app.js?v=20260725-r7"></script>
-    <script src="clean.js?v=20260725-r7"></script>
-    <script src="rollback-rebuild.js?v=20260725-r7"></script>
-    <script src="release-fixes.js?v=20260725-r7"></script>
+    <script src="content-data.js?v=20260725-r10"></script>
+    <script src="quiz-data.js?v=20260725-r10"></script>
+    <script src="app.js?v=20260725-r10"></script>
+    <script src="release-fixes.js?v=20260725-r10"></script>
+    <script src="shootout.js?v=20260725-r10"></script>
+    <script src="polish.js?v=20260725-r10"></script>
   </body>
 </html>
