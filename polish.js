@@ -45,7 +45,7 @@
 
   function progressiveReveal() {
     if (!("IntersectionObserver" in window) || window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
-    const cards = [...document.querySelectorAll("main > .card")].filter((card, index) => index > 1 && !card.classList.contains("shootout-v11"));
+    const cards = [...document.querySelectorAll("main > .card")].filter((card, index) => index > 1 && !card.classList.contains("shootout-card"));
     cards.forEach((card) => card.classList.add("reveal-ready"));
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -109,7 +109,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 13</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 14</span>');
   }
 
   completeControlSemantics();

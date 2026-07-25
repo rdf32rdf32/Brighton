@@ -1,4 +1,4 @@
-BRIGHTON FAN HUB — RELEASE 13
+BRIGHTON FAN HUB — RELEASE 14
 
 1. Extract this ZIP.
 2. Upload every file directly to the root of the GitHub repository.

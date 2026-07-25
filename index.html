@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260725-r13" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260725-r13" />
-    <link rel="stylesheet" href="shootout.css?v=20260725-r13" />
-    <link rel="stylesheet" href="polish.css?v=20260725-r13" />
-    <meta name="release" content="production-r13-20260725" />
+    <link rel="stylesheet" href="style.css?v=20260726-r14" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r14" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r14" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r14" />
+    <meta name="release" content="production-r14-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -275,21 +275,17 @@
         <div id="quizResult" class="result" aria-live="polite"></div>
       </section>
 
-      <section class="card shootout-card shootout-v13" id="shootout">
+      <section class="card shootout-card shootout-v14" id="shootout">
         <div class="section-head shootout-intro">
           <div>
             <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
             <h2>Seagulls v Eagles</h2>
             <p class="shootout-lead">
-              Aim inside the goal and click to shoot. For Palace penalties, move the mouse or swipe towards the shot as the taker plants the standing foot.
+              Move inside the goal and click to shoot. For Palace penalties, read the run-up and move or swipe towards the shot. One balanced level keeps every kick quick and fair.
             </p>
           </div>
-          <div class="shootout-top-controls" aria-label="Penalty game options">
-            <label for="shootoutDifficulty">Difficulty</label>
-            <select id="shootoutDifficulty">
-              <option value="normal" selected>Normal</option>
-              <option value="hard">Hard</option>
-            </select>
+          <div class="shootout-top-controls single-control" aria-label="Penalty game sound">
+            <span class="balanced-mode">Balanced match mode</span>
             <button id="shootoutSound" class="ghost compact-control" type="button" aria-pressed="true">Sound on</button>
           </div>
         </div>
@@ -344,30 +340,31 @@
 
             <div id="goalMouth" class="goal-mouth" aria-hidden="true">
               <div class="goal-depth" aria-hidden="true">
-                <svg class="goal-net-svg" viewBox="0 0 1000 500" preserveAspectRatio="none">
+                <svg class="goal-net-svg" viewBox="0 0 1000 520" preserveAspectRatio="none">
                   <defs>
-                    <pattern id="r13BackGrid" width="70" height="58" patternUnits="userSpaceOnUse">
-                      <path d="M70 0H0V58" fill="none" stroke="rgba(245,250,255,.62)" stroke-width="3" />
+                    <pattern id="r14BackGrid" width="62" height="54" patternUnits="userSpaceOnUse">
+                      <path d="M62 0H0V54" fill="none" stroke="rgba(245,250,255,.66)" stroke-width="2.5" />
                     </pattern>
-                    <pattern id="r13SideGrid" width="42" height="48" patternUnits="userSpaceOnUse">
-                      <path d="M42 0H0V48" fill="none" stroke="rgba(250,252,255,.76)" stroke-width="3" />
+                    <pattern id="r14SideGrid" width="38" height="44" patternUnits="userSpaceOnUse">
+                      <path d="M38 0H0V44" fill="none" stroke="rgba(250,252,255,.76)" stroke-width="2.5" />
                     </pattern>
-                    <linearGradient id="r13NetFade" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stop-color="#fff" stop-opacity=".92" />
-                      <stop offset="1" stop-color="#dce7ee" stop-opacity=".48" />
+                    <linearGradient id="r14NetFade" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="#fff" stop-opacity=".9" />
+                      <stop offset="1" stop-color="#dce7ee" stop-opacity=".42" />
                     </linearGradient>
+                    <filter id="r14Soft"><feGaussianBlur stdDeviation=".35" /></filter>
                   </defs>
-                  <polygon class="goal-roof-net" points="40,20 960,20 865,105 135,105" fill="url(#r13SideGrid)" stroke="url(#r13NetFade)" stroke-width="5" />
-                  <polygon class="goal-back-net" points="135,105 865,105 865,455 135,455" fill="url(#r13BackGrid)" stroke="url(#r13NetFade)" stroke-width="5" />
-                  <polygon class="goal-side-net goal-side-left" points="40,20 135,105 135,455 40,480" fill="url(#r13SideGrid)" stroke="url(#r13NetFade)" stroke-width="5" />
-                  <polygon class="goal-side-net goal-side-right" points="960,20 865,105 865,455 960,480" fill="url(#r13SideGrid)" stroke="url(#r13NetFade)" stroke-width="5" />
-                  <g class="goal-perspective-lines" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="3">
-                    <path d="M40 20L135 105M40 110L135 175M40 205L135 245M40 300L135 315M40 395L135 385M960 20L865 105M960 110L865 175M960 205L865 245M960 300L865 315M960 395L865 385" />
-                    <path d="M40 20L40 480M70 47L70 472M101 75L101 464M960 20L960 480M930 47L930 472M899 75L899 464" />
-                    <path d="M40 20L960 20M72 49L928 49M104 77L896 77M135 105L865 105" />
+                  <path class="goal-roof-net" d="M34 24 Q500 9 966 24 L874 112 Q500 97 126 112 Z" fill="url(#r14SideGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
+                  <path class="goal-back-net" d="M126 112 Q500 98 874 112 L874 468 Q500 486 126 468 Z" fill="url(#r14BackGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
+                  <path class="goal-side-net goal-side-left" d="M34 24 L126 112 L126 468 L34 500 Q24 260 34 24 Z" fill="url(#r14SideGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
+                  <path class="goal-side-net goal-side-right" d="M966 24 L874 112 L874 468 L966 500 Q976 260 966 24 Z" fill="url(#r14SideGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
+                  <g class="goal-perspective-lines" fill="none" stroke="rgba(255,255,255,.66)" stroke-width="2.4" stroke-linecap="round">
+                    <path d="M34 24L126 112M32 116L126 182M31 211L126 252M31 307L126 324M32 403L126 397M966 24L874 112M968 116L874 182M969 211L874 252M969 307L874 324M968 403L874 397" />
+                    <path d="M34 24Q500 9 966 24M66 54Q500 39 934 54M96 83Q500 69 904 83M126 112Q500 98 874 112" />
+                    <path d="M34 24Q24 260 34 500M66 54Q57 262 66 489M96 83Q89 263 96 479M966 24Q976 260 966 500M934 54Q943 262 934 489M904 83Q911 263 904 479" />
                   </g>
-                  <g class="rear-frame" fill="none" stroke="rgba(224,234,240,.8)" stroke-width="7">
-                    <path d="M135 105V455M865 105V455M135 105H865" />
+                  <g class="rear-frame" fill="none" stroke="rgba(221,232,239,.72)" stroke-width="6" stroke-linecap="round">
+                    <path d="M126 112V468M874 112V468M126 112Q500 98 874 112" />
                   </g>
                 </svg>
               </div>
@@ -386,44 +383,38 @@
               <span class="spot-wear"></span>
               <span class="goal-line-wear"></span>
             </div>
-            <svg id="refereeFigure" class="penalty-figure referee-figure" viewBox="0 0 130 250" aria-hidden="true">
+            <svg id="refereeFigure" class="penalty-figure referee-figure" viewBox="0 0 110 250" aria-hidden="true">
               <defs>
-                <linearGradient id="refShirtShade" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#070a0c"/><stop offset=".55" stop-color="#26313a"/><stop offset="1" stop-color="#080b0e"/>
+                <linearGradient id="refSideShirt" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#090d10"/><stop offset=".58" stop-color="#2d3942"/><stop offset="1" stop-color="#0b1014"/>
                 </linearGradient>
               </defs>
               <g class="referee-root">
-                <ellipse class="figure-shadow" cx="64" cy="237" rx="25" ry="6" />
+                <ellipse class="figure-shadow" cx="55" cy="238" rx="20" ry="5" />
                 <g class="referee-head-group">
-                  <ellipse class="skin" cx="56" cy="34" rx="13" ry="17" />
-                  <path class="skin referee-nose" d="M44 32l-10 5 10 5z" />
-                  <circle class="referee-ear skin" cx="66" cy="36" r="4" />
-                  <path class="hair" d="M44 31c3-16 23-21 29-5-10-3-20-2-29 5z" />
-                  <path class="ref-face-line" d="M45 39q5 3 9 0" />
+                  <path class="skin" d="M43 19q18-5 23 13l-1 15q-5 13-18 8-9-5-8-20z" />
+                  <path class="skin referee-nose" d="M39 31l-8 5 8 5z" />
+                  <path class="hair" d="M40 31q1-17 19-16 10 3 10 13-12-4-29 3z" />
+                  <path class="ref-face-line" d="M38 44q5 3 10 0" />
+                  <circle class="referee-ear skin" cx="63" cy="37" r="3.5" />
                 </g>
-                <path class="skin" d="M53 49h9l2 15H52z" />
-                <path class="referee-shirt" fill="url(#refShirtShade)" d="M48 62q12-7 25 1l10 69-33 3-8-57z" />
-                <path class="referee-collar" d="M52 60l7 10 8-9-5-4h-6z" />
-                <rect class="referee-pocket" x="64" y="77" width="8" height="11" rx="1.5" />
+                <path class="skin" d="M48 53h9l2 13H47z" />
+                <path class="referee-shirt" fill="url(#refSideShirt)" d="M43 65q11-7 23 0l8 67-29 2-8-55z" />
+                <path class="referee-collar" d="M46 63l7 9 7-9-4-3h-6z" />
+                <rect class="referee-pocket" x="57" y="78" width="7" height="10" rx="1.5" />
                 <g class="referee-arm referee-arm-left">
-                  <path class="referee-sleeve" d="M48 67q-12 4-17 15l10 8 13-16z" />
-                  <path class="skin" d="M34 82q-8 22-5 45l10 1 8-40z" />
-                  <circle class="skin" cx="34" cy="129" r="5" />
+                  <path class="referee-sleeve" d="M43 69q-11 4-16 14l9 8 12-15z" />
+                  <path class="skin" d="M30 84q-6 23-2 43l9 1 6-38z" />
+                  <circle class="skin" cx="33" cy="130" r="4.5" />
                 </g>
                 <g class="referee-arm referee-arm-right">
-                  <path class="referee-sleeve" d="M72 67q10 5 15 15l-8 8-12-15z" />
-                  <path class="skin" d="M82 83q12 20 9 36l-9 2-11-32z" />
-                  <circle class="referee-whistle" cx="88" cy="119" r="3.5" />
+                  <path class="referee-sleeve" d="M65 68q9 6 12 16l-8 7-10-15z" />
+                  <path class="skin" d="M73 84q8 18 5 34l-8 1-8-30z" />
+                  <circle class="referee-whistle" cx="76" cy="118" r="3" />
                 </g>
-                <path class="referee-shorts" d="M49 130h34l-4 29H66l-3-15-3 15H50z" />
-                <g class="referee-leg referee-leg-left">
-                  <path class="referee-sock" d="M51 155h12l-1 58H49z" />
-                  <path class="referee-boot" d="M47 207h21l5 11H45q-3-7 2-11z" />
-                </g>
-                <g class="referee-leg referee-leg-right">
-                  <path class="referee-sock" d="M66 155h12l4 58H68z" />
-                  <path class="referee-boot" d="M69 207h22q6 5 4 11H70z" />
-                </g>
+                <path class="referee-shorts" d="M44 130h31l-4 28H60l-2-14-3 14H45z" />
+                <g class="referee-leg referee-leg-left"><path class="referee-sock" d="M45 155h11l-3 57H40z"/><path class="referee-boot" d="M38 207h20l6 10H36q-2-6 2-10z"/></g>
+                <g class="referee-leg referee-leg-right"><path class="referee-sock" d="M60 155h11l5 57H64z"/><path class="referee-boot" d="M64 207h21q6 5 4 10H65z"/></g>
               </g>
             </svg>
             <svg id="keeperFigure" class="penalty-figure keeper-figure" viewBox="0 0 180 250" aria-hidden="true">
@@ -547,7 +538,7 @@
               <input id="panenkaChoice" class="form-check-input" type="checkbox" />
               <span class="form-check-label">Try a Panenka on the next Albion kick</span>
             </label>
-            <span id="keyboardHint">Keyboard: arrows aim, Enter shoots or dives. The whole goal is active.</span>
+            <span id="keyboardHint">Keyboard: arrows aim, Enter acts. Mouse movement and swipes control Verbruggen.</span>
           </div>
 
           <div id="shootoutSummary" class="shootout-summary-v10" hidden></div>
@@ -1858,11 +1849,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260725-r13"></script>
-    <script src="quiz-data.js?v=20260725-r13"></script>
-    <script src="app.js?v=20260725-r13"></script>
-    <script src="release-fixes.js?v=20260725-r13"></script>
-    <script src="shootout.js?v=20260725-r13"></script>
-    <script src="polish.js?v=20260725-r13"></script>
+    <script src="content-data.js?v=20260726-r14"></script>
+    <script src="quiz-data.js?v=20260726-r14"></script>
+    <script src="app.js?v=20260726-r14"></script>
+    <script src="release-fixes.js?v=20260726-r14"></script>
+    <script src="shootout.js?v=20260726-r14"></script>
+    <script src="polish.js?v=20260726-r14"></script>
   </body>
 </html>
