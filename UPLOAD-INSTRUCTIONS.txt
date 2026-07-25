@@ -1,4 +1,4 @@
-ALBION FAN HUB RELEASE 10
+ALBION FAN HUB RELEASE 11
 
 1. Open the Brighton GitHub repository.
 2. Replace the existing repository files with every file from this ZIP.
@@ -6,8 +6,9 @@ ALBION FAN HUB RELEASE 10
 4. Commit the changes and wait for GitHub Pages to finish deploying.
 5. Open https://rdf32rdf32.github.io/Brighton/ and press Ctrl+F5 once.
 
-The penalty shoot-out should then work as follows:
-- Brighton kick: move inside the goal and click once to shoot.
-- Palace kick: press Ready for Palace, wait for REACT, then click where Verbruggen should dive.
+The penalty shoot-out works as follows:
+- Brighton kick: wait for the referee's whistle, move inside the goal and click once to shoot.
+- Palace kick: press Ready for Palace, read the run-up and click or tap the goal as the taker plants his standing foot or immediately after contact.
 
+Difficulty has two choices: Normal and Hard.
 There is no power bar and no Shoot button.
