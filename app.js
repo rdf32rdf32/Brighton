@@ -637,6 +637,7 @@
       if (
         saved?.category === selectedQuizCategory() &&
         saved?.currentQuiz?.length === 5 &&
+        saved.currentQuiz.every((q) => q && Array.isArray(q.choices) && q.choices.length >= 2 && Number.isInteger(q.answer)) &&
         Number.isInteger(saved.quizPage) &&
         saved.quizPage >= 0 &&
         saved.quizPage < 5
@@ -3268,11 +3269,10 @@
       window.scrollTo({ top: 0, behavior: "smooth" }),
     );
     const notice = $("cookieNotice");
-    if (localStorage.getItem("albionCookieNotice") === "accepted")
-      notice.hidden = true;
+    if (localStorage.getItem("albionCookieNotice") === "accepted" || localStorage.getItem("albion-cookie-consent") === "accepted") { notice.hidden = true; notice.style.display = "none"; }
     $("acceptCookies").addEventListener("click", () => {
-      localStorage.setItem("albionCookieNotice", "accepted");
-      notice.hidden = true;
+      localStorage.setItem("albionCookieNotice", "accepted"); localStorage.setItem("albion-cookie-consent", "accepted");
+      notice.hidden = true; notice.style.display = "none";
     });
     $("resetSite").addEventListener("click", () => {
       if (

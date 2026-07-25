@@ -7,11 +7,11 @@
   const key = 'albion-cookie-consent';
   if (notice && accept) {
     let accepted = false;
-    try { accepted = localStorage.getItem(key) === 'accepted'; } catch (_) {}
-    notice.hidden = accepted;
+    try { accepted = localStorage.getItem(key) === 'accepted' || localStorage.getItem('albionCookieNotice') === 'accepted'; } catch (_) {}
+    notice.hidden = accepted; if (accepted) notice.style.display = 'none';
     accept.addEventListener('click', () => {
-      try { localStorage.setItem(key, 'accepted'); } catch (_) {}
-      notice.hidden = true;
+      try { localStorage.setItem(key, 'accepted'); localStorage.setItem('albionCookieNotice', 'accepted'); } catch (_) {}
+      notice.hidden = true; notice.style.display = 'none';
     });
   }
 
