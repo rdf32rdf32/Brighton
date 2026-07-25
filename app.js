@@ -1279,21 +1279,9 @@
     const aimGuide = $("aimGuide");
     const aimHint = $("aimHint");
     const shotControls = $("shotControls");
-    let accuracyMeter = document.querySelector(".accuracy-meter");
-    let accuracyVerdict = $("accuracyVerdict");
-    // Self-heal the penalty controls if a future HTML edit removes the bar.
-    if ((!accuracyMeter || !accuracyVerdict) && shotControls) {
-      const control = document.createElement("div");
-      control.className = "accuracy-control";
-      control.innerHTML =
-        '<span>Power and accuracy</span><div class="accuracy-meter" role="meter" aria-label="Penalty timing and accuracy" aria-valuemin="0" aria-valuemax="100"><span class="meter-label meter-miss-left">MISS</span><span class="meter-label meter-risk-left">RISK</span><span class="meter-label meter-best">BEST</span><span class="meter-label meter-risk-right">RISK</span><span class="meter-label meter-miss-right">MISS</span><b aria-hidden="true"></b><i aria-hidden="true"></i></div><small id="accuracyVerdict" class="accuracy-verdict" aria-live="polite">Time your strike</small>';
-      shotControls.prepend(control);
-      accuracyMeter = control.querySelector(".accuracy-meter");
-      accuracyVerdict = control.querySelector("#accuracyVerdict");
-    }
-    if (!accuracyMeter || !accuracyVerdict) return;
-    const accuracyMarker = accuracyMeter.querySelector("i");
-    if (!accuracyMarker) return;
+    const shootButton = $("shootButton");
+    const aimSelectionStatus = $("aimSelectionStatus");
+    if (!shootButton || !aimSelectionStatus) return;
     const turnReadyPanel = $("turnReadyPanel");
     const turnReadyText = $("turnReadyText");
     const continueShootoutButton = $("continueShootout");
@@ -1466,36 +1454,24 @@
       "middle-right": ["top-right", "bottom-right", "centre"],
       "bottom-right": ["middle-right"],
     };
-    let liveAccuracy = 1;
-    let accuracyFrozen = false;
-    const accuracyStarted = Date.now();
-    window.setInterval(() => {
-      if (accuracyFrozen) return;
-      const sweepPhase = ((Date.now() - accuracyStarted) % 1800) / 1800;
-      const position = sweepPhase < 0.5 ? sweepPhase * 2 : (1 - sweepPhase) * 2;
-      accuracyMarker.style.left = `${1 + position * 97}%`;
-      accuracyMeter.setAttribute("aria-valuenow", String(Math.round(position * 100)));
-      liveAccuracy = 1 - Math.abs(position - 0.5) * 2;
-    }, 32);
-    const timingLabel = (accuracy) =>
-      accuracy < 0.56
-        ? ["RED: MISS", "red"]
-        : accuracy < 0.76
-          ? ["RISKY", "risky"]
-          : accuracy < 0.92
-            ? ["GOOD", "good"]
-            : ["PERFECT", "perfect"];
-    function freezeAccuracy(button, panenka = false) {
-      accuracyFrozen = true;
-      accuracyMeter.classList.add("frozen");
+    function lockSelectedTarget(button, panenka = false) {
       targets.forEach((target) =>
         target.classList.toggle("selected-target", target === button),
       );
-      const [label, className] = panenka
-        ? ["PANENKA SELECTED", "panenka"]
-        : timingLabel(liveAccuracy);
-      accuracyVerdict.textContent = label;
-      accuracyVerdict.className = `accuracy-verdict ${className}`;
+      aimSelectionStatus.textContent = panenka
+        ? "Panenka selected."
+        : "Penalty taken.";
+      shootButton.disabled = true;
+    }
+    function selectAimTarget(button) {
+      if (!button || locked || phase !== "shoot") return;
+      const point = zonePoint[button.dataset.target];
+      updateAimPointer(point.x, point.y, false);
+      targets.forEach((target) =>
+        target.classList.toggle("selected-target", target === button),
+      );
+      aimSelectionStatus.textContent = `${button.getAttribute("aria-label")} selected. Press Shoot.`;
+      shootButton.disabled = false;
     }
     function readShootoutRecord() {
       try {
@@ -1822,14 +1798,14 @@
       ball.classList.remove("ball-to-spot");
       targets.forEach((button) => (button.disabled = false));
       $("panenkaButton").disabled = false;
-      accuracyFrozen = false;
       locked = false;
       stadiumScene.classList.add("aim-ready");
-      accuracyVerdict.textContent = "Time your strike";
+      aimSelectionStatus.textContent = "Move the target, then press Shoot.";
+      shootButton.disabled = false;
       playSfx("whistle");
       announce(
         albionKicks >= 5 ? "Sudden death: pick your spot" : "Pick your spot",
-        `${pressurePrompt("shoot")} · Green timing gives the best finish.`,
+        `${pressurePrompt("shoot")} · Aim away from the goalkeeper and press Shoot.`,
       );
     }
     function startSaveCountdown() {
@@ -1880,7 +1856,7 @@
       );
       aimHint.textContent = saving
         ? "Wait for the strike"
-        : "Aim inside the goal and release";
+        : "Aim inside the goal, then press Shoot";
       updateAimPointer(50, saving ? 52 : 46);
       targets.forEach((target) => {
         target.classList.remove("selected-target");
@@ -1890,10 +1866,8 @@
       });
       if (!saving) {
         locked = true;
-        accuracyFrozen = true;
-        accuracyMeter.className = "accuracy-meter";
-        accuracyVerdict.textContent = "Placing the ball…";
-        accuracyVerdict.className = "accuracy-verdict";
+        shootButton.disabled = true;
+        aimSelectionStatus.textContent = "Placing the ball…";
       }
       $("turnBadge").textContent = saving
         ? "PALACE SHOOTS · YOU CONTROL VERBRUGGEN"
@@ -1901,6 +1875,7 @@
       $("turnBadge").className =
         `turn-badge ${saving ? "palace-turn" : "albion-turn"}`;
       $("shotControls").classList.toggle("controls-disabled", saving);
+      shootButton.disabled = true;
       $("panenkaButton").disabled = saving;
       goalFrame.classList.toggle("saving-turn", saving);
       stadiumScene.classList.add(saving ? "camera-save" : "camera-shoot");
@@ -1978,7 +1953,7 @@
         ball.classList.add("ball-to-spot");
         announce(
           `${player.name} places the ball`,
-          `${pressurePrompt("shoot")} · The bar starts when the referee is ready.`,
+          `${pressurePrompt("shoot")} · Choose your placement when the referee is ready.`,
         );
       }
       targets.forEach((button, index) => {
@@ -2117,7 +2092,7 @@
       renderShootoutRecord();
       $("shootoutSummary").insertAdjacentHTML(
         "beforeend",
-        `<div class="shootout-stats"><article><b>${conversion}%</b><span>Albion conversion</span></article><article><b>${saveRate}%</b><span>Verbruggen save rate</span></article><article><b>${palaceSaves}</b><span>Palace penalties saved</span></article><article><b>${albionRedMisses}</b><span>Red-zone misses</span></article><article><b>${panenkaGoals}/${panenkaAttempts}</b><span>Panenkas scored</span></article><article><b>${palaceKicks > 5 ? palaceKicks - 5 : 0}</b><span>Sudden-death rounds</span></article></div><p class="best-save"><b>Best Verbruggen moment:</b> ${esc(bestSave)}</p>`,
+        `<div class="shootout-stats"><article><b>${conversion}%</b><span>Albion conversion</span></article><article><b>${saveRate}%</b><span>Verbruggen save rate</span></article><article><b>${palaceSaves}</b><span>Palace penalties saved</span></article><article><b>${albionRedMisses}</b><span>Albion misses</span></article><article><b>${panenkaGoals}/${panenkaAttempts}</b><span>Panenkas scored</span></article><article><b>${palaceKicks > 5 ? palaceKicks - 5 : 0}</b><span>Sudden-death rounds</span></article></div><p class="best-save"><b>Best Verbruggen moment:</b> ${esc(bestSave)}</p>`,
       );
       const guessRate = keeperStats.dives
         ? Math.round((keeperStats.correctGuesses / keeperStats.dives) * 100)
@@ -2361,7 +2336,7 @@
       localStorage.setItem("albionShootoutGuideSeen", "yes");
       locked = true;
       stadiumScene.classList.remove("aim-ready", "aim-dragging");
-      freezeAccuracy(button);
+      lockSelectedTarget(button);
       targets.forEach((targetButton) => {
         targetButton.disabled = true;
       });
@@ -2370,25 +2345,24 @@
       const aimX = Number(button.dataset.aimX || zonePoint[target].x);
       const aimY = Number(button.dataset.aimY || zonePoint[target].y);
       const pointerMiss = button.dataset.aimMiss === "true";
-      const accuracy = liveAccuracy;
+      const edgeX = Math.abs(aimX - 50) / 50;
+      const edgeY = Math.abs(aimY - 50) / 50;
+      const placementRisk = Math.max(edgeX, edgeY);
+      const accuracy = clamp(0.97 - placementRisk * 0.10 + (Math.random() - 0.5) * 0.05, 0.78, 0.99);
       const predictable =
         recentTargets.length >= 2 &&
         recentTargets.slice(-2).every((item) => item === target);
-      const readsShot = Math.random() < (predictable ? 0.75 : 0.36);
+      const readsShot = Math.random() < (predictable ? 0.72 : 0.38);
       const dive = readsShot
         ? target
         : positions[Math.floor(Math.random() * positions.length)];
-      const redZone = accuracy < 0.46;
-      const greenZone = accuracy >= 0.76;
-      const missed = redZone || pointerMiss;
-      const greenRoll = greenZone && !missed ? Math.random() : null;
-      const woodwork = !missed && !greenZone && accuracy < 0.58 && Math.random() < 0.18;
+      const missChance = target === "centre" ? 0.025 : 0.035 + placementRisk * 0.055;
+      const missed = pointerMiss || Math.random() < missChance;
+      const woodwork = !missed && Math.random() < 0.025 + placementRisk * 0.035;
       const sameSide = dive.split("-").pop() === target.split("-").pop();
       const saveChance =
-        dive === target ? 0.42 : sameSide && target !== "centre" ? 0.06 : 0;
-      const saved = !missed && !woodwork && (greenZone
-        ? greenRoll >= 0.90
-        : Math.random() < saveChance);
+        dive === target ? (target === "centre" ? 0.72 : 0.52) : sameSide && target !== "centre" ? 0.07 : 0;
+      const saved = !missed && !woodwork && Math.random() < saveChance;
       const scored = !missed && !woodwork && !saved;
       const shotStyle = shotStyleFor(accuracy, target);
       const label = scored
@@ -2396,11 +2370,11 @@
         : woodwork
           ? "Woodwork"
           : missed
-            ? redZone
-              ? "Missed: red zone"
-              : "Missed: outside goal"
+            ? pointerMiss
+              ? "Missed: outside goal"
+              : "Missed: wide"
             : "Saved";
-      if (redZone) albionRedMisses += 1;
+      if (missed) albionRedMisses += 1;
       recentTargets.push(target);
       albionResults.push({ scored, label, target });
       albionKicks += 1;
@@ -2437,18 +2411,16 @@
               : woodwork
                 ? "OFF THE POST!"
                 : missed
-                  ? redZone
-                    ? "RED ZONE: MISSED!"
-                    : "WIDE!"
+                  ? "WIDE!"
                   : "SAVED!",
             scored
               ? goalLines[Math.floor(Math.random() * goalLines.length)]
               : woodwork
                 ? `${player.name} hits the frame of the goal.`
                 : missed
-                  ? redZone
-                    ? "The accuracy marker was outside the safe area."
-                    : "The pointer was dragged beyond the frame of the goal."
+                  ? pointerMiss
+                    ? "The target was placed beyond the frame of the goal."
+                    : "The shot drifts wide under pressure."
                   : `The Palace keeper denies ${player.name}.`,
           );
           renderLineup();
@@ -2473,7 +2445,7 @@
       localStorage.setItem("albionShootoutGuideSeen", "yes");
       locked = true;
       stadiumScene.classList.remove("aim-ready", "aim-dragging");
-      freezeAccuracy(
+      lockSelectedTarget(
         targets.find((target) => target.dataset.target === "centre"),
         true,
       );
@@ -2757,21 +2729,41 @@
       goalFrame.releasePointerCapture?.(event.pointerId);
       aimingPointerId = null;
       stadiumScene.classList.remove("aim-dragging");
-      chooseAimPoint();
+      if (phase === "save") chooseAimPoint();
+      else {
+        const button = targetForPoint(
+          clamp(aimPoint.x, 4, 96),
+          clamp(aimPoint.y, 7, 91),
+        );
+        if (button) {
+          targets.forEach((target) =>
+            target.classList.toggle("selected-target", target === button),
+          );
+          aimSelectionStatus.textContent = `${button.getAttribute("aria-label")} selected. Press Shoot.`;
+          shootButton.disabled = false;
+        }
+      }
     });
     goalFrame.addEventListener("pointercancel", () => {
       aimingPointerId = null;
       stadiumScene.classList.remove("aim-dragging");
     });
     targets.forEach((button) => {
+      const activate = () => {
+        if (phase === "shoot") selectAimTarget(button);
+        else chooseTarget(button);
+      };
       button.addEventListener("pointerdown", (event) => {
         if (event.button !== undefined && event.button !== 0) return;
         event.preventDefault();
-        chooseTarget(button);
+        activate();
       });
       button.addEventListener("click", (event) => {
-        if (event.detail === 0) chooseTarget(button);
+        if (event.detail === 0) activate();
       });
+    });
+    shootButton.addEventListener("click", () => {
+      if (!locked && phase === "shoot") chooseAimPoint();
     });
     $("panenkaButton").addEventListener("pointerdown", (event) => {
       if (event.button !== undefined && event.button !== 0) return;
@@ -2800,7 +2792,8 @@
       const key = Number(event.key);
       if (key >= 1 && key <= 7) {
         event.preventDefault();
-        chooseTarget(targets[key - 1]);
+        if (phase === "shoot") selectAimTarget(targets[key - 1]);
+        else chooseTarget(targets[key - 1]);
       }
       const movement = {
         ArrowLeft: [-7, 0],
@@ -2814,6 +2807,17 @@
           aimPoint.x + movement[0],
           aimPoint.y + movement[1],
         );
+        if (phase === "shoot") {
+          const button = targetForPoint(
+            clamp(aimPoint.x, 4, 96),
+            clamp(aimPoint.y, 7, 91),
+          );
+          targets.forEach((target) =>
+            target.classList.toggle("selected-target", target === button),
+          );
+          aimSelectionStatus.textContent = "Target moved. Press Enter or Shoot.";
+          shootButton.disabled = false;
+        }
       }
       if ((event.key === "Enter" || event.key === " ") && !locked) {
         event.preventDefault();
@@ -3491,13 +3495,13 @@
   siteExperience();
   ui();
   initialiseQuiz();
-  // Clean release: remove legacy service workers and caches.
+  // Production release: register a fresh service worker for install and offline support.
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.getRegistrations().then((registrations) =>
-      registrations.forEach((registration) => registration.unregister()),
-    ).catch(() => {});
-  }
-  if ("caches" in window) {
-    caches.keys().then((keys) => Promise.all(keys.map((key) => caches.delete(key)))).catch(() => {});
+    window.addEventListener("load", () => {
+      navigator.serviceWorker
+        .register("./service-worker.js?v=20260725-r7", { updateViaCache: "none" })
+        .then((registration) => registration.update())
+        .catch(() => {});
+    });
   }
 })();

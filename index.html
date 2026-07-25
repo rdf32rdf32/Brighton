@@ -32,9 +32,10 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260725-r5fix" />
-    <link rel="stylesheet" href="clean.css?v=20260725-r5fix" />
-    <meta name="release" content="rollback-5-repaired-20260725" />
+    <link rel="stylesheet" href="style.css?v=20260725-r7" />
+    <link rel="stylesheet" href="clean.css?v=20260725-r7" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260725-r7" />
+    <meta name="release" content="production-r7-20260725" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -105,7 +106,7 @@
           <span>Next opponent</span><b id="dashboardOpponent">Aston Villa</b>
         </article>
       </section>
-      <section class="fan-dashboard" aria-label="Fan dashboard">
+      <section class="fan-dashboard" id="fan-dashboard" aria-label="Fan dashboard">
         <div class="quick-actions">
           <a href="#quiz">Play quiz</a><a href="#shootout">Penalty shoot-out</a
           ><a href="#chants">Albion chants</a><a href="#fixtures">Fixtures</a><a href="#xi">Pick your XI</a
@@ -298,25 +299,14 @@
           class="shootout-records"
           aria-live="polite"
         ></div>
-        <div id="shotControls" class="penalty-controls penalty-choice-controls">
-          <div class="accuracy-control">
-            <span>Power and accuracy</span>
-            <div
-              class="accuracy-meter"
-              role="meter"
-              aria-label="Penalty timing and accuracy"
-              aria-valuemin="0"
-              aria-valuemax="100"
-            >
-              <span class="meter-label meter-miss-left">MISS</span>
-              <span class="meter-label meter-risk-left">RISK</span>
-              <span class="meter-label meter-best">BEST</span>
-              <span class="meter-label meter-risk-right">RISK</span>
-              <span class="meter-label meter-miss-right">MISS</span>
-              <b aria-hidden="true"></b><i aria-hidden="true"></i>
-            </div>
-            <small id="accuracyVerdict" class="accuracy-verdict" aria-live="polite">Time your strike</small>
+        <div id="shotControls" class="penalty-controls penalty-choice-controls simple-penalty-controls">
+          <div class="direct-aim-control">
+            <span>Choose your placement inside the goal</span>
+            <small id="aimSelectionStatus" aria-live="polite">Move the target, then press Shoot.</small>
           </div>
+          <button id="shootButton" class="shoot-button" type="button" disabled>
+            <b>Shoot</b><small>Take the penalty</small>
+          </button>
           <button id="panenkaButton" class="panenka-button" type="button">
             <b>Try a Panenka</b><small>Risky slow central chip</small>
           </button>
@@ -324,9 +314,9 @@
         <details class="how-to-play">
           <summary>How to play</summary>
           <p>
-            <b>Albion kick:</b> move the pointer or drag towards your chosen
-            spot, then release to shoot. <b>Palace kick:</b> move the glove
-            pointer and release after the ball is struck. Verbruggen cannot
+            <b>Albion kick:</b> move or tap the target inside the goal, then
+            press Shoot. <b>Palace kick:</b> move the glove pointer and release
+            after the ball is struck. Verbruggen cannot
             commit early. Palace never starts until you press Ready, and their
             target remains secret during the run-up. Level after five goes to
             sudden death.
@@ -476,14 +466,14 @@
               <i></i>
             </div>
             <div id="aimHint" class="aim-hint" aria-hidden="true">
-              Aim and release
+              Choose your spot
             </div>
             <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">
               REACT!
             </div>
             <div id="firstKickCoach" class="first-kick-coach" hidden>
               <b>Your first kick</b>
-              <span>Aim inside the distant goal and release.</span>
+              <span>Aim inside the distant goal, then press Shoot.</span>
             </div>
             <button
               class="target top-left"
@@ -537,7 +527,7 @@
           aria-live="polite"
         >
           <b>Pick your spot</b
-          ><span>Aim carefully inside the goal frame.</span>
+          ><span>Move the target inside the goal, then press Shoot.</span>
         </div>
         <div id="turnReadyPanel" class="turn-ready-panel" hidden>
           <p id="turnReadyText">The next player is ready.</p>
@@ -1860,10 +1850,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260725-r5fix"></script>
-    <script src="quiz-data.js?v=20260725-r5fix"></script>
-    <script src="app.js?v=20260725-r5fix"></script>
-    <script src="clean.js?v=20260725-r5fix"></script>
-    <script src="rollback-rebuild.js?v=20260725-r5fix"></script>
+    <script src="content-data.js?v=20260725-r7"></script>
+    <script src="quiz-data.js?v=20260725-r7"></script>
+    <script src="app.js?v=20260725-r7"></script>
+    <script src="clean.js?v=20260725-r7"></script>
+    <script src="rollback-rebuild.js?v=20260725-r7"></script>
+    <script src="release-fixes.js?v=20260725-r7"></script>
   </body>
 </html>
