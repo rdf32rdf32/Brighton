@@ -280,3 +280,25 @@
   #aimGuide.aim-guide{opacity:.07!important}
   .penalty-controls{padding:12px!important;gap:12px!important}
 }
+
+
+/* Repaired release: keep the restored power/accuracy bar prominent and usable. */
+.penalty-choice-controls .accuracy-control{width:100%;min-width:0}
+.penalty-choice-controls .accuracy-meter{
+  height:28px!important;
+  border:2px solid rgba(9,46,82,.5)!important;
+  border-radius:8px!important;
+  overflow:visible!important;
+  box-shadow:inset 0 1px 4px rgba(0,0,0,.22)!important
+}
+.penalty-choice-controls .accuracy-meter i{
+  width:6px!important;
+  height:38px!important;
+  top:-7px!important;
+  box-shadow:0 0 0 3px #fff,0 2px 7px rgba(0,0,0,.38)!important
+}
+.penalty-choice-controls .accuracy-verdict{min-height:1.1em;margin-top:6px;font-weight:900}
+@media(max-width:700px){
+  .penalty-choice-controls .accuracy-meter{height:25px!important}
+  .penalty-choice-controls .accuracy-meter i{height:35px!important}
+}

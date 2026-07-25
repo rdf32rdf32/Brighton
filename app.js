@@ -1278,9 +1278,22 @@
     const aimPointer = $("aimPointer");
     const aimGuide = $("aimGuide");
     const aimHint = $("aimHint");
-    const accuracyMeter = document.querySelector(".accuracy-meter");
+    const shotControls = $("shotControls");
+    let accuracyMeter = document.querySelector(".accuracy-meter");
+    let accuracyVerdict = $("accuracyVerdict");
+    // Self-heal the penalty controls if a future HTML edit removes the bar.
+    if ((!accuracyMeter || !accuracyVerdict) && shotControls) {
+      const control = document.createElement("div");
+      control.className = "accuracy-control";
+      control.innerHTML =
+        '<span>Power and accuracy</span><div class="accuracy-meter" role="meter" aria-label="Penalty timing and accuracy" aria-valuemin="0" aria-valuemax="100"><span class="meter-label meter-miss-left">MISS</span><span class="meter-label meter-risk-left">RISK</span><span class="meter-label meter-best">BEST</span><span class="meter-label meter-risk-right">RISK</span><span class="meter-label meter-miss-right">MISS</span><b aria-hidden="true"></b><i aria-hidden="true"></i></div><small id="accuracyVerdict" class="accuracy-verdict" aria-live="polite">Time your strike</small>';
+      shotControls.prepend(control);
+      accuracyMeter = control.querySelector(".accuracy-meter");
+      accuracyVerdict = control.querySelector("#accuracyVerdict");
+    }
+    if (!accuracyMeter || !accuracyVerdict) return;
     const accuracyMarker = accuracyMeter.querySelector("i");
-    const accuracyVerdict = $("accuracyVerdict");
+    if (!accuracyMarker) return;
     const turnReadyPanel = $("turnReadyPanel");
     const turnReadyText = $("turnReadyText");
     const continueShootoutButton = $("continueShootout");
@@ -1461,6 +1474,7 @@
       const sweepPhase = ((Date.now() - accuracyStarted) % 1800) / 1800;
       const position = sweepPhase < 0.5 ? sweepPhase * 2 : (1 - sweepPhase) * 2;
       accuracyMarker.style.left = `${1 + position * 97}%`;
+      accuracyMeter.setAttribute("aria-valuenow", String(Math.round(position * 100)));
       liveAccuracy = 1 - Math.abs(position - 0.5) * 2;
     }, 32);
     const timingLabel = (accuracy) =>

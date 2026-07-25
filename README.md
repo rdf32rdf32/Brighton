@@ -1,15 +1,14 @@
-# Brighton Fan Hub — clean release
+# Albion Fan Hub — repaired release
 
-This release removes the historical version patch files and legacy service-worker caching.
+This is a static GitHub Pages site. Upload every file in the ZIP directly to the repository root. No build step is required.
 
-Active application files:
-- `index.html`
-- `style.css`
-- `clean.css`
-- `content-data.js`
-- `quiz-data.js`
-- `app.js`
-- `clean.js`
+## Main repairs
 
-Upload the contents of this folder directly to the root of the GitHub Pages repository.
-After deployment, refresh once with Ctrl+F5 so Edge discards any previously cached page assets.
+- Restored the full-width moving power and accuracy bar in the Brighton v Palace shoot-out.
+- Added a self-healing penalty control fallback so missing markup cannot stop the rest of the site.
+- Restored quiz, cookie notice, sound, navigation and later page initialisation.
+- Added cache-busted active CSS and JavaScript references to defeat stale service-worker files.
+- Corrected the diagnostics for the 500-question quiz bank.
+- Unified the Sussex by the Sea recording credit.
+
+Run `node site-check.js` locally for the static release checks.

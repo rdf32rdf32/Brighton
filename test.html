@@ -1,1 +1,48 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Seagulls Test</title><link rel="stylesheet" href="style.css"></head><body><main style="margin:32px auto"><section class="card"><h1>Site test</h1><p id="status">Running checks...</p><ul id="checks"></ul><p><a href="index.html">Open homepage</a></p></section></main><script src="config.js"></script><script src="quiz-data.js"></script><script src="content-data.js"></script><script>const checks=[];function ok(name,value){checks.push(`<li>${value?'✅':'❌'} ${name}</li>`)}ok('Config loaded',!!window.SITE_CONFIG);ok('Quiz data loaded',Array.isArray(window.ALBION_QUIZ)&&window.ALBION_QUIZ.length>=3);ok('Content data loaded',!!window.ALBION_CONTENT&&Array.isArray(window.ALBION_CONTENT.facts));ok('Quiz has 200 questions',Array.isArray(window.ALBION_QUIZ)&&window.ALBION_QUIZ.length===200);document.getElementById('checks').innerHTML=checks.join('');document.getElementById('status').textContent=checks.every(x=>x.includes('✅'))?'All basic checks passed.':'One or more checks failed.';</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Albion Fan Hub release test</title>
+  <link rel="icon" href="favicon.svg">
+  <link rel="stylesheet" href="style.css?v=20260725-r5fix">
+</head>
+<body>
+  <main style="margin:32px auto;max-width:850px">
+    <section class="card">
+      <p class="eyebrow">Release diagnostics</p>
+      <h1>Albion Fan Hub site test</h1>
+      <p id="status">Running checks…</p>
+      <ul id="checks"></ul>
+      <p><a href="index.html">Open homepage</a></p>
+    </section>
+  </main>
+  <script src="quiz-data.js?v=20260725-r5fix"></script>
+  <script src="content-data.js?v=20260725-r5fix"></script>
+  <script>
+    (async () => {
+      const checks = [];
+      const check = (name, value) => checks.push({ name, value: Boolean(value) });
+      check("500-question quiz bank loaded", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.length === 500);
+      check("Content data loaded", window.ALBION_CONTENT && Array.isArray(window.ALBION_CONTENT.facts));
+      check("38 league fixtures loaded", window.ALBION_CONTENT?.fixtures?.length === 38);
+      try {
+        const homepage = await fetch("index.html", { cache: "no-store" }).then(response => response.text());
+        check("Penalty power/accuracy bar present", homepage.includes('class="accuracy-meter"'));
+        check("Penalty verdict element present", homepage.includes('id="accuracyVerdict"'));
+        check("Cookie OK button present", homepage.includes('id="acceptCookies"'));
+        check("Fixed JavaScript URL active", homepage.includes("app.js?v=20260725-r5fix"));
+      } catch (_) {
+        check("Homepage could be read", false);
+      }
+      document.getElementById("checks").innerHTML = checks
+        .map(item => `<li>${item.value ? "✅" : "❌"} ${item.name}</li>`)
+        .join("");
+      const passed = checks.every(item => item.value);
+      document.getElementById("status").textContent = passed
+        ? "All basic release checks passed."
+        : "One or more release checks failed.";
+    })();
+  </script>
+</body>
+</html>

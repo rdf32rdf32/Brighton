@@ -12,17 +12,27 @@ const fail = (message) => failures.push(message);
 const requiredFiles = [
   "index.html",
   "style.css",
+  "clean.css",
   "app.js",
-  "v16.js",
-  "v17.js",
-  "v18.js",
+  "clean.js",
+  "rollback-rebuild.js",
   "content-data.js",
   "quiz-data.js",
   "editor.html",
   "editor.js",
+  "test.html",
+  "privacy.html",
+  "cookies.html",
+  "copyright.html",
+  "contact.html",
   "service-worker.js",
   "manifest.json",
   "offline.html",
+  "favicon.svg",
+  "albion-safe-graphic.svg",
+  "icon-192.png",
+  "icon-512.png",
+  "social-preview.png",
   "sussex-by-the-sea.mp3",
   "albion-albion-albion.mp3",
   "seagulls.mp3",
@@ -53,7 +63,7 @@ const localAssets = [...html.matchAll(/(?:src|href)="([^"#]+)"/g)]
 const missingAssets = [
   ...new Set(
     localAssets.filter(
-      (asset) => !fs.existsSync(path.join(root, asset.replace(/^\.\//, ""))),
+      (asset) => !fs.existsSync(path.join(root, asset.split("?")[0].replace(/^\.\//, ""))),
     ),
   ),
 ];
@@ -64,6 +74,14 @@ else pass("all local page assets resolve");
 if (!/<button id="checkQuiz"[^>]*hidden/.test(html))
   fail("quiz Check answer control must remain hidden");
 else pass("quiz uses instant answer selection");
+
+if (!/class="accuracy-meter"/.test(html) || !/id="accuracyVerdict"/.test(html))
+  fail("penalty power/accuracy bar markup is missing");
+else pass("penalty power/accuracy bar markup is present");
+
+if (!/20260725-r5fix/.test(html))
+  fail("active CSS and JavaScript are not cache-busted");
+else pass("active CSS and JavaScript use repaired release URLs");
 
 if (/Personal matchday itinerary|id="itinerary/i.test(html))
   fail("personal matchday itinerary must remain removed");
@@ -89,15 +107,23 @@ const serviceWorker = fs.readFileSync(
   "utf8",
 );
 if (
-  !/albion-fan-hub-v34/.test(serviceWorker) ||
-  !/FILES[\s\S]*sussex-by-the-sea\.mp3[\s\S]*self\.addEventListener\('install'/.test(
+  !/albion-v11-repaired-20260725/.test(serviceWorker) ||
+  !/CORE[\s\S]*app\.js\?v=20260725-r5fix[\s\S]*self\.addEventListener\('install'/.test(
     serviceWorker,
   )
 )
-  fail("v34 release cache or anthem asset is incorrect");
-else pass("v34 cache includes the anthem and chant assets");
+  fail("repaired release cache is incorrect");
+else pass("repaired cache uses the fixed, cache-busted assets");
 
 const application = fs.readFileSync(path.join(root, "app.js"), "utf8");
+const referencedIds = [
+  ...application.matchAll(/\$\(["']([^"']+)["']\)/g),
+  ...application.matchAll(/getElementById\(["']([^"']+)["']\)/g),
+].map((match) => match[1]);
+const missingReferencedIds = [...new Set(referencedIds.filter((id) => !ids.includes(id)))];
+if (missingReferencedIds.length)
+  fail(`app.js references missing HTML ids: ${missingReferencedIds.join(", ")}`);
+else pass("all static app.js element references exist in index.html");
 if (
   !/Master volume/.test(html) ||
   /id="anthemVolume"|id="playAnthem"|id="soundReliability"/.test(html) ||
@@ -213,7 +239,7 @@ if (!/exactChance = \{ perfect: 0\.98, good: 0\.92, none: 0 \}/.test(application
   fail("Forgiving Palace save probability is missing");
 else pass("Forgiving Palace save probability present");
 
-["app.js", "v16.js", "v17.js", "v18.js", "editor.js", "service-worker.js"].forEach((file) => {
+["app.js", "clean.js", "rollback-rebuild.js", "editor.js", "service-worker.js"].forEach((file) => {
   try {
     new Function(fs.readFileSync(path.join(root, file), "utf8"));
     pass(`${file} parses`);
