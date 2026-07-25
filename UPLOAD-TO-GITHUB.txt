@@ -1,0 +1,17 @@
+BRIGHTON FAN HUB — FIXED RELEASE
+
+1. Extract this ZIP.
+2. Open https://github.com/rdf32rdf32/Brighton/upload/main
+3. Upload the FILES INSIDE this folder, not the ZIP and not an outer folder.
+4. Commit the changes.
+5. After deployment, open https://rdf32rdf32.github.io/Brighton/ and press Ctrl+Shift+R once.
+
+Key points in this release:
+- Five-question quiz from a 500-question bank; total bank size is not shown on the site.
+- Guess the Player removed.
+- Brighton v Palace alternating penalty shoot-out, best of five plus sudden death.
+- No timing/power bar.
+- Visible master sound control and volume setting.
+- Cookie notice fixed.
+- Responsive desktop/mobile layout.
+- Fresh service-worker cache to prevent the old build persisting.
