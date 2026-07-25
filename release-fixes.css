@@ -1,4 +1,4 @@
-/* Release 10 utility styles for diagnostics and repaired controls. */
+/* Release 13 utility styles for diagnostics and repaired controls. */
 .diagnostic-results{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px}
 .diagnostic-results i{display:block;padding:7px 9px;border-radius:8px;font-style:normal;background:#eef5fb}
 .diagnostic-results .pass{color:#126b43}.diagnostic-results .fail{color:#a62d35}

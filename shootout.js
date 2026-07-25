@@ -7,6 +7,7 @@
 
   const goalMouth = $("goalMouth");
   const ball = $("penaltyBall");
+  const ballShadow = $("penaltyBallShadow");
   const keeper = $("keeperFigure");
   const taker = $("takerFigure");
   const referee = $("refereeFigure");
@@ -23,10 +24,23 @@
   const shareButton = $("shareShootout");
   const shootoutCard = $("shootout");
   const miniScore = $("stadiumMiniScore");
+  const celebrationPlayers = $("celebrationPlayers");
+  const confetti = $("shootoutConfetti");
 
-  const goalBox = { left: 0.17, top: 0.125, width: 0.66, height: 0.35 };
+  const goalBox = { left: 0.16, top: 0.12, width: 0.68, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
-  const keeperBootRatio = 0.91;
+
+  function syncGoalBox() {
+    const stageRect = stage.getBoundingClientRect();
+    const goalRect = goalMouth.getBoundingClientRect();
+    if (!stageRect.width || !stageRect.height || !goalRect.width || !goalRect.height) return goalBox;
+    goalBox.left = (goalRect.left - stageRect.left) / stageRect.width;
+    goalBox.top = (goalRect.top - stageRect.top) / stageRect.height;
+    goalBox.width = goalRect.width / stageRect.width;
+    goalBox.height = goalRect.height / stageRect.height;
+    return goalBox;
+  }
+  const keeperBootRatio = 0.924;
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const sleep = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
   const reducedMotion = () =>
@@ -35,28 +49,32 @@
 
   const configurations = {
     normal: {
-      shotSpread: 0.022,
-      keeperNoise: 0.165,
+      shotSpread: 0.018,
+      keeperNoise: 0.18,
       keeperReach: 0.165,
-      palaceMiss: 0.14,
-      saveRadius: 0.285,
-      preContactWindow: 250,
-      postContactWindow: 520,
-      flight: 830,
-      runUpScale: 1,
+      palaceMiss: 0.16,
+      saveRadius: 0.415,
+      preContactWindow: 365,
+      postContactWindow: 720,
+      flight: 890,
+      runUpScale: 1.03,
       cueStrength: 1,
+      diveAssist: 0.48,
+      sameSideBonus: 0.105,
     },
     hard: {
-      shotSpread: 0.041,
-      keeperNoise: 0.115,
+      shotSpread: 0.034,
+      keeperNoise: 0.12,
       keeperReach: 0.19,
-      palaceMiss: 0.085,
-      saveRadius: 0.225,
-      preContactWindow: 150,
-      postContactWindow: 370,
-      flight: 690,
-      runUpScale: 0.9,
-      cueStrength: 0.48,
+      palaceMiss: 0.1,
+      saveRadius: 0.305,
+      preContactWindow: 225,
+      postContactWindow: 500,
+      flight: 735,
+      runUpScale: 0.94,
+      cueStrength: 0.52,
+      diveAssist: 0.18,
+      sameSideBonus: 0.045,
     },
   };
 
@@ -102,6 +120,9 @@
     reactionTimer: 0,
     sequence: 0,
     sound: localStorage.getItem("albionShootoutSound") !== "off",
+    pointerStart: null,
+    pointerLast: null,
+    activePointerId: null,
   };
 
   let audioContext = null;
@@ -142,16 +163,28 @@
     if (kind === "whistle") {
       tone(1240, 0.08, "sine", 0.035);
       window.setTimeout(() => tone(1510, 0.09, "sine", 0.03), 70);
-    } else if (kind === "kick") tone(115, 0.09, "triangle", 0.09);
+    } else if (kind === "finalWhistle") {
+      tone(1320, 0.09, "sine", 0.04);
+      window.setTimeout(() => tone(1510, 0.1, "sine", 0.035), 110);
+      window.setTimeout(() => tone(1320, 0.12, "sine", 0.04), 235);
+    } else if (kind === "kick") tone(112, 0.095, "triangle", 0.09);
     else if (kind === "goal") {
-      tone(520, 0.12, "square", 0.045);
-      window.setTimeout(() => tone(660, 0.16, "square", 0.04), 100);
-    } else if (kind === "save") tone(175, 0.18, "sawtooth", 0.055);
-    else if (kind === "post") tone(910, 0.22, "triangle", 0.045);
+      tone(510, 0.12, "square", 0.042);
+      window.setTimeout(() => tone(650, 0.18, "square", 0.038), 95);
+    } else if (kind === "save") {
+      tone(168, 0.14, "sawtooth", 0.055);
+      window.setTimeout(() => tone(240, 0.12, "triangle", 0.034), 80);
+    } else if (kind === "post") tone(940, 0.23, "triangle", 0.05);
     else if (kind === "gloves") tone(260, 0.05, "triangle", 0.026);
-    else if (kind === "crowd") {
-      tone(175, 0.18, "sine", 0.022);
-      window.setTimeout(() => tone(210, 0.22, "sine", 0.018), 80);
+    else if (kind === "albionCheer") {
+      [175, 210, 255, 310].forEach((frequency, index) => window.setTimeout(() => tone(frequency, .28, "sine", .021), index * 55));
+    } else if (kind === "palaceCheer") {
+      [150, 188, 225].forEach((frequency, index) => window.setTimeout(() => tone(frequency, .24, "sine", .017), index * 65));
+    } else if (kind === "win") {
+      [180, 225, 280, 350, 440].forEach((frequency, index) => window.setTimeout(() => tone(frequency, .42, "sine", .026), index * 75));
+    } else if (kind === "gasp") {
+      tone(135, .18, "sine", .018);
+      window.setTimeout(() => tone(110, .22, "sine", .014), 85);
     } else tone(210, 0.14, "sine", 0.04);
   }
 
@@ -220,6 +253,7 @@
   }
 
   function setReticle(nx, ny) {
+    syncGoalBox();
     state.aim.x = clamp(nx, 0.025, 0.975);
     state.aim.y = clamp(ny, 0.035, 0.965);
     const sx = goalBox.left + state.aim.x * goalBox.width;
@@ -229,6 +263,7 @@
   }
 
   function eventGoalPoint(event) {
+    syncGoalBox();
     const rect = stage.getBoundingClientRect();
     const sx = (event.clientX - rect.left) / rect.width;
     const sy = (event.clientY - rect.top) / rect.height;
@@ -247,7 +282,7 @@
       try { animation.cancel(); } catch {}
     });
     currentAnimations = [];
-    [ball, keeper, taker, referee].forEach((element) => {
+    [ball, ballShadow, keeper, taker, referee, celebrationPlayers].forEach((element) => {
       element?.getAnimations().forEach((animation) => animation.cancel());
     });
   }
@@ -255,30 +290,35 @@
   function keeperDimensions() {
     const rect = keeper.getBoundingClientRect();
     return {
-      width: rect.width || stage.clientWidth * 0.175,
-      height: rect.height || stage.clientWidth * 0.175 * (250 / 180),
+      width: rect.width || stage.clientWidth * 0.108,
+      height: rect.height || stage.clientWidth * 0.108 * (250 / 180),
     };
   }
 
   function positionKeeperOnLine() {
     if (!stage.clientHeight) return;
+    syncGoalBox();
     const dimensions = keeperDimensions();
     const goalLineY = (goalBox.top + goalBox.height) * stage.clientHeight;
     const top = goalLineY - dimensions.height * keeperBootRatio;
     keeper.style.left = "50%";
     keeper.style.top = `${top}px`;
     keeper.style.transform = "translateX(-50%)";
+    stage.style.setProperty("--keeper-line-y", `${goalLineY}px`);
   }
 
   function resetCrowd() {
-    stage.classList.remove("crowd-hush", "crowd-albion-cheer", "crowd-palace-cheer", "crowd-gasp");
+    stage.classList.remove(
+      "crowd-hush", "crowd-albion-cheer", "crowd-palace-cheer", "crowd-gasp",
+      "shootout-win-albion", "shootout-win-palace", "save-celebration", "goal-celebration",
+    );
   }
 
-  function crowdReaction(kind) {
-    resetCrowd();
+  function crowdReaction(kind, duration = 1550) {
+    stage.classList.remove("crowd-hush", "crowd-albion-cheer", "crowd-palace-cheer", "crowd-gasp");
     if (kind) stage.classList.add(kind);
     if (kind && kind !== "crowd-hush") {
-      window.setTimeout(() => stage.classList.remove(kind), reducedMotion() ? 300 : 1450);
+      window.setTimeout(() => stage.classList.remove(kind), reducedMotion() ? 300 : duration);
     }
   }
 
@@ -286,18 +326,33 @@
     cancelAnimations();
     ball.style.left = `${ballStart.x * 100}%`;
     ball.style.top = `${ballStart.y * 100}%`;
+    ball.style.opacity = "1";
     ball.style.transform = "translate(-50%,-50%) scale(1) rotate(0deg)";
+    if (ballShadow) {
+      ballShadow.style.left = `${ballStart.x * 100}%`;
+      ballShadow.style.top = `${(ballStart.y + .012) * 100}%`;
+      ballShadow.style.opacity = "1";
+      ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
+    }
     taker.style.left = "50%";
-    taker.style.top = "69%";
+    taker.style.top = "50.5%";
+    taker.style.opacity = "1";
     taker.style.transform = "translate(-50%,0)";
-    referee.style.left = "78%";
-    referee.style.top = "43%";
+    referee.style.left = "81%";
+    referee.style.top = "42%";
     referee.style.transform = "translate(-50%,0)";
+    keeper.style.opacity = "1";
     keeper.querySelectorAll(".keeper-arm,.keeper-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
-    referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root").forEach((part) => { part.style.transform = ""; });
-    stage.classList.remove("palace-kick", "is-save-window", "is-locked", "is-waiting", "is-aiming");
-    goalMouth.classList.remove("net-hit");
+    taker.querySelectorAll(".taker-arm,.taker-leg,.taker-root").forEach((part) => { part.style.transform = ""; });
+    referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root,.referee-head-group").forEach((part) => { part.style.transform = ""; });
+    stage.classList.remove("palace-kick", "is-save-window", "is-locked", "is-waiting", "is-aiming", "placing-ball");
+    goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre");
+    goalMouth.style.removeProperty("--hit-x");
+    goalMouth.style.removeProperty("--hit-y");
     cue.hidden = true;
+    decision.hidden = true;
+    if (celebrationPlayers) celebrationPlayers.hidden = true;
+    if (confetti) confetti.hidden = true;
     resetCrowd();
     positionKeeperOnLine();
   }
@@ -313,6 +368,7 @@
   }
 
   function stagePoint(goalPoint) {
+    syncGoalBox();
     return {
       x: goalBox.left + goalPoint.x * goalBox.width,
       y: goalBox.top + goalPoint.y * goalBox.height,
@@ -322,56 +378,96 @@
   function animateRunUp(isPalace, foot = "right", target = null, style = "direct") {
     const footDirection = foot === "left" ? -1 : 1;
     const settings = config();
-    const targetBias = target ? (target.x - 0.5) * 52 * settings.cueStrength : 0;
-    const styleOffset = style === "stutter" ? 8 : style === "quick" ? -5 : 0;
-    const duration = isPalace ? Math.round(820 * settings.runUpScale) : style === "quick" ? 570 : 660;
+    const targetBias = target ? (target.x - 0.5) * 48 * settings.cueStrength : 0;
+    const styleOffset = style === "stutter" ? 7 : style === "quick" ? -5 : 0;
+    const duration = isPalace ? Math.round(830 * settings.runUpScale) : style === "quick" ? 585 : 680;
     stage.classList.toggle("palace-kick", isPalace);
     const run = animateElement(
       taker,
       [
-        { transform: `translate(calc(-50% + ${-footDirection * 16 + styleOffset}px), 10px) scale(.96)` },
-        { transform: `translate(calc(-50% + ${footDirection * 7 + targetBias * 0.28}px), -8px) scale(1.01)`, offset: style === "stutter" ? 0.48 : 0.58 },
-        { transform: `translate(calc(-50% + ${targetBias}px), -38px) scale(.94)` },
+        { transform: `translate(calc(-50% + ${-footDirection * 22 + styleOffset}px), 18px) scale(.965)` },
+        { transform: `translate(calc(-50% + ${footDirection * 10 + targetBias * .18}px), -4px) scale(1.015)`, offset: style === "stutter" ? .43 : .56 },
+        { transform: `translate(calc(-50% + ${targetBias}px), -34px) scale(.985)` },
+        { transform: `translate(calc(-50% + ${targetBias + footDirection * 7}px), -39px) scale(.975)` },
       ],
-      { duration, easing: style === "stutter" ? "cubic-bezier(.2,.55,.18,1)" : "cubic-bezier(.25,.72,.3,1)" },
+      { duration, easing: style === "stutter" ? "cubic-bezier(.2,.55,.18,1)" : "cubic-bezier(.24,.72,.28,1)" },
     );
     const kickingLeg = taker.querySelector(foot === "left" ? ".taker-leg-left" : ".taker-leg-right");
-    const arm = taker.querySelector(foot === "left" ? ".taker-arm-right" : ".taker-arm-left");
-    if (kickingLeg) animateElement(kickingLeg, [{ transform: "rotate(0deg)" }, { transform: `rotate(${footDirection * -24}deg)` }, { transform: `rotate(${footDirection * 34}deg)` }], { duration });
-    if (arm) animateElement(arm, [{ transform: "rotate(0deg)" }, { transform: `rotate(${footDirection * 18}deg)` }, { transform: `rotate(${footDirection * -12}deg)` }], { duration });
+    const standingLeg = taker.querySelector(foot === "left" ? ".taker-leg-right" : ".taker-leg-left");
+    const balanceArm = taker.querySelector(foot === "left" ? ".taker-arm-right" : ".taker-arm-left");
+    const trailingArm = taker.querySelector(foot === "left" ? ".taker-arm-left" : ".taker-arm-right");
+    if (kickingLeg) animateElement(kickingLeg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${footDirection * -31}deg)`, offset: .58 },
+      { transform: `rotate(${footDirection * 42}deg)`, offset: .82 },
+      { transform: `rotate(${footDirection * 22}deg)` },
+    ], { duration });
+    if (standingLeg) animateElement(standingLeg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${footDirection * -5}deg)`, offset: .7 },
+      { transform: `rotate(${footDirection * 4}deg)` },
+    ], { duration });
+    if (balanceArm) animateElement(balanceArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${footDirection * 24}deg)`, offset: .66 },
+      { transform: `rotate(${footDirection * -13}deg)` },
+    ], { duration });
+    if (trailingArm) animateElement(trailingArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${footDirection * -12}deg)`, offset: .62 },
+      { transform: `rotate(${footDirection * 10}deg)` },
+    ], { duration });
     return { animation: run, duration };
   }
 
-  function animateBall(target, duration, saved = false, miss = false) {
+  function animateBall(target, duration, saved = false, miss = false, shotType = "driven") {
     const point = stagePoint(target);
-    const endScale = saved ? 0.72 : miss ? 0.58 : 0.5;
+    const endScale = saved ? 0.66 : miss ? 0.54 : 0.48;
+    const panenkaShot = shotType === "panenka";
+    const spin = panenkaShot ? -300 : target.x < .5 ? 560 : -560;
+    const midX = ballStart.x + (point.x - ballStart.x) * .52;
+    const linearMidY = ballStart.y + (point.y - ballStart.y) * .52;
+    const midY = panenkaShot ? linearMidY - .105 : linearMidY;
     sound("kick");
+    if (ballShadow) {
+      animateElement(ballShadow, [
+        { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .72, transform: "translate(-50%,-50%) scale(1)" },
+        { left: `${midX * 100}%`, top: `${(ballStart.y - .01) * 100}%`, opacity: panenkaShot ? .16 : .28, transform: "translate(-50%,-50%) scale(.62)" },
+        { left: `${point.x * 100}%`, top: `${(goalBox.top + goalBox.height + .012) * 100}%`, opacity: .06, transform: "translate(-50%,-50%) scale(.3)" },
+      ], { duration, easing: "cubic-bezier(.18,.58,.24,1)" });
+    }
     return animateElement(
       ball,
       [
         { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(0deg)" },
-        { left: `${(ballStart.x + point.x) * 50}%`, top: `${(ballStart.y + point.y) * 50 - 4}%`, transform: "translate(-50%,-50%) scale(.75) rotate(210deg)", offset: 0.48 },
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale}) rotate(520deg)` },
+        { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: `translate(-50%,-50%) scale(${panenkaShot ? .78 : .7}) rotate(${spin * .42}deg)`, offset: .5 },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale}) rotate(${spin}deg)` },
       ],
-      { duration, easing: "cubic-bezier(.15,.58,.24,1)" },
+      { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : "linear" },
     );
   }
 
   function animateDeflection(target, saveType) {
     if (saveType === "CATCH") {
+      if (ballShadow) animateElement(ballShadow, [{ opacity: .08 }, { opacity: 0 }], { duration: 220 });
       return animateElement(ball, [
-        { opacity: 1, transform: "translate(-50%,-50%) scale(.72)" },
-        { opacity: .25, transform: "translate(-50%,-50%) scale(.3)" },
-      ], { duration: 220 });
+        { opacity: 1, transform: "translate(-50%,-50%) scale(.66)" },
+        { opacity: .18, transform: "translate(-50%,-50%) scale(.26)" },
+      ], { duration: 230 });
     }
     const direction = target.x < 0.5 ? -1 : 1;
     const point = stagePoint(target);
-    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? 0.08 : 0.055), 0.02, 0.98);
-    const endY = clamp(point.y + (target.y < 0.4 ? -0.035 : 0.045), 0.02, 0.94);
+    const strong = saveType === "PARRIED" || saveType === "BLOCKED";
+    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? .095 : strong ? .075 : .055), .015, .985);
+    const endY = clamp(point.y + (target.y < .42 ? -.055 : .065), .015, .95);
+    if (ballShadow) animateElement(ballShadow, [
+      { left: `${point.x * 100}%`, opacity: .12 },
+      { left: `${endX * 100}%`, opacity: .26, transform: "translate(-50%,-50%) scale(.55)" },
+    ], { duration: 360 });
     return animateElement(ball, [
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.72) rotate(520deg)" },
-      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.58) rotate(710deg)" },
-    ], { duration: 300, easing: "cubic-bezier(.2,.5,.4,1)" });
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.66) rotate(560deg)" },
+      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.54) rotate(790deg)" },
+    ], { duration: 360, easing: "cubic-bezier(.16,.52,.35,1)" });
   }
 
   function diveZone(point) {
@@ -380,7 +476,7 @@
     return `${point.y < 0.48 ? "high" : "low"}-${side}`;
   }
 
-  function animateKeeperDive(point, duration = 620, saved = false) {
+  function animateKeeperDive(point, duration = 700, saved = false) {
     positionKeeperOnLine();
     const stageWidth = stage.clientWidth;
     const stageHeight = stage.clientHeight;
@@ -392,23 +488,17 @@
     const targetX = target.x * stageWidth;
     const targetY = target.y * stageHeight;
     const zone = diveZone(point);
-    const direction = point.x < 0.5 ? -1 : point.x > 0.5 ? 1 : 0;
-    const handXRatio = direction < 0 ? 11 / 180 : direction > 0 ? 169 / 180 : 0.5;
-    const handYRatio = direction === 0 ? 0.47 : 94 / 250;
-    const baseHandX = stageWidth * 0.5 + (handXRatio - 0.5) * keeperWidth;
-    const baseHandY = baseTop + handYRatio * keeperHeight;
-    let dx = targetX - baseHandX;
-    let dy = targetY - baseHandY;
-    if (direction === 0) {
-      dx = (point.x - 0.5) * stageWidth * 0.1;
-      dy = clamp(dy, -keeperHeight * 0.16, keeperHeight * 0.1);
-    }
-    const goalLeft = goalBox.left * stageWidth;
-    const goalRight = (goalBox.left + goalBox.width) * stageWidth;
-    const bodyCentre = stageWidth * 0.5 + dx;
-    if (bodyCentre < goalLeft + keeperWidth * 0.15) dx += goalLeft + keeperWidth * 0.15 - bodyCentre;
-    if (bodyCentre > goalRight - keeperWidth * 0.15) dx -= bodyCentre - (goalRight - keeperWidth * 0.15);
-    dy = clamp(dy, -keeperHeight * 0.56, keeperHeight * 0.22);
+    const direction = point.x < .42 ? -1 : point.x > .58 ? 1 : 0;
+    const gloveXRatio = direction < 0 ? 38 / 180 : direction > 0 ? 142 / 180 : .5;
+    const gloveYRatio = direction === 0 ? .5 : 128 / 250;
+    const baseGloveX = stageWidth * .5 + (gloveXRatio - .5) * keeperWidth;
+    const baseGloveY = baseTop + gloveYRatio * keeperHeight;
+    let dx = (targetX - baseGloveX) * (direction ? .84 : .38);
+    let dy = (targetY - baseGloveY) * (direction ? .76 : .55);
+    const goalWidth = goalBox.width * stageWidth;
+    const maxDx = goalWidth * .445;
+    dx = clamp(dx, -maxDx, maxDx);
+    dy = clamp(dy, -keeperHeight * .63, keeperHeight * .27);
 
     const leftArm = keeper.querySelector(".keeper-arm-left");
     const rightArm = keeper.querySelector(".keeper-arm-right");
@@ -416,25 +506,177 @@
     const rightLeg = keeper.querySelector(".keeper-leg-right");
     const body = keeper.querySelector(".keeper-body-group");
     let leftArmEnd = 0, rightArmEnd = 0, leftLegEnd = 0, rightLegEnd = 0;
-    if (zone === "high-left") { leftArmEnd = 34; rightArmEnd = -10; leftLegEnd = 16; rightLegEnd = -10; }
-    else if (zone === "low-left") { leftArmEnd = -28; rightArmEnd = 12; leftLegEnd = 24; rightLegEnd = -13; }
-    else if (zone === "high-right") { rightArmEnd = -34; leftArmEnd = 10; rightLegEnd = -16; leftLegEnd = 10; }
-    else if (zone === "low-right") { rightArmEnd = 28; leftArmEnd = -12; rightLegEnd = -24; leftLegEnd = 13; }
-    else { leftArmEnd = -20; rightArmEnd = 20; leftLegEnd = 14; rightLegEnd = -14; }
+    if (zone === "high-left") { leftArmEnd = -102; rightArmEnd = -63; leftLegEnd = 24; rightLegEnd = -18; }
+    else if (zone === "low-left") { leftArmEnd = -34; rightArmEnd = -10; leftLegEnd = 39; rightLegEnd = -24; }
+    else if (zone === "high-right") { rightArmEnd = 102; leftArmEnd = 63; rightLegEnd = -24; leftLegEnd = 18; }
+    else if (zone === "low-right") { rightArmEnd = 34; leftArmEnd = 10; rightLegEnd = -39; leftLegEnd = 24; }
+    else { leftArmEnd = -74; rightArmEnd = 74; leftLegEnd = 23; rightLegEnd = -23; }
 
-    if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: `rotate(${leftArmEnd * .4}deg)`, offset: .32 }, { transform: `rotate(${leftArmEnd}deg)` }], { duration: duration * .88 });
-    if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: `rotate(${rightArmEnd * .4}deg)`, offset: .32 }, { transform: `rotate(${rightArmEnd}deg)` }], { duration: duration * .88 });
-    if (leftLeg) animateElement(leftLeg, [{ transform: "rotate(0deg)" }, { transform: `rotate(${leftLegEnd}deg)` }], { duration });
-    if (rightLeg) animateElement(rightLeg, [{ transform: "rotate(0deg)" }, { transform: `rotate(${rightLegEnd}deg)` }], { duration });
-    if (body) animateElement(body, [{ transform: "scaleX(1)" }, { transform: "scaleX(1.035)", offset: .28 }, { transform: "scaleX(1)" }], { duration });
+    if (leftArm) animateElement(leftArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${leftArmEnd * .18}deg)`, offset: .22 },
+      { transform: `rotate(${leftArmEnd}deg)`, offset: .72 },
+      { transform: `rotate(${leftArmEnd * .9}deg)` },
+    ], { duration: duration * .94 });
+    if (rightArm) animateElement(rightArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${rightArmEnd * .18}deg)`, offset: .22 },
+      { transform: `rotate(${rightArmEnd}deg)`, offset: .72 },
+      { transform: `rotate(${rightArmEnd * .9}deg)` },
+    ], { duration: duration * .94 });
+    if (leftLeg) animateElement(leftLeg, [{ transform: "rotate(0deg)" }, { transform: `rotate(${leftLegEnd * -.22}deg)`, offset: .2 }, { transform: `rotate(${leftLegEnd}deg)`, offset: .72 }, { transform: `rotate(${leftLegEnd * .82}deg)` }], { duration });
+    if (rightLeg) animateElement(rightLeg, [{ transform: "rotate(0deg)" }, { transform: `rotate(${rightLegEnd * -.22}deg)`, offset: .2 }, { transform: `rotate(${rightLegEnd}deg)`, offset: .72 }, { transform: `rotate(${rightLegEnd * .82}deg)` }], { duration });
+    if (body) animateElement(body, [
+      { transform: "translateY(0) scale(1)" },
+      { transform: "translateY(3px) scale(.99,.97)", offset: .18 },
+      { transform: "translateY(-2px) scale(1.045,1)", offset: .7 },
+      { transform: "translateY(3px) scale(1.01,.985)" },
+    ], { duration });
 
-    const rotation = direction * (zone.startsWith("low") ? 15 : zone.startsWith("high") ? 11 : 0);
-    const scale = saved ? 1.035 : 1;
+    const fullLength = direction !== 0 && (Math.abs(point.x - .5) > .21 || point.y < .4);
+    const rotation = direction * (zone.startsWith("low") ? 22 : zone.startsWith("high") ? 17 : 0);
+    const landingY = dy + (zone.startsWith("low") ? keeperHeight * .09 : keeperHeight * .045);
+    const extensionScale = fullLength ? 1.12 : saved ? 1.065 : 1.035;
     return animateElement(keeper, [
       { transform: "translateX(-50%) translate(0,0) rotate(0deg) scale(1)" },
-      { transform: `translateX(-50%) translate(${dx * .28}px,${Math.min(-5, dy * .18)}px) rotate(${rotation * .2}deg) scale(1.025)`, offset: .28 },
-      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${rotation}deg) scale(${scale})` },
-    ], { duration, easing: "cubic-bezier(.18,.72,.22,1)" });
+      { transform: `translateX(-50%) translate(${-direction * 5}px,3px) rotate(${-rotation * .07}deg) scale(.99,.97)`, offset: .18 },
+      { transform: `translateX(-50%) translate(${dx * .54}px,${dy * .48}px) rotate(${rotation * .55}deg) scale(1.03)`, offset: .48 },
+      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${rotation}deg) scale(${extensionScale},1)`, offset: .76 },
+      { transform: `translateX(-50%) translate(${dx * .94}px,${landingY}px) rotate(${rotation * 1.08}deg) scale(1.02,.98)` },
+    ], { duration, easing: "cubic-bezier(.16,.69,.22,1)" });
+  }
+
+  function assistedDivePoint(point) {
+    const target = state.palaceTarget;
+    if (!target) return { ...point };
+    const settings = config();
+    const pointSide = point.x < .4 ? -1 : point.x > .6 ? 1 : 0;
+    const targetSide = target.x < .4 ? -1 : target.x > .6 ? 1 : 0;
+    const compatible = pointSide === targetSide || (pointSide === 0 && targetSide === 0);
+    if (!compatible) return { ...point };
+    const heightCompatible = Math.abs(point.y - target.y) < .48;
+    const amount = settings.diveAssist * (heightCompatible ? 1 : .55);
+    return {
+      x: clamp(point.x + (target.x - point.x) * amount, .015, .985),
+      y: clamp(point.y + (target.y - point.y) * amount, .02, .98),
+    };
+  }
+
+  function netReaction(target, strength = 1) {
+    goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre");
+    goalMouth.style.setProperty("--hit-x", `${clamp(target.x, 0, 1) * 100}%`);
+    goalMouth.style.setProperty("--hit-y", `${clamp(target.y, 0, 1) * 100}%`);
+    void goalMouth.offsetWidth;
+    goalMouth.classList.add("net-hit");
+    if (target.x < .32) goalMouth.classList.add("net-hit-left");
+    else if (target.x > .68) goalMouth.classList.add("net-hit-right");
+    else goalMouth.classList.add("net-hit-centre");
+    if (target.y < .34) goalMouth.classList.add("net-hit-high");
+    if (target.y > .7) goalMouth.classList.add("net-hit-low");
+    window.setTimeout(() => goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre"), reducedMotion() ? 220 : 620 * strength);
+  }
+
+  function frameReaction(target) {
+    const part = target.y < 0 ? goalMouth.querySelector(".goal-crossbar") : target.x < 0 ? goalMouth.querySelector(".left-post") : goalMouth.querySelector(".right-post");
+    if (!part) return;
+    animateElement(part, [
+      { transform: "translate(0,0)" },
+      { transform: target.y < 0 ? "translateY(-2px)" : `translateX(${target.x < 0 ? -2 : 2}px)`, offset: .4 },
+      { transform: "translate(0,0)" },
+    ], { duration: 270, easing: "ease-in-out" });
+  }
+
+  async function animateBallPlacement(side, token) {
+    const suddenDeath = state.albionKicks >= 5 && state.palaceKicks >= 5;
+    const fullPlacement = side === "albion" && (state.albionKicks === 0 || suddenDeath);
+    if (!fullPlacement) {
+      animateElement(ball, [{ transform: "translate(-50%,-50%) scale(.94)" }, { transform: "translate(-50%,-50%) scale(1)" }], { duration: reducedMotion() ? 80 : 230 });
+      await sleep(reducedMotion() ? 70 : 180);
+      return token === state.sequence;
+    }
+    stage.classList.add("placing-ball");
+    ball.style.left = "58%";
+    ball.style.top = "70%";
+    if (ballShadow) { ballShadow.style.left = "58%"; ballShadow.style.top = "71.2%"; }
+    taker.style.left = "59%";
+    taker.style.top = "51.5%";
+    const root = taker.querySelector(".taker-root");
+    animateElement(taker, [
+      { transform: "translate(-50%,8px) scale(.95)" },
+      { transform: "translate(-50%,-2px) scale(.98)", offset: .45 },
+      { transform: "translate(-50%,6px) scale(.96)" },
+    ], { duration: reducedMotion() ? 130 : 820 });
+    if (root) animateElement(root, [
+      { transform: "rotate(0deg) scaleY(1)" },
+      { transform: "rotate(8deg) scaleY(.78)", offset: .5 },
+      { transform: "rotate(0deg) scaleY(1)" },
+    ], { duration: reducedMotion() ? 130 : 820 });
+    animateElement(ball, [
+      { left: "58%", top: "70%", transform: "translate(-50%,-50%) scale(.8)" },
+      { left: "53%", top: "73%", transform: "translate(-50%,-50%) scale(.92)", offset: .48 },
+      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1)" },
+    ], { duration: reducedMotion() ? 130 : 760, easing: "cubic-bezier(.25,.65,.3,1)" });
+    if (ballShadow) animateElement(ballShadow, [
+      { left: "58%", top: "71.2%" },
+      { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%` },
+    ], { duration: reducedMotion() ? 130 : 760 });
+    await sleep(reducedMotion() ? 140 : 850);
+    if (token !== state.sequence) return false;
+    stage.classList.remove("placing-ball");
+    taker.style.left = "50%";
+    taker.style.top = "50.5%";
+    taker.style.transform = "translate(-50%,0)";
+    if (root) root.style.transform = "";
+    return true;
+  }
+
+  function takerReaction(scored, side = "albion") {
+    const leftArm = taker.querySelector(".taker-arm-left");
+    const rightArm = taker.querySelector(".taker-arm-right");
+    const duration = reducedMotion() ? 140 : 760;
+    if (scored) {
+      stage.classList.add("goal-celebration");
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-112deg)" }], { duration: duration * .65 });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(112deg)" }], { duration: duration * .65 });
+      animateElement(taker, [
+        { transform: taker.style.transform || "translate(-50%,0)" },
+        { transform: `translate(calc(-50% + ${side === "albion" ? -35 : 35}px),-58px) scale(.92)`, offset: .62 },
+        { transform: `translate(calc(-50% + ${side === "albion" ? -52 : 52}px),-55px) scale(.91)` },
+      ], { duration });
+    } else {
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-96deg)" }], { duration: duration * .7 });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(96deg)" }], { duration: duration * .7 });
+      animateElement(taker, [{ transform: taker.style.transform || "translate(-50%,0)" }, { transform: "translate(-50%,-35px) rotate(3deg) scale(.93)" }], { duration });
+    }
+  }
+
+  function keeperCelebration() {
+    stage.classList.add("save-celebration");
+    const leftArm = keeper.querySelector(".keeper-arm-left");
+    const rightArm = keeper.querySelector(".keeper-arm-right");
+    window.setTimeout(() => {
+      positionKeeperOnLine();
+      animateElement(keeper, [
+        { transform: "translateX(-50%) translateY(8px) scale(.98)" },
+        { transform: "translateX(-50%) translateY(-10px) scale(1.02)" },
+        { transform: "translateX(-50%) translateY(0) scale(1)" },
+      ], { duration: reducedMotion() ? 150 : 620 });
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(-50deg)" }, { transform: "rotate(-115deg)" }, { transform: "rotate(-82deg)" }], { duration: reducedMotion() ? 150 : 620 });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(50deg)" }, { transform: "rotate(115deg)" }, { transform: "rotate(82deg)" }], { duration: reducedMotion() ? 150 : 620 });
+    }, reducedMotion() ? 80 : 260);
+  }
+
+  function victoryCelebration(albionWon) {
+    stage.classList.add(albionWon ? "shootout-win-albion" : "shootout-win-palace");
+    sound("finalWhistle");
+    if (albionWon) {
+      if (celebrationPlayers) celebrationPlayers.hidden = false;
+      if (confetti && !reducedMotion()) confetti.hidden = false;
+      sound("win");
+      window.setTimeout(() => { if (confetti) confetti.hidden = true; }, 2300);
+    } else {
+      sound("palaceCheer");
+    }
   }
 
   async function keeperRoutine(kind, token) {
@@ -446,29 +688,37 @@
     const rightArm = keeper.querySelector(".keeper-arm-right");
     const leftLeg = keeper.querySelector(".keeper-leg-left");
     const rightLeg = keeper.querySelector(".keeper-leg-right");
-    const duration = reducedMotion() ? 120 : 760;
+    const duration = reducedMotion() ? 120 : 820;
 
     if (routine === "bar") {
-      const rise = Math.max(10, keeperDimensions().height * 0.16);
+      const lift = Math.max(8, keeperDimensions().height * .08);
       animateElement(keeper, [
-        { transform: "translateX(-50%) translateY(0)" },
-        { transform: `translateX(-50%) translateY(${-rise}px)`, offset: .58 },
-        { transform: "translateX(-50%) translateY(0)" },
+        { transform: "translateX(-50%) translateY(0) scaleY(1)" },
+        { transform: `translateX(-50%) translateY(${-lift}px) scaleY(1.035)`, offset: .56 },
+        { transform: "translateX(-50%) translateY(0) scaleY(1)" },
       ], { duration, easing: "cubic-bezier(.2,.72,.3,1)" });
-      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-70deg)", offset: .55 }, { transform: "rotate(0deg)" }], { duration });
+      if (rightArm) animateElement(rightArm, [
+        { transform: "rotate(0deg)" },
+        { transform: "rotate(148deg)", offset: .55 },
+        { transform: "rotate(0deg)" },
+      ], { duration });
       const bar = goalMouth.querySelector(".goal-crossbar");
-      if (bar) animateElement(bar, [{ transform: "translateY(0)" }, { transform: "translateY(-1px)", offset: .58 }, { transform: "translateY(0)" }], { duration });
+      if (bar) animateElement(bar, [{ filter: "brightness(1)" }, { filter: "brightness(1.35)", offset: .56 }, { filter: "brightness(1)" }], { duration });
     } else if (routine === "point") {
       const pointLeft = (state.albionKicks + state.palaceKicks) % 2 === 0;
       const arm = pointLeft ? leftArm : rightArm;
-      if (arm) animateElement(arm, [{ transform: "rotate(0deg)" }, { transform: `rotate(${pointLeft ? -10 : 10}deg) scaleX(1.08)`, offset: .42 }, { transform: "rotate(0deg)" }], { duration });
-      animateElement(keeper, [{ transform: "translateX(-50%)" }, { transform: `translateX(calc(-50% + ${pointLeft ? -9 : 9}px))`, offset: .42 }, { transform: "translateX(-50%)" }], { duration });
+      if (arm) animateElement(arm, [
+        { transform: "rotate(0deg)" },
+        { transform: `rotate(${pointLeft ? -54 : 54}deg)`, offset: .42 },
+        { transform: "rotate(0deg)" },
+      ], { duration });
+      animateElement(keeper, [{ transform: "translateX(-50%)" }, { transform: `translateX(calc(-50% + ${pointLeft ? -8 : 8}px))`, offset: .42 }, { transform: "translateX(-50%)" }], { duration });
     } else if (routine === "gloves") {
-      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-112deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
-      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(112deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
-      window.setTimeout(() => sound("gloves"), reducedMotion() ? 40 : 330);
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-82deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(82deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
+      window.setTimeout(() => sound("gloves"), reducedMotion() ? 40 : 360);
     } else {
-      if (body) animateElement(body, [{ transform: "translateY(0)" }, { transform: "translateY(-4px)", offset: .28 }, { transform: "translateY(0)", offset: .55 }, { transform: "translateY(-3px)", offset: .75 }, { transform: "translateY(0)" }], { duration });
+      if (body) animateElement(body, [{ transform: "translateY(0) scaleY(1)" }, { transform: "translateY(-3px) scaleY(1.02)", offset: .28 }, { transform: "translateY(0) scaleY(.99)", offset: .55 }, { transform: "translateY(-2px) scaleY(1.01)", offset: .75 }, { transform: "translateY(0) scaleY(1)" }], { duration });
       if (leftLeg) animateElement(leftLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(5deg)" }, { transform: "rotate(0deg)" }], { duration });
       if (rightLeg) animateElement(rightLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(-5deg)" }, { transform: "rotate(0deg)" }], { duration });
     }
@@ -482,14 +732,16 @@
   async function refereeCheck(token) {
     const rightArm = referee.querySelector(".referee-arm-right");
     const leftArm = referee.querySelector(".referee-arm-left");
-    const duration = reducedMotion() ? 120 : 720;
+    const head = referee.querySelector(".referee-head-group");
+    const duration = reducedMotion() ? 120 : 760;
     animateElement(referee, [
-      { transform: "translate(-50%,0)" },
-      { transform: "translate(-58%,-4px)", offset: .45 },
-      { transform: "translate(-50%,0)" },
+      { transform: "translate(-50%,0) rotate(0deg)" },
+      { transform: "translate(-62%,-3px) rotate(-2deg)", offset: .38 },
+      { transform: "translate(-48%,0) rotate(1deg)" },
     ], { duration });
-    if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-48deg)", offset: .42 }, { transform: "rotate(0deg)" }], { duration });
-    if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-68deg)", offset: .68 }, { transform: "rotate(0deg)" }], { duration });
+    if (head) animateElement(head, [{ transform: "rotate(0deg)" }, { transform: "rotate(-8deg)", offset: .35 }, { transform: "rotate(7deg)", offset: .7 }, { transform: "rotate(0deg)" }], { duration });
+    if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-42deg)", offset: .38 }, { transform: "rotate(0deg)" }], { duration });
+    if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-72deg)", offset: .72 }, { transform: "rotate(-48deg)" }], { duration });
     await sleep(duration);
     return token === state.sequence;
   }
@@ -497,23 +749,27 @@
   function refereeSignal(scored) {
     const rightArm = referee.querySelector(".referee-arm-right");
     const leftArm = referee.querySelector(".referee-arm-left");
-    const duration = reducedMotion() ? 120 : 620;
+    const head = referee.querySelector(".referee-head-group");
+    const duration = reducedMotion() ? 120 : 650;
+    if (head) animateElement(head, [{ transform: "rotate(0deg)" }, { transform: "rotate(-7deg)" }, { transform: "rotate(0deg)" }], { duration });
     if (scored) {
-      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-78deg)" }, { transform: "rotate(-58deg)" }], { duration });
-      animateElement(referee, [{ transform: "translate(-50%,0)" }, { transform: "translate(-62%,-2px)" }], { duration });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(-48deg)" }, { transform: "rotate(34deg)" }, { transform: "rotate(18deg)" }], { duration });
+      animateElement(referee, [{ transform: "translate(-48%,0)" }, { transform: "translate(-64%,-1px)" }], { duration });
     } else {
-      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-52deg)" }, { transform: "rotate(0deg)" }], { duration });
-      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(52deg)" }, { transform: "rotate(0deg)" }], { duration });
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-58deg)" }, { transform: "rotate(-24deg)" }], { duration });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(-48deg)" }, { transform: "rotate(46deg)" }, { transform: "rotate(16deg)" }], { duration });
     }
   }
 
   async function preKickCeremony(side, token) {
     crowdReaction("crowd-hush");
-    setStatus("Referee checks the penalty", side === "albion" ? "The Palace goalkeeper sets himself on the line." : "Verbruggen checks the bar and settles on the goal line.");
+    setStatus("The ball is set", side === "albion" ? "The referee checks the spot and the Palace goalkeeper." : "Verbruggen checks the frame and settles on the goal line.");
+    if (!(await animateBallPlacement(side, token))) return false;
+    setStatus("Referee checks the penalty", side === "albion" ? "The Palace goalkeeper stays on the line." : "Verbruggen completes his routine and faces the taker.");
     const ok = await Promise.all([keeperRoutine(side, token), refereeCheck(token)]);
     if (token !== state.sequence || ok.includes(false)) return false;
     sound("whistle");
-    await sleep(reducedMotion() ? 70 : 170);
+    await sleep(reducedMotion() ? 70 : 180);
     return token === state.sequence;
   }
 
@@ -540,6 +796,8 @@
     state.reactionOpen = false;
     readyPanel.hidden = true;
     panenka.disabled = true;
+    panenka.closest("label")?.removeAttribute("hidden");
+    difficulty.disabled = state.albionKicks + state.palaceKicks > 0;
     const player = albionTakers[state.albionKicks % albionTakers.length];
     $("penaltyTakerName").textContent = player.name;
     $("penaltyShirt").textContent = String(player.number);
@@ -569,13 +827,15 @@
     state.reactionOpen = false;
     readyPanel.hidden = false;
     panenka.disabled = true;
+    panenka.closest("label")?.setAttribute("hidden", "");
+    difficulty.disabled = true;
     const player = palaceTakers[state.palaceKicks % palaceTakers.length];
     $("penaltyTakerName").textContent = player.name;
     $("penaltyShirt").textContent = String((state.palaceKicks % 5) + 7);
     $("turnBadge").textContent = "PALACE PENALTY · YOU ARE VERBRUGGEN";
     $("turnBadge").className = "turn-badge palace-turn";
     $("stageInstruction").textContent = "Press Ready, then read the run-up";
-    stage.setAttribute("aria-label", "Palace penalty. Press Ready, read the run-up, then click or tap inside the goal as the taker plants his foot.");
+    stage.setAttribute("aria-label", "Palace penalty. Press Ready, read the run-up, then move the mouse, swipe, click or tap towards the shot.");
     setStatus("Your turn in goal", "Press Ready when set. You may move as the taker plants his standing foot.");
     readyButton.focus({ preventScroll: true });
     renderScore();
@@ -613,29 +873,30 @@
     if (isPanenka) state.panenkaAttempts += 1;
     setStatus(`${player.name} begins the run-up`, isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact.");
     const run = animateRunUp(false, player.foot, aim, player.style);
-    await sleep(reducedMotion() ? 100 : Math.max(370, run.duration - 130));
+    await sleep(reducedMotion() ? 100 : Math.max(390, run.duration - 130));
     if (token !== state.sequence) return;
 
-    const edge = Math.max(Math.abs(aim.x - 0.5), Math.abs(aim.y - 0.5));
-    const spread = settings.shotSpread * (1 + edge * 1.3);
+    const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));
+    const spread = settings.shotSpread * (1 + edge * 1.25);
     const resolved = isPanenka
-      ? { x: clamp(0.5 + gaussian() * 0.025, 0.43, 0.57), y: clamp(0.61 + gaussian() * 0.025, 0.52, 0.68) }
+      ? { x: clamp(.5 + gaussian() * .024, .43, .57), y: clamp(.61 + gaussian() * .024, .52, .68) }
       : { x: aim.x + gaussian() * spread, y: aim.y + gaussian() * spread };
     const frameResult = classifyFrame(resolved);
     const keeperGuess = {
-      x: clamp(resolved.x + gaussian() * settings.keeperNoise, 0.04, 0.96),
-      y: clamp(resolved.y + gaussian() * settings.keeperNoise * 0.78, 0.06, 0.94),
+      x: clamp(resolved.x + gaussian() * settings.keeperNoise, .04, .96),
+      y: clamp(resolved.y + gaussian() * settings.keeperNoise * .78, .06, .94),
     };
-    if (isPanenka && Math.random() < 0.76) keeperGuess.x = Math.random() < 0.5 ? 0.12 : 0.88;
-    const distance = Math.hypot(resolved.x - keeperGuess.x, (resolved.y - keeperGuess.y) * 0.88);
-    const centralPenalty = Math.abs(resolved.x - 0.5) < 0.12 && resolved.y > 0.32;
-    const saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? 0.055 : 0);
+    if (isPanenka && Math.random() < .76) keeperGuess.x = Math.random() < .5 ? .12 : .88;
+    const distance = Math.hypot(resolved.x - keeperGuess.x, (resolved.y - keeperGuess.y) * .88);
+    const centralPenalty = Math.abs(resolved.x - .5) < .12 && resolved.y > .32;
+    const saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? .05 : 0);
     const scored = !frameResult && !saved;
 
-    animateKeeperDive(keeperGuess, settings.flight * 0.82, saved);
-    const ballAnimation = animateBall(resolved, settings.flight, saved, Boolean(frameResult));
+    animateKeeperDive(keeperGuess, settings.flight * .9, saved);
+    const ballAnimation = animateBall(resolved, settings.flight, saved, Boolean(frameResult), isPanenka ? "panenka" : "driven");
     await ballAnimation?.finished.catch(() => {});
     if (saved) await animateDeflection(resolved, distance < settings.keeperReach * .48 ? "CATCH" : "PARRIED")?.finished.catch(() => {});
+    if (frameResult === "woodwork") frameReaction(resolved);
 
     state.albionKicks += 1;
     if (scored) state.albionGoals += 1;
@@ -645,32 +906,40 @@
     refereeSignal(scored);
 
     if (scored) {
-      goalMouth.classList.add("net-hit");
-      crowdReaction("crowd-albion-cheer");
+      netReaction(resolved, isPanenka ? .82 : 1);
+      crowdReaction("crowd-albion-cheer", 1750);
+      takerReaction(true, "albion");
       showDecision(isPanenka ? "PANENKA!" : "GOAL!", "goal");
-      setStatus("Goal for Brighton", isPanenka ? "The keeper commits and the chip drops centrally." : "Cleanly placed beyond the goalkeeper.");
-      sound("goal"); sound("crowd");
+      $("stageInstruction").textContent = "Goal for Brighton";
+      setStatus("Goal for Brighton", isPanenka ? "The keeper commits and the chip drops centrally." : resolved.x < .3 || resolved.x > .7 ? "Driven into the side netting." : "Placed beyond the goalkeeper.");
+      sound("goal"); sound("albionCheer");
     } else if (saved) {
       crowdReaction("crowd-palace-cheer");
+      takerReaction(false, "albion");
       showDecision("SAVED!", "save");
+      $("stageInstruction").textContent = "Saved by the goalkeeper";
       setStatus("Palace save", "The goalkeeper reaches the shot and keeps it out.");
-      sound("save");
+      sound("save"); sound("palaceCheer");
     } else if (frameResult === "woodwork") {
       crowdReaction("crowd-gasp");
+      takerReaction(false, "albion");
       showDecision("OFF THE FRAME!", "miss");
+      $("stageInstruction").textContent = "Off the frame";
       setStatus("So close", "The ambitious placement catches the post or crossbar.");
-      sound("post");
+      sound("post"); sound("gasp");
     } else {
       crowdReaction("crowd-gasp");
+      takerReaction(false, "albion");
       showDecision("WIDE!", "miss");
+      $("stageInstruction").textContent = "Missed";
       setStatus("Missed", "The shot drifts beyond the goal under pressure.");
-      sound("miss");
+      sound("gasp");
     }
 
     panenka.checked = false;
     renderScore();
     const outcome = resultDecision();
-    await sleep(reducedMotion() ? 350 : 1350);
+    await sleep(reducedMotion() ? 360 : 1550);
     if (outcome.finished) finishShootout(outcome.albionWon);
     else preparePalaceKick();
   }
@@ -678,17 +947,24 @@
   function randomPalaceTarget() {
     const settings = config();
     const miss = Math.random() < settings.palaceMiss;
-    const options = [
-      { x: 0.12, y: 0.17, weight: 1.1 }, { x: 0.12, y: 0.82, weight: 1.35 },
-      { x: 0.88, y: 0.17, weight: 1.1 }, { x: 0.88, y: 0.82, weight: 1.35 },
-      { x: 0.21, y: 0.51, weight: 1.1 }, { x: 0.79, y: 0.51, weight: 1.1 },
-      { x: 0.5, y: 0.58, weight: 1.25 }, { x: 0.5, y: 0.22, weight: .55 },
+    const normal = difficulty.value !== "hard";
+    const options = normal ? [
+      { x: .17, y: .28, weight: .55 }, { x: .16, y: .78, weight: 1.75 },
+      { x: .83, y: .28, weight: .55 }, { x: .84, y: .78, weight: 1.75 },
+      { x: .25, y: .54, weight: 1.6 }, { x: .75, y: .54, weight: 1.6 },
+      { x: .5, y: .64, weight: 1.85 }, { x: .5, y: .34, weight: .7 },
+    ] : [
+      { x: .1, y: .16, weight: 1.15 }, { x: .11, y: .84, weight: 1.3 },
+      { x: .9, y: .16, weight: 1.15 }, { x: .89, y: .84, weight: 1.3 },
+      { x: .2, y: .49, weight: 1.1 }, { x: .8, y: .49, weight: 1.1 },
+      { x: .5, y: .58, weight: .95 }, { x: .5, y: .21, weight: .55 },
     ];
-    const pool = options.flatMap((item) => Array(Math.round(item.weight * 4)).fill(item));
+    const pool = options.flatMap((item) => Array(Math.max(1, Math.round(item.weight * 5))).fill(item));
     const base = pool[Math.floor(Math.random() * pool.length)];
-    if (!miss) return { target: { x: clamp(base.x + gaussian() * 0.032, 0.025, 0.975), y: clamp(base.y + gaussian() * 0.032, 0.035, 0.965) }, miss: false };
-    if (Math.random() < 0.58) return { target: { x: Math.random() < 0.5 ? -0.062 : 1.062, y: clamp(base.y, 0.08, 0.92) }, miss: true };
-    return { target: { x: clamp(base.x, 0.08, 0.92), y: -0.065 }, miss: true };
+    const spread = normal ? .027 : .032;
+    if (!miss) return { target: { x: clamp(base.x + gaussian() * spread, .025, .975), y: clamp(base.y + gaussian() * spread, .035, .965) }, miss: false };
+    if (Math.random() < .58) return { target: { x: Math.random() < .5 ? -.062 : 1.062, y: clamp(base.y, .08, .92) }, miss: true };
+    return { target: { x: clamp(base.x, .08, .92), y: -.065 }, miss: true };
   }
 
   async function beginPalacePenalty() {
@@ -700,6 +976,9 @@
     state.locked = true;
     state.userDive = null;
     state.reactionOpen = false;
+    state.pointerStart = null;
+    state.pointerLast = null;
+    state.activePointerId = null;
     stage.classList.remove("is-waiting");
     stage.classList.add("is-locked", "palace-kick");
     const player = palaceTakers[state.palaceKicks % palaceTakers.length];
@@ -711,7 +990,7 @@
     const settings = config();
     const runDuration = Math.round(player.delay * settings.runUpScale);
     state.phase = "palace-run";
-    setStatus("Palace begin the run-up", "Read the approach and standing foot. The save window opens just before contact.");
+    setStatus("Palace begin the run-up", "Read the approach and standing foot. The save window opens before contact.");
     const run = animateRunUp(true, player.foot, state.palaceTarget, "direct");
     const actualRun = Math.max(runDuration, run.duration);
     const waitBeforeWindow = Math.max(80, actualRun - settings.preContactWindow);
@@ -720,18 +999,25 @@
 
     state.phase = "save";
     state.reactionOpen = true;
+    const activeGoalRect = goalMouth.getBoundingClientRect();
+    state.pointerStart = {
+      clientX: activeGoalRect.left + activeGoalRect.width * .5,
+      clientY: activeGoalRect.top + activeGoalRect.height * .58,
+      time: performance.now(),
+    };
+    state.pointerLast = { ...state.pointerStart };
     state.contactAt = performance.now() + (reducedMotion() ? 30 : settings.preContactWindow);
     stage.classList.remove("is-locked");
     stage.classList.add("is-save-window");
-    $("stageInstruction").textContent = "Click or tap where Verbruggen should reach";
-    setStatus("Read the final stride", "You can commit as the standing foot plants, or react immediately after contact.");
+    $("stageInstruction").textContent = "Move, swipe, click or tap towards the shot";
+    setStatus("Read the final stride", "Commit as the standing foot plants, or react immediately after contact.");
 
     await sleep(reducedMotion() ? 30 : settings.preContactWindow);
     if (token !== state.sequence) return;
     cue.hidden = false;
-    setStatus("REACT!", "Click anywhere in the goal to choose Verbruggen’s reach.");
-    window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 360);
-    const ballAnimation = animateBall(state.palaceTarget, settings.flight, false, state.palaceMiss);
+    setStatus("REACT!", "Move or swipe towards the shot. Normal mode strongly assists the correct side.");
+    window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 350);
+    const ballAnimation = animateBall(state.palaceTarget, settings.flight, false, state.palaceMiss, "driven");
     window.clearTimeout(state.reactionTimer);
     state.reactionTimer = window.setTimeout(() => {
       state.reactionOpen = false;
@@ -748,28 +1034,34 @@
     if (!state.palaceMiss && state.userDive) {
       const timing = state.userDive.timing;
       const latePenalty = Math.max(0, timing) / settings.postContactWindow;
-      const veryEarly = Math.max(0, -timing - 120) / Math.max(1, settings.preContactWindow - 120);
-      const timingFactor = clamp(1 - latePenalty * .5 - veryEarly * .22, .54, 1.04);
+      const earlyAmount = Math.max(0, -timing) / settings.preContactWindow;
+      const timingFactor = clamp(1.08 - latePenalty * .42 - Math.max(0, earlyAmount - .78) * .28, .64, 1.1);
       let radius = settings.saveRadius * timingFactor;
-      const targetCentre = Math.abs(state.palaceTarget.x - .5) < .16;
-      const diveCentre = Math.abs(state.userDive.x - .5) < .18;
-      if (targetCentre && diveCentre) radius += .065;
+      const targetCentre = Math.abs(state.palaceTarget.x - .5) < .17;
+      const diveCentre = Math.abs(state.userDive.x - .5) < .2;
+      const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
+      const diveSide = state.userDive.x < .4 ? -1 : state.userDive.x > .6 ? 1 : 0;
+      const sameSide = targetSide === diveSide;
+      if (sameSide) radius += settings.sameSideBonus;
+      if (targetCentre && diveCentre) radius += .075;
       const distance = Math.hypot(
         state.palaceTarget.x - state.userDive.x,
-        (state.palaceTarget.y - state.userDive.y) * 0.86,
+        (state.palaceTarget.y - state.userDive.y) * .82,
       );
-      const gloveEdge = distance <= radius * 1.12 && Math.abs(timing) < settings.postContactWindow * .85;
-      saved = distance <= radius || gloveEdge;
+      const gloveEdge = sameSide && distance <= radius * 1.22 && Math.abs(timing) < settings.postContactWindow * .94;
+      const bodyBlock = targetCentre && diveCentre && Math.abs(state.palaceTarget.y - state.userDive.y) < .4;
+      saved = distance <= radius || gloveEdge || bodyBlock;
       if (saved) {
-        if (distance < radius * .43 && timing < 230) saveType = "CATCH";
-        else if (distance > radius * .84 || gloveEdge) saveType = "FINGERTIP SAVE";
-        else if (targetCentre && diveCentre) saveType = "BLOCKED";
+        if ((distance < radius * .4 || bodyBlock) && timing < 250) saveType = targetCentre ? "BLOCKED" : "CATCH";
+        else if (distance > radius * .86 || gloveEdge) saveType = "FINGERTIP SAVE";
+        else if (state.palaceTarget.y > .66) saveType = "LEG SAVE";
         else saveType = "PARRIED";
       }
     }
 
     const scored = !state.palaceMiss && !saved;
     if (saved) await animateDeflection(state.palaceTarget, saveType)?.finished.catch(() => {});
+    if (state.palaceMiss) frameReaction(state.palaceTarget);
     state.palaceKicks += 1;
     if (scored) state.palaceGoals += 1;
     if (saved) {
@@ -781,40 +1073,58 @@
     refereeSignal(scored);
 
     if (saved) {
-      crowdReaction("crowd-albion-cheer");
+      crowdReaction("crowd-albion-cheer", 1850);
+      keeperCelebration();
+      takerReaction(false, "palace");
       showDecision(saveType, "save");
       const timingText = state.userDive.timing < 0 ? "well-timed anticipation" : `${Math.round(state.userDive.timing)} ms reaction`;
+      $("stageInstruction").textContent = "Saved by Verbruggen";
       setStatus("Verbruggen saves", `${timingText} · ${saveType.toLowerCase()}.`);
-      sound("save"); sound("crowd");
+      sound("save"); sound("albionCheer");
     } else if (state.palaceMiss) {
       crowdReaction("crowd-albion-cheer");
+      takerReaction(false, "palace");
       showDecision("PALACE MISS!", "miss");
+      $("stageInstruction").textContent = "Palace miss";
       setStatus("It stays out", "The Palace taker fails to find the target.");
-      sound("post");
+      sound("post"); sound("albionCheer");
     } else {
-      goalMouth.classList.add("net-hit");
+      netReaction(state.palaceTarget);
       crowdReaction("crowd-palace-cheer");
+      takerReaction(true, "palace");
       showDecision("PALACE SCORE", "goal");
-      setStatus("Palace score", state.userDive ? "Verbruggen cannot quite reach it." : "No dive was made in the available window.");
-      sound("goal");
+      $("stageInstruction").textContent = "Palace score";
+      setStatus("Palace score", state.userDive ? "Verbruggen stretches but cannot quite reach it." : "No dive was made in the available window.");
+      sound("goal"); sound("palaceCheer");
     }
 
     renderScore();
     const outcome = resultDecision();
-    await sleep(reducedMotion() ? 350 : 1400);
+    await sleep(reducedMotion() ? 370 : 1600);
     if (outcome.finished) finishShootout(outcome.albionWon);
     else prepareAlbionKick();
   }
 
-  function takeUserDive(point) {
+  function takeUserDive(point, source = "direct") {
     if (state.phase !== "save" || !state.reactionOpen || state.userDive) return;
     const timing = performance.now() - state.contactAt;
-    state.userDive = { x: point.x, y: point.y, timing };
+    let assisted = assistedDivePoint(point);
+    if (difficulty.value !== "hard" && state.palaceTarget) {
+      const chosenSide = point.x < .4 ? -1 : point.x > .6 ? 1 : 0;
+      const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
+      if (chosenSide === targetSide) {
+        assisted = {
+          x: clamp(assisted.x + (state.palaceTarget.x - assisted.x) * .34, .015, .985),
+          y: clamp(assisted.y + (state.palaceTarget.y - assisted.y) * .28, .02, .98),
+        };
+      }
+    }
+    state.userDive = { x: assisted.x, y: assisted.y, rawX: point.x, rawY: point.y, timing, source };
     state.reactionTimes.push(Math.max(0, timing));
     state.reactionOpen = false;
     stage.classList.remove("is-save-window");
-    animateKeeperDive(point, Math.max(360, config().flight * 0.78), true);
-    // The physical launch is the confirmation; no extra registration message is shown.
+    const duration = Math.max(610, config().flight * .94 + Math.max(0, -timing) * .72);
+    animateKeeperDive(assisted, duration, true);
   }
 
   function finishShootout(albionWon) {
@@ -822,7 +1132,8 @@
     state.locked = true;
     state.phase = "finished";
     ++state.sequence;
-    resetVisuals();
+    cancelAnimations();
+    stage.classList.remove("is-aiming", "is-save-window", "is-waiting");
     stage.classList.add("is-locked");
     readyPanel.hidden = true;
     panenka.disabled = true;
@@ -832,8 +1143,11 @@
     $("stageInstruction").textContent = "Full time";
     showDecision(albionWon ? "SEAGULLS WIN!" : "PALACE WIN", albionWon ? "goal" : "miss");
     refereeSignal(albionWon);
-    crowdReaction(albionWon ? "crowd-albion-cheer" : "crowd-palace-cheer");
-    setStatus(albionWon ? "Brighton win the shoot-out" : "Palace take the shoot-out", albionWon ? "Derby nerve held from the spot." : "Restart and try to turn it around.");
+    crowdReaction(albionWon ? "crowd-albion-cheer" : "crowd-palace-cheer", 2600);
+    victoryCelebration(albionWon);
+    if (albionWon && state.userSaves && state.palaceResults.at(-1)?.result === "saved") keeperCelebration();
+    else if (albionWon) takerReaction(true, "albion");
+    setStatus(albionWon ? "Brighton win the shoot-out" : "Palace take the shoot-out", albionWon ? "The players and home end celebrate the derby win." : "Restart and try to turn it around.");
 
     const saveRate = state.palaceKicks ? Math.round((state.userSaves / state.palaceKicks) * 100) : 0;
     const conversion = state.albionKicks ? Math.round((state.albionGoals / state.albionKicks) * 100) : 0;
@@ -862,7 +1176,6 @@
     renderRecord();
     shareButton.hidden = false;
     shareButton.dataset.shareText = `Brighton ${state.albionGoals}–${state.palaceGoals} Palace. I made ${state.userSaves} ${state.userSaves === 1 ? "save" : "saves"} as Bart Verbruggen in the Albion Fan Hub shoot-out.`;
-    if (albionWon) sound("goal");
   }
 
   function resetGame() {
@@ -890,19 +1203,65 @@
       palaceTarget: null,
       palaceMiss: false,
       userDive: null,
+      pointerStart: null,
+      pointerLast: null,
+      activePointerId: null,
     });
     summary.hidden = true;
     summary.innerHTML = "";
     shareButton.hidden = true;
+    if (celebrationPlayers) celebrationPlayers.hidden = true;
+    if (confetti) confetti.hidden = true;
+    resetCrowd();
     panenka.checked = false;
+    difficulty.disabled = false;
+    panenka.closest("label")?.removeAttribute("hidden");
     prepareAlbionKick();
+  }
+
+  function pointerDistance(a, b) {
+    if (!a || !b) return 0;
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
+
+  function beginPointerTracking(event) {
+    state.pointerStart = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
+    state.pointerLast = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
+    state.activePointerId = event.pointerId;
+    try { stage.setPointerCapture(event.pointerId); } catch {}
+  }
+
+  function clearPointerTracking() {
+    state.pointerStart = null;
+    state.pointerLast = null;
+    state.activePointerId = null;
   }
 
   stage.addEventListener("pointermove", (event) => {
     if (state.phase !== "albion-aim" && state.phase !== "save") return;
     const point = eventGoalPoint(event);
-    if (point.inside && state.phase === "albion-aim") setReticle(point.x, point.y);
-  });
+    if (point.inside && state.phase === "albion-aim") {
+      setReticle(point.x, point.y);
+      return;
+    }
+    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !point.inside) return;
+
+    const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
+    if (!state.pointerStart) {
+      state.pointerStart = nowPoint;
+      state.pointerLast = nowPoint;
+      return;
+    }
+    const fromStart = pointerDistance(state.pointerStart, nowPoint);
+    const fromLast = pointerDistance(state.pointerLast, nowPoint);
+    state.pointerLast = nowPoint;
+    const threshold = event.pointerType === "touch" ? Math.max(16, stage.clientWidth * .022) : Math.max(12, stage.clientWidth * .016);
+    if (fromStart >= threshold || fromLast >= threshold * .72) {
+      event.preventDefault();
+      takeUserDive(point, event.pointerType === "touch" ? "swipe" : "mouse-flick");
+      clearPointerTracking();
+    }
+  }, { passive: false });
 
   stage.addEventListener("pointerdown", (event) => {
     const point = eventGoalPoint(event);
@@ -912,9 +1271,62 @@
       setReticle(point.x, point.y);
       takeAlbionPenalty(point);
     } else if (state.phase === "save") {
-      takeUserDive(point);
+      if (event.pointerType === "touch" || event.pointerType === "pen") beginPointerTracking(event);
+      else takeUserDive(point, "click");
     }
+  }, { passive: false });
+
+  stage.addEventListener("pointerup", (event) => {
+    if (state.phase === "save" && state.reactionOpen && !state.userDive) {
+      const point = eventGoalPoint(event);
+      if (point.inside) takeUserDive(point, pointerDistance(state.pointerStart, event) > 10 ? "swipe" : "tap");
+    }
+    clearPointerTracking();
+  }, { passive: false });
+
+  stage.addEventListener("pointercancel", clearPointerTracking);
+  stage.addEventListener("pointerleave", (event) => {
+    if (event.pointerType === "mouse" && state.phase !== "save") clearPointerTracking();
   });
+
+  let fallbackTouchStart = null;
+  stage.addEventListener("touchstart", (event) => {
+    if (state.phase !== "save" || !state.reactionOpen || state.userDive) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+    const point = eventGoalPoint(touch);
+    if (!point.inside) return;
+    fallbackTouchStart = { clientX: touch.clientX, clientY: touch.clientY, time: performance.now() };
+    event.preventDefault();
+  }, { passive: false });
+
+  stage.addEventListener("touchmove", (event) => {
+    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !fallbackTouchStart) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+    const point = eventGoalPoint(touch);
+    const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
+    if (point.inside && distance >= Math.max(14, stage.clientWidth * .02)) {
+      event.preventDefault();
+      takeUserDive(point, "swipe");
+      fallbackTouchStart = null;
+      clearPointerTracking();
+    }
+  }, { passive: false });
+
+  stage.addEventListener("touchend", (event) => {
+    if (state.phase === "save" && state.reactionOpen && !state.userDive) {
+      const touch = event.changedTouches[0];
+      if (touch) {
+        const point = eventGoalPoint(touch);
+        if (point.inside) takeUserDive(point, "tap");
+      }
+    }
+    fallbackTouchStart = null;
+    clearPointerTracking();
+  }, { passive: false });
+
+  stage.addEventListener("touchcancel", () => { fallbackTouchStart = null; clearPointerTracking(); });
 
   stage.addEventListener("keydown", (event) => {
     const step = event.shiftKey ? 0.08 : 0.035;
@@ -925,7 +1337,7 @@
     else if (event.key === "ArrowDown") setReticle(state.aim.x, state.aim.y + step);
     else if (event.key === "Enter" || event.key === " ") {
       if (state.phase === "albion-aim") takeAlbionPenalty({ ...state.aim });
-      else if (state.phase === "save") takeUserDive({ ...state.aim });
+      else if (state.phase === "save") takeUserDive({ ...state.aim }, "keyboard");
       else if (state.phase === "palace-ready") beginPalacePenalty();
     } else if (event.key.toLowerCase() === "p" && state.phase === "albion-aim") panenka.checked = !panenka.checked;
     else handled = false;
