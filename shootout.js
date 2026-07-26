@@ -1,4 +1,4 @@
-// Albion Fan Hub r27 clean production shoot-out
+// Albion Fan Hub r28 clean production shoot-out
 (() => {
   "use strict";
 
@@ -59,7 +59,7 @@
   const GAME = Object.freeze({
     shotSpread: 0.0022,
     keeperNoise: 0.39,
-    keeperReach: 0.115,
+    keeperReach: 0.109,
     palaceMiss: 0.18,
     saveRadius: 0.66,
     preContactWindow: 720,
@@ -69,9 +69,9 @@
     cueStrength: 0.78,
     diveAssist: 0.88,
     sameSideBonus: 0.29,
-    scoringDifficultyIncrease: 0.3115,
+    scoringDifficultyIncrease: 0.205,
     contactDecisionDelay: 285,
-    edgeAccuracyPenalty: 0.008,
+    edgeAccuracyPenalty: 0.0055,
   });
 
   const albionTakers = [
@@ -1870,9 +1870,13 @@
   }
 
   async function keeperRoutine(kind, token) {
-    if (kind === "palace" && nextBottleRoutine()) return keeperBottleRoutine(token);
-    // On other Palace kicks Verbruggen touches the frame in a shuffled two-out-of-three pattern.
-    if (kind === "palace" && nextCrossbarRoutine()) return keeperBarTouchRoutine(kind, token);
+    if (kind !== "palace") return keeperSettleRoutine(token);
+    // r28: every Palace penalty uses the complete visible routine.
+    if (!(await keeperBottleRoutine(token))) return false;
+    if (token !== state.sequence) return false;
+    setStatus("Verbruggen checks the frame", "He returns to the line, jumps to touch the crossbar and settles before the whistle.");
+    if (!(await keeperBarTouchRoutine(kind, token))) return false;
+    if (token !== state.sequence) return false;
     return keeperSettleRoutine(token);
   }
 
@@ -1998,9 +2002,10 @@
     $("penaltyShirt").textContent = String((state.palaceKicks % 5) + 7);
     $("turnBadge").textContent = "PALACE PENALTY · YOU ARE VERBRUGGEN";
     $("turnBadge").className = "turn-badge palace-turn";
-    $("stageInstruction").textContent = "Press Ready, then read the run-up";
+    $("stageInstruction").textContent = "Press READY TO SAVE";
     stage.setAttribute("aria-label", "Palace penalty. Press Ready, read the run-up, then move the mouse, swipe, click or tap towards the shot.");
-    setStatus("Your turn in goal", "Press Ready when set. You may move as the taker plants his standing foot.");
+    setStatus("YOU ARE VERBRUGGEN", "Press READY TO SAVE. Swipe towards the shot, or stay still for a central penalty.");
+    readyButton.textContent = "READY TO SAVE";
     readyButton.focus({ preventScroll: true });
     renderScore();
   }
@@ -2065,7 +2070,7 @@
     const distance = Math.hypot(resolved.x - keeperGuess.x, (resolved.y - keeperGuess.y) * .88);
     const centralPenalty = Math.abs(resolved.x - .5) < .12 && resolved.y > .32;
     let saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? .05 : 0);
-    // r25: cumulative 31.15% keeper-read rescue, approximately 15% harder to score than r24 while preserving accurate corners.
+    // r28: reduced keeper-read rescue and reach make scoring approximately 10% easier than r27 while preserving skill-based placement.
     const extraRead = !frameResult && !saved && Math.random() < settings.scoringDifficultyIncrease;
     if (extraRead) {
       saved = true;
@@ -2438,7 +2443,8 @@
         <article><h4>Palace penalties</h4>${shotMapSvg(state.palaceShots, "Map of Palace penalties and Verbruggen dives")}<ol>${shotSequence(state.palaceShots)}</ol></article>
       </div>
       <div class="penalty-map-legend" aria-label="Penalty map legend"><span class="map-goal-dot">Goal</span><span class="map-save-dot">Saved</span><span class="map-frame-dot">Woodwork</span><span class="map-miss-dot">Miss</span><span class="map-dive-key">Keeper dive</span></div>
-      <p>${state.catches ? `${state.catches} clean ${state.catches === 1 ? "catch" : "catches"}. ` : ""}${state.fingertips ? `${state.fingertips} fingertip ${state.fingertips === 1 ? "save" : "saves"}. ` : ""}${state.panenkaAttempts ? `${state.panenkaGoals}/${state.panenkaAttempts} Panenkas scored.` : ""}</p>`;
+      <p>${state.catches ? `${state.catches} clean ${state.catches === 1 ? "catch" : "catches"}. ` : ""}${state.fingertips ? `${state.fingertips} fingertip ${state.fingertips === 1 ? "save" : "saves"}. ` : ""}${state.panenkaAttempts ? `${state.panenkaGoals}/${state.panenkaAttempts} Panenkas scored.` : ""}</p>
+      <button id="retakeShootoutFinal" class="retake-shootout-final" type="button">RETAKE SHOOT-OUT</button>`;
 
     const record = readRecord();
     record.played += 1;
@@ -2726,6 +2732,9 @@
 
   readyButton.addEventListener("click", () => { unlockAudio(); beginPalacePenalty(); });
   $("resetShootout").addEventListener("click", resetGame);
+  summary.addEventListener("click", (event) => {
+    if (event.target?.id === "retakeShootoutFinal") resetGame();
+  });
 
 
   soundButton.addEventListener("click", () => {

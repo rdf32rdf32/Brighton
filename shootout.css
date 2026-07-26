@@ -744,3 +744,47 @@
   .shootout-v17 .referee-figure{left:98%!important;top:41.5%!important;width:9.1%!important;min-width:40px!important;max-width:51px!important}
   .shootout-v17 .keeper-figure{width:11.8%!important;min-width:44px!important}
 }
+
+
+/* r28 final mobile experience: prominent actions, visible referee, subtle side netting. */
+.shootout-v17 .goal-side-net{
+  width:5.6%!important;
+  opacity:.28!important;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.34) 0 1px,transparent 1px 34%),repeating-linear-gradient(0deg,rgba(255,255,255,.3) 0 1px,transparent 1px 16%)!important;
+}
+.shootout-v17 .goal-side-left{clip-path:polygon(16% 4%,100% 10%,76% 100%,30% 100%)!important}
+.shootout-v17 .goal-side-right{clip-path:polygon(0 10%,84% 4%,70% 100%,24% 100%)!important}
+.shootout-v17 .palace-ready-panel{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:9px!important;
+  text-align:center!important;
+  padding:14px!important;
+  border:2px solid rgba(255,255,255,.82)!important;
+  box-shadow:0 8px 22px rgba(0,0,0,.25)!important;
+}
+.shootout-v17 .palace-ready-panel[hidden]{display:none!important}
+.shootout-v17 .palace-ready-panel p{font-weight:750!important;font-size:.92rem!important}
+.shootout-v17 .palace-ready-panel button{
+  width:100%!important;
+  min-height:58px!important;
+  font-size:1.05rem!important;
+  font-weight:900!important;
+  letter-spacing:.04em!important;
+}
+.shootout-v17 .retake-shootout-final{
+  display:block;width:min(100%,520px);min-height:58px;margin:18px auto 2px;border:0;border-radius:14px;
+  background:#0057a8;color:#fff;font:900 1.05rem/1 system-ui,sans-serif;letter-spacing:.035em;box-shadow:0 8px 20px rgba(0,0,0,.24)
+}
+.shootout-v17 .retake-shootout-final:focus-visible{outline:3px solid #fff;outline-offset:3px}
+@media(max-width:760px){
+  .shootout-v17 .referee-figure{left:90.5%!important;top:40.6%!important;width:8.3%!important;min-width:40px!important;max-width:55px!important;z-index:6!important}
+  .shootout-v17 .palace-ready-panel{position:relative!important;left:auto!important;right:auto!important;width:100%!important;margin:10px 0 0!important}
+  .shootout-v17 .shootout-playing .shootout-option-row{display:none!important}
+  body.shootout-playing .shootout-actions-v10{opacity:.45;pointer-events:none}
+}
+@media(max-width:480px){
+  .shootout-v17 .referee-figure{left:89.5%!important;top:41%!important;width:8.8%!important;min-width:38px!important;max-width:48px!important}
+  .shootout-v17 .goal-side-net{width:5%!important;opacity:.24!important}
+  .shootout-v17 .palace-ready-panel button{min-height:60px!important;font-size:1.08rem!important}
+}

@@ -1,5 +1,3 @@
-# Albion Fan Hub r27
+# Albion Fan Hub r28
 
-Production-ready static GitHub Pages site. Upload the files directly to the repository root.
-
-Key r24 work: true visible goalkeeper contact, improved gloves and catches, readable penalty-notes bottle with longer keeper routine, mobile fixture overlap repair, and pitch/goal polish.
+Clean GitHub Pages production release. Extract all files directly into the repository root and replace the existing files.
