@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r16" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r16" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r16" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r16" />
-    <meta name="release" content="production-r16-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r17" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r17" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r17" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r17" />
+    <meta name="release" content="production-r17-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -275,13 +275,13 @@
         <div id="quizResult" class="result" aria-live="polite"></div>
       </section>
 
-      <section class="card shootout-card shootout-v16" id="shootout">
+      <section class="card shootout-card shootout-v17" id="shootout">
         <div class="section-head shootout-intro">
           <div>
             <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
             <h2>Seagulls v Eagles</h2>
             <p class="shootout-lead">
-              Move inside the goal and click to shoot. For Palace penalties, read the run-up and move or swipe towards the shot. Every kick uses the same clear, responsive controls.
+              Drag inside the goal and release to shoot. For Palace penalties, read the run-up, then swipe, tap or move towards the shot. Staying central can stop a penalty hit straight at Verbruggen.
             </p>
           </div>
           <div class="shootout-top-controls single-control" aria-label="Penalty game sound">
@@ -441,25 +441,35 @@
                   <path class="keeper-shorts" fill="url(#keeperShortShade)" d="M68 143h44l-5 31H93l-3-17-3 17H73z" />
                   <g class="keeper-arm keeper-arm-left">
                     <path class="keeper-sleeve" fill="url(#keeperKitShade)" d="M67 77q-14 3-22 16l11 11 17-17z" />
-                    <path class="keeper-forearm" d="M49 94q-12 19-14 31l12 5 17-29z" />
-                    <ellipse class="keeper-glove" cx="38" cy="129" rx="11" ry="13" transform="rotate(18 38 129)" />
-                    <path class="glove-detail" d="M33 121l8 15M38 118l7 15" />
+                    <g class="keeper-lower-arm keeper-lower-arm-left">
+                      <path class="keeper-forearm" d="M49 94q-12 19-14 31l12 5 17-29z" />
+                      <ellipse class="keeper-glove" cx="38" cy="129" rx="11" ry="13" transform="rotate(18 38 129)" />
+                      <path class="glove-detail" d="M33 121l8 15M38 118l7 15" />
+                    </g>
                   </g>
                   <g class="keeper-arm keeper-arm-right">
                     <path class="keeper-sleeve" fill="url(#keeperKitShade)" d="M113 77q14 3 22 16l-11 11-17-17z" />
-                    <path class="keeper-forearm" d="M131 94q12 19 14 31l-12 5-17-29z" />
-                    <ellipse class="keeper-glove" cx="142" cy="129" rx="11" ry="13" transform="rotate(-18 142 129)" />
-                    <path class="glove-detail" d="M147 121l-8 15M142 118l-7 15" />
+                    <g class="keeper-lower-arm keeper-lower-arm-right">
+                      <path class="keeper-forearm" d="M131 94q12 19 14 31l-12 5-17-29z" />
+                      <ellipse class="keeper-glove" cx="142" cy="129" rx="11" ry="13" transform="rotate(-18 142 129)" />
+                      <path class="glove-detail" d="M147 121l-8 15M142 118l-7 15" />
+                    </g>
                   </g>
                   <g class="keeper-leg keeper-leg-left">
-                    <path class="keeper-thigh" d="M73 166h16l-2 28H70z" />
-                    <path class="keeper-sock" d="M70 190h17l-2 34H67z" />
-                    <path class="keeper-boot" d="M64 217h29v12H61q-3-7 3-12z" />
+                    <path class="keeper-thigh" d="M73 166h16l-1 26-17 2z" />
+                    <circle class="keeper-knee" cx="79" cy="193" r="5" />
+                    <g class="keeper-lower-leg keeper-lower-leg-left">
+                      <path class="keeper-sock" d="M70 190h17l-2 34H67z" />
+                      <path class="keeper-boot" d="M64 217h29v12H61q-3-7 3-12z" />
+                    </g>
                   </g>
                   <g class="keeper-leg keeper-leg-right">
-                    <path class="keeper-thigh" d="M92 166h16l4 28H95z" />
-                    <path class="keeper-sock" d="M95 190h17l2 34H97z" />
-                    <path class="keeper-boot" d="M92 217h29q7 5 4 12H92z" />
+                    <path class="keeper-thigh" d="M92 166h16l4 26-17 2z" />
+                    <circle class="keeper-knee" cx="103" cy="193" r="5" />
+                    <g class="keeper-lower-leg keeper-lower-leg-right">
+                      <path class="keeper-sock" d="M95 190h17l2 34H97z" />
+                      <path class="keeper-boot" d="M92 217h29q7 5 4 12H92z" />
+                    </g>
                   </g>
                   <text class="keeper-back-number" x="90" y="113" text-anchor="middle">1</text>
                 </g>
@@ -484,23 +494,33 @@
                 <path class="taker-shorts" d="M61 147h48l-5 36H88l-3-19-3 19H66z" />
                 <g class="taker-arm taker-arm-left">
                   <path class="taker-sleeve" fill="url(#albionBlueShade)" d="M58 69q-15 3-22 15l11 10 17-16z" />
-                  <path class="skin" d="M40 86q-10 25-8 57l12 1 9-50z" />
-                  <circle class="skin" cx="38" cy="145" r="5" />
+                  <g class="taker-lower-arm taker-lower-arm-left">
+                    <path class="skin" d="M40 86q-10 25-8 57l12 1 9-50z" />
+                    <circle class="skin" cx="38" cy="145" r="5" />
+                  </g>
                 </g>
                 <g class="taker-arm taker-arm-right">
                   <path class="taker-sleeve" fill="url(#albionBlueShade)" d="M112 69q15 3 22 15l-11 10-17-16z" />
-                  <path class="skin" d="M130 86q10 25 8 57l-12 1-9-50z" />
-                  <circle class="skin" cx="132" cy="145" r="5" />
+                  <g class="taker-lower-arm taker-lower-arm-right">
+                    <path class="skin" d="M130 86q10 25 8 57l-12 1-9-50z" />
+                    <circle class="skin" cx="132" cy="145" r="5" />
+                  </g>
                 </g>
                 <g class="taker-leg taker-leg-left">
-                  <path class="taker-thigh" d="M67 177h18l-3 42H64z" />
-                  <path class="taker-sock" d="M64 212h18l-2 55H59z" />
-                  <path class="taker-boot" d="M55 260h32v14H52q-3-9 3-14z" />
+                  <path class="taker-thigh" d="M67 177h18l-2 39-18 3z" />
+                  <circle class="taker-knee" cx="73" cy="217" r="5.5" />
+                  <g class="taker-lower-leg taker-lower-leg-left">
+                    <path class="taker-sock" d="M64 212h18l-2 55H59z" />
+                    <path class="taker-boot" d="M55 260h32v14H52q-3-9 3-14z" />
+                  </g>
                 </g>
                 <g class="taker-leg taker-leg-right">
-                  <path class="taker-thigh" d="M87 177h18l7 42H92z" />
-                  <path class="taker-sock" d="M92 212h18l5 55H95z" />
-                  <path class="taker-boot" d="M92 260h32q8 5 5 14H92z" />
+                  <path class="taker-thigh" d="M87 177h18l7 39-18 3z" />
+                  <circle class="taker-knee" cx="103" cy="217" r="5.5" />
+                  <g class="taker-lower-leg taker-lower-leg-right">
+                    <path class="taker-sock" d="M92 212h18l5 55H95z" />
+                    <path class="taker-boot" d="M92 260h32q8 5 5 14H92z" />
+                  </g>
                 </g>
               </g>
             </svg>
@@ -522,12 +542,12 @@
             <div id="aimReticle" class="aim-reticle" aria-hidden="true"><i></i></div>
             <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">REACT!</div>
             <div id="kickDecision" class="kick-decision-v10" hidden aria-live="assertive"></div>
-            <div id="stageInstruction" class="stage-instruction">Aim and click to shoot</div>
+            <div id="stageInstruction" class="stage-instruction">Drag to aim, release to shoot</div>
           </div>
 
           <div id="shootoutStatus" class="shootout-status-v10" aria-live="polite">
             <b>Pick your spot</b>
-            <span>Move inside the goal and click once.</span>
+            <span>Drag inside the goal and release.</span>
           </div>
 
           <div id="palaceReadyPanel" class="palace-ready-panel" hidden>
@@ -540,7 +560,7 @@
               <input id="panenkaChoice" class="form-check-input" type="checkbox" />
               <span class="form-check-label">Try a Panenka on the next Albion kick</span>
             </label>
-            <span id="keyboardHint">Keyboard: arrows aim, Enter acts. Mouse movement and swipes control Verbruggen.</span>
+            <span id="keyboardHint">Desktop: move and release to shoot. Mobile: drag and release. In goal, swipe or tap; stay central for a straight penalty. Keyboard: arrows and Enter.</span>
           </div>
 
           <div id="shootoutSummary" class="shootout-summary-v10" hidden></div>
@@ -1851,11 +1871,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r16"></script>
-    <script src="quiz-data.js?v=20260726-r16"></script>
-    <script src="app.js?v=20260726-r16"></script>
-    <script src="release-fixes.js?v=20260726-r16"></script>
-    <script src="shootout.js?v=20260726-r16"></script>
-    <script src="polish.js?v=20260726-r16"></script>
+    <script src="content-data.js?v=20260726-r17"></script>
+    <script src="quiz-data.js?v=20260726-r17"></script>
+    <script src="app.js?v=20260726-r17"></script>
+    <script src="release-fixes.js?v=20260726-r17"></script>
+    <script src="shootout.js?v=20260726-r17"></script>
+    <script src="polish.js?v=20260726-r17"></script>
   </body>
 </html>

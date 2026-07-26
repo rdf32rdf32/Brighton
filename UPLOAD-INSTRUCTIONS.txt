@@ -1,1 +1,1 @@
-Upload every file in this ZIP directly to the GitHub repository root, replacing existing files. After GitHub Pages redeploys, press Ctrl+F5 once.
+Upload every file in this ZIP directly to the root of the GitHub Brighton repository. Replace the existing files when prompted. Do not upload an outer folder. Release: production r17.

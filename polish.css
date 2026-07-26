@@ -9,7 +9,7 @@ button,input,select,a{transition:filter .16s ease,transform .16s ease,box-shadow
 button:active,.cta-row a:active{transform:translateY(1px)}
 button[disabled]{cursor:not-allowed;opacity:.55;filter:none}
 .card{transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
-@media(hover:hover) and (pointer:fine){.card:not(.shootout-v16):hover{border-color:#c5d9eb;box-shadow:0 10px 27px rgba(5,55,107,.075)}}
+@media(hover:hover) and (pointer:fine){.card:not(.shootout-v17):hover{border-color:#c5d9eb;box-shadow:0 10px 27px rgba(5,55,107,.075)}}
 .card.reveal-ready{opacity:0;transform:translateY(12px)}.card.reveal-ready.in-view{opacity:1;transform:none}
 .quiz-card .button-row{min-height:44px}.quiz-card #newQuiz[hidden]{display:none}.quiz-card .quiz-question{box-shadow:0 6px 18px rgba(5,55,107,.045)}
 .quiz-card .quiz-question label{min-height:45px;display:flex;align-items:center;gap:9px;cursor:pointer}.quiz-card .quiz-question input{width:18px;height:18px;flex:0 0 auto;accent-color:#0057b8}
@@ -21,7 +21,7 @@ button[disabled]{cursor:not-allowed;opacity:.55;filter:none}
 .visually-hidden-polish{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .site-smooth-status{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;color:var(--muted)}
 .site-smooth-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#36a269}
-@media(max-width:760px){html{scroll-padding-top:68px}main>section[id]{scroll-margin-top:68px}.card{content-visibility:auto;contain-intrinsic-size:700px}.card:first-of-type,.quiz-card,.shootout-v16{content-visibility:visible}.nav-links a.active{background:#eaf4ff;color:#05376b;margin:0;padding:7px 9px}}
+@media(max-width:760px){html{scroll-padding-top:68px}main>section[id]{scroll-margin-top:68px}.card{content-visibility:auto;contain-intrinsic-size:700px}.card:first-of-type,.quiz-card,.shootout-v17{content-visibility:visible}.nav-links a.active{background:#eaf4ff;color:#05376b;margin:0;padding:7px 9px}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.card,.nav-links a,.mobile-jump-nav a,button,input,select,a,.quiz-card .quiz-progress-track i{transition:none!important}.card.reveal-ready{opacity:1;transform:none}}
 .user-reduce-motion .card,.user-reduce-motion .nav-links a,.user-reduce-motion .mobile-jump-nav a,.user-reduce-motion button,.user-reduce-motion input,.user-reduce-motion select,.user-reduce-motion a{transition:none!important}.user-reduce-motion .card.reveal-ready{opacity:1;transform:none}
 @media(max-width:760px){body.shootout-in-view .sound-toggle,body.shootout-in-view .settings-toggle{opacity:0;pointer-events:none;transform:translateY(10px)}body.shootout-in-view .back-to-top{opacity:0!important;pointer-events:none!important}}
@@ -29,7 +29,7 @@ button[disabled]{cursor:not-allowed;opacity:.55;filter:none}
 body.shootout-in-view .sound-toggle{opacity:0;pointer-events:none;transform:translateY(10px)}
 @media(min-width:761px){body.shootout-in-view .settings-toggle{opacity:.55}}
 
-/* Release 16 whole-site smoothness and interaction polish. */
+/* Release 17 whole-site smoothness and interaction polish. */
 html{scroll-behavior:smooth;scroll-padding-top:88px}
 main>section[id]{scroll-margin-top:96px}
 button,a,input,select{touch-action:manipulation}
@@ -68,7 +68,7 @@ img,svg{max-width:100%}
 body.shootout-in-view .settings-toggle,
 body.shootout-in-view .back-to-top{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
 
-/* Release 16 whole-site overlap and compactness pass. */
+/* Release 17 whole-site overlap and compactness pass. */
 body.shootout-in-view .settings-fab,body.shootout-in-view .back-to-top,body.shootout-in-view .sound-fab{opacity:.18;pointer-events:none;transform:translateY(10px)}
 #shootout .shootout-lead{max-width:760px}
 @media(max-width:760px){.matchday-quick-view{grid-template-columns:1fr 1fr}.fan-control-centre .control-centre-grid{grid-template-columns:1fr}.supporter-profile-grid{grid-template-columns:1fr 1fr}}

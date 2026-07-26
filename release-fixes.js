@@ -22,7 +22,7 @@
     const steps = [
       ["fan-dashboard", "Welcome to Albion Fan Hub", "Your quiz record, shoot-out record and saved predictions are collected here."],
       ["quiz", "Test your Albion knowledge", "Play five medium and difficult questions, one at a time."],
-      ["shootout", "Seagulls v Eagles", "Aim and click to shoot, then read the run-up and move Bart Verbruggen as the standing foot plants."],
+      ["shootout", "Seagulls v Eagles", "Drag and release to shoot, then read the run-up and move Bart Verbruggen as the standing foot plants."],
       ["fixtures", "Follow the season", "Search and filter fixtures by venue and month."],
       ["xi", "Build your Albion XI", "Choose a formation, players and set-piece takers."],
       ["story", "Explore the Albion story", "Browse the club journey, grounds, people, rivalry and memories."],

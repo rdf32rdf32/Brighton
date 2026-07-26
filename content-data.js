@@ -1,5 +1,5 @@
 window.ALBION_CONTENT = {
-  featureVersion: "16",
+  featureVersion: "17",
   lastUpdated: "23 July 2026",
   currentSeason: "2026/27",
   seasonDatabase: {

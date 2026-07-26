@@ -110,11 +110,27 @@
     pointerLast: null,
     activePointerId: null,
     pendingDive: null,
+    aimPointerActive: false,
+    aimDragMoved: false,
+    standingSaveTimer: 0,
   };
 
   let audioContext = null;
   let currentAnimations = [];
   let keeperRoutineIndex = 0;
+  let chantIndex = -1;
+  let chantStopTimer = 0;
+  let chantPrimed = false;
+  const chantTracks = [
+    "seagulls.mp3",
+    "albion-albion-albion.mp3",
+    "we-are-brighton.mp3",
+    "come-on-brighton.mp3",
+    "b-r-i-g-h-t-o-n.mp3",
+  ];
+  const chantAudio = new Audio();
+  chantAudio.preload = "auto";
+  chantAudio.volume = 0.24;
 
   function config() { return GAME; }
 
@@ -139,6 +155,49 @@
     } catch {
       state.audioUnlocked = false;
     }
+    if (!chantPrimed) {
+      chantPrimed = true;
+      chantAudio.src = chantTracks[0];
+      chantAudio.muted = true;
+      const prime = chantAudio.play();
+      prime?.then(() => {
+        chantAudio.pause();
+        chantAudio.currentTime = 0;
+        chantAudio.muted = false;
+      }).catch(() => { chantAudio.muted = false; });
+    }
+  }
+
+  function stopChant() {
+    window.clearTimeout(chantStopTimer);
+    chantAudio.pause();
+    try { chantAudio.currentTime = 0; } catch {}
+  }
+
+  function playAlbionChant(victory = false) {
+    if (!state.sound || !state.audioUnlocked) return;
+    stopChant();
+    if (victory) {
+      chantAudio.src = "sussex-by-the-sea.mp3";
+    } else {
+      let next = Math.floor(Math.random() * chantTracks.length);
+      if (chantTracks.length > 1 && next === chantIndex) next = (next + 1) % chantTracks.length;
+      chantIndex = next;
+      chantAudio.src = chantTracks[next];
+    }
+    chantAudio.volume = victory ? 0.28 : 0.23;
+    try { chantAudio.currentTime = 0; } catch {}
+    chantAudio.play()?.catch(() => {});
+    chantStopTimer = window.setTimeout(() => {
+      const fade = window.setInterval(() => {
+        chantAudio.volume = Math.max(0, chantAudio.volume - 0.04);
+        if (chantAudio.volume <= 0.01 || chantAudio.paused) {
+          window.clearInterval(fade);
+          stopChant();
+          chantAudio.volume = victory ? 0.28 : 0.23;
+        }
+      }, 90);
+    }, victory ? 5200 : 2600);
   }
 
   function tone(frequency, duration = 0.08, type = "sine", gain = 0.04, endFrequency = null) {
@@ -312,18 +371,23 @@
     reticle.style.top = `${sy * 100}%`;
   }
 
-  function eventGoalPoint(event) {
+  function eventGoalPoint(event, tolerance = 0) {
     syncGoalBox();
     const rect = stage.getBoundingClientRect();
     const sx = (event.clientX - rect.left) / rect.width;
     const sy = (event.clientY - rect.top) / rect.height;
+    const padX = goalBox.width * tolerance;
+    const padY = goalBox.height * tolerance;
     const inside =
-      sx >= goalBox.left && sx <= goalBox.left + goalBox.width &&
-      sy >= goalBox.top && sy <= goalBox.top + goalBox.height;
+      sx >= goalBox.left - padX && sx <= goalBox.left + goalBox.width + padX &&
+      sy >= goalBox.top - padY && sy <= goalBox.top + goalBox.height + padY;
     return {
       inside,
-      x: clamp((sx - goalBox.left) / goalBox.width, 0, 1),
-      y: clamp((sy - goalBox.top) / goalBox.height, 0, 1),
+      strictInside:
+        sx >= goalBox.left && sx <= goalBox.left + goalBox.width &&
+        sy >= goalBox.top && sy <= goalBox.top + goalBox.height,
+      x: clamp((sx - goalBox.left) / goalBox.width, 0.015, 0.985),
+      y: clamp((sy - goalBox.top) / goalBox.height, 0.02, 0.98),
     };
   }
 
@@ -393,10 +457,12 @@
     referee.style.top = "42.8%";
     referee.style.transform = "translate(-50%,0)";
     keeper.style.opacity = "1";
-    keeper.querySelectorAll(".keeper-arm,.keeper-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
-    taker.querySelectorAll(".taker-arm,.taker-leg,.taker-root").forEach((part) => { part.style.transform = ""; });
+    window.clearTimeout(state.standingSaveTimer);
+    state.standingSaveTimer = 0;
+    keeper.querySelectorAll(".keeper-arm,.keeper-lower-arm,.keeper-leg,.keeper-lower-leg,.keeper-body-group,.keeper-head-group").forEach((part) => { part.style.transform = ""; });
+    taker.querySelectorAll(".taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg,.taker-root").forEach((part) => { part.style.transform = ""; });
     referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root,.referee-head-group").forEach((part) => { part.style.transform = ""; });
-    stage.classList.remove("palace-kick", "is-save-window", "is-locked", "is-waiting", "is-aiming", "placing-ball");
+    stage.classList.remove("palace-kick", "is-save-window", "is-locked", "is-waiting", "is-aiming", "is-drag-aiming", "placing-ball");
     goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre");
     goalMouth.style.removeProperty("--hit-x");
     goalMouth.style.removeProperty("--hit-y");
@@ -436,6 +502,8 @@
     const root = taker.querySelector(".taker-root");
     const kickingLeg = taker.querySelector(foot === "left" ? ".taker-leg-left" : ".taker-leg-right");
     const standingLeg = taker.querySelector(foot === "left" ? ".taker-leg-right" : ".taker-leg-left");
+    const kickingLowerLeg = kickingLeg?.querySelector(".taker-lower-leg");
+    const standingLowerLeg = standingLeg?.querySelector(".taker-lower-leg");
     const standingBoot = standingLeg?.querySelector(".taker-boot");
     const balanceArm = taker.querySelector(foot === "left" ? ".taker-arm-right" : ".taker-arm-left");
     const trailingArm = taker.querySelector(foot === "left" ? ".taker-arm-left" : ".taker-arm-right");
@@ -476,6 +544,21 @@
       { transform: `rotate(${footDirection * 1.5}deg) translateY(2px) scaleY(.99)`, offset: .9 },
       { transform: `rotate(${footDirection * 5}deg) translateY(0) scaleY(1)` },
     ], { duration, easing: "cubic-bezier(.2,.58,.2,1)" });
+    if (kickingLowerLeg) animateElement(kickingLowerLeg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${footDirection * 14}deg)`, offset: .24 },
+      { transform: `rotate(${footDirection * 31}deg)`, offset: .54 },
+      { transform: `rotate(${footDirection * -24}deg)`, offset: .72 },
+      { transform: `rotate(${footDirection * 18}deg)`, offset: .88 },
+      { transform: `rotate(${footDirection * 8}deg)` },
+    ], { duration, easing: "cubic-bezier(.16,.62,.18,1)" });
+    if (standingLowerLeg) animateElement(standingLowerLeg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${footDirection * 7}deg)`, offset: .38 },
+      { transform: `rotate(${footDirection * -11}deg)`, offset: .7 },
+      { transform: `rotate(${footDirection * -16}deg)`, offset: .82 },
+      { transform: `rotate(${footDirection * -8}deg)` },
+    ], { duration, easing: "cubic-bezier(.18,.6,.2,1)" });
     if (standingBoot) animateElement(standingBoot, [
       { transform: "rotate(0deg) translate(0,0)" },
       { transform: `rotate(${footDirection * -2}deg) translate(0,0)`, offset: .62 },
@@ -502,7 +585,7 @@
     const point = stagePoint(target);
     const endScale = saved ? 0.66 : miss ? 0.54 : 0.48;
     const panenkaShot = shotType === "panenka";
-    const spin = panenkaShot ? -300 : target.x < .5 ? 560 : -560;
+    const spin = panenkaShot ? -150 : target.x < .5 ? 82 : -82;
     const midX = ballStart.x + (point.x - ballStart.x) * .52;
     const linearMidY = ballStart.y + (point.y - ballStart.y) * .52;
     const midY = panenkaShot ? linearMidY - .105 : linearMidY;
@@ -554,7 +637,57 @@
     return `${point.y < 0.48 ? "high" : "low"}-${side}`;
   }
 
+  function animateKeeperBlock(point, duration = 760) {
+    positionKeeperOnLine();
+    const targetHigh = point.y < .43;
+    const targetLow = point.y > .66;
+    const sideBias = clamp((point.x - .5) * 8, -3, 3);
+    const leftArm = keeper.querySelector(".keeper-arm-left");
+    const rightArm = keeper.querySelector(".keeper-arm-right");
+    const leftLowerArm = keeper.querySelector(".keeper-lower-arm-left");
+    const rightLowerArm = keeper.querySelector(".keeper-lower-arm-right");
+    const leftLeg = keeper.querySelector(".keeper-leg-left");
+    const rightLeg = keeper.querySelector(".keeper-leg-right");
+    const leftLowerLeg = keeper.querySelector(".keeper-lower-leg-left");
+    const rightLowerLeg = keeper.querySelector(".keeper-lower-leg-right");
+    const body = keeper.querySelector(".keeper-body-group");
+    const total = Math.max(620, duration);
+    const armAngle = targetHigh ? 74 : targetLow ? 28 : 48;
+    [leftArm, rightArm].forEach((arm, index) => arm && animateElement(arm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? armAngle : -armAngle}deg)`, offset: .48 },
+      { transform: `rotate(${index ? armAngle * .82 : -armAngle * .82}deg)` },
+    ], { duration: total, easing: "cubic-bezier(.18,.64,.2,1)" }));
+    [leftLowerArm, rightLowerArm].forEach((arm, index) => arm && animateElement(arm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? 13 : -13}deg)`, offset: .55 },
+      { transform: `rotate(${index ? 8 : -8}deg)` },
+    ], { duration: total }));
+    [leftLeg, rightLeg].forEach((leg, index) => leg && animateElement(leg, [
+      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${index ? -12 : 12}deg) translateY(${targetLow ? 5 : 2}px)`, offset: .48 },
+      { transform: `rotate(${index ? -8 : 8}deg) translateY(${targetLow ? 4 : 1}px)` },
+    ], { duration: total }));
+    [leftLowerLeg, rightLowerLeg].forEach((leg, index) => leg && animateElement(leg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? 18 : -18}deg)`, offset: .5 },
+      { transform: `rotate(${index ? 11 : -11}deg)` },
+    ], { duration: total }));
+    if (body) animateElement(body, [
+      { transform: "translate(0,0) rotate(0deg) scale(1)" },
+      { transform: `translate(${sideBias}px,${targetLow ? 7 : targetHigh ? -7 : 1}px) rotate(${sideBias * .22}deg) scale(1,.97)`, offset: .5 },
+      { transform: `translate(${sideBias * .7}px,${targetLow ? 5 : targetHigh ? -5 : 0}px) rotate(${sideBias * .16}deg) scale(1,.985)` },
+    ], { duration: total });
+    return animateElement(keeper, [
+      { transform: "translateX(-50%) translateY(0) scale(1)" },
+      { transform: `translateX(-50%) translate(${sideBias}px,${targetLow ? 5 : targetHigh ? -8 : 0}px) scale(1)`, offset: .5 },
+      { transform: `translateX(-50%) translate(${sideBias * .7}px,${targetLow ? 3 : targetHigh ? -5 : 0}px) scale(1)` },
+    ], { duration: total, easing: "cubic-bezier(.16,.62,.2,1)" });
+  }
+
   function animateKeeperDive(point, duration = 840, saved = false) {
+    const direction = point.x < .41 ? -1 : point.x > .59 ? 1 : 0;
+    if (!direction) return animateKeeperBlock(point, duration);
     positionKeeperOnLine();
     const stageWidth = stage.clientWidth;
     const stageHeight = stage.clientHeight;
@@ -563,108 +696,118 @@
     const target = stagePoint(point);
     const targetX = target.x * stageWidth;
     const targetY = target.y * stageHeight;
-    const direction = point.x < .41 ? -1 : point.x > .59 ? 1 : 0;
-    const wide = direction !== 0 && Math.abs(point.x - .5) > .23;
-    const extreme = direction !== 0 && Math.abs(point.x - .5) > .34;
+    const wide = Math.abs(point.x - .5) > .24;
+    const extreme = Math.abs(point.x - .5) > .36;
     const high = point.y < .45;
     const low = point.y > .63;
-    const gloveXRatio = direction < 0 ? 31 / 180 : direction > 0 ? 149 / 180 : .5;
-    const gloveYRatio = direction === 0 ? .51 : 124 / 250;
-    const baseGloveX = stageWidth * .5 + (gloveXRatio - .5) * keeperWidth;
+    const gloveXRatio = direction < 0 ? 31 / 180 : 149 / 180;
+    const gloveYRatio = 124 / 250;
+    const baseCentreX = stageWidth * .5;
+    const baseGloveX = baseCentreX + (gloveXRatio - .5) * keeperWidth;
     const baseGloveY = baseTop + gloveYRatio * keeperHeight;
-    const goalWidth = goalBox.width * stageWidth;
-    let dx = (targetX - baseGloveX) * (direction ? 1.22 : .48);
-    let dy = (targetY - baseGloveY) * (direction ? .96 : .62);
-    dx = clamp(dx, -goalWidth * .57, goalWidth * .57);
-    dy = clamp(dy, -keeperHeight * .78, keeperHeight * .34);
-    if (wide) dx += direction * goalWidth * .07;
-    if (extreme) dx += direction * goalWidth * .04;
-    if (high) dy -= keeperHeight * .07;
+    const goalLeft = goalBox.left * stageWidth;
+    const goalRight = (goalBox.left + goalBox.width) * stageWidth;
+    const bodyMargin = keeperWidth * .43;
+    const minDx = goalLeft + bodyMargin - baseCentreX;
+    const maxDx = goalRight - bodyMargin - baseCentreX;
+    let dx = (targetX - baseGloveX) * 1.05;
+    let dy = (targetY - baseGloveY) * .86;
+    dx = clamp(dx, minDx, maxDx);
+    dy = clamp(dy, -keeperHeight * .54, keeperHeight * .18);
+    if (high) dy = Math.max(dy - keeperHeight * .035, -keeperHeight * .56);
 
     const leftArm = keeper.querySelector(".keeper-arm-left");
     const rightArm = keeper.querySelector(".keeper-arm-right");
+    const leftLowerArm = keeper.querySelector(".keeper-lower-arm-left");
+    const rightLowerArm = keeper.querySelector(".keeper-lower-arm-right");
     const leftLeg = keeper.querySelector(".keeper-leg-left");
     const rightLeg = keeper.querySelector(".keeper-leg-right");
+    const leftLowerLeg = keeper.querySelector(".keeper-lower-leg-left");
+    const rightLowerLeg = keeper.querySelector(".keeper-lower-leg-right");
     const body = keeper.querySelector(".keeper-body-group");
     const head = keeper.querySelector(".keeper-head-group");
-    const leadingArm = direction < 0 ? leftArm : direction > 0 ? rightArm : null;
-    const trailingArm = direction < 0 ? rightArm : direction > 0 ? leftArm : null;
-    const pushLeg = direction < 0 ? rightLeg : direction > 0 ? leftLeg : null;
-    const trailLeg = direction < 0 ? leftLeg : direction > 0 ? rightLeg : null;
-    const leadAngle = direction < 0 ? -132 : 132;
-    const trailAngle = direction < 0 ? -96 : 96;
-    const bodyRotation = direction * (low ? 78 : high ? 82 : 80);
-    const landingY = dy + (low ? keeperHeight * .2 : keeperHeight * .12);
-    const extension = extreme ? 1.29 : wide || high ? 1.21 : 1.09;
-    const totalDuration = Math.max(duration, extreme ? 980 : wide ? 900 : 820);
+    const leadingArm = direction < 0 ? leftArm : rightArm;
+    const trailingArm = direction < 0 ? rightArm : leftArm;
+    const leadingLowerArm = direction < 0 ? leftLowerArm : rightLowerArm;
+    const trailingLowerArm = direction < 0 ? rightLowerArm : leftLowerArm;
+    const pushLeg = direction < 0 ? rightLeg : leftLeg;
+    const trailLeg = direction < 0 ? leftLeg : rightLeg;
+    const pushLowerLeg = direction < 0 ? rightLowerLeg : leftLowerLeg;
+    const trailLowerLeg = direction < 0 ? leftLowerLeg : rightLowerLeg;
+    const leadAngle = direction < 0 ? -122 : 122;
+    const trailAngle = direction < 0 ? -82 : 82;
+    const bodyRotation = direction * (low ? 62 : high ? 57 : 60);
+    const landingY = clamp(dy + (low ? keeperHeight * .12 : keeperHeight * .07), -keeperHeight * .5, keeperHeight * .23);
+    const totalDuration = Math.max(duration, extreme ? 920 : wide ? 860 : 790);
 
     if (pushLeg) animateElement(pushLeg, [
-      { transform: "rotate(0deg) translateY(0) scaleY(1)" },
-      { transform: `rotate(${direction * -10}deg) translateY(3px) scaleY(.9)`, offset: .14 },
-      { transform: `rotate(${direction * 13}deg) translateY(1px) scaleY(.97)`, offset: .29 },
-      { transform: `rotate(${direction * 34}deg) translateY(-2px) scaleY(1.07)`, offset: .53 },
-      { transform: `rotate(${direction * 22}deg) translateY(0) scaleY(1.02)` },
-    ], { duration: totalDuration * .94, easing: "cubic-bezier(.12,.72,.16,1)" });
+      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${direction * -11}deg) translateY(4px)`, offset: .16 },
+      { transform: `rotate(${direction * 17}deg) translateY(1px)`, offset: .38 },
+      { transform: `rotate(${direction * 27}deg) translateY(-1px)`, offset: .7 },
+      { transform: `rotate(${direction * 20}deg)` },
+    ], { duration: totalDuration, easing: "cubic-bezier(.14,.68,.18,1)" });
+    if (pushLowerLeg) animateElement(pushLowerLeg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * -22}deg)`, offset: .18 },
+      { transform: `rotate(${direction * 12}deg)`, offset: .48 },
+      { transform: `rotate(${direction * 18}deg)` },
+    ], { duration: totalDuration });
     if (trailLeg) animateElement(trailLeg, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${direction * -5}deg)`, offset: .22 },
-      { transform: `rotate(${direction * -28}deg)`, offset: .57 },
-      { transform: `rotate(${direction * -44}deg)`, offset: .79 },
-      { transform: `rotate(${direction * -28}deg)` },
+      { transform: `rotate(${direction * -7}deg)`, offset: .28 },
+      { transform: `rotate(${direction * -30}deg)`, offset: .7 },
+      { transform: `rotate(${direction * -25}deg)` },
+    ], { duration: totalDuration });
+    if (trailLowerLeg) animateElement(trailLowerLeg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * 18}deg)`, offset: .5 },
+      { transform: `rotate(${direction * 25}deg)` },
     ], { duration: totalDuration });
     if (leadingArm) animateElement(leadingArm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${leadAngle * .11}deg)`, offset: .18 },
-      { transform: `rotate(${leadAngle * .44}deg)`, offset: .39 },
-      { transform: `rotate(${leadAngle * .79}deg)`, offset: .61 },
-      { transform: `rotate(${leadAngle}deg) scaleY(1.08)`, offset: .82 },
-      { transform: `rotate(${leadAngle * .96}deg) scaleY(1.04)` },
-    ], { duration: totalDuration * .98, easing: "cubic-bezier(.12,.68,.16,1)" });
+      { transform: `rotate(${leadAngle * .2}deg)`, offset: .22 },
+      { transform: `rotate(${leadAngle * .66}deg)`, offset: .54 },
+      { transform: `rotate(${leadAngle}deg)`, offset: .82 },
+      { transform: `rotate(${leadAngle * .96}deg)` },
+    ], { duration: totalDuration, easing: "cubic-bezier(.12,.68,.16,1)" });
+    if (leadingLowerArm) animateElement(leadingLowerArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * 12}deg)`, offset: .5 },
+      { transform: `rotate(${direction * 5}deg)` },
+    ], { duration: totalDuration });
     if (trailingArm) animateElement(trailingArm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${trailAngle * .08}deg)`, offset: .25 },
-      { transform: `rotate(${trailAngle * .48}deg)`, offset: .48 },
-      { transform: `rotate(${trailAngle * .84}deg)`, offset: .72 },
-      { transform: `rotate(${trailAngle}deg)`, offset: .88 },
-      { transform: `rotate(${trailAngle * .92}deg)` },
+      { transform: `rotate(${trailAngle * .45}deg)`, offset: .5 },
+      { transform: `rotate(${trailAngle}deg)`, offset: .82 },
+      { transform: `rotate(${trailAngle * .9}deg)` },
     ], { duration: totalDuration });
-    if (!direction) {
-      [leftArm, rightArm].forEach((arm, index) => arm && animateElement(arm, [
-        { transform: "rotate(0deg)" },
-        { transform: `rotate(${index ? 88 : -88}deg)`, offset: .65 },
-        { transform: `rotate(${index ? 72 : -72}deg)` },
-      ], { duration: totalDuration }));
-      [leftLeg, rightLeg].forEach((leg, index) => leg && animateElement(leg, [
-        { transform: "rotate(0deg)" },
-        { transform: `rotate(${index ? -27 : 27}deg)`, offset: .62 },
-        { transform: `rotate(${index ? -18 : 18}deg)` },
-      ], { duration: totalDuration }));
-    }
+    if (trailingLowerArm) animateElement(trailingLowerArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * -8}deg)`, offset: .62 },
+      { transform: `rotate(${direction * -4}deg)` },
+    ], { duration: totalDuration });
     if (body) animateElement(body, [
       { transform: "translate(0,0) rotate(0deg) scale(1)" },
-      { transform: `translate(${direction * -1}px,4px) rotate(${direction * -1}deg) scale(.99,.95)`, offset: .13 },
-      { transform: `translate(${direction * 2}px,1px) rotate(${direction * 2.5}deg) scale(1.01,.98)`, offset: .31 },
-      { transform: `translate(${direction * 4}px,-2px) rotate(${direction * 5}deg) scale(1.04,1)`, offset: .54 },
-      { transform: `translate(${direction * 6}px,1px) rotate(${direction * 8}deg) scale(1.055,1)`, offset: .78 },
-      { transform: `translate(${direction * 5}px,6px) rotate(${direction * 9}deg) scale(1.02,.97)` },
-    ], { duration: totalDuration, easing: "cubic-bezier(.14,.62,.16,1)" });
+      { transform: `translate(${direction * -1}px,4px) rotate(${direction * -1}deg) scale(1,.96)`, offset: .15 },
+      { transform: `translate(${direction * 2}px,0) rotate(${direction * 3}deg) scale(1)`, offset: .38 },
+      { transform: `translate(${direction * 4}px,-1px) rotate(${direction * 7}deg) scale(1.015)`, offset: .68 },
+      { transform: `translate(${direction * 4}px,4px) rotate(${direction * 8}deg) scale(1,.98)` },
+    ], { duration: totalDuration });
     if (head) animateElement(head, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${direction * -2}deg)`, offset: .28 },
-      { transform: `rotate(${direction * -7}deg)`, offset: .56 },
-      { transform: `rotate(${direction * -10}deg)`, offset: .79 },
+      { transform: `rotate(${direction * -4}deg)`, offset: .45 },
       { transform: `rotate(${direction * -8}deg)` },
     ], { duration: totalDuration });
 
     return animateElement(keeper, [
       { transform: "translateX(-50%) translate(0,0) rotate(0deg) scale(1)" },
-      { transform: `translateX(-50%) translate(${direction * -2}px,4px) rotate(${bodyRotation * -.018}deg) scale(.99,.96)`, offset: .12 },
-      { transform: `translateX(-50%) translate(${dx * .16}px,${dy * .11}px) rotate(${bodyRotation * .1}deg) scale(1.005)`, offset: .27 },
-      { transform: `translateX(-50%) translate(${dx * .46}px,${dy * .37}px) rotate(${bodyRotation * .36}deg) scale(1.04,1)`, offset: .47 },
-      { transform: `translateX(-50%) translate(${dx * .78}px,${dy * .72}px) rotate(${bodyRotation * .72}deg) scale(${extension},1)`, offset: .68 },
-      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(${extension},1)`, offset: .84 },
-      { transform: `translateX(-50%) translate(${dx * .97}px,${landingY}px) rotate(${bodyRotation * 1.04}deg) scale(1.05,.95)` },
-    ], { duration: totalDuration, easing: "cubic-bezier(.1,.7,.14,1)" });
+      { transform: `translateX(-50%) translate(${dx * .12}px,${dy * .08}px) rotate(${bodyRotation * .06}deg) scale(1)`, offset: .2 },
+      { transform: `translateX(-50%) translate(${dx * .44}px,${dy * .34}px) rotate(${bodyRotation * .3}deg) scale(1.01)`, offset: .46 },
+      { transform: `translateX(-50%) translate(${dx * .8}px,${dy * .72}px) rotate(${bodyRotation * .72}deg) scale(1.015)`, offset: .72 },
+      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(1.018)`, offset: .88 },
+      { transform: `translateX(-50%) translate(${dx * .98}px,${landingY}px) rotate(${bodyRotation * 1.02}deg) scale(1,.98)` },
+    ], { duration: totalDuration, easing: "cubic-bezier(.1,.68,.16,1)" });
   }
 
   function assistedDivePoint(point) {
@@ -711,13 +854,18 @@
     const kickIndex = side === "albion" ? state.albionKicks : state.palaceKicks;
     const routineIndex = (kickIndex + (side === "palace" ? 2 : 0)) % 5;
     const dramatic = kickIndex === 0 || (state.albionKicks >= 5 && state.palaceKicks >= 5);
-    const duration = reducedMotion() ? 150 : dramatic ? 1040 : 650 + routineIndex * 45;
+    const duration = reducedMotion() ? 170 : dramatic ? 1580 : 1320 + routineIndex * 55;
+    const settlePause = reducedMotion() ? 25 : 320;
     stage.classList.add("placing-ball", `placement-${routineIndex + 1}`);
     const root = taker.querySelector(".taker-root");
     const leftArm = taker.querySelector(".taker-arm-left");
     const rightArm = taker.querySelector(".taker-arm-right");
     const leftLeg = taker.querySelector(".taker-leg-left");
     const rightLeg = taker.querySelector(".taker-leg-right");
+    const leftLowerArm = taker.querySelector(".taker-lower-arm-left");
+    const rightLowerArm = taker.querySelector(".taker-lower-arm-right");
+    const leftLowerLeg = taker.querySelector(".taker-lower-leg-left");
+    const rightLowerLeg = taker.querySelector(".taker-lower-leg-right");
     const sideBias = routineIndex === 1 ? -2.5 : routineIndex === 3 ? 2.5 : 0;
     const carryX = 55.5 + sideBias;
     const carryY = routineIndex === 2 ? 55.5 : 57.5;
@@ -739,15 +887,22 @@
     if (root) animateElement(root, [
       { transform: "rotate(0deg) translateY(0) scaleY(1)" },
       { transform: `rotate(${routineIndex % 2 ? -3 : 3}deg) translateY(3px) scaleY(.93)`, offset: .32 },
-      { transform: `rotate(${routineIndex % 2 ? -6 : 6}deg) translateY(${bendDepth}px) scaleY(.8)`, offset: .53 },
+      { transform: `rotate(${routineIndex % 2 ? -6 : 6}deg) translateY(${bendDepth}px) scaleY(.9)`, offset: .53 },
       { transform: `rotate(${routineIndex % 2 ? -2 : 2}deg) translateY(3px) scaleY(.96)`, offset: .76 },
       { transform: "rotate(0deg) translateY(0) scaleY(1)" },
     ], { duration, easing: "cubic-bezier(.2,.55,.22,1)" });
     [leftArm, rightArm].forEach((arm, index) => arm && animateElement(arm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${index ? 38 : -38}deg)`, offset: .34 },
-      { transform: `rotate(${index ? 72 + routineIndex * 2 : -72 - routineIndex * 2}deg)`, offset: .55 },
-      { transform: `rotate(${index ? 28 : -28}deg)`, offset: .72 },
+      { transform: `rotate(${index ? 30 : -30}deg)`, offset: .3 },
+      { transform: `rotate(${index ? 58 + routineIndex * 1.5 : -58 - routineIndex * 1.5}deg)`, offset: .56 },
+      { transform: `rotate(${index ? 24 : -24}deg)`, offset: .76 },
+      { transform: "rotate(0deg)" },
+    ], { duration }));
+    [leftLowerArm, rightLowerArm].forEach((arm, index) => arm && animateElement(arm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? 24 : -24}deg)`, offset: .42 },
+      { transform: `rotate(${index ? 38 : -38}deg)`, offset: .56 },
+      { transform: `rotate(${index ? 14 : -14}deg)`, offset: .75 },
       { transform: "rotate(0deg)" },
     ], { duration }));
     if (leftLeg) animateElement(leftLeg, [
@@ -756,6 +911,12 @@
     if (rightLeg) animateElement(rightLeg, [
       { transform: "rotate(0deg)" }, { transform: `rotate(${routineIndex % 2 ? -12 : -7}deg)`, offset: .52 }, { transform: "rotate(0deg)" },
     ], { duration });
+    [leftLowerLeg, rightLowerLeg].forEach((leg, index) => leg && animateElement(leg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? -17 : 17}deg)`, offset: .48 },
+      { transform: `rotate(${index ? -22 : 22}deg)`, offset: .58 },
+      { transform: "rotate(0deg)" },
+    ], { duration }));
 
     const settleRotation = [36, 70, -22, 95, 52][routineIndex];
     const adjustX = [50, 49.7, 50.3, 50, 50.15][routineIndex];
@@ -771,35 +932,51 @@
       { left: `${carryX}%`, top: "70%", opacity: .14, transform: "translate(-50%,-50%) scale(.5)" },
       { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .7, transform: "translate(-50%,-50%) scale(1)" },
     ], { duration });
-    await sleep(duration + (reducedMotion() ? 20 : 55));
+    await sleep(duration + settlePause);
     if (token !== state.sequence) return false;
     stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
     taker.style.left = "50%";
     taker.style.top = "49%";
     taker.style.transform = "translate(-50%,0)";
-    taker.querySelectorAll(".taker-root,.taker-arm,.taker-leg").forEach((part) => { part.style.transform = ""; });
+    taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
     return true;
   }
 
   function takerReaction(scored, side = "albion") {
     const leftArm = taker.querySelector(".taker-arm-left");
     const rightArm = taker.querySelector(".taker-arm-right");
+    const leftLowerArm = taker.querySelector(".taker-lower-arm-left");
+    const rightLowerArm = taker.querySelector(".taker-lower-arm-right");
+    const leftLeg = taker.querySelector(".taker-leg-left");
+    const rightLeg = taker.querySelector(".taker-leg-right");
     const root = taker.querySelector(".taker-root");
-    const duration = reducedMotion() ? 160 : 920;
+    const direction = side === "albion" ? -1 : 1;
+    const duration = reducedMotion() ? 170 : 1080;
     if (scored) {
-      if (root) animateElement(root,[{transform:"rotate(0deg)"},{transform:`rotate(${side === "albion" ? -5 : 5}deg)`,offset:.58},{transform:`rotate(${side === "albion" ? -8 : 8}deg)`}],{duration});
-      if (leftArm) animateElement(leftArm,[{transform:"rotate(0deg)"},{transform:"rotate(-46deg)",offset:.45},{transform:"rotate(-72deg)",offset:.72},{transform:"rotate(-54deg)"}],{duration});
-      if (rightArm) animateElement(rightArm,[{transform:"rotate(0deg)"},{transform:"rotate(34deg)",offset:.45},{transform:"rotate(68deg)",offset:.72},{transform:"rotate(48deg)"}],{duration});
-      animateElement(taker,[
-        {transform:taker.style.transform||"translate(-50%,0)"},
-        {transform:`translate(calc(-50% + ${side === "albion" ? -10 : 10}px),-10px) scale(.995)`,offset:.46},
-        {transform:`translate(calc(-50% + ${side === "albion" ? -22 : 22}px),-12px) scale(.99)`}
-      ],{duration,easing:"cubic-bezier(.2,.58,.25,1)"});
+      stage.classList.add("goal-celebration");
+      if (root) animateElement(root, [
+        { transform: "rotate(0deg)" },
+        { transform: `rotate(${direction * 5}deg)`, offset: .42 },
+        { transform: `rotate(${direction * 11}deg)` },
+      ], { duration });
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-42deg)", offset: .45 }, { transform: "rotate(-56deg)" }], { duration });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(42deg)", offset: .45 }, { transform: "rotate(56deg)" }], { duration });
+      [leftLowerArm, rightLowerArm].forEach((arm, index) => arm && animateElement(arm, [
+        { transform: "rotate(0deg)" }, { transform: `rotate(${index ? 10 : -10}deg)`, offset: .58 }, { transform: `rotate(${index ? 6 : -6}deg)` },
+      ], { duration }));
+      [leftLeg, rightLeg].forEach((leg, index) => leg && animateElement(leg, [
+        { transform: "rotate(0deg)" }, { transform: `rotate(${index ? -8 : 8}deg)`, offset: .58 }, { transform: `rotate(${index ? 5 : -5}deg)` },
+      ], { duration }));
+      animateElement(taker, [
+        { transform: taker.style.transform || "translate(-50%,0)" },
+        { transform: `translate(calc(-50% + ${direction * 18}px),-13px) scale(.995)`, offset: .42 },
+        { transform: `translate(calc(-50% + ${direction * 48}px),-8px) scale(.975)` },
+      ], { duration, easing: "cubic-bezier(.2,.6,.24,1)" });
     } else {
-      if (leftArm) animateElement(leftArm,[{transform:"rotate(0deg)"},{transform:"rotate(-66deg)",offset:.7},{transform:"rotate(-58deg)"}],{duration});
-      if (rightArm) animateElement(rightArm,[{transform:"rotate(0deg)"},{transform:"rotate(66deg)",offset:.7},{transform:"rotate(58deg)"}],{duration});
-      if (root) animateElement(root,[{transform:"rotate(0deg)"},{transform:"rotate(4deg)",offset:.65},{transform:"rotate(2deg)"}],{duration});
-      animateElement(taker,[{transform:taker.style.transform||"translate(-50%,0)"},{transform:"translate(-50%,-32px) scale(.96)",offset:.7},{transform:"translate(-50%,-28px) scale(.95)"}],{duration});
+      if (leftArm) animateElement(leftArm,[{transform:"rotate(0deg)"},{transform:"rotate(-48deg)",offset:.7},{transform:"rotate(-40deg)"}],{duration});
+      if (rightArm) animateElement(rightArm,[{transform:"rotate(0deg)"},{transform:"rotate(48deg)",offset:.7},{transform:"rotate(40deg)"}],{duration});
+      if (root) animateElement(root,[{transform:"rotate(0deg)"},{transform:`rotate(${direction * 4}deg)`,offset:.65},{transform:`rotate(${direction * 2}deg)`}],{duration});
+      animateElement(taker,[{transform:taker.style.transform||"translate(-50%,0)"},{transform:"translate(-50%,-18px) scale(.975)",offset:.7},{transform:"translate(-50%,-15px) scale(.97)"}],{duration});
     }
   }
 
@@ -826,6 +1003,7 @@
       if (celebrationPlayers) celebrationPlayers.hidden = false;
       if (confetti && !reducedMotion()) confetti.hidden = false;
       sound("win");
+      playAlbionChant(true);
       window.setTimeout(() => { if (confetti) confetti.hidden = true; }, 2300);
     } else {
       sound("palaceCheer");
@@ -834,61 +1012,74 @@
 
   async function keeperRoutine(kind, token) {
     positionKeeperOnLine();
-    const routineCycle = ["bar-right", "bar-left", "bar-right", "gloves", "bar-left", "bar-right", "point", "bar-left", "bar-right", "bar-left"];
-    const routine = routineCycle[keeperRoutineIndex++ % routineCycle.length];
+    const useLeft = keeperRoutineIndex++ % 2 === 1;
     const body = keeper.querySelector(".keeper-body-group");
     const leftArm = keeper.querySelector(".keeper-arm-left");
     const rightArm = keeper.querySelector(".keeper-arm-right");
+    const leftLowerArm = keeper.querySelector(".keeper-lower-arm-left");
+    const rightLowerArm = keeper.querySelector(".keeper-lower-arm-right");
     const leftLeg = keeper.querySelector(".keeper-leg-left");
     const rightLeg = keeper.querySelector(".keeper-leg-right");
-    const duration = reducedMotion() ? 130 : 850;
+    const leftLowerLeg = keeper.querySelector(".keeper-lower-leg-left");
+    const rightLowerLeg = keeper.querySelector(".keeper-lower-leg-right");
+    const arm = useLeft ? leftArm : rightArm;
+    const lowerArm = useLeft ? leftLowerArm : rightLowerArm;
+    const bar = goalMouth.querySelector(".goal-crossbar");
+    const glove = arm?.querySelector(".keeper-glove");
+    const barRect = bar?.getBoundingClientRect();
+    const gloveRect = glove?.getBoundingClientRect();
+    const requiredLift = barRect && gloveRect ? Math.max(12, gloveRect.top - barRect.bottom + 10) : keeperDimensions().height * .14;
+    const lift = Math.min(keeperDimensions().height * .24, requiredLift + 5);
+    const duration = reducedMotion() ? 150 : 1120;
 
-    if (routine.startsWith("bar")) {
-      const useLeft = routine.endsWith("left");
-      const arm = useLeft ? leftArm : rightArm;
-      const bar = goalMouth.querySelector(".goal-crossbar");
-      const glove = arm?.querySelector(".keeper-glove");
-      const barRect = bar?.getBoundingClientRect();
-      const gloveRect = glove?.getBoundingClientRect();
-      const requiredLift = barRect && gloveRect ? Math.max(9, gloveRect.top - barRect.bottom + 7) : keeperDimensions().height * .095;
-      const lift = Math.min(keeperDimensions().height * .18, requiredLift + 2);
-      animateElement(keeper, [
-        { transform: "translateX(-50%) translateY(0) scaleY(1)" },
-        { transform: `translateX(calc(-50% + ${useLeft ? -3 : 3}px)) translateY(${-lift * .46}px) scaleY(1.018)`, offset: .34 },
-        { transform: `translateX(calc(-50% + ${useLeft ? -4 : 4}px)) translateY(${-lift}px) scaleY(1.045)`, offset: .58 },
-        { transform: "translateX(-50%) translateY(0) scaleY(1)", offset: .92 },
-        { transform: "translateX(-50%) translateY(0) scaleY(1)" },
-      ], { duration, easing: "cubic-bezier(.18,.72,.22,1)" });
-      if (arm) animateElement(arm, [
-        { transform: "rotate(0deg)" },
-        { transform: `rotate(${useLeft ? -84 : 84}deg)`, offset: .32 },
-        { transform: `rotate(${useLeft ? -154 : 154}deg) scaleY(1.08)`, offset: .58 },
-        { transform: `rotate(${useLeft ? -72 : 72}deg)`, offset: .78 },
-        { transform: "rotate(0deg)" },
-      ], { duration });
-      if (bar) animateElement(bar, [{ filter: "brightness(1)" }, { filter: "brightness(1.42)", offset: .58 }, { filter: "brightness(1)" }], { duration });
-      window.setTimeout(() => sound("gloves"), reducedMotion() ? 45 : duration * .56);
-    } else if (routine === "point") {
-      const pointLeft = (state.albionKicks + state.palaceKicks) % 2 === 0;
-      const arm = pointLeft ? leftArm : rightArm;
-      if (arm) animateElement(arm, [
-        { transform: "rotate(0deg)" },
-        { transform: `rotate(${pointLeft ? -58 : 58}deg)`, offset: .42 },
-        { transform: "rotate(0deg)" },
-      ], { duration });
-      animateElement(keeper, [{ transform: "translateX(-50%)" }, { transform: `translateX(calc(-50% + ${pointLeft ? -8 : 8}px))`, offset: .42 }, { transform: "translateX(-50%)" }], { duration });
-    } else if (routine === "gloves") {
-      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-84deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
-      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(84deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
-      window.setTimeout(() => sound("gloves"), reducedMotion() ? 40 : 360);
-    } else {
-      if (body) animateElement(body, [{ transform: "translateY(0) scaleY(1)" }, { transform: "translateY(-3px) scaleY(1.02)", offset: .28 }, { transform: "translateY(1px) scaleY(.985)", offset: .55 }, { transform: "translateY(-2px) scaleY(1.01)", offset: .75 }, { transform: "translateY(0) scaleY(1)" }], { duration });
-      if (leftLeg) animateElement(leftLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(6deg)" }, { transform: "rotate(0deg)" }], { duration });
-      if (rightLeg) animateElement(rightLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(-6deg)" }, { transform: "rotate(0deg)" }], { duration });
-    }
+    animateElement(keeper, [
+      { transform: "translateX(-50%) translateY(0) scale(1)" },
+      { transform: `translateX(calc(-50% + ${useLeft ? -2 : 2}px)) translateY(3px) scale(1,.965)`, offset: .16 },
+      { transform: `translateX(calc(-50% + ${useLeft ? -4 : 4}px)) translateY(${-lift * .58}px) scale(1,1.012)`, offset: .43 },
+      { transform: `translateX(calc(-50% + ${useLeft ? -5 : 5}px)) translateY(${-lift}px) scale(1,1.025)`, offset: .61 },
+      { transform: "translateX(-50%) translateY(2px) scale(1,.98)", offset: .84 },
+      { transform: "translateX(-50%) translateY(0) scale(1)" },
+    ], { duration, easing: "cubic-bezier(.18,.7,.22,1)" });
+    if (body) animateElement(body, [
+      { transform: "translateY(0) rotate(0deg)" },
+      { transform: `translateY(2px) rotate(${useLeft ? -2 : 2}deg)`, offset: .18 },
+      { transform: `translateY(-2px) rotate(${useLeft ? -4 : 4}deg)`, offset: .58 },
+      { transform: "translateY(0) rotate(0deg)" },
+    ], { duration });
+    if (arm) animateElement(arm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${useLeft ? -76 : 76}deg)`, offset: .34 },
+      { transform: `rotate(${useLeft ? -146 : 146}deg)`, offset: .6 },
+      { transform: `rotate(${useLeft ? -68 : 68}deg)`, offset: .79 },
+      { transform: "rotate(0deg)" },
+    ], { duration });
+    if (lowerArm) animateElement(lowerArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${useLeft ? -18 : 18}deg)`, offset: .42 },
+      { transform: `rotate(${useLeft ? -30 : 30}deg)`, offset: .6 },
+      { transform: "rotate(0deg)" },
+    ], { duration });
+    [leftLeg, rightLeg].forEach((leg, index) => leg && animateElement(leg, [
+      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${index ? -8 : 8}deg) translateY(4px)`, offset: .18 },
+      { transform: `rotate(${index ? 5 : -5}deg) translateY(-1px)`, offset: .55 },
+      { transform: "rotate(0deg) translateY(0)" },
+    ], { duration }));
+    [leftLowerLeg, rightLowerLeg].forEach((leg, index) => leg && animateElement(leg, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? 16 : -16}deg)`, offset: .2 },
+      { transform: `rotate(${index ? -7 : 7}deg)`, offset: .58 },
+      { transform: "rotate(0deg)" },
+    ], { duration }));
+    if (bar) animateElement(bar, [
+      { filter: "brightness(1)" },
+      { filter: "brightness(1.6) drop-shadow(0 0 3px rgba(255,255,255,.75))", offset: .6 },
+      { filter: "brightness(1)" },
+    ], { duration });
+    window.setTimeout(() => sound("gloves"), reducedMotion() ? 55 : duration * .59);
     await sleep(duration);
     if (token !== state.sequence) return false;
-    keeper.querySelectorAll(".keeper-arm,.keeper-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
+    keeper.querySelectorAll(".keeper-arm,.keeper-lower-arm,.keeper-leg,.keeper-lower-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
     positionKeeperOnLine();
     return true;
   }
@@ -967,7 +1158,7 @@
     $("turnBadge").textContent = "ALBION PENALTY";
     $("turnBadge").className = "turn-badge albion-turn";
     $("stageInstruction").textContent = "Wait for the whistle";
-    stage.setAttribute("aria-label", "Albion penalty. Wait for the referee, then move the pointer inside the goal and click to shoot.");
+    stage.setAttribute("aria-label", "Albion penalty. Wait for the referee, then drag or move inside the goal and release to shoot.");
     renderScore();
     setReticle(state.aim.x, state.aim.y);
     if (!(await preKickCeremony("albion", token))) return;
@@ -976,8 +1167,8 @@
     stage.classList.add("is-aiming");
     stage.classList.remove("is-locked", "crowd-hush");
     panenka.disabled = false;
-    $("stageInstruction").textContent = "Aim and click to shoot";
-    setStatus("Pick your spot", "The whistle has gone. Click once inside the goal.");
+    $("stageInstruction").textContent = "Drag to aim, release to shoot";
+    setStatus("Pick your spot", "Move or drag the target, then release to shoot.");
   }
 
   function preparePalaceKick() {
@@ -1076,7 +1267,7 @@
       showDecision(isPanenka ? "PANENKA!" : "GOAL!", "goal");
       $("stageInstruction").textContent = "Goal for Brighton";
       setStatus("Goal for Brighton", isPanenka ? "The keeper commits and the chip drops centrally." : resolved.x < .3 || resolved.x > .7 ? "Driven into the side netting." : "Placed beyond the goalkeeper.");
-      sound("goal"); window.setTimeout(() => sound("albionCheer"), 170);
+      sound("goal"); window.setTimeout(() => sound("albionCheer"), 170); window.setTimeout(() => playAlbionChant(false), 240);
     } else if (saved) {
       crowdReaction("crowd-palace-cheer");
       takerReaction(false, "albion");
@@ -1183,6 +1374,15 @@
     setStatus("REACT!", "Move or swipe towards the shot. Choosing the correct side is strongly rewarded.");
     window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 350);
     const ballAnimation = animateBall(state.palaceTarget, settings.flight, false, state.palaceMiss, "driven");
+    window.clearTimeout(state.standingSaveTimer);
+    const straightAtKeeper = !state.palaceMiss && Math.abs(state.palaceTarget.x - .5) < .13 && state.palaceTarget.y > .34;
+    if (straightAtKeeper) {
+      state.standingSaveTimer = window.setTimeout(() => {
+        if (state.phase === "save" && state.reactionOpen && !state.userDive) {
+          takeUserDive({ x: .5, y: state.palaceTarget.y }, "stand-still");
+        }
+      }, reducedMotion() ? 35 : 210);
+    }
     window.clearTimeout(state.reactionTimer);
     state.reactionTimer = window.setTimeout(() => {
       state.reactionOpen = false;
@@ -1215,9 +1415,11 @@
       );
       const gloveEdge = sameSide && distance <= radius * 1.22 && Math.abs(timing) < settings.postContactWindow * .94;
       const bodyBlock = targetCentre && diveCentre && Math.abs(state.palaceTarget.y - state.userDive.y) < .4;
-      saved = distance <= radius || gloveEdge || bodyBlock;
+      const stayedCentral = state.userDive.source === "stand-still" && targetCentre && state.palaceTarget.y > .34;
+      saved = distance <= radius || gloveEdge || bodyBlock || stayedCentral;
       if (saved) {
-        if ((distance < radius * .4 || bodyBlock) && timing < 250) saveType = targetCentre ? "BLOCKED" : "CATCH";
+        if (stayedCentral) saveType = state.palaceTarget.y > .67 ? "LEG SAVE" : "BLOCKED";
+        else if ((distance < radius * .4 || bodyBlock) && timing < 250) saveType = targetCentre ? "BLOCKED" : "CATCH";
         else if (distance > radius * .86 || gloveEdge) saveType = "FINGERTIP SAVE";
         else if (state.palaceTarget.y > .66) saveType = "LEG SAVE";
         else saveType = "PARRIED";
@@ -1244,7 +1446,7 @@
       keeperCelebration();
       takerReaction(false, "palace");
       showDecision(saveType, "save");
-      const timingText = state.userDive.timing < 0 ? "well-timed anticipation" : `${Math.round(state.userDive.timing)} ms reaction`;
+      const timingText = state.userDive.source === "stand-still" ? "held the centre" : state.userDive.timing < 0 ? "well-timed anticipation" : `${Math.round(state.userDive.timing)} ms reaction`;
       $("stageInstruction").textContent = "Saved by Verbruggen";
       setStatus("Verbruggen saves", `${timingText} · ${saveType.toLowerCase()}.`);
       sound(saveType === "CATCH" ? "catch" : "save"); window.setTimeout(() => sound("albionCheer"), 90);
@@ -1301,7 +1503,9 @@
     state.reactionOpen = false;
     stage.classList.remove("is-save-window");
     const duration = Math.max(610, config().flight * .94 + Math.max(0, -timing) * .72);
-    animateKeeperDive(assisted, duration, true);
+    const centralAction = Math.abs(assisted.x - .5) < .19 && state.palaceTarget && Math.abs(state.palaceTarget.x - .5) < .17;
+    if (centralAction) animateKeeperBlock(assisted, duration);
+    else animateKeeperDive(assisted, duration, true);
   }
 
   function shotMapSvg(shots, label) {
@@ -1428,6 +1632,9 @@
       pointerLast: null,
       activePointerId: null,
       pendingDive: null,
+      aimPointerActive: false,
+      aimDragMoved: false,
+      standingSaveTimer: 0,
     });
     summary.hidden = true;
     summary.innerHTML = "";
@@ -1456,107 +1663,167 @@
     state.pointerStart = null;
     state.pointerLast = null;
     state.activePointerId = null;
+    state.aimPointerActive = false;
+    state.aimDragMoved = false;
+    stage.classList.remove("is-drag-aiming");
+  }
+
+  function swipeGoalPoint(start, current, fallbackPoint) {
+    if (!start || !current) return fallbackPoint;
+    const dx = (current.clientX - start.clientX) / Math.max(1, stage.clientWidth);
+    const dy = (current.clientY - start.clientY) / Math.max(1, stage.clientHeight);
+    return {
+      x: clamp(.5 + dx * 3.35, .015, .985),
+      y: clamp(.58 + dy * 2.05, .02, .98),
+    };
   }
 
   stage.addEventListener("pointermove", (event) => {
     const keeperPreparing = state.phase === "palace-prep" || state.phase === "palace-run";
     if (state.phase !== "albion-aim" && state.phase !== "save" && !keeperPreparing) return;
-    const point = eventGoalPoint(event);
-    if (point.inside && state.phase === "albion-aim") {
-      setReticle(point.x, point.y);
-      return;
-    }
-    if (keeperPreparing && point.inside) {
-      previewKeeper(point);
-      const centreDistance = Math.hypot(point.x - .5, (point.y - .58) * .8);
-      if (centreDistance > .12) state.pendingDive = { point: { x: point.x, y: point.y }, time: performance.now(), source: event.pointerType === "touch" ? "early-swipe" : "early-mouse" };
-      return;
-    }
-    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !point.inside) return;
+    const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
+    const point = eventGoalPoint(event, touchLike ? .09 : 0);
 
-    previewKeeper(point);
-    const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
-    if (!state.pointerStart) {
-      state.pointerStart = nowPoint;
-      state.pointerLast = nowPoint;
+    if (state.phase === "albion-aim") {
+      if (!point.inside) return;
+      if (state.aimPointerActive || event.pointerType === "mouse") {
+        setReticle(point.x, point.y);
+        if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
+        if (state.aimPointerActive) event.preventDefault();
+      }
       return;
     }
+
+    if (keeperPreparing) {
+      if (!point.inside || !state.pointerStart) return;
+      event.preventDefault();
+      const swipePoint = touchLike ? swipeGoalPoint(state.pointerStart, event, point) : point;
+      previewKeeper(swipePoint);
+      state.pointerLast = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
+      if (pointerDistance(state.pointerStart, event) >= Math.max(8, stage.clientWidth * .012)) {
+        state.pendingDive = { point: swipePoint, time: performance.now(), source: touchLike ? "early-swipe" : "early-mouse" };
+      }
+      return;
+    }
+
+    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !point.inside) return;
+    previewKeeper(point);
+    if (!state.pointerStart) {
+      beginPointerTracking(event);
+      return;
+    }
+    const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
     const fromStart = pointerDistance(state.pointerStart, nowPoint);
     const fromLast = pointerDistance(state.pointerLast, nowPoint);
     state.pointerLast = nowPoint;
-    const threshold = event.pointerType === "touch" ? Math.max(10, stage.clientWidth * .014) : Math.max(6, stage.clientWidth * .008);
+    const threshold = touchLike ? Math.max(8, stage.clientWidth * .011) : Math.max(5, stage.clientWidth * .007);
     if (fromStart >= threshold || fromLast >= threshold * .72) {
       event.preventDefault();
-      takeUserDive(point, event.pointerType === "touch" ? "swipe" : "mouse-flick");
+      const divePoint = touchLike ? swipeGoalPoint(state.pointerStart, nowPoint, point) : point;
+      takeUserDive(divePoint, touchLike ? "swipe" : "mouse-flick");
       clearPointerTracking();
     }
   }, { passive: false });
 
   stage.addEventListener("pointerdown", (event) => {
     unlockAudio();
-    const point = eventGoalPoint(event);
+    const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
+    const point = eventGoalPoint(event, touchLike ? .09 : 0);
     if (!point.inside) return;
     event.preventDefault();
+    beginPointerTracking(event);
+
     if (state.phase === "albion-aim") {
+      state.aimPointerActive = true;
+      state.aimDragMoved = false;
+      stage.classList.add("is-drag-aiming");
       setReticle(point.x, point.y);
-      takeAlbionPenalty(point);
+      $("stageInstruction").textContent = "Release to shoot";
     } else if (state.phase === "palace-prep" || state.phase === "palace-run") {
       previewKeeper(point);
-      state.pendingDive = { point: { x: point.x, y: point.y }, time: performance.now(), source: event.pointerType === "touch" ? "early-tap" : "early-click" };
+      state.pendingDive = { point: { x: point.x, y: point.y }, time: performance.now(), source: touchLike ? "early-touch" : "early-click" };
     } else if (state.phase === "save") {
-      if (event.pointerType === "touch" || event.pointerType === "pen") beginPointerTracking(event);
-      else takeUserDive(point, "click");
+      previewKeeper(point);
     }
   }, { passive: false });
 
   stage.addEventListener("pointerup", (event) => {
-    if (state.phase === "save" && state.reactionOpen && !state.userDive) {
-      const point = eventGoalPoint(event);
-      if (point.inside) takeUserDive(point, pointerDistance(state.pointerStart, event) > 10 ? "swipe" : "tap");
+    const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
+    const point = eventGoalPoint(event, touchLike ? .1 : 0);
+    const distance = pointerDistance(state.pointerStart, event);
+    const swipePoint = touchLike && distance > 6 ? swipeGoalPoint(state.pointerStart, event, point) : point;
+
+    if (state.phase === "albion-aim" && state.aimPointerActive && point.inside) {
+      event.preventDefault();
+      setReticle(point.x, point.y);
+      const shot = { ...state.aim };
+      clearPointerTracking();
+      takeAlbionPenalty(shot);
+      return;
     }
+    if ((state.phase === "palace-prep" || state.phase === "palace-run") && point.inside) {
+      event.preventDefault();
+      state.pendingDive = { point: swipePoint, time: performance.now(), source: distance > 7 ? (touchLike ? "early-swipe" : "early-mouse") : (touchLike ? "early-tap" : "early-click") };
+      previewKeeper(swipePoint);
+    } else if (state.phase === "save" && state.reactionOpen && !state.userDive && point.inside) {
+      event.preventDefault();
+      takeUserDive(swipePoint, distance > 7 ? (touchLike ? "swipe" : "mouse-flick") : (touchLike ? "tap" : "click"));
+    }
+    const cancelledAim = state.phase === "albion-aim" && state.aimPointerActive;
     clearPointerTracking();
+    if (cancelledAim) $("stageInstruction").textContent = "Drag to aim, release to shoot";
   }, { passive: false });
 
-  stage.addEventListener("pointercancel", clearPointerTracking);
+  stage.addEventListener("pointercancel", () => {
+    const cancelledAim = state.phase === "albion-aim" && state.aimPointerActive;
+    clearPointerTracking();
+    if (cancelledAim) $("stageInstruction").textContent = "Drag to aim, release to shoot";
+  });
   stage.addEventListener("pointerleave", (event) => {
-    if (event.pointerType === "mouse" && state.phase !== "save") clearPointerTracking();
+    if (event.pointerType === "mouse" && state.phase !== "save" && !state.aimPointerActive) clearPointerTracking();
   });
 
+  // Legacy touch fallback only for browsers without Pointer Events.
   let fallbackTouchStart = null;
   stage.addEventListener("touchstart", (event) => {
-    if (state.phase !== "save" || !state.reactionOpen || state.userDive) return;
+    if (window.PointerEvent) return;
+    if (state.phase !== "albion-aim" && state.phase !== "save") return;
     const touch = event.touches[0];
     if (!touch) return;
-    const point = eventGoalPoint(touch);
+    const point = eventGoalPoint(touch, .1);
     if (!point.inside) return;
     fallbackTouchStart = { clientX: touch.clientX, clientY: touch.clientY, time: performance.now() };
+    if (state.phase === "albion-aim") setReticle(point.x, point.y);
     event.preventDefault();
   }, { passive: false });
 
   stage.addEventListener("touchmove", (event) => {
-    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !fallbackTouchStart) return;
+    if (window.PointerEvent || !fallbackTouchStart) return;
     const touch = event.touches[0];
     if (!touch) return;
-    const point = eventGoalPoint(touch);
-    const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
-    if (point.inside && distance >= Math.max(10, stage.clientWidth * .014)) {
-      event.preventDefault();
-      takeUserDive(point, "swipe");
-      fallbackTouchStart = null;
-      clearPointerTracking();
+    const point = eventGoalPoint(touch, .1);
+    if (!point.inside) return;
+    event.preventDefault();
+    if (state.phase === "albion-aim") setReticle(point.x, point.y);
+    else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
+      const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
+      if (distance >= 8) takeUserDive(swipeGoalPoint(fallbackTouchStart, touch, point), "swipe");
     }
   }, { passive: false });
 
   stage.addEventListener("touchend", (event) => {
-    if (state.phase === "save" && state.reactionOpen && !state.userDive) {
-      const touch = event.changedTouches[0];
-      if (touch) {
-        const point = eventGoalPoint(touch);
-        if (point.inside) takeUserDive(point, "tap");
+    if (window.PointerEvent || !fallbackTouchStart) return;
+    const touch = event.changedTouches[0];
+    if (touch) {
+      const point = eventGoalPoint(touch, .1);
+      if (point.inside && state.phase === "albion-aim") {
+        setReticle(point.x, point.y);
+        takeAlbionPenalty({ ...state.aim });
+      } else if (point.inside && state.phase === "save" && state.reactionOpen && !state.userDive) {
+        takeUserDive(swipeGoalPoint(fallbackTouchStart, touch, point), "tap");
       }
     }
     fallbackTouchStart = null;
-    clearPointerTracking();
   }, { passive: false });
 
   stage.addEventListener("touchcancel", () => { fallbackTouchStart = null; clearPointerTracking(); });
@@ -1585,6 +1852,7 @@
     const turningOn = !state.sound;
     state.sound = turningOn;
     if (turningOn) unlockAudio();
+    else stopChant();
     localStorage.setItem("albionShootoutSound", state.sound ? "on" : "off");
     soundButton.textContent = state.sound ? "Sound on" : "Sound off";
     soundButton.setAttribute("aria-pressed", String(state.sound));
@@ -1637,13 +1905,29 @@
   if (typeof IntersectionObserver === "function") {
     const visibilityObserver = new IntersectionObserver((entries) => {
       const entry = entries[0];
-      document.body.classList.toggle("shootout-in-view", Boolean(entry?.isIntersecting && entry.intersectionRatio > 0.18));
+      document.body.classList.toggle("shootout-in-view", Boolean(entry?.isIntersecting));
     }, { threshold: [0, 0.18, 0.4] });
     visibilityObserver.observe(shootoutCard);
   }
 
+  // Mobile browsers can report an unreliable intersection ratio for a game taller than the viewport.
+  // Keep floating controls away whenever any substantial part of the shoot-out is on screen.
+  let visibilityFrame = 0;
+  const syncShootoutVisibility = () => {
+    visibilityFrame = 0;
+    const rect = shootoutCard.getBoundingClientRect();
+    const visible = rect.top < window.innerHeight * .92 && rect.bottom > window.innerHeight * .08;
+    document.body.classList.toggle("shootout-in-view", visible);
+  };
+  const scheduleVisibilitySync = () => {
+    if (!visibilityFrame) visibilityFrame = window.requestAnimationFrame(syncShootoutVisibility);
+  };
+  window.addEventListener("scroll", scheduleVisibilitySync, { passive: true });
+  window.addEventListener("resize", scheduleVisibilitySync, { passive: true });
+
   window.requestAnimationFrame(() => {
     positionKeeperOnLine();
+    syncShootoutVisibility();
     prepareAlbionKick();
   });
 })();

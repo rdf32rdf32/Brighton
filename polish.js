@@ -109,7 +109,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 16</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 17</span>');
   }
 
   completeControlSemantics();
