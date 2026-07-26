@@ -143,6 +143,7 @@
     takerPose: "relaxed",
     aimDragMoved: false,
     standingSaveTimer: 0,
+    collisionFrame: 0,
     saveResolutionLocked: false,
   };
 
@@ -566,6 +567,8 @@
 
   function resetVisuals() {
     cancelAnimations();
+    if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
+    state.collisionFrame = 0;
     ball.style.left = `${ballStart.x * 100}%`;
     ball.style.top = `${ballStart.y * 100}%`;
     ball.style.opacity = "1";
@@ -859,42 +862,190 @@
     return { point, animation };
   }
 
-  function saveContactPoint(target, saveType, divePoint = null) {
+  function elementStagePoint(element, anchorX = .5, anchorY = .5) {
+    if (!element) return null;
+    const stageRect = stage.getBoundingClientRect();
+    const rect = element.getBoundingClientRect();
+    if (!stageRect.width || !stageRect.height || !rect.width || !rect.height) return null;
+    return {
+      x: clamp((rect.left + rect.width * anchorX - stageRect.left) / stageRect.width, .005, .995),
+      y: clamp((rect.top + rect.height * anchorY - stageRect.top) / stageRect.height, .005, .995),
+    };
+  }
+
+  function midpoint(a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+  }
+
+  function closestPoint(points, target) {
+    return points.filter(Boolean).sort((a, b) => Math.hypot(a.x - target.x, a.y - target.y) - Math.hypot(b.x - target.x, b.y - target.y))[0] || null;
+  }
+
+  function saveContactDescriptor(saveType, target) {
+    const leftGlove = keeper.querySelector('.keeper-arm-left .keeper-glove');
+    const rightGlove = keeper.querySelector('.keeper-arm-right .keeper-glove');
+    const leftBoot = keeper.querySelector('.keeper-leg-left .keeper-boot');
+    const rightBoot = keeper.querySelector('.keeper-leg-right .keeper-boot');
+    const leftShin = keeper.querySelector('.keeper-lower-leg-left');
+    const rightShin = keeper.querySelector('.keeper-lower-leg-right');
+    const shirt = keeper.querySelector('.keeper-shirt');
+    const shorts = keeper.querySelector('.keeper-shorts');
+    const leftPalm = elementStagePoint(leftGlove, target.x < .5 ? .34 : .66, .52);
+    const rightPalm = elementStagePoint(rightGlove, target.x < .5 ? .34 : .66, .52);
+    const glovePoints = [leftPalm, rightPalm];
+    if (saveType === 'CATCH') {
+      const leading = closestPoint(glovePoints, target);
+      const support = leading === leftPalm ? rightPalm : leftPalm;
+      return { point: midpoint(leading, support ? { x: leading.x + (support.x - leading.x) * .34, y: leading.y + (support.y - leading.y) * .34 } : null), element: leading === leftPalm ? leftGlove : rightGlove, kind: 'glove' };
+    }
+    if (saveType === 'FINGERTIP SAVE' || saveType === 'PARRIED') {
+      const point = closestPoint(glovePoints, target);
+      return { point, element: point === leftPalm ? leftGlove : rightGlove, kind: 'glove' };
+    }
+    if (saveType === 'LEG SAVE') {
+      const candidates = [
+        { point: elementStagePoint(leftBoot, .5, .38), element: leftBoot },
+        { point: elementStagePoint(rightBoot, .5, .38), element: rightBoot },
+        { point: elementStagePoint(leftShin, .5, .58), element: leftShin },
+        { point: elementStagePoint(rightShin, .5, .58), element: rightShin },
+      ];
+      const selected = candidates.filter(item => item.point).sort((a,b) => Math.hypot(a.point.x-target.x,a.point.y-target.y)-Math.hypot(b.point.x-target.x,b.point.y-target.y))[0];
+      return { point: selected?.point, element: selected?.element, kind: 'boot' };
+    }
+    const chest = elementStagePoint(shirt, .5, target.y > .62 ? .78 : .55);
+    const hip = elementStagePoint(shorts, .5, .48);
+    const point = target.y > .62 ? hip || chest : chest || hip;
+    return { point, element: target.y > .62 ? shorts : shirt, kind: target.y > .62 ? 'body' : 'chest' };
+  }
+
+  function fallbackContactPoint(target, saveType, divePoint = null) {
     const centre = divePoint || state.userDive || { x: .5, y: .56 };
-    if (saveType === "BLOCKED") return { x: clamp(centre.x, .38, .62), y: clamp(target.y, .43, .68) };
-    if (saveType === "LEG SAVE") return { x: clamp((target.x + centre.x) / 2, .25, .75), y: clamp(Math.max(target.y, .69), .67, .86) };
-    if (saveType === "CATCH") return { x: clamp((target.x + centre.x) / 2, .08, .92), y: clamp((target.y + centre.y) / 2, .16, .78) };
-    return { x: clamp(target.x + (centre.x - target.x) * .28, .025, .975), y: clamp(target.y + (centre.y - target.y) * .22, .035, .96) };
+    let goalPoint;
+    if (saveType === 'BLOCKED') goalPoint = { x: clamp(centre.x, .38, .62), y: clamp(target.y, .43, .68) };
+    else if (saveType === 'LEG SAVE') goalPoint = { x: clamp((target.x + centre.x) / 2, .25, .75), y: clamp(Math.max(target.y, .69), .67, .86) };
+    else goalPoint = { x: clamp(target.x + (centre.x - target.x) * .28, .025, .975), y: clamp(target.y + (centre.y - target.y) * .22, .035, .96) };
+    return stagePoint(goalPoint);
+  }
+
+  function liveSavePoint(saveType, target, divePoint = null) {
+    return saveContactDescriptor(saveType, target).point || fallbackContactPoint(target, saveType, divePoint);
   }
 
   function showSaveImpact(point, saveType) {
     if (!saveImpact) return;
-    const position = stagePoint(point);
+    const position = point;
     saveImpact.hidden = false;
-    saveImpact.className = `save-impact ${saveType === "CATCH" ? "catch-impact" : "glove-impact"}`;
+    saveImpact.className = `save-impact ${saveType === 'CATCH' ? 'catch-impact' : 'glove-impact'}`;
     saveImpact.style.left = `${position.x * 100}%`;
     saveImpact.style.top = `${position.y * 100}%`;
-    stage.classList.add("save-contact");
+    stage.classList.add('save-contact');
     window.setTimeout(() => {
       saveImpact.hidden = true;
-      stage.classList.remove("save-contact");
+      stage.classList.remove('save-contact');
     }, reducedMotion() ? 90 : 230);
   }
 
-  async function animateSavedShot(target, duration, saveType, divePoint = null, shotType = "driven", { silentKick = false, from = null, hapticEnabled = true } = {}) {
-    const contact = saveContactPoint(target, saveType, divePoint);
-    const flight = animateBall(contact, Math.max(280, duration * .72), true, false, shotType, { silentKick, from: from || ballStart });
-    await flight?.finished.catch(() => {});
+  function recoilSavePart(descriptor, saveType, target) {
+    const element = descriptor?.element;
+    if (!element) return;
+    const direction = target.x < .5 ? -1 : 1;
+    const glove = descriptor.kind === 'glove';
+    const boot = descriptor.kind === 'boot';
+    animateElement(element, [
+      { transform: getComputedStyle(element).transform === 'none' ? 'translate(0,0) rotate(0deg)' : getComputedStyle(element).transform },
+      { transform: glove ? `translate(${direction * 2}px,2px) rotate(${direction * -9}deg) scale(.96,1.05)` : boot ? `translate(${direction * 3}px,2px) rotate(${direction * 7}deg)` : `translate(${direction}px,3px) scale(.98,1.03)`, offset: .45 },
+      { transform: glove ? `translate(${direction}px,1px) rotate(${direction * -4}deg)` : 'translate(0,1px)' },
+    ], { duration: reducedMotion() ? 110 : 260, easing: 'cubic-bezier(.15,.7,.2,1)' });
+  }
+
+  function setBallFrame(point, scale, squashX = 1, squashY = 1) {
+    ball.style.left = `${point.x * 100}%`;
+    ball.style.top = `${point.y * 100}%`;
+    ball.style.opacity = '1';
+    ball.style.transform = ballTransform(scale * squashX, scale * squashY);
+  }
+
+  function animateBallToLiveContact(target, duration, saveType, divePoint, from) {
+    const startPoint = from || ballStart;
+    const intended = stagePoint(target);
+    const startTime = performance.now();
+    const total = Math.max(reducedMotion() ? 150 : 390, duration);
+    if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
+    return new Promise((resolve) => {
+      const frame = (now) => {
+        const raw = clamp((now - startTime) / total, 0, 1);
+        const flight = raw < .74 ? raw / .74 : 1;
+        const eased = flight * flight * (3 - 2 * flight);
+        const natural = {
+          x: startPoint.x + (intended.x - startPoint.x) * eased,
+          y: startPoint.y + (intended.y - startPoint.y) * eased,
+        };
+        const descriptor = saveContactDescriptor(saveType, target);
+        const live = descriptor.point || fallbackContactPoint(target, saveType, divePoint);
+        const lock = clamp((raw - .46) / .34, 0, 1);
+        const magnet = lock * lock * (3 - 2 * lock);
+        const point = {
+          x: natural.x + (live.x - natural.x) * magnet,
+          y: natural.y + (live.y - natural.y) * magnet,
+        };
+        const scale = ballScaleAt(point, { saved: true });
+        setBallFrame(point, scale, raw > .74 ? .94 : 1, raw > .74 ? 1.06 : 1);
+        if (ballShadow) {
+          ballShadow.style.left = `${point.x * 100}%`;
+          ballShadow.style.top = `${Math.min(.96, point.y + .028) * 100}%`;
+          ballShadow.style.opacity = String(.34 - raw * .18);
+          ballShadow.style.transform = ballTransform(Math.max(.25, scale * .56));
+        }
+        if (raw < 1) {
+          state.collisionFrame = requestAnimationFrame(frame);
+        } else {
+          state.collisionFrame = 0;
+          const finalDescriptor = saveContactDescriptor(saveType, target);
+          const finalPoint = finalDescriptor.point || live;
+          setBallFrame(finalPoint, ballScaleAt(finalPoint, { saved: true }), .92, 1.08);
+          resolve({ point: finalPoint, descriptor: finalDescriptor });
+        }
+      };
+      state.collisionFrame = requestAnimationFrame(frame);
+    });
+  }
+
+  async function secureCatch(target, descriptor, duration = 430) {
+    const started = performance.now();
+    return new Promise((resolve) => {
+      const frame = (now) => {
+        const progress = clamp((now - started) / duration, 0, 1);
+        const live = saveContactDescriptor('CATCH', target).point || descriptor.point;
+        const chest = elementStagePoint(keeper.querySelector('.keeper-shirt'), .5, .66) || live;
+        const tuck = progress * progress * (3 - 2 * progress);
+        const point = { x: live.x + (chest.x - live.x) * tuck * .68, y: live.y + (chest.y - live.y) * tuck * .68 };
+        setBallFrame(point, ballScaleAt(point, { saved: true }) * (1 - .08 * tuck));
+        if (progress < 1) state.collisionFrame = requestAnimationFrame(frame);
+        else { state.collisionFrame = 0; resolve(); }
+      };
+      state.collisionFrame = requestAnimationFrame(frame);
+    });
+  }
+
+  async function animateSavedShot(target, duration, saveType, divePoint = null, shotType = 'driven', { silentKick = false, from = null, hapticEnabled = true } = {}) {
+    if (!silentKick) sound('kick');
+    const collision = await animateBallToLiveContact(target, Math.max(300, duration * .72), saveType, divePoint, from || ballStart);
+    const contact = collision.point;
     showSaveImpact(contact, saveType);
-    if (hapticEnabled) haptic([18, 28, 24]);
-    await sleep(reducedMotion() ? 55 : 105);
-    await animateDeflection(contact, saveType)?.finished.catch(() => {});
+    recoilSavePart(collision.descriptor, saveType, target);
+    sound(saveType === 'CATCH' ? 'catch' : saveType === 'LEG SAVE' ? 'save' : 'gloves');
+    if (hapticEnabled) haptic(saveType === 'BLOCKED' || saveType === 'LEG SAVE' ? [24, 24, 30] : [16, 26, 22]);
+    await sleep(reducedMotion() ? 55 : 110);
+    if (saveType === 'CATCH') await secureCatch(target, collision.descriptor);
+    else await animateDeflection(contact, saveType)?.finished.catch(() => {});
     return contact;
   }
 
   function animateDeflection(target, saveType) {
     const direction = target.x < 0.47 ? -1 : target.x > 0.53 ? 1 : (state.userDive?.rawX || .5) < .5 ? -1 : 1;
-    const point = stagePoint(target);
+    const point = target;
     const contactScale = ballScaleAt(point, { saved: true });
     if (saveType === "CATCH") {
       if (ballShadow) animateElement(ballShadow, [
@@ -923,22 +1074,64 @@
   }
 
   async function exceptionalSaveReplay(target, saveType, divePoint) {
-    if (reducedMotion() || !["CATCH", "FINGERTIP SAVE"].includes(saveType)) return;
+    if (!["CATCH", "FINGERTIP SAVE"].includes(saveType)) return false;
+
+    // A replay must own the keeper and ball animations. Incrementing the sequence
+    // invalidates the recovery timer from the live save so it cannot reset the
+    // goalkeeper halfway through the replay.
+    const replayToken = ++state.sequence;
+    if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
+    state.collisionFrame = 0;
+    window.clearTimeout(state.standingSaveTimer);
+    state.standingSaveTimer = 0;
+
+    [ball, ballShadow, keeper].forEach((element) => {
+      element?.getAnimations().forEach((animation) => {
+        try { animation.cancel(); } catch {}
+      });
+    });
+    keeper.querySelectorAll(".keeper-arm,.keeper-lower-arm,.keeper-leg,.keeper-lower-leg,.keeper-body-group,.keeper-head-group").forEach((part) => {
+      part.getAnimations().forEach((animation) => {
+        try { animation.cancel(); } catch {}
+      });
+      part.style.transform = "";
+    });
+
+    stage.classList.remove("save-celebration");
     stage.classList.add("save-replay");
     showDecision("SLOW REPLAY", "save");
     positionKeeperOnLine();
-    const targetPoint = saveContactPoint(target, saveType, divePoint);
-    const targetStage = stagePoint(targetPoint);
-    const start = { x: ballStart.x + (targetStage.x - ballStart.x) * .42, y: ballStart.y + (targetStage.y - ballStart.y) * .42 };
-    ball.style.left = `${start.x * 100}%`;
-    ball.style.top = `${start.y * 100}%`;
-    ball.style.opacity = "1";
-    ball.style.transform = "translate(-50%,-50%) scale(.78)";
-    animateKeeperDive(divePoint || target, 820, true);
-    await animateSavedShot(target, 820, saveType, divePoint, "driven", { silentKick: true, from: start, hapticEnabled: false });
-    await sleep(180);
+
+    const intended = stagePoint(target);
+    const start = {
+      x: ballStart.x + (intended.x - ballStart.x) * .30,
+      y: ballStart.y + (intended.y - ballStart.y) * .30,
+    };
+    setBallFrame(start, ballScaleAt(start, { saved: false }));
+    if (ballShadow) {
+      ballShadow.style.left = `${start.x * 100}%`;
+      ballShadow.style.top = `${Math.min(.96, start.y + .03) * 100}%`;
+      ballShadow.style.opacity = ".35";
+      ballShadow.style.transform = ballTransform(.55);
+    }
+
+    await sleep(reducedMotion() ? 70 : 180);
+    if (replayToken !== state.sequence) return false;
+
+    const replayDuration = reducedMotion() ? 420 : 1080;
+    animateKeeperDive(divePoint || target, replayDuration, true);
+    await animateSavedShot(target, replayDuration, saveType, divePoint, "driven", {
+      silentKick: true,
+      from: start,
+      hapticEnabled: false,
+    });
+    await sleep(reducedMotion() ? 90 : 260);
+
+    // Invalidate the replay dive's scheduled recovery before restoring the result.
+    if (replayToken === state.sequence) state.sequence += 1;
     stage.classList.remove("save-replay");
     showDecision(saveType, "save");
+    return true;
   }
 
   function diveZone(point) {
@@ -1606,7 +1799,20 @@
 
   function preparePalaceKick() {
     ++state.sequence;
-    resetVisuals();
+  
+  window.addEventListener("pagehide", () => {
+    if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
+    state.collisionFrame = 0;
+    clearPointerTracking();
+  });
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
+      state.collisionFrame = 0;
+      clearPointerTracking();
+    }
+  });
+  resetVisuals();
     keeper.classList.remove("opposition-keeper");
     stage.classList.add("palace-kick", "is-waiting");
     state.phase = "palace-ready";
@@ -1909,14 +2115,14 @@
 
     if (saved) {
       crowdReaction("crowd-albion-cheer", 1850);
-      keeperCelebration();
-      takerReaction(false, "palace");
       showDecision(saveType, "save");
       const timingText = state.userDive.source === "stand-still" ? "held the centre" : state.userDive.timing < 0 ? "well-timed anticipation" : `${Math.round(state.userDive.timing)} ms reaction`;
       $("stageInstruction").textContent = "Saved by Verbruggen";
       setStatus("Verbruggen saves", `${timingText} · ${saveType.toLowerCase()}. The ball stays outside the net.`);
-      sound(saveType === "CATCH" ? "catch" : "save"); window.setTimeout(() => sound("albionCheer"), 90);
+      window.setTimeout(() => sound("albionCheer"), 90);
       await exceptionalSaveReplay(state.palaceTarget, saveType, state.userDive);
+      keeperCelebration();
+      takerReaction(false, "palace");
     } else if (state.palaceMiss) {
       crowdReaction("crowd-albion-cheer");
       takerReaction(false, "palace");
@@ -2110,6 +2316,7 @@
     takerPose: "relaxed",
       aimDragMoved: false,
       standingSaveTimer: 0,
+    collisionFrame: 0,
       saveResolutionLocked: false,
     });
     summary.hidden = true;

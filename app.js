@@ -918,20 +918,8 @@
   }
 
   function randomContent() {
-    const showFact = () => {
-      $("momentType").textContent = "Albion fact";
-      $("momentText").textContent =
-        C.facts[Math.floor(Math.random() * C.facts.length)];
-    };
-    const showMemory = () => {
-      $("momentType").textContent = "Albion memory";
-      $("momentText").textContent =
-        C.memories[Math.floor(Math.random() * C.memories.length)];
-    };
-    showFact();
-    showMemory();
-    $("newFact").addEventListener("click", showFact);
-    $("newMemory").addEventListener("click", showMemory);
+    // Facts and memories now live inside the interactive Albion Timeline.
+    // The Surprise me control is wired in historyEraFilters so it respects the active era.
   }
 
   function weather() {
@@ -1090,7 +1078,9 @@
       });
     });
     const saved = localStorage.getItem("albionStoryTab");
-    activate(tabs.some((tab) => tab.dataset.story === saved) ? saved : tabs[0]?.dataset.story, { persist: false, revealTab: false });
+    const safeSaved = saved === "moments" ? "journey" : saved;
+    if (saved === "moments") localStorage.setItem("albionStoryTab", "journey");
+    activate(tabs.some((tab) => tab.dataset.story === safeSaved) ? safeSaved : tabs[0]?.dataset.story, { persist: false, revealTab: false });
   }
 
   function historyDetails() {
@@ -1117,12 +1107,19 @@
     const prev = $("timelinePrev");
     const next = $("timelineNext");
     const progress = $("timelineProgress");
+    const surprise = $("timelineSurprise");
     if (!timeline) return;
     let visibleEntries = [];
     let activeIndex = 0;
     let pointerStartX = null;
 
     const allEntries = [...timeline.querySelectorAll("article")];
+    allEntries.forEach((entry) => {
+      entry.tabIndex = -1;
+      const kind = entry.dataset.kind || "Milestone";
+      const year = entry.dataset.year || "Albion history";
+      entry.setAttribute("aria-label", `${kind}, ${year}: ${entry.querySelector("h3")?.textContent || "Albion history"}`);
+    });
     const updateProgress = () => {
       if (!visibleEntries.length) return;
       activeIndex = Math.max(0, Math.min(activeIndex, visibleEntries.length - 1));
@@ -1135,6 +1132,7 @@
     const goTo = (index, smooth = true) => {
       if (!visibleEntries.length) return;
       activeIndex = Math.max(0, Math.min(index, visibleEntries.length - 1));
+      visibleEntries.forEach((entry, index) => entry.tabIndex = index === activeIndex ? 0 : -1);
       visibleEntries[activeIndex].scrollIntoView({
         behavior: smooth && !document.body.classList.contains("user-reduce-motion") ? "smooth" : "auto",
         block: "nearest",
@@ -1163,6 +1161,13 @@
     );
     prev?.addEventListener("click", () => goTo(activeIndex - 1));
     next?.addEventListener("click", () => goTo(activeIndex + 1));
+    surprise?.addEventListener("click", () => {
+      if (!visibleEntries.length) return;
+      const candidates = visibleEntries.map((_, index) => index).filter((index) => index !== activeIndex);
+      const nextIndex = candidates.length ? candidates[Math.floor(Math.random() * candidates.length)] : 0;
+      goTo(nextIndex);
+      visibleEntries[nextIndex]?.focus({ preventScroll: true });
+    });
     timeline.addEventListener("keydown", (event) => {
       if (event.key === "ArrowRight") { event.preventDefault(); goTo(activeIndex + 1); }
       if (event.key === "ArrowLeft") { event.preventDefault(); goTo(activeIndex - 1); }
@@ -2146,7 +2151,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260726-r21", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260726-r22", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {

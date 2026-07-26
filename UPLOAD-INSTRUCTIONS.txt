@@ -1,1 +1,1 @@
-Upload every file in this ZIP directly to the root of the GitHub Brighton repository. Replace the existing files when prompted. Do not upload an outer folder. Release: production r21.
+Upload every file in this ZIP directly to the root of the Brighton GitHub repository, replacing the existing files. Keep .nojekyll. This is production r22.

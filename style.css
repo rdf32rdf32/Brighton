@@ -2732,3 +2732,22 @@ button,.cta-row a,input,select{border-radius:var(--control-radius)}
   .dashboard{gap:9px}.dashboard article{padding:12px}
   .quick-actions a{padding:8px 10px}
 }
+
+
+/* Production r22: merged Story timeline, freshness and final mobile hierarchy */
+.content-freshness{display:inline-flex;gap:4px;align-items:center;margin:0 0 12px;padding:6px 10px;border-radius:999px;background:#edf6fd;color:#42627d;font-size:.68rem}
+.content-freshness b{color:#173f61}
+.timeline-nav{grid-template-columns:auto minmax(80px,1fr) auto auto!important}
+.timeline-surprise{min-height:40px}
+.timeline article[data-kind]::before{content:attr(data-kind);display:inline-block;margin-bottom:7px;padding:3px 7px;border-radius:999px;background:#e8f4ff;color:#075c9f;font-size:.6rem;font-weight:950;letter-spacing:.08em;text-transform:uppercase}
+.timeline article.timeline-memory::before{background:#fff1cb;color:#735200}
+.timeline article:focus-visible{outline:4px solid rgba(0,87,184,.35);outline-offset:3px}
+.night-theme .content-freshness{background:#173d5d;color:#c7dced}.night-theme .content-freshness b{color:#fff}
+.night-theme .timeline article[data-kind]::before{background:#173d5d;color:#d8ecff}
+@media(max-width:760px){
+  .timeline-nav{grid-template-columns:1fr 1fr!important}
+  .timeline-progress{grid-column:1/-1;grid-row:1}
+  .timeline-surprise{grid-column:1/-1}
+  #fan-control-centre,#supporter-profile{content-visibility:auto;contain-intrinsic-size:420px}
+  .content-freshness{margin-bottom:9px}
+}

@@ -1,6 +1,6 @@
 window.ALBION_CONTENT = {
-  featureVersion: "17",
-  lastUpdated: "23 July 2026",
+  featureVersion: "22",
+  lastUpdated: "26 July 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
@@ -19,10 +19,10 @@ window.ALBION_CONTENT = {
     },
   },
   freshness: {
-    fixtures: "23 July 2026",
-    squad: "22 July 2026",
-    travel: "23 July 2026",
-    history: "23 July 2026",
+    fixtures: "26 July 2026",
+    squad: "26 July 2026",
+    travel: "26 July 2026",
+    history: "26 July 2026",
   },
   nextMatch: {
     opponent: "Aston Villa",

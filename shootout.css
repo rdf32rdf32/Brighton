@@ -564,3 +564,14 @@
 @media(prefers-reduced-motion:reduce){
   .shootout-v17 .penalty-stage.frame-impact,.shootout-v17 .penalty-stage.goal-celebration,.shootout-v17 .penalty-stage.save-contact{animation:none!important}
 }
+
+
+/* Production r22: physically visible goalkeeper contact and final mobile clarity */
+.shootout-v17 .penalty-stage.save-contact .penalty-ball{z-index:11;filter:drop-shadow(0 1px 1px rgba(0,0,0,.42))}
+.shootout-v17 .penalty-stage.save-contact .keeper-figure{z-index:12}
+.shootout-v17 .keeper-glove,.shootout-v17 .keeper-boot,.shootout-v17 .keeper-shirt,.shootout-v17 .keeper-shorts{transform-box:fill-box;transform-origin:center}
+.shootout-v17 .timeline-surprise{white-space:nowrap}
+@media(max-width:760px){
+  .shootout-v17 .shootout-status-v10{min-height:58px}
+  .shootout-v17 .penalty-stage{overscroll-behavior:none;touch-action:none}
+}
