@@ -577,7 +577,7 @@
 }
 
 
-/* Production r24: true interception, readable bottle, clearer gloves, pitch and goal depth */
+/* Production r25: true interception, readable bottle, clearer gloves, pitch and goal depth */
 .shootout-v17 .penalty-stage{
   background:
     radial-gradient(ellipse at 50% 77%,rgba(157,126,69,.12) 0 1.4%,transparent 3.2%),
@@ -631,7 +631,7 @@
 }
 @media(prefers-reduced-motion:reduce){.shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{filter:none}}
 
-/* Production r24: connected wrists, rear bottle, stronger referee and final mobile polish */
+/* Production r25: connected wrists, rear bottle, stronger referee and final mobile polish */
 .shootout-v17 .keeper-wrist-bridge{fill:#2aa96c;stroke:#1d7650;stroke-width:.7;pointer-events:none}
 .shootout-v17 .opposition-keeper .keeper-wrist-bridge{fill:#b8253c;stroke:#79182a}
 .shootout-v17 .keeper-lower-arm{transform-box:view-box;transform-origin:center top}
@@ -663,3 +663,57 @@
   .shootout-v17 .penalty-stage{min-height:322px}
 }
 @media(prefers-reduced-motion:reduce){.shootout-v17 .penalty-stage.is-save-window .keeper-body-group{animation:none!important}}
+
+
+/* Production r25: anatomically connected arms, smaller rear bottle, obvious every-kick note check */
+.shootout-v17 .keeper-arm,.shootout-v17 .keeper-lower-arm,.shootout-v17 .keeper-glove{
+  transform-box:view-box!important;
+}
+.shootout-v17 .keeper-arm-left{transform-origin:67px 78px!important}
+.shootout-v17 .keeper-arm-right{transform-origin:113px 78px!important}
+.shootout-v17 .keeper-lower-arm-left{transform-origin:53px 97px!important}
+.shootout-v17 .keeper-lower-arm-right{transform-origin:127px 97px!important}
+.shootout-v17 .keeper-glove-left{transform-origin:38px 138px!important}
+.shootout-v17 .keeper-glove-right{transform-origin:142px 138px!important}
+.shootout-v17 .keeper-wrist-bridge{stroke-width:1.15!important;stroke-linejoin:round;paint-order:stroke fill}
+.shootout-v17 .glove-cuff{stroke:#173c57;stroke-width:1.05;paint-order:stroke fill}
+.shootout-v17 .keeper-bottle{
+  left:10.8%!important;
+  top:34.2%!important;
+  width:14px!important;
+  height:36px!important;
+  z-index:1!important;
+  opacity:.68!important;
+  transform:rotate(-8deg) scale(.62)!important;
+}
+.shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{
+  z-index:10!important;
+  opacity:1!important;
+}
+.shootout-v17 .penalty-stage.bottle-reading::after{
+  content:"Verbruggen reads the penalty notes";
+  position:absolute;
+  left:50%;
+  top:6%;
+  transform:translateX(-50%);
+  z-index:30;
+  max-width:82%;
+  padding:5px 10px;
+  border-radius:999px;
+  background:rgba(3,28,52,.9);
+  color:#fff;
+  font-weight:800;
+  font-size:.72rem;
+  letter-spacing:.01em;
+  text-align:center;
+  box-shadow:0 2px 8px rgba(0,0,0,.28);
+}
+@media(max-width:760px){
+  .shootout-v17 .keeper-bottle{left:10.4%!important;top:34.8%!important;width:12px!important;height:31px!important;transform:rotate(-8deg) scale(.56)!important}
+  .shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{transform:translateY(-18px) rotate(-3deg) scale(1.22)!important}
+  .shootout-v17 .penalty-stage.bottle-reading::after{top:4.2%;font-size:.69rem}
+}
+@media(max-width:480px){
+  .shootout-v17 .keeper-bottle{left:9.8%!important;top:35.2%!important;width:11px!important;height:29px!important}
+  .shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{transform:translateY(-19px) rotate(-3deg) scale(1.34)!important}
+}

@@ -68,7 +68,7 @@
     cueStrength: 0.78,
     diveAssist: 0.88,
     sameSideBonus: 0.29,
-    scoringDifficultyIncrease: 0.19,
+    scoringDifficultyIncrease: 0.3115,
     contactDecisionDelay: 285,
     edgeAccuracyPenalty: 0.008,
   });
@@ -1768,8 +1768,7 @@
   }
 
   function nextBottleRoutine() {
-    if (!bottleRoutineBag.length) bottleRoutineBag = shuffled([true, false, false]);
-    return bottleRoutineBag.pop();
+    return true;
   }
 
   async function keeperBottleRoutine(token) {
@@ -1780,20 +1779,20 @@
     const keeperRect = keeper.getBoundingClientRect();
     const bottleRect = keeperBottle.getBoundingClientRect();
     const delta = bottleRect.left + bottleRect.width * .5 - (keeperRect.left + keeperRect.width * .5) + Math.max(10, keeperRect.width * .18);
-    const duration = reducedMotion() ? 250 : 4600;
+    const duration = reducedMotion() ? 420 : 5200;
     const body = keeper.querySelector('.keeper-body-group');
     const head = keeper.querySelector('.keeper-head-group');
     const leftArm = keeper.querySelector('.keeper-arm-left');
     const rightArm = keeper.querySelector('.keeper-arm-right');
     stage.classList.add('bottle-reading');
     keeperBottle.classList.add('is-read');
-    setStatus('Verbruggen checks his notes', 'He walks to the bottle and studies the penalty directions before returning to the line.');
+    setStatus('Verbruggen reads his penalty notes', 'He walks behind the post, lifts the bottle and studies the notes before returning to the goal line.');
     animateElement(keeper, [
       { transform: 'translateX(-50%) translate(0,0) scale(1)' },
       { transform: `translateX(-50%) translate(${delta * .55}px,2px) scale(1)`, offset: .14 },
       { transform: `translateX(-50%) translate(${delta}px,5px) scale(.99)`, offset: .25 },
-      { transform: `translateX(-50%) translate(${delta}px,11px) scale(.98,.92)`, offset: .34 },
-      { transform: `translateX(-50%) translate(${delta}px,11px) scale(.98,.92)`, offset: .73 },
+      { transform: `translateX(-50%) translate(${delta}px,11px) scale(.98,.92)`, offset: .30 },
+      { transform: `translateX(-50%) translate(${delta}px,11px) scale(.98,.92)`, offset: .76 },
       { transform: `translateX(-50%) translate(${delta}px,2px) scale(1)`, offset: .81 },
       { transform: `translateX(-50%) translate(${delta * .48}px,0) scale(1)`, offset: .9 },
       { transform: 'translateX(-50%) translate(0,0) scale(1)' },
@@ -1801,15 +1800,15 @@
     if (body) animateElement(body, [
       { transform: 'rotate(0deg) translateY(0)' },
       { transform: 'rotate(-5deg) translateY(0)', offset: .25 },
-      { transform: 'rotate(-14deg) translateY(7px)', offset: .36 },
-      { transform: 'rotate(-14deg) translateY(7px)', offset: .72 },
+      { transform: 'rotate(-14deg) translateY(7px)', offset: .32 },
+      { transform: 'rotate(-14deg) translateY(7px)', offset: .75 },
       { transform: 'rotate(0deg) translateY(0)' },
     ], { duration });
     if (head) animateElement(head, [
       { transform: 'rotate(0deg)' },
       { transform: 'rotate(-10deg)', offset: .3 },
-      { transform: 'rotate(-24deg) translateY(2px)', offset: .38 },
-      { transform: 'rotate(-24deg) translateY(2px)', offset: .7 },
+      { transform: 'rotate(-24deg) translateY(2px)', offset: .34 },
+      { transform: 'rotate(-24deg) translateY(2px)', offset: .74 },
       { transform: 'rotate(7deg)', offset: .86 },
       { transform: 'rotate(0deg)' },
     ], { duration });
@@ -1817,8 +1816,8 @@
     if (rightArm) animateElement(rightArm, [{ transform:'rotate(0deg)' }, { transform:'rotate(18deg)', offset:.34 }, { transform:'rotate(34deg)', offset:.48 }, { transform:'rotate(34deg)', offset:.69 }, { transform:'rotate(0deg)' }], { duration });
     animateElement(keeperBottle, [
       { transform: 'rotate(-8deg) scale(.82)', filter: 'brightness(1)' },
-      { transform: 'rotate(-5deg) scale(.9)', filter: 'brightness(1.35)', offset: .36 },
-      { transform: 'rotate(-5deg) scale(.9)', filter: 'brightness(1.35)', offset: .72 },
+      { transform: 'translateY(-18px) rotate(-3deg) scale(1.32)', filter: 'brightness(1.45)', offset: .34 },
+      { transform: 'translateY(-18px) rotate(-3deg) scale(1.32)', filter: 'brightness(1.45)', offset: .74 },
       { transform: 'rotate(-8deg) scale(.82)', filter: 'brightness(1)' },
     ], { duration });
     await sleep(duration);
@@ -2033,7 +2032,7 @@
     const distance = Math.hypot(resolved.x - keeperGuess.x, (resolved.y - keeperGuess.y) * .88);
     const centralPenalty = Math.abs(resolved.x - .5) < .12 && resolved.y > .32;
     let saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? .05 : 0);
-    // A cumulative 19% keeper-read rescue produces a second relative 10% difficulty step from the previous release.
+    // r25: cumulative 31.15% keeper-read rescue, approximately 15% harder to score than r24 while preserving accurate corners.
     const extraRead = !frameResult && !saved && Math.random() < settings.scoringDifficultyIncrease;
     if (extraRead) {
       saved = true;
