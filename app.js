@@ -1355,6 +1355,17 @@
       chantAudio.currentTime = 0;
       setChantState("", message);
     };
+    window.AlbionStopAllAudio = () => {
+      window.clearTimeout(chantClipTimer);
+      if (!audio.paused) audio.pause();
+      try { audio.currentTime = 0; } catch {}
+      chantAudio.pause();
+      try { chantAudio.currentTime = 0; } catch {}
+      setChantState("", "Choose a chant");
+      soundStatus.textContent = soundEnabled
+        ? `Site audio stopped. Sound remains on at ${Math.round(masterVolume * 100)}% volume.`
+        : "Site sound is off.";
+    };
     const showCaption = (text) => {
       window.clearTimeout(captionTimer);
       caption.textContent = text;
@@ -1599,41 +1610,189 @@
 
   function siteExperience() {
     const search = $("siteSearch");
+    const form = $("siteSearchForm");
     const results = $("siteSearchResults");
-    const searchable = [
-      ["quiz", "Quiz"],
-      ["shootout", "Penalty shoot-out"],
-      ["match-centre", "Matchday"],
-      ["fixtures", "Fixtures"],
-      ["xi", "Pick your XI"],
-      ["predictor", "Match predictor"],
-      ["league-predictor", "League position predictor"],
-      ["story", "Albion Story"],
-      ["records", "Records & Honours"],
-      ["amex-stands", "Amex stand guide"],
-      ["travel", "Getting to the Amex"],
-      ["anthem", "Sussex by the Sea"],
+    const clearButton = $("clearSiteSearch");
+    const normalise = (value = "") => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+    const cleanText = (value = "") => value.replace(/\s+/g, " ").trim();
+    const entries = [];
+    const seen = new Set();
+    let currentMatches = [];
+    let activeResult = -1;
+
+    const addEntry = ({ title, category = "Section", target, text = "", keywords = "", element = null }) => {
+      const cleanTitle = cleanText(title);
+      if (!cleanTitle || !target) return;
+      const key = `${target}|${normalise(cleanTitle)}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      const content = cleanText(`${cleanTitle} ${keywords} ${text}`);
+      entries.push({ title: cleanTitle, category, target, text: content, haystack: normalise(content), titleKey: normalise(cleanTitle), element });
+    };
+
+    const sectionDefinitions = [
+      ["quiz", "Albion quiz", "Game", "questions knowledge players history records"],
+      ["shootout", "Brighton v Palace penalty shoot-out", "Game", "penalties Verbruggen saves Seagulls Eagles"],
+      ["chants", "Albion chants", "Audio", "songs terrace Seagulls Brighton Aces Great Escape"],
+      ["anthem", "Sussex by the Sea", "Audio", "anthem music song"],
+      ["match-centre", "Matchday centre", "Matchday", "next match opponent weather referee television"],
+      ["fixtures", "2026/27 fixtures", "Fixtures", "opponents home away month results"],
+      ["xi", "Pick your Albion XI", "Team", "formation players captain substitutes tactics"],
+      ["predictor", "Match predictor", "Prediction", "score first scorer player of the match"],
+      ["league-predictor", "League position predictor", "Prediction", "finish table Europe relegation"],
+      ["story", "Albion Story", "History", "Goldstone Withdean Priestfield promotion Europe legends rivalry"],
+      ["records", "Records and honours", "History", "appearances goals Charity Shield FA Cup titles"],
+      ["amex-stands", "Explore the Amex stands", "Stadium", "North West East South capacity seating"],
+      ["travel", "Getting to the Amex", "Matchday", "train bus park and ride walking cycling accessibility away fans"],
+      ["glossary", "Albion glossary", "Guide", "Albion Seagulls Amex M23 derby North Stand"],
+      ["supporter-settings", "Accessibility, data and site health", "Settings", "text contrast motion export diagnostics reset"],
     ];
-    search.addEventListener("input", () => {
-      const query = search.value.trim().toLowerCase();
+    const searchable = sectionDefinitions.map(([target, title]) => [target, title]);
+
+    sectionDefinitions.forEach(([target, title, category, keywords]) => {
+      const element = $(target);
+      addEntry({ title, category, target, keywords, text: element?.textContent || "", element });
+    });
+
+    document.querySelectorAll("main section[id]").forEach((section) => {
+      const heading = section.querySelector("h2,h1");
+      if (!heading) return;
+      addEntry({ title: heading.textContent, category: "Section", target: section.id, text: section.textContent, element: section });
+    });
+
+    const detailSelectors = [
+      ["#fixtureList .fixture-item", "Fixture", "fixtures"],
+      ["#squadBrowser li", "Player", "xi"],
+      ["#story article", "Albion Story", "story"],
+      ["#records article", "Record", "records"],
+      ["#glossary details", "Glossary", "glossary"],
+      ["#chants [data-chant]", "Chant", "chants"],
+      ["#amex-stands [data-stand]", "Amex stand", "amex-stands"],
+      ["#travel .travel-panel", "Travel", "travel"],
+    ];
+    detailSelectors.forEach(([selector, category, fallbackTarget]) => {
+      document.querySelectorAll(selector).forEach((node) => {
+        const target = node.closest("section[id]")?.id || fallbackTarget;
+        const title = node.dataset.title || node.querySelector("summary,h3,h4,b,strong")?.textContent || cleanText(node.textContent).slice(0, 72);
+        addEntry({ title, category, target, text: node.textContent, element: node });
+      });
+    });
+
+    const snippetFor = (entry, query) => {
+      const text = entry.text || entry.title;
+      const lower = normalise(text);
+      const found = lower.indexOf(query);
+      const startAt = found > 46 ? found - 42 : 0;
+      const excerpt = text.slice(startAt, startAt + 132).trim();
+      return `${startAt ? "…" : ""}${excerpt}${text.length > startAt + 132 ? "…" : ""}`;
+    };
+
+    const scoreEntry = (entry, query, tokens) => {
+      let score = 0;
+      if (entry.titleKey === query) score += 120;
+      if (entry.titleKey.startsWith(query)) score += 70;
+      else if (entry.titleKey.includes(query)) score += 48;
+      if (entry.haystack.includes(query)) score += 28;
+      tokens.forEach((token) => {
+        if (entry.titleKey.includes(token)) score += 15;
+        else if (entry.haystack.includes(token)) score += 6;
+        else score -= 10;
+      });
+      return score;
+    };
+
+    const setExpanded = (expanded) => {
+      search.setAttribute("aria-expanded", String(expanded));
+      results.hidden = !expanded;
+      document.body.classList.toggle("site-search-open", expanded);
+    };
+
+    const closeResults = ({ clear = false } = {}) => {
+      results.innerHTML = "";
+      currentMatches = [];
+      activeResult = -1;
+      setExpanded(false);
+      if (clear) {
+        search.value = "";
+        clearButton.hidden = true;
+      }
+    };
+
+    const setActiveResult = (next) => {
+      const buttons = [...results.querySelectorAll("[data-search-result]")];
+      if (!buttons.length) return;
+      activeResult = (next + buttons.length) % buttons.length;
+      buttons.forEach((button, index) => {
+        const active = index === activeResult;
+        button.classList.toggle("active", active);
+        button.setAttribute("aria-selected", String(active));
+      });
+      buttons[activeResult].scrollIntoView({ block: "nearest" });
+    };
+
+    const renderSearch = () => {
+      const query = normalise(search.value);
+      clearButton.hidden = !search.value;
+      activeResult = -1;
       if (query.length < 2) {
-        results.innerHTML = "";
+        closeResults();
         return;
       }
-      const matches = searchable
-        .filter(([id, label]) =>
-          `${label} ${$(id)?.textContent || ""}`.toLowerCase().includes(query),
-        )
-        .slice(0, 6);
-      results.innerHTML = matches.length
-        ? matches
-            .map(([id, label]) => `<a href="#${id}">${esc(label)}</a>`)
-            .join("")
-        : "<span>No matching section found.</span>";
+      const tokens = query.split(" ").filter(Boolean);
+      const rankedMatches = entries
+        .map((entry) => ({ entry, score: scoreEntry(entry, query, tokens) }))
+        .filter((item) => item.score > 0)
+        .sort((a, b) => b.score - a.score || a.entry.title.localeCompare(b.entry.title));
+      const displayedTitles = new Set();
+      currentMatches = rankedMatches
+        .filter(({ entry }) => {
+          if (displayedTitles.has(entry.titleKey)) return false;
+          displayedTitles.add(entry.titleKey);
+          return true;
+        })
+        .slice(0, 9)
+        .map((item) => item.entry);
+      results.innerHTML = currentMatches.length
+        ? `<div class="search-result-heading">${currentMatches.length} ${currentMatches.length === 1 ? "result" : "results"}</div>${currentMatches.map((entry, index) => `<button type="button" role="option" aria-selected="false" data-search-result="${index}"><span><b>${esc(entry.title)}</b><small>${esc(entry.category)}</small></span><em>${esc(snippetFor(entry, query))}</em><i aria-hidden="true">Go</i></button>`).join("")}`
+        : `<div class="search-empty"><b>No result for “${esc(search.value.trim())}”</b><span>Try a player surname, opponent, chant, stand or historic ground.</span></div>`;
+      setExpanded(true);
+    };
+
+    const chooseResult = (index = 0) => {
+      const entry = currentMatches[index];
+      if (!entry) return;
+      const target = entry.element || $(entry.target);
+      closeResults({ clear: true });
+      if (!target) return;
+      target.scrollIntoView({ behavior: document.body.classList.contains("user-reduce-motion") ? "auto" : "smooth", block: "start" });
+      target.classList.add("site-search-focus");
+      window.setTimeout(() => target.classList.remove("site-search-focus"), 1800);
+      history.replaceState(null, "", `#${entry.target}`);
+    };
+
+    search.addEventListener("input", renderSearch);
+    search.addEventListener("focus", () => { if (normalise(search.value).length >= 2) renderSearch(); });
+    search.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowDown") { event.preventDefault(); setActiveResult(activeResult + 1); }
+      else if (event.key === "ArrowUp") { event.preventDefault(); setActiveResult(activeResult - 1); }
+      else if (event.key === "Enter" && currentMatches.length) { event.preventDefault(); chooseResult(activeResult >= 0 ? activeResult : 0); }
+      else if (event.key === "Escape") { closeResults(); search.blur(); }
     });
-    results.addEventListener("click", () => {
-      search.value = "";
-      results.innerHTML = "";
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!currentMatches.length) renderSearch();
+      if (currentMatches.length) chooseResult(activeResult >= 0 ? activeResult : 0);
+    });
+    clearButton.addEventListener("click", () => {
+      closeResults({ clear: true });
+      search.focus();
+    });
+    results.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-search-result]");
+      if (button) chooseResult(Number(button.dataset.searchResult));
+    });
+    document.addEventListener("pointerdown", (event) => {
+      if (!event.target.closest(".global-site-search")) closeResults();
     });
     const theme = $("themeToggle");
     const setTheme = (night) => {
@@ -1789,7 +1948,7 @@
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker
-        .register("./service-worker.js?v=20260726-r17", { updateViaCache: "none" })
+        .register("./service-worker.js?v=20260726-r18", { updateViaCache: "none" })
         .then((registration) => registration.update())
         .catch(() => {});
     });

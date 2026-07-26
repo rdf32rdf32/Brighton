@@ -369,3 +369,61 @@
     white-space: nowrap;
   }
 }
+
+
+/* Production r18: mobile-first penalty controls and realism */
+.shootout-v17 .penalty-stage{touch-action:none;overscroll-behavior:contain;-webkit-user-select:none;user-select:none}
+.shootout-v17 .keeper-figure{width:10.7%;min-width:56px;max-width:108px}
+.shootout-v17 .referee-figure{left:87.2%;top:42.6%;width:6.25%;transform:rotate(-7deg);transform-origin:50% 93%}
+.shootout-v17 .pitch-spot-mark{fill:#fff;stroke:rgba(0,45,28,.65);stroke-width:2.3;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+.shootout-v17 .spot-wear{width:25px;height:12px;border:2px solid rgba(244,238,205,.72);background:radial-gradient(ellipse,rgba(246,242,216,.8),rgba(102,86,49,.24) 45%,transparent 72%);box-shadow:0 1px 2px rgba(0,0,0,.26)}
+.shootout-v17 .penalty-ball{filter:drop-shadow(0 3px 2px rgba(0,0,0,.38));transform-origin:50% 50%}
+.shootout-v17 .penalty-ball .ball-dark-panel{fill:#17202a}.shootout-v17 .penalty-ball .ball-seam{stroke:#65717a;stroke-width:1.4;fill:none}.shootout-v17 .penalty-ball .ball-highlight{fill:rgba(255,255,255,.9)}
+.shootout-v17 .keeper-bottle{position:absolute;z-index:12;left:calc(var(--goal-left,26%) + var(--goal-width,48%) + 1.2%);top:43.4%;width:10px;height:27px;transform:rotate(8deg);border:1px solid rgba(225,250,255,.8);border-radius:3px 3px 5px 5px;background:linear-gradient(90deg,rgba(230,252,255,.68),rgba(55,157,197,.38),rgba(230,252,255,.64));box-shadow:0 3px 3px rgba(0,0,0,.25)}
+.shootout-v17 .keeper-bottle:before{content:"";position:absolute;left:2px;right:2px;top:-5px;height:5px;border-radius:2px 2px 0 0;background:#e8f4f7}.shootout-v17 .keeper-bottle i{position:absolute;left:1px;right:1px;bottom:4px;height:7px;border-radius:0 0 3px 3px;background:rgba(29,125,188,.48)}
+.shootout-v17 .swipe-trail{position:absolute;z-index:42;height:6px;transform-origin:0 50%;pointer-events:none;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,214,55,.95));box-shadow:0 0 10px rgba(255,215,55,.55)}
+.shootout-v17 .swipe-trail i{position:absolute;right:-1px;top:50%;width:17px;height:17px;transform:translateY(-50%) rotate(45deg);border-top:5px solid #ffd633;border-right:5px solid #ffd633;border-radius:2px}
+.shootout-v17 .swipe-trail b{position:absolute;left:-7px;top:50%;width:14px;height:14px;transform:translateY(-50%);border:2px solid rgba(255,255,255,.82);border-radius:50%;background:rgba(0,87,184,.55)}
+.shootout-v17 .crossbar-contact .goal-crossbar{filter:brightness(1.45) drop-shadow(0 0 5px rgba(255,255,255,.9))}
+@media(max-width:760px){
+  .shootout-v17 .penalty-stage{min-height:330px}
+  .shootout-v17 .goal-mouth{left:16%;top:11.6%;width:68%;height:38.5%}
+  .shootout-v17 .keeper-figure{width:14.8%;min-width:61px;max-width:92px}
+  .shootout-v17 .taker-figure{top:49%;width:18.2%;min-width:76px;max-width:116px}
+  .shootout-v17 .referee-figure{left:87%;top:43%;width:7.3%;min-width:36px;max-width:52px;transform:rotate(-8deg)}
+  .shootout-v17 .keeper-bottle{left:84.7%;top:44%;width:9px;height:24px}
+  .shootout-v17 .pitch-spot-mark{r:8px}
+  .shootout-v17 .spot-wear{width:28px;height:14px}
+  .shootout-v17 .stage-instruction{display:block;max-width:88%;padding:6px 9px;font-size:.68rem;line-height:1.2}
+  body.shootout-in-view .sound-toggle,body.shootout-in-view .settings-toggle,body.shootout-in-view .back-to-top,body.shootout-in-view #startTour{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+}
+@media(max-width:480px){
+  .shootout-v17{padding-left:7px;padding-right:7px}
+  .shootout-v17 .penalty-stage{min-height:310px}
+  .shootout-v17 .goal-mouth{left:14%;width:72%;height:39%}
+  .shootout-v17 .keeper-figure{width:15.3%;min-width:62px;max-width:82px}
+  .shootout-v17 .taker-figure{width:19.5%;min-width:70px;max-width:94px}
+  .shootout-v17 .referee-figure{left:88%;top:43.5%;width:7.8%;min-width:31px;max-width:41px}
+  .shootout-v17 .keeper-bottle{left:86.2%;top:44.7%;transform:rotate(7deg) scale(.9)}
+  .shootout-v17 .stage-instruction{bottom:5px;font-size:.64rem}
+}
+@media(prefers-reduced-motion:reduce){.shootout-v17 .swipe-trail{display:none!important}.site-search-focus{animation:none!important}}
+
+/* r18 final mobile play-space refinements */
+@media(max-width:760px){
+  body.shootout-in-view{padding-bottom:0}
+  body.shootout-in-view .mobile-jump-nav{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(115%)!important;transition:opacity .16s ease,transform .18s ease,visibility .16s ease}
+}
+@media(max-width:480px){
+  .shootout-v17 .shootout-intro{margin-bottom:10px}
+  .shootout-v17 .shootout-intro .eyebrow{margin:0 0 5px;font-size:.64rem;line-height:1.25}
+  .shootout-v17 .shootout-intro h2{margin:0;font-size:1.72rem;line-height:1.05}
+  .shootout-v17 .shootout-lead{margin-top:8px;font-size:.82rem;line-height:1.42}
+  .shootout-v17 .shootout-top-controls.single-control{min-width:0;margin-top:9px;padding:0;background:transparent;border:0;box-shadow:none}
+  .shootout-v17 .shootout-top-controls.single-control .compact-control{min-height:40px;padding:7px 12px;font-size:.76rem}
+  .shootout-v17 .shootout-shell{padding:8px}
+  .shootout-v17 .shootout-scoreboard{padding:7px 8px}
+  .shootout-v17 .shootout-match-strip{padding:7px 3px 6px;gap:5px 9px}
+  .shootout-v17 .shootout-match-strip #penaltyTakerName{font-size:.98rem}
+  .shootout-v17 .shootout-match-strip #shootoutSituation{font-size:.66rem}
+}

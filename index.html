@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r17" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r17" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r17" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r17" />
-    <meta name="release" content="production-r17-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r18" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r18" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r18" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r18" />
+    <meta name="release" content="production-r18-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -99,6 +99,29 @@
       ><a href="#next-match">Countdown</a>
     </aside>
     <main id="main">
+      <section class="global-site-search" aria-labelledby="globalSearchLabel">
+        <form id="siteSearchForm" class="global-search-form" role="search" novalidate>
+          <label id="globalSearchLabel" for="siteSearch">Search the whole Albion Fan Hub</label>
+          <div class="global-search-control">
+            <span class="global-search-icon" aria-hidden="true">⌕</span>
+            <input
+              id="siteSearch"
+              type="search"
+              placeholder="Try Dunk, Palace, fixtures, chants or the Amex…"
+              autocomplete="off"
+              spellcheck="false"
+              enterkeyhint="search"
+              aria-controls="siteSearchResults"
+              aria-expanded="false"
+              aria-autocomplete="list"
+            />
+            <button id="clearSiteSearch" class="global-search-clear" type="button" hidden aria-label="Clear site search">Clear</button>
+            <button class="global-search-submit" type="submit">Search</button>
+          </div>
+          <p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
+        </form>
+        <div id="siteSearchResults" class="site-search-results global-search-results" role="listbox" aria-live="polite"></div>
+      </section>
       <section class="dashboard" aria-label="Albion at a glance">
         <article><span>Home</span><b>Amex Stadium</b></article>
         <article><span>Founded</span><b>1901</b></article>
@@ -118,19 +141,6 @@
             type="button"
             hidden
           ></button>
-        </div>
-        <div class="site-search">
-          <label for="siteSearch">Search the fan hub</label
-          ><input
-            id="siteSearch"
-            type="search"
-            placeholder="Search players, history, fixtures…"
-          />
-          <div
-            id="siteSearchResults"
-            class="site-search-results"
-            aria-live="polite"
-          ></div>
         </div>
         <button
           id="themeToggle"
@@ -281,7 +291,7 @@
             <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
             <h2>Seagulls v Eagles</h2>
             <p class="shootout-lead">
-              Drag inside the goal and release to shoot. For Palace penalties, read the run-up, then swipe, tap or move towards the shot. Staying central can stop a penalty hit straight at Verbruggen.
+              Drag inside the goal and release to shoot. For Palace penalties, read the run-up, then swipe anywhere across the pitch or tap left, centre or right. Staying central can stop a penalty hit straight at Verbruggen.
             </p>
           </div>
           <div class="shootout-top-controls single-control" aria-label="Penalty game sound">
@@ -373,6 +383,7 @@
               <span class="goal-crossbar"></span>
               <span class="goal-line"></span>
             </div>
+            <div class="keeper-bottle" aria-hidden="true"><i></i></div>
             <div class="pitch-stripes" aria-hidden="true"></div>
             <div class="pitch-lines" aria-hidden="true">
               <svg class="pitch-markings-svg" viewBox="0 0 1000 650" preserveAspectRatio="none">
@@ -540,6 +551,7 @@
             <div id="celebrationPlayers" class="celebration-players" hidden aria-hidden="true"><i></i><i></i><i></i><i></i></div>
             <div id="shootoutConfetti" class="shootout-confetti" hidden aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             <div id="aimReticle" class="aim-reticle" aria-hidden="true"><i></i></div>
+            <div id="swipeTrail" class="swipe-trail" hidden aria-hidden="true"><i></i><b></b></div>
             <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">REACT!</div>
             <div id="kickDecision" class="kick-decision-v10" hidden aria-live="assertive"></div>
             <div id="stageInstruction" class="stage-instruction">Drag to aim, release to shoot</div>
@@ -560,7 +572,7 @@
               <input id="panenkaChoice" class="form-check-input" type="checkbox" />
               <span class="form-check-label">Try a Panenka on the next Albion kick</span>
             </label>
-            <span id="keyboardHint">Desktop: move and release to shoot. Mobile: drag and release. In goal, swipe or tap; stay central for a straight penalty. Keyboard: arrows and Enter.</span>
+            <span id="keyboardHint">Desktop: move and release to shoot. Mobile: drag to place a kick; when saving, swipe anywhere on the pitch or tap left, centre or right. Stay central for a straight penalty. Keyboard: arrows and Enter.</span>
           </div>
 
           <div id="shootoutSummary" class="shootout-summary-v10" hidden></div>
@@ -1871,11 +1883,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r17"></script>
-    <script src="quiz-data.js?v=20260726-r17"></script>
-    <script src="app.js?v=20260726-r17"></script>
-    <script src="release-fixes.js?v=20260726-r17"></script>
-    <script src="shootout.js?v=20260726-r17"></script>
-    <script src="polish.js?v=20260726-r17"></script>
+    <script src="content-data.js?v=20260726-r18"></script>
+    <script src="quiz-data.js?v=20260726-r18"></script>
+    <script src="app.js?v=20260726-r18"></script>
+    <script src="release-fixes.js?v=20260726-r18"></script>
+    <script src="shootout.js?v=20260726-r18"></script>
+    <script src="polish.js?v=20260726-r18"></script>
   </body>
 </html>

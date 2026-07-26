@@ -25,6 +25,7 @@
   const miniScore = $("stadiumMiniScore");
   const celebrationPlayers = $("celebrationPlayers");
   const confetti = $("shootoutConfetti");
+  const swipeTrail = $("swipeTrail");
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
@@ -120,6 +121,8 @@
   let keeperRoutineIndex = 0;
   let chantIndex = -1;
   let chantStopTimer = 0;
+  let chantFadeTimer = 0;
+  let chantHardStopTimer = 0;
   let chantPrimed = false;
   const chantTracks = [
     "seagulls.mp3",
@@ -170,8 +173,20 @@
 
   function stopChant() {
     window.clearTimeout(chantStopTimer);
+    window.clearTimeout(chantHardStopTimer);
+    window.clearInterval(chantFadeTimer);
+    chantStopTimer = 0;
+    chantHardStopTimer = 0;
+    chantFadeTimer = 0;
     chantAudio.pause();
     try { chantAudio.currentTime = 0; } catch {}
+  }
+
+  function stopOtherSiteAudio() {
+    try { window.AlbionStopAllAudio?.(); } catch {}
+    document.querySelectorAll("audio").forEach((audio) => {
+      try { audio.pause(); audio.currentTime = 0; } catch {}
+    });
   }
 
   function playAlbionChant(victory = false) {
@@ -188,16 +203,18 @@
     chantAudio.volume = victory ? 0.28 : 0.23;
     try { chantAudio.currentTime = 0; } catch {}
     chantAudio.play()?.catch(() => {});
+    if (victory) stopOtherSiteAudio();
+    const fadeAt = victory ? 9000 : 2600;
+    const stopAt = victory ? 10000 : 3400;
     chantStopTimer = window.setTimeout(() => {
-      const fade = window.setInterval(() => {
-        chantAudio.volume = Math.max(0, chantAudio.volume - 0.04);
-        if (chantAudio.volume <= 0.01 || chantAudio.paused) {
-          window.clearInterval(fade);
-          stopChant();
-          chantAudio.volume = victory ? 0.28 : 0.23;
-        }
+      chantFadeTimer = window.setInterval(() => {
+        chantAudio.volume = Math.max(0, chantAudio.volume - (victory ? 0.028 : 0.04));
       }, 90);
-    }, victory ? 5200 : 2600);
+    }, fadeAt);
+    chantHardStopTimer = window.setTimeout(() => {
+      stopChant();
+      chantAudio.volume = victory ? 0.28 : 0.23;
+    }, stopAt);
   }
 
   function tone(frequency, duration = 0.08, type = "sine", gain = 0.04, endFrequency = null) {
@@ -391,6 +408,54 @@
     };
   }
 
+  function eventStagePoint(event) {
+    syncGoalBox();
+    const rect = stage.getBoundingClientRect();
+    const sx = clamp((event.clientX - rect.left) / Math.max(1, rect.width), 0, 1);
+    const sy = clamp((event.clientY - rect.top) / Math.max(1, rect.height), 0, 1);
+    const goalX = clamp((sx - goalBox.left) / goalBox.width, .015, .985);
+    const goalY = clamp((sy - goalBox.top) / goalBox.height, .02, .98);
+    return { sx, sy, x: goalX, y: goalY };
+  }
+
+  function mobileTapGoalPoint(event) {
+    const strict = eventGoalPoint(event, .04);
+    if (strict.inside) return { x: strict.x, y: strict.y };
+    const stagePoint = eventStagePoint(event);
+    const x = stagePoint.sx < .39 ? .12 : stagePoint.sx > .61 ? .88 : .5;
+    const y = stagePoint.sy < goalBox.top + goalBox.height * .52 ? .3 : .67;
+    return { x, y };
+  }
+
+  function showSwipeTrail(start, current) {
+    if (!swipeTrail || !start || !current || reducedMotion()) return;
+    const rect = stage.getBoundingClientRect();
+    const x1 = clamp(start.clientX - rect.left, 0, rect.width);
+    const y1 = clamp(start.clientY - rect.top, 0, rect.height);
+    const x2 = clamp(current.clientX - rect.left, 0, rect.width);
+    const y2 = clamp(current.clientY - rect.top, 0, rect.height);
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const length = Math.hypot(dx, dy);
+    swipeTrail.hidden = length < 4;
+    swipeTrail.style.left = `${x1}px`;
+    swipeTrail.style.top = `${y1}px`;
+    swipeTrail.style.width = `${Math.max(4, length)}px`;
+    swipeTrail.style.transform = `rotate(${Math.atan2(dy, dx)}rad)`;
+  }
+
+  let swipeTrailHideTimer = 0;
+  function hideSwipeTrail(delay = 0) {
+    if (!swipeTrail) return;
+    window.clearTimeout(swipeTrailHideTimer);
+    if (delay > 0) {
+      swipeTrailHideTimer = window.setTimeout(() => hideSwipeTrail(), delay);
+      return;
+    }
+    swipeTrail.hidden = true;
+    swipeTrail.style.width = "0";
+  }
+
   function cancelAnimations() {
     currentAnimations.forEach((animation) => {
       try { animation.cancel(); } catch {}
@@ -471,6 +536,8 @@
     if (celebrationPlayers) celebrationPlayers.hidden = true;
     if (confetti) confetti.hidden = true;
     resetCrowd();
+    hideSwipeTrail();
+    stage.classList.remove("crossbar-contact");
     positionKeeperOnLine();
   }
 
@@ -1028,9 +1095,9 @@
     const glove = arm?.querySelector(".keeper-glove");
     const barRect = bar?.getBoundingClientRect();
     const gloveRect = glove?.getBoundingClientRect();
-    const requiredLift = barRect && gloveRect ? Math.max(12, gloveRect.top - barRect.bottom + 10) : keeperDimensions().height * .14;
-    const lift = Math.min(keeperDimensions().height * .24, requiredLift + 5);
-    const duration = reducedMotion() ? 150 : 1120;
+    const requiredLift = barRect && gloveRect ? Math.max(18, gloveRect.top - barRect.bottom + 5) : stage.clientHeight * .2;
+    const lift = Math.min(stage.clientHeight * .285, requiredLift + 7);
+    const duration = reducedMotion() ? 170 : 1280;
 
     animateElement(keeper, [
       { transform: "translateX(-50%) translateY(0) scale(1)" },
@@ -1072,11 +1139,20 @@
       { transform: "rotate(0deg)" },
     ], { duration }));
     if (bar) animateElement(bar, [
-      { filter: "brightness(1)" },
-      { filter: "brightness(1.6) drop-shadow(0 0 3px rgba(255,255,255,.75))", offset: .6 },
-      { filter: "brightness(1)" },
+      { transform: "translate(0,0)", filter: "brightness(1)" },
+      { transform: "translate(0,0)", filter: "brightness(1.7) drop-shadow(0 0 4px rgba(255,255,255,.9))", offset: .58 },
+      { transform: "translate(-3px,1px)", offset: .61 },
+      { transform: "translate(3px,-1px)", offset: .64 },
+      { transform: "translate(-2px,1px)", offset: .67 },
+      { transform: "translate(1px,0)", offset: .7 },
+      { transform: "translate(0,0)", filter: "brightness(1)" },
     ], { duration });
-    window.setTimeout(() => sound("gloves"), reducedMotion() ? 55 : duration * .59);
+    window.setTimeout(() => {
+      sound("gloves");
+      if (!reducedMotion() && navigator.vibrate) navigator.vibrate(32);
+      stage.classList.add("crossbar-contact");
+      window.setTimeout(() => stage.classList.remove("crossbar-contact"), 330);
+    }, reducedMotion() ? 65 : duration * .59);
     await sleep(duration);
     if (token !== state.sequence) return false;
     keeper.querySelectorAll(".keeper-arm,.keeper-lower-arm,.keeper-leg,.keeper-lower-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
@@ -1360,7 +1436,7 @@
     const anticipatedDive = state.pendingDive && performance.now() - state.pendingDive.time < 1800 ? state.pendingDive : null;
     stage.classList.remove("is-locked");
     stage.classList.add("is-save-window");
-    $("stageInstruction").textContent = "Move or swipe towards the shot — early movement counts";
+    $("stageInstruction").textContent = matchMedia("(max-width:760px)").matches ? "Swipe anywhere or tap left, centre or right" : "Move or swipe towards the shot — early movement counts";
     setStatus("Read the final stride", "You can begin moving before contact and continue reacting after the strike.");
     if (anticipatedDive) {
       window.setTimeout(() => {
@@ -1371,7 +1447,7 @@
     await sleep(reducedMotion() ? 30 : settings.preContactWindow);
     if (token !== state.sequence) return;
     cue.hidden = false;
-    setStatus("REACT!", "Move or swipe towards the shot. Choosing the correct side is strongly rewarded.");
+    setStatus("REACT!", matchMedia("(max-width:760px)").matches ? "Swipe anywhere on the pitch or tap left, centre or right." : "Move or swipe towards the shot. Choosing the correct side is strongly rewarded.");
     window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 350);
     const ballAnimation = animateBall(state.palaceTarget, settings.flight, false, state.palaceMiss, "driven");
     window.clearTimeout(state.standingSaveTimer);
@@ -1659,22 +1735,27 @@
     try { stage.setPointerCapture(event.pointerId); } catch {}
   }
 
-  function clearPointerTracking() {
+  function clearPointerTracking(trailDelay = 0) {
     state.pointerStart = null;
     state.pointerLast = null;
     state.activePointerId = null;
     state.aimPointerActive = false;
     state.aimDragMoved = false;
     stage.classList.remove("is-drag-aiming");
+    hideSwipeTrail(trailDelay);
   }
 
   function swipeGoalPoint(start, current, fallbackPoint) {
     if (!start || !current) return fallbackPoint;
     const dx = (current.clientX - start.clientX) / Math.max(1, stage.clientWidth);
     const dy = (current.clientY - start.clientY) / Math.max(1, stage.clientHeight);
+    const magnitude = Math.hypot(dx, dy);
+    if (magnitude < .018) return fallbackPoint;
+    const directionalX = clamp(dx / Math.max(.025, Math.abs(dx) + Math.abs(dy) * .22), -1, 1);
+    const directionalY = clamp(dy / Math.max(.025, Math.abs(dy) + Math.abs(dx) * .34), -1, 1);
     return {
-      x: clamp(.5 + dx * 3.35, .015, .985),
-      y: clamp(.58 + dy * 2.05, .02, .98),
+      x: clamp(.5 + directionalX * .46, .025, .975),
+      y: clamp(.57 + directionalY * .39, .04, .96),
     };
   }
 
@@ -1682,10 +1763,10 @@
     const keeperPreparing = state.phase === "palace-prep" || state.phase === "palace-run";
     if (state.phase !== "albion-aim" && state.phase !== "save" && !keeperPreparing) return;
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
-    const point = eventGoalPoint(event, touchLike ? .09 : 0);
+    const point = eventGoalPoint(event, touchLike ? .1 : 0);
 
     if (state.phase === "albion-aim") {
-      if (!point.inside) return;
+      if (!point.inside && !state.aimPointerActive) return;
       if (state.aimPointerActive || event.pointerType === "mouse") {
         setReticle(point.x, point.y);
         if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
@@ -1694,42 +1775,39 @@
       return;
     }
 
+    if (!state.pointerStart) return;
+    const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
+    const distance = pointerDistance(state.pointerStart, nowPoint);
+    const mappedPoint = touchLike ? swipeGoalPoint(state.pointerStart, nowPoint, mobileTapGoalPoint(event)) : mobileTapGoalPoint(event);
+    state.pointerLast = nowPoint;
+    if (touchLike) showSwipeTrail(state.pointerStart, nowPoint);
+    previewKeeper(mappedPoint);
+
     if (keeperPreparing) {
-      if (!point.inside || !state.pointerStart) return;
       event.preventDefault();
-      const swipePoint = touchLike ? swipeGoalPoint(state.pointerStart, event, point) : point;
-      previewKeeper(swipePoint);
-      state.pointerLast = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
-      if (pointerDistance(state.pointerStart, event) >= Math.max(8, stage.clientWidth * .012)) {
-        state.pendingDive = { point: swipePoint, time: performance.now(), source: touchLike ? "early-swipe" : "early-mouse" };
+      if (distance >= Math.max(12, stage.clientWidth * .018)) {
+        state.pendingDive = { point: mappedPoint, time: performance.now(), source: touchLike ? "early-swipe" : "early-mouse" };
       }
       return;
     }
 
-    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !point.inside) return;
-    previewKeeper(point);
-    if (!state.pointerStart) {
-      beginPointerTracking(event);
-      return;
-    }
-    const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
-    const fromStart = pointerDistance(state.pointerStart, nowPoint);
-    const fromLast = pointerDistance(state.pointerLast, nowPoint);
-    state.pointerLast = nowPoint;
-    const threshold = touchLike ? Math.max(8, stage.clientWidth * .011) : Math.max(5, stage.clientWidth * .007);
-    if (fromStart >= threshold || fromLast >= threshold * .72) {
+    if (state.phase !== "save" || !state.reactionOpen || state.userDive) return;
+    const threshold = touchLike ? Math.max(14, stage.clientWidth * .021) : Math.max(7, stage.clientWidth * .01);
+    if (distance >= threshold) {
       event.preventDefault();
-      const divePoint = touchLike ? swipeGoalPoint(state.pointerStart, nowPoint, point) : point;
-      takeUserDive(divePoint, touchLike ? "swipe" : "mouse-flick");
-      clearPointerTracking();
+      takeUserDive(mappedPoint, touchLike ? "swipe" : "mouse-flick");
+      if (touchLike && navigator.vibrate && !reducedMotion()) navigator.vibrate(18);
+      clearPointerTracking(touchLike ? 180 : 0);
     }
   }, { passive: false });
 
   stage.addEventListener("pointerdown", (event) => {
     unlockAudio();
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
-    const point = eventGoalPoint(event, touchLike ? .09 : 0);
-    if (!point.inside) return;
+    const point = eventGoalPoint(event, touchLike ? .1 : 0);
+    const savingPhase = state.phase === "palace-prep" || state.phase === "palace-run" || state.phase === "save";
+    if (state.phase === "albion-aim" && !point.inside) return;
+    if (!savingPhase && state.phase !== "albion-aim") return;
     event.preventDefault();
     beginPointerTracking(event);
 
@@ -1739,21 +1817,24 @@
       stage.classList.add("is-drag-aiming");
       setReticle(point.x, point.y);
       $("stageInstruction").textContent = "Release to shoot";
-    } else if (state.phase === "palace-prep" || state.phase === "palace-run") {
-      previewKeeper(point);
-      state.pendingDive = { point: { x: point.x, y: point.y }, time: performance.now(), source: touchLike ? "early-touch" : "early-click" };
-    } else if (state.phase === "save") {
-      previewKeeper(point);
+    } else {
+      const tapPoint = mobileTapGoalPoint(event);
+      previewKeeper(tapPoint);
+      if (state.phase !== "save") {
+        state.pendingDive = { point: tapPoint, time: performance.now(), source: touchLike ? "early-touch" : "early-click" };
+      }
     }
   }, { passive: false });
 
   stage.addEventListener("pointerup", (event) => {
+    const hadTracking = Boolean(state.pointerStart);
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
-    const point = eventGoalPoint(event, touchLike ? .1 : 0);
+    const point = eventGoalPoint(event, touchLike ? .12 : 0);
     const distance = pointerDistance(state.pointerStart, event);
-    const swipePoint = touchLike && distance > 6 ? swipeGoalPoint(state.pointerStart, event, point) : point;
+    const fallbackPoint = mobileTapGoalPoint(event);
+    const swipePoint = touchLike && distance > 9 ? swipeGoalPoint(state.pointerStart, event, fallbackPoint) : fallbackPoint;
 
-    if (state.phase === "albion-aim" && state.aimPointerActive && point.inside) {
+    if (state.phase === "albion-aim" && state.aimPointerActive) {
       event.preventDefault();
       setReticle(point.x, point.y);
       const shot = { ...state.aim };
@@ -1761,16 +1842,17 @@
       takeAlbionPenalty(shot);
       return;
     }
-    if ((state.phase === "palace-prep" || state.phase === "palace-run") && point.inside) {
+    if (state.phase === "palace-prep" || state.phase === "palace-run") {
       event.preventDefault();
-      state.pendingDive = { point: swipePoint, time: performance.now(), source: distance > 7 ? (touchLike ? "early-swipe" : "early-mouse") : (touchLike ? "early-tap" : "early-click") };
+      state.pendingDive = { point: swipePoint, time: performance.now(), source: distance > 9 ? (touchLike ? "early-swipe" : "early-mouse") : (touchLike ? "early-tap" : "early-click") };
       previewKeeper(swipePoint);
-    } else if (state.phase === "save" && state.reactionOpen && !state.userDive && point.inside) {
+    } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       event.preventDefault();
-      takeUserDive(swipePoint, distance > 7 ? (touchLike ? "swipe" : "mouse-flick") : (touchLike ? "tap" : "click"));
+      takeUserDive(swipePoint, distance > 9 ? (touchLike ? "swipe" : "mouse-flick") : (touchLike ? "tap" : "click"));
+      if (touchLike && navigator.vibrate && !reducedMotion()) navigator.vibrate(18);
     }
     const cancelledAim = state.phase === "albion-aim" && state.aimPointerActive;
-    clearPointerTracking();
+    if (hadTracking) clearPointerTracking(touchLike && !cancelledAim ? 180 : 0);
     if (cancelledAim) $("stageInstruction").textContent = "Drag to aim, release to shoot";
   }, { passive: false });
 
@@ -1783,15 +1865,16 @@
     if (event.pointerType === "mouse" && state.phase !== "save" && !state.aimPointerActive) clearPointerTracking();
   });
 
-  // Legacy touch fallback only for browsers without Pointer Events.
+  // Fallback for older browsers without Pointer Events.
   let fallbackTouchStart = null;
   stage.addEventListener("touchstart", (event) => {
     if (window.PointerEvent) return;
-    if (state.phase !== "albion-aim" && state.phase !== "save") return;
+    const savingPhase = state.phase === "palace-prep" || state.phase === "palace-run" || state.phase === "save";
+    if (state.phase !== "albion-aim" && !savingPhase) return;
     const touch = event.touches[0];
     if (!touch) return;
-    const point = eventGoalPoint(touch, .1);
-    if (!point.inside) return;
+    const point = eventGoalPoint(touch, .12);
+    if (state.phase === "albion-aim" && !point.inside) return;
     fallbackTouchStart = { clientX: touch.clientX, clientY: touch.clientY, time: performance.now() };
     if (state.phase === "albion-aim") setReticle(point.x, point.y);
     event.preventDefault();
@@ -1801,13 +1884,14 @@
     if (window.PointerEvent || !fallbackTouchStart) return;
     const touch = event.touches[0];
     if (!touch) return;
-    const point = eventGoalPoint(touch, .1);
-    if (!point.inside) return;
     event.preventDefault();
+    const point = eventGoalPoint(touch, .12);
     if (state.phase === "albion-aim") setReticle(point.x, point.y);
     else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
-      if (distance >= 8) takeUserDive(swipeGoalPoint(fallbackTouchStart, touch, point), "swipe");
+      const mapped = distance > 10 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
+      previewKeeper(mapped);
+      if (distance >= 14) takeUserDive(mapped, "swipe");
     }
   }, { passive: false });
 
@@ -1815,18 +1899,19 @@
     if (window.PointerEvent || !fallbackTouchStart) return;
     const touch = event.changedTouches[0];
     if (touch) {
-      const point = eventGoalPoint(touch, .1);
-      if (point.inside && state.phase === "albion-aim") {
+      const point = eventGoalPoint(touch, .12);
+      const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
+      const mapped = distance > 9 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
+      if (state.phase === "albion-aim") {
         setReticle(point.x, point.y);
         takeAlbionPenalty({ ...state.aim });
-      } else if (point.inside && state.phase === "save" && state.reactionOpen && !state.userDive) {
-        takeUserDive(swipeGoalPoint(fallbackTouchStart, touch, point), "tap");
+      } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
+        takeUserDive(mapped, distance > 9 ? "swipe" : "tap");
       }
     }
     fallbackTouchStart = null;
+    hideSwipeTrail();
   }, { passive: false });
-
-  stage.addEventListener("touchcancel", () => { fallbackTouchStart = null; clearPointerTracking(); });
 
   stage.addEventListener("keydown", (event) => {
     const step = event.shiftKey ? 0.08 : 0.035;
