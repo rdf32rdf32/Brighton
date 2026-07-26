@@ -26,6 +26,7 @@
   const celebrationPlayers = $("celebrationPlayers");
   const confetti = $("shootoutConfetti");
   const swipeTrail = $("swipeTrail");
+  const saveImpact = $("saveImpact");
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
@@ -47,6 +48,11 @@
     document.body.classList.contains("user-reduce-motion") ||
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
+  function haptic(pattern) {
+    if (reducedMotion() || !navigator.vibrate) return;
+    try { navigator.vibrate(pattern); } catch {}
+  }
+
   const GAME = Object.freeze({
     shotSpread: 0.0022,
     keeperNoise: 0.42,
@@ -60,6 +66,8 @@
     cueStrength: 0.78,
     diveAssist: 0.88,
     sameSideBonus: 0.29,
+    scoringDifficultyIncrease: 0.10,
+    contactDecisionDelay: 285,
   });
 
   const albionTakers = [
@@ -114,16 +122,17 @@
     aimPointerActive: false,
     aimDragMoved: false,
     standingSaveTimer: 0,
+    saveResolutionLocked: false,
   };
 
   let audioContext = null;
   let currentAnimations = [];
   let keeperRoutineIndex = 0;
+  let crossbarRoutineBag = [];
   let chantIndex = -1;
   let chantStopTimer = 0;
   let chantFadeTimer = 0;
   let chantHardStopTimer = 0;
-  let chantPrimed = false;
   const chantTracks = [
     "seagulls.mp3",
     "albion-albion-albion.mp3",
@@ -132,7 +141,7 @@
     "b-r-i-g-h-t-o-n.mp3",
   ];
   const chantAudio = new Audio();
-  chantAudio.preload = "auto";
+  chantAudio.preload = "none";
   chantAudio.volume = 0.24;
 
   function config() { return GAME; }
@@ -158,17 +167,6 @@
     } catch {
       state.audioUnlocked = false;
     }
-    if (!chantPrimed) {
-      chantPrimed = true;
-      chantAudio.src = chantTracks[0];
-      chantAudio.muted = true;
-      const prime = chantAudio.play();
-      prime?.then(() => {
-        chantAudio.pause();
-        chantAudio.currentTime = 0;
-        chantAudio.muted = false;
-      }).catch(() => { chantAudio.muted = false; });
-    }
   }
 
   function stopChant() {
@@ -193,6 +191,7 @@
     if (!state.sound || !state.audioUnlocked) return;
     stopChant();
     if (victory) {
+      stopOtherSiteAudio();
       chantAudio.src = "sussex-by-the-sea.mp3";
     } else {
       let next = Math.floor(Math.random() * chantTracks.length);
@@ -202,8 +201,8 @@
     }
     chantAudio.volume = victory ? 0.28 : 0.23;
     try { chantAudio.currentTime = 0; } catch {}
+    chantAudio.load();
     chantAudio.play()?.catch(() => {});
-    if (victory) stopOtherSiteAudio();
     const fadeAt = victory ? 9000 : 2600;
     const stopAt = victory ? 10000 : 3400;
     chantStopTimer = window.setTimeout(() => {
@@ -537,7 +536,9 @@
     if (confetti) confetti.hidden = true;
     resetCrowd();
     hideSwipeTrail();
-    stage.classList.remove("crossbar-contact");
+    if (saveImpact) { saveImpact.hidden = true; saveImpact.className = "save-impact"; }
+    state.saveResolutionLocked = false;
+    stage.classList.remove("crossbar-contact", "save-contact", "save-replay");
     positionKeeperOnLine();
   }
 
@@ -648,54 +649,127 @@
     return { animation: run, duration };
   }
 
-  function animateBall(target, duration, saved = false, miss = false, shotType = "driven") {
+  function animateBall(target, duration, saved = false, miss = false, shotType = "driven", options = {}) {
     const point = stagePoint(target);
     const endScale = saved ? 0.66 : miss ? 0.54 : 0.48;
     const panenkaShot = shotType === "panenka";
     const spin = panenkaShot ? -150 : target.x < .5 ? 82 : -82;
-    const midX = ballStart.x + (point.x - ballStart.x) * .52;
-    const linearMidY = ballStart.y + (point.y - ballStart.y) * .52;
+    const from = options.from || ballStart;
+    const midX = from.x + (point.x - from.x) * .52;
+    const linearMidY = from.y + (point.y - from.y) * .52;
     const midY = panenkaShot ? linearMidY - .105 : linearMidY;
-    sound("kick");
+    if (!options.silentKick) sound("kick");
     if (ballShadow) {
+      const shadowEndY = saved ? point.y + .025 : goalBox.top + goalBox.height + .012;
       animateElement(ballShadow, [
-        { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .72, transform: "translate(-50%,-50%) scale(1)" },
-        { left: `${midX * 100}%`, top: `${(ballStart.y - .01) * 100}%`, opacity: panenkaShot ? .16 : .28, transform: "translate(-50%,-50%) scale(.62)" },
-        { left: `${point.x * 100}%`, top: `${(goalBox.top + goalBox.height + .012) * 100}%`, opacity: .06, transform: "translate(-50%,-50%) scale(.3)" },
+        { left: `${from.x * 100}%`, top: `${(from.y + .012) * 100}%`, opacity: .72, transform: "translate(-50%,-50%) scale(1)" },
+        { left: `${midX * 100}%`, top: `${(from.y - .01) * 100}%`, opacity: panenkaShot ? .16 : .28, transform: "translate(-50%,-50%) scale(.62)" },
+        { left: `${point.x * 100}%`, top: `${shadowEndY * 100}%`, opacity: saved ? .12 : .06, transform: "translate(-50%,-50%) scale(.3)" },
       ], { duration, easing: "cubic-bezier(.18,.58,.24,1)" });
     }
-    return animateElement(
-      ball,
-      [
-        { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(0deg)" },
-        { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: `translate(-50%,-50%) scale(${panenkaShot ? .78 : .7}) rotate(${spin * .42}deg)`, offset: .5 },
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale}) rotate(${spin}deg)` },
-      ],
-      { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : "linear" },
-    );
+    return animateElement(ball, [
+      { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(0deg)" },
+      { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: `translate(-50%,-50%) scale(${panenkaShot ? .78 : .7}) rotate(${spin * .42}deg)`, offset: .5 },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale}) rotate(${spin}deg)` },
+    ], { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : "linear" });
+  }
+
+  function animateBallApproach(target, duration, shotType = "driven") {
+    const targetStage = stagePoint(target);
+    const point = {
+      x: ballStart.x + (targetStage.x - ballStart.x) * .34,
+      y: ballStart.y + (targetStage.y - ballStart.y) * .34,
+    };
+    sound("kick");
+    if (ballShadow) animateElement(ballShadow, [
+      { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .72, transform: "translate(-50%,-50%) scale(1)" },
+      { left: `${point.x * 100}%`, top: `${(point.y + .018) * 100}%`, opacity: .34, transform: "translate(-50%,-50%) scale(.72)" },
+    ], { duration, easing: "linear" });
+    const animation = animateElement(ball, [
+      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(0deg)" },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(.82) rotate(${target.x < .5 ? 32 : -32}deg)` },
+    ], { duration, easing: "linear" });
+    return { point, animation };
+  }
+
+  function saveContactPoint(target, saveType, divePoint = null) {
+    const centre = divePoint || state.userDive || { x: .5, y: .56 };
+    if (saveType === "BLOCKED") return { x: clamp(centre.x, .38, .62), y: clamp(target.y, .43, .68) };
+    if (saveType === "LEG SAVE") return { x: clamp((target.x + centre.x) / 2, .25, .75), y: clamp(Math.max(target.y, .69), .67, .86) };
+    if (saveType === "CATCH") return { x: clamp((target.x + centre.x) / 2, .08, .92), y: clamp((target.y + centre.y) / 2, .16, .78) };
+    return { x: clamp(target.x + (centre.x - target.x) * .28, .025, .975), y: clamp(target.y + (centre.y - target.y) * .22, .035, .96) };
+  }
+
+  function showSaveImpact(point, saveType) {
+    if (!saveImpact) return;
+    const position = stagePoint(point);
+    saveImpact.hidden = false;
+    saveImpact.className = `save-impact ${saveType === "CATCH" ? "catch-impact" : "glove-impact"}`;
+    saveImpact.style.left = `${position.x * 100}%`;
+    saveImpact.style.top = `${position.y * 100}%`;
+    stage.classList.add("save-contact");
+    window.setTimeout(() => {
+      saveImpact.hidden = true;
+      stage.classList.remove("save-contact");
+    }, reducedMotion() ? 90 : 230);
+  }
+
+  async function animateSavedShot(target, duration, saveType, divePoint = null, shotType = "driven", { silentKick = false, from = null, hapticEnabled = true } = {}) {
+    const contact = saveContactPoint(target, saveType, divePoint);
+    const flight = animateBall(contact, Math.max(280, duration * .72), true, false, shotType, { silentKick, from: from || ballStart });
+    await flight?.finished.catch(() => {});
+    showSaveImpact(contact, saveType);
+    if (hapticEnabled) haptic([18, 28, 24]);
+    await sleep(reducedMotion() ? 55 : 105);
+    await animateDeflection(contact, saveType)?.finished.catch(() => {});
+    return contact;
   }
 
   function animateDeflection(target, saveType) {
-    if (saveType === "CATCH") {
-      if (ballShadow) animateElement(ballShadow, [{ opacity: .08 }, { opacity: 0 }], { duration: 220 });
-      return animateElement(ball, [
-        { opacity: 1, transform: "translate(-50%,-50%) scale(.66)" },
-        { opacity: .18, transform: "translate(-50%,-50%) scale(.26)" },
-      ], { duration: 230 });
-    }
-    const direction = target.x < 0.5 ? -1 : 1;
+    const direction = target.x < 0.47 ? -1 : target.x > 0.53 ? 1 : (state.userDive?.rawX || .5) < .5 ? -1 : 1;
     const point = stagePoint(target);
+    if (saveType === "CATCH") {
+      if (ballShadow) animateElement(ballShadow, [
+        { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .18 },
+        { left: `${point.x * 100}%`, top: `${(point.y + .02) * 100}%`, opacity: 0 },
+      ], { duration: 360 });
+      return animateElement(ball, [
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.66) rotate(0deg)" },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.61) rotate(20deg)", offset: .55 },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: .92, transform: "translate(-50%,-50%) scale(.58) rotate(30deg)" },
+      ], { duration: 360, easing: "ease-out" });
+    }
     const strong = saveType === "PARRIED" || saveType === "BLOCKED";
-    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? .095 : strong ? .075 : .055), .015, .985);
-    const endY = clamp(point.y + (target.y < .42 ? -.055 : .065), .015, .95);
+    const backward = saveType === "BLOCKED" || saveType === "LEG SAVE";
+    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? .13 : strong ? .09 : .07), .012, .988);
+    const endY = clamp(point.y + (saveType === "FINGERTIP SAVE" && target.y < .45 ? -.11 : backward ? .14 : target.y < .42 ? -.07 : .085), .012, .97);
     if (ballShadow) animateElement(ballShadow, [
-      { left: `${point.x * 100}%`, opacity: .12 },
-      { left: `${endX * 100}%`, opacity: .26, transform: "translate(-50%,-50%) scale(.55)" },
-    ], { duration: 360 });
+      { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .16, transform: "translate(-50%,-50%) scale(.32)" },
+      { left: `${endX * 100}%`, top: `${(endY + .035) * 100}%`, opacity: .32, transform: "translate(-50%,-50%) scale(.72)" },
+    ], { duration: 430 });
     return animateElement(ball, [
       { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.66) rotate(560deg)" },
-      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.54) rotate(790deg)" },
-    ], { duration: 360, easing: "cubic-bezier(.16,.52,.35,1)" });
+      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.58) rotate(840deg)" },
+    ], { duration: 430, easing: "cubic-bezier(.12,.5,.3,1)" });
+  }
+
+  async function exceptionalSaveReplay(target, saveType, divePoint) {
+    if (reducedMotion() || !["CATCH", "FINGERTIP SAVE"].includes(saveType)) return;
+    stage.classList.add("save-replay");
+    showDecision("SLOW REPLAY", "save");
+    positionKeeperOnLine();
+    const targetPoint = saveContactPoint(target, saveType, divePoint);
+    const targetStage = stagePoint(targetPoint);
+    const start = { x: ballStart.x + (targetStage.x - ballStart.x) * .42, y: ballStart.y + (targetStage.y - ballStart.y) * .42 };
+    ball.style.left = `${start.x * 100}%`;
+    ball.style.top = `${start.y * 100}%`;
+    ball.style.opacity = "1";
+    ball.style.transform = "translate(-50%,-50%) scale(.78) rotate(0deg)";
+    animateKeeperDive(divePoint || target, 820, true);
+    await animateSavedShot(target, 820, saveType, divePoint, "driven", { silentKick: true, from: start, hapticEnabled: false });
+    await sleep(180);
+    stage.classList.remove("save-replay");
+    showDecision(saveType, "save");
   }
 
   function diveZone(point) {
@@ -1077,7 +1151,7 @@
     }
   }
 
-  async function keeperRoutine(kind, token) {
+  async function keeperBarTouchRoutine(kind, token) {
     positionKeeperOnLine();
     const useLeft = keeperRoutineIndex++ % 2 === 1;
     const body = keeper.querySelector(".keeper-body-group");
@@ -1149,7 +1223,7 @@
     ], { duration });
     window.setTimeout(() => {
       sound("gloves");
-      if (!reducedMotion() && navigator.vibrate) navigator.vibrate(32);
+      haptic(36);
       stage.classList.add("crossbar-contact");
       window.setTimeout(() => stage.classList.remove("crossbar-contact"), 330);
     }, reducedMotion() ? 65 : duration * .59);
@@ -1158,6 +1232,51 @@
     keeper.querySelectorAll(".keeper-arm,.keeper-lower-arm,.keeper-leg,.keeper-lower-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
     positionKeeperOnLine();
     return true;
+  }
+
+
+  async function keeperSettleRoutine(token) {
+    positionKeeperOnLine();
+    const body = keeper.querySelector(".keeper-body-group");
+    const leftArm = keeper.querySelector(".keeper-arm-left");
+    const rightArm = keeper.querySelector(".keeper-arm-right");
+    const duration = reducedMotion() ? 140 : 720;
+    animateElement(keeper, [
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+      { transform: "translateX(-50%) translate(-7px,1px) scale(1,.985)", offset: .22 },
+      { transform: "translateX(-50%) translate(7px,-4px) scale(1.01)", offset: .48 },
+      { transform: "translateX(-50%) translate(0,2px) scale(1,.97)", offset: .72 },
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+    ], { duration, easing: "cubic-bezier(.2,.64,.2,1)" });
+    if (body) animateElement(body, [
+      { transform: "translateY(0)" },
+      { transform: "translateY(-2px)", offset: .48 },
+      { transform: "translateY(3px) scaleY(.98)", offset: .72 },
+      { transform: "translateY(0)" },
+    ], { duration });
+    if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-15deg)", offset: .55 }, { transform: "rotate(-5deg)" }], { duration });
+    if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(15deg)", offset: .55 }, { transform: "rotate(5deg)" }], { duration });
+    await sleep(duration);
+    if (token !== state.sequence) return false;
+    positionKeeperOnLine();
+    return true;
+  }
+
+  function nextCrossbarRoutine() {
+    if (!crossbarRoutineBag.length) {
+      crossbarRoutineBag = [true, true, false];
+      for (let i = crossbarRoutineBag.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [crossbarRoutineBag[i], crossbarRoutineBag[j]] = [crossbarRoutineBag[j], crossbarRoutineBag[i]];
+      }
+    }
+    return crossbarRoutineBag.pop();
+  }
+
+  async function keeperRoutine(kind, token) {
+    // Verbruggen touches the frame in a shuffled two-out-of-three pattern.
+    if (kind === "palace" && nextCrossbarRoutine()) return keeperBarTouchRoutine(kind, token);
+    return keeperSettleRoutine(token);
   }
 
   async function refereeCheck(token) {
@@ -1223,6 +1342,7 @@
     keeper.classList.add("opposition-keeper");
     stage.classList.remove("palace-kick");
     state.phase = "albion-prep";
+    document.body.classList.add("shootout-playing");
     state.locked = true;
     state.reactionOpen = false;
     readyPanel.hidden = true;
@@ -1306,7 +1426,7 @@
     if (token !== state.sequence) return;
 
     const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));
-    const spread = settings.shotSpread * (1 + edge * 1.25);
+    const spread = settings.shotSpread * (1 + edge * 1.75);
     const resolved = isPanenka
       ? { x: clamp(.5 + gaussian() * .024, .43, .57), y: clamp(.61 + gaussian() * .024, .52, .68) }
       : { x: aim.x + gaussian() * spread, y: aim.y + gaussian() * spread };
@@ -1318,13 +1438,23 @@
     if (isPanenka && Math.random() < .76) keeperGuess.x = Math.random() < .5 ? .12 : .88;
     const distance = Math.hypot(resolved.x - keeperGuess.x, (resolved.y - keeperGuess.y) * .88);
     const centralPenalty = Math.abs(resolved.x - .5) < .12 && resolved.y > .32;
-    const saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? .05 : 0);
+    let saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? .05 : 0);
+    // A keeper-read rescue on exactly 10% of otherwise scoring shots gives a relative 10% difficulty increase.
+    const extraRead = !frameResult && !saved && Math.random() < settings.scoringDifficultyIncrease;
+    if (extraRead) {
+      saved = true;
+      keeperGuess.x = clamp(resolved.x + gaussian() * .025, .035, .965);
+      keeperGuess.y = clamp(resolved.y + gaussian() * .025, .05, .95);
+    }
     const scored = !frameResult && !saved;
+    const saveType = distance < settings.keeperReach * .48 || (centralPenalty && extraRead) ? "CATCH" : extraRead && resolved.y < .42 ? "FINGERTIP SAVE" : "PARRIED";
 
     animateKeeperDive(keeperGuess, settings.flight * .9, saved);
-    const ballAnimation = animateBall(resolved, settings.flight, saved, Boolean(frameResult), isPanenka ? "panenka" : "driven");
-    await ballAnimation?.finished.catch(() => {});
-    if (saved) await animateDeflection(resolved, distance < settings.keeperReach * .48 ? "CATCH" : "PARRIED")?.finished.catch(() => {});
+    if (saved) await animateSavedShot(resolved, settings.flight, saveType, keeperGuess, isPanenka ? "panenka" : "driven");
+    else {
+      const ballAnimation = animateBall(resolved, settings.flight, false, Boolean(frameResult), isPanenka ? "panenka" : "driven");
+      await ballAnimation?.finished.catch(() => {});
+    }
     if (frameResult === "woodwork") frameReaction(resolved);
 
     state.albionKicks += 1;
@@ -1349,7 +1479,7 @@
       takerReaction(false, "albion");
       showDecision("SAVED!", "save");
       $("stageInstruction").textContent = "Saved by the goalkeeper";
-      setStatus("Palace save", "The goalkeeper reaches the shot and keeps it out.");
+      setStatus("Palace save", "The goalkeeper makes contact before the line. The ball stays out and the net does not move.");
       sound("save"); sound("palaceCheer");
     } else if (frameResult === "woodwork") {
       crowdReaction("crowd-gasp");
@@ -1449,15 +1579,12 @@
     cue.hidden = false;
     setStatus("REACT!", matchMedia("(max-width:760px)").matches ? "Swipe anywhere on the pitch or tap left, centre or right." : "Move or swipe towards the shot. Choosing the correct side is strongly rewarded.");
     window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 350);
-    const ballAnimation = animateBall(state.palaceTarget, settings.flight, false, state.palaceMiss, "driven");
     window.clearTimeout(state.standingSaveTimer);
     const straightAtKeeper = !state.palaceMiss && Math.abs(state.palaceTarget.x - .5) < .13 && state.palaceTarget.y > .34;
     if (straightAtKeeper) {
       state.standingSaveTimer = window.setTimeout(() => {
-        if (state.phase === "save" && state.reactionOpen && !state.userDive) {
-          takeUserDive({ x: .5, y: state.palaceTarget.y }, "stand-still");
-        }
-      }, reducedMotion() ? 35 : 210);
+        if (state.phase === "save" && state.reactionOpen && !state.userDive) takeUserDive({ x: .5, y: state.palaceTarget.y }, "stand-still");
+      }, reducedMotion() ? 35 : 190);
     }
     window.clearTimeout(state.reactionTimer);
     state.reactionTimer = window.setTimeout(() => {
@@ -1465,7 +1592,11 @@
       stage.classList.remove("is-save-window");
     }, settings.postContactWindow);
 
-    await ballAnimation?.finished.catch(() => {});
+    // Start the ball immediately, then lock the outcome while it is still in front of the goal.
+    const approachDuration = reducedMotion() ? 55 : settings.contactDecisionDelay;
+    const approach = animateBallApproach(state.palaceTarget, approachDuration, "driven");
+    await approach.animation?.finished.catch(() => {});
+    state.saveResolutionLocked = true;
     state.reactionOpen = false;
     stage.classList.remove("is-save-window");
     window.clearTimeout(state.reactionTimer);
@@ -1485,10 +1616,7 @@
       const sameSide = targetSide === diveSide;
       if (sameSide) radius += settings.sameSideBonus;
       if (targetCentre && diveCentre) radius += .075;
-      const distance = Math.hypot(
-        state.palaceTarget.x - state.userDive.x,
-        (state.palaceTarget.y - state.userDive.y) * .82,
-      );
+      const distance = Math.hypot(state.palaceTarget.x - state.userDive.x, (state.palaceTarget.y - state.userDive.y) * .82);
       const gloveEdge = sameSide && distance <= radius * 1.22 && Math.abs(timing) < settings.postContactWindow * .94;
       const bodyBlock = targetCentre && diveCentre && Math.abs(state.palaceTarget.y - state.userDive.y) < .4;
       const stayedCentral = state.userDive.source === "stand-still" && targetCentre && state.palaceTarget.y > .34;
@@ -1503,7 +1631,12 @@
     }
 
     const scored = !state.palaceMiss && !saved;
-    if (saved) await animateDeflection(state.palaceTarget, saveType)?.finished.catch(() => {});
+    const remainingFlight = Math.max(380, settings.flight - approachDuration);
+    if (saved) await animateSavedShot(state.palaceTarget, remainingFlight, saveType, state.userDive, "driven", { silentKick: true, from: approach.point });
+    else {
+      const ballAnimation = animateBall(state.palaceTarget, remainingFlight, false, state.palaceMiss, "driven", { silentKick: true, from: approach.point });
+      await ballAnimation?.finished.catch(() => {});
+    }
     if (state.palaceMiss) frameReaction(state.palaceTarget);
     state.palaceKicks += 1;
     if (scored) state.palaceGoals += 1;
@@ -1524,8 +1657,9 @@
       showDecision(saveType, "save");
       const timingText = state.userDive.source === "stand-still" ? "held the centre" : state.userDive.timing < 0 ? "well-timed anticipation" : `${Math.round(state.userDive.timing)} ms reaction`;
       $("stageInstruction").textContent = "Saved by Verbruggen";
-      setStatus("Verbruggen saves", `${timingText} · ${saveType.toLowerCase()}.`);
+      setStatus("Verbruggen saves", `${timingText} · ${saveType.toLowerCase()}. The ball stays outside the net.`);
       sound(saveType === "CATCH" ? "catch" : "save"); window.setTimeout(() => sound("albionCheer"), 90);
+      await exceptionalSaveReplay(state.palaceTarget, saveType, state.userDive);
     } else if (state.palaceMiss) {
       crowdReaction("crowd-albion-cheer");
       takerReaction(false, "palace");
@@ -1579,9 +1713,15 @@
     state.reactionOpen = false;
     stage.classList.remove("is-save-window");
     const duration = Math.max(610, config().flight * .94 + Math.max(0, -timing) * .72);
-    const centralAction = Math.abs(assisted.x - .5) < .19 && state.palaceTarget && Math.abs(state.palaceTarget.x - .5) < .17;
-    if (centralAction) animateKeeperBlock(assisted, duration);
-    else animateKeeperDive(assisted, duration, true);
+    const launchDelay = Math.max(0, -timing - 45);
+    const launch = () => {
+      if (state.saveResolutionLocked) return;
+      const centralAction = Math.abs(assisted.x - .5) < .19 && state.palaceTarget && Math.abs(state.palaceTarget.x - .5) < .17;
+      if (centralAction) animateKeeperBlock(assisted, duration);
+      else animateKeeperDive(assisted, duration, true);
+    };
+    if (launchDelay > 0) window.setTimeout(launch, Math.min(launchDelay, 520));
+    else launch();
   }
 
   function shotMapSvg(shots, label) {
@@ -1617,6 +1757,7 @@
     state.finished = true;
     state.locked = true;
     state.phase = "finished";
+    document.body.classList.remove("shootout-playing");
     ++state.sequence;
     cancelAnimations();
     stage.classList.remove("is-aiming", "is-save-window", "is-waiting");
@@ -1711,6 +1852,7 @@
       aimPointerActive: false,
       aimDragMoved: false,
       standingSaveTimer: 0,
+      saveResolutionLocked: false,
     });
     summary.hidden = true;
     summary.innerHTML = "";
@@ -1759,6 +1901,10 @@
     };
   }
 
+  function aimPointForPointer(point, touchLike) {
+    return touchLike ? { x: point.x, y: clamp(point.y - .085, .025, .975) } : point;
+  }
+
   stage.addEventListener("pointermove", (event) => {
     const keeperPreparing = state.phase === "palace-prep" || state.phase === "palace-run";
     if (state.phase !== "albion-aim" && state.phase !== "save" && !keeperPreparing) return;
@@ -1768,7 +1914,8 @@
     if (state.phase === "albion-aim") {
       if (!point.inside && !state.aimPointerActive) return;
       if (state.aimPointerActive || event.pointerType === "mouse") {
-        setReticle(point.x, point.y);
+        const aimPoint = aimPointForPointer(point, touchLike);
+        setReticle(aimPoint.x, aimPoint.y);
         if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
         if (state.aimPointerActive) event.preventDefault();
       }
@@ -1796,7 +1943,7 @@
     if (distance >= threshold) {
       event.preventDefault();
       takeUserDive(mappedPoint, touchLike ? "swipe" : "mouse-flick");
-      if (touchLike && navigator.vibrate && !reducedMotion()) navigator.vibrate(18);
+      if (touchLike) haptic(12);
       clearPointerTracking(touchLike ? 180 : 0);
     }
   }, { passive: false });
@@ -1815,7 +1962,8 @@
       state.aimPointerActive = true;
       state.aimDragMoved = false;
       stage.classList.add("is-drag-aiming");
-      setReticle(point.x, point.y);
+      const aimPoint = aimPointForPointer(point, touchLike);
+      setReticle(aimPoint.x, aimPoint.y);
       $("stageInstruction").textContent = "Release to shoot";
     } else {
       const tapPoint = mobileTapGoalPoint(event);
@@ -1832,11 +1980,14 @@
     const point = eventGoalPoint(event, touchLike ? .12 : 0);
     const distance = pointerDistance(state.pointerStart, event);
     const fallbackPoint = mobileTapGoalPoint(event);
-    const swipePoint = touchLike && distance > 9 ? swipeGoalPoint(state.pointerStart, event, fallbackPoint) : fallbackPoint;
+    const swipePoint = touchLike
+      ? distance <= 4 ? fallbackPoint : distance < Math.max(13, stage.clientWidth * .02) ? { x: .5, y: .58 } : swipeGoalPoint(state.pointerStart, event, fallbackPoint)
+      : fallbackPoint;
 
     if (state.phase === "albion-aim" && state.aimPointerActive) {
       event.preventDefault();
-      setReticle(point.x, point.y);
+      const aimPoint = aimPointForPointer(point, touchLike);
+      setReticle(aimPoint.x, aimPoint.y);
       const shot = { ...state.aim };
       clearPointerTracking();
       takeAlbionPenalty(shot);
@@ -1849,7 +2000,7 @@
     } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       event.preventDefault();
       takeUserDive(swipePoint, distance > 9 ? (touchLike ? "swipe" : "mouse-flick") : (touchLike ? "tap" : "click"));
-      if (touchLike && navigator.vibrate && !reducedMotion()) navigator.vibrate(18);
+      if (touchLike) haptic(12);
     }
     const cancelledAim = state.phase === "albion-aim" && state.aimPointerActive;
     if (hadTracking) clearPointerTracking(touchLike && !cancelledAim ? 180 : 0);
@@ -1983,9 +2134,17 @@
       })
     : null;
   resizeObserver?.observe(stage);
-  window.addEventListener("resize", () => {
-    if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine();
-  }, { passive: true });
+  let resizeTimer = 0;
+  const resyncStage = () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(() => {
+      syncGoalBox();
+      setReticle(state.aim.x, state.aim.y);
+      if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine();
+    }, 90);
+  };
+  window.addEventListener("resize", resyncStage, { passive: true });
+  window.addEventListener("orientationchange", resyncStage, { passive: true });
 
   if (typeof IntersectionObserver === "function") {
     const visibilityObserver = new IntersectionObserver((entries) => {

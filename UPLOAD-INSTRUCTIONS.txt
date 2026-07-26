@@ -1,1 +1,1 @@
-Upload every file in this ZIP directly to the root of the GitHub Brighton repository. Replace the existing files when prompted. Do not upload an outer folder. Release: production r18.
+Upload every file in this ZIP directly to the root of the GitHub Brighton repository. Replace the existing files when prompted. Do not upload an outer folder. Release: production r19.

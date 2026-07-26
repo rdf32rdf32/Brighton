@@ -274,7 +274,7 @@
   }
 
   function updateControl() {
-    $("reloadUpdate")?.addEventListener("click", () => window.location.reload());
+    // The service-worker registration in app.js owns the ready-update flow.
   }
 
   tour();

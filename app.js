@@ -1035,6 +1035,7 @@
       localStorage.setItem("albionStandSavedAt", new Date().toISOString());
       window.dispatchEvent(new Event("albion:progress"));
     };
+    window.AlbionSelectStand = render;
     buttons.forEach((button) =>
       button.addEventListener("click", () => render(button.dataset.stand)),
     );
@@ -1056,20 +1057,40 @@
 
   function story() {
     const tabs = [...document.querySelectorAll(".story-tab")];
-    tabs.forEach((tab) =>
-      tab.addEventListener("click", () => {
-        tabs.forEach((item) => {
-          item.classList.toggle("active", item === tab);
-          item.classList.toggle("ghost", item !== tab);
-          item.setAttribute("aria-selected", String(item === tab));
-        });
-        document.querySelectorAll(".story-panel").forEach((panel) => {
-          const active = panel.id === tab.dataset.story;
-          panel.hidden = !active;
-          panel.classList.toggle("active", active);
-        });
-      }),
-    );
+    const panels = [...document.querySelectorAll(".story-panel")];
+    const activate = (panelId, { persist = true, revealTab = true } = {}) => {
+      const tab = tabs.find((item) => item.dataset.story === panelId) || tabs[0];
+      if (!tab) return;
+      tabs.forEach((item) => {
+        const active = item === tab;
+        item.classList.toggle("active", active);
+        item.classList.toggle("ghost", !active);
+        item.setAttribute("aria-selected", String(active));
+        item.tabIndex = active ? 0 : -1;
+      });
+      panels.forEach((panel) => {
+        const active = panel.id === tab.dataset.story;
+        panel.hidden = !active;
+        panel.classList.toggle("active", active);
+      });
+      if (persist) localStorage.setItem("albionStoryTab", tab.dataset.story);
+      if (revealTab && matchMedia("(max-width:760px)").matches) {
+        tab.scrollIntoView({ behavior: document.body.classList.contains("user-reduce-motion") ? "auto" : "smooth", block: "nearest", inline: "center" });
+      }
+    };
+    window.AlbionActivateStoryTab = activate;
+    tabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activate(tab.dataset.story));
+      tab.addEventListener("keydown", (event) => {
+        if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+        event.preventDefault();
+        const nextIndex = event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : (index + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+        tabs[nextIndex].focus();
+        activate(tabs[nextIndex].dataset.story);
+      });
+    });
+    const saved = localStorage.getItem("albionStoryTab");
+    activate(tabs.some((tab) => tab.dataset.story === saved) ? saved : tabs[0]?.dataset.story, { persist: false, revealTab: false });
   }
 
   function historyDetails() {
@@ -1170,20 +1191,27 @@
 
   function travelGuide() {
     const tabs = [...document.querySelectorAll(".travel-tab")];
-    tabs.forEach((tab) =>
-      tab.addEventListener("click", () => {
-        tabs.forEach((item) => {
-          item.classList.toggle("active", item === tab);
-          item.classList.toggle("ghost", item !== tab);
-          item.setAttribute("aria-selected", String(item === tab));
-        });
-        document.querySelectorAll(".travel-panel").forEach((panel) => {
-          const active = panel.id === tab.dataset.travel;
-          panel.hidden = !active;
-          panel.classList.toggle("active", active);
-        });
-      }),
-    );
+    const panels = [...document.querySelectorAll(".travel-panel")];
+    const activate = (panelId, { persist = true } = {}) => {
+      const tab = tabs.find((item) => item.dataset.travel === panelId) || tabs[0];
+      if (!tab) return;
+      tabs.forEach((item) => {
+        const active = item === tab;
+        item.classList.toggle("active", active);
+        item.classList.toggle("ghost", !active);
+        item.setAttribute("aria-selected", String(active));
+      });
+      panels.forEach((panel) => {
+        const active = panel.id === tab.dataset.travel;
+        panel.hidden = !active;
+        panel.classList.toggle("active", active);
+      });
+      if (persist) localStorage.setItem("albionTravelTab", tab.dataset.travel);
+    };
+    window.AlbionActivateTravelTab = activate;
+    tabs.forEach((tab) => tab.addEventListener("click", () => activate(tab.dataset.travel)));
+    const saved = localStorage.getItem("albionTravelTab");
+    activate(tabs.some((tab) => tab.dataset.travel === saved) ? saved : tabs[0]?.dataset.travel, { persist: false });
   }
 
   // Penalty shoot-out logic lives in shootout.js.
@@ -1613,6 +1641,7 @@
     const form = $("siteSearchForm");
     const results = $("siteSearchResults");
     const clearButton = $("clearSiteSearch");
+    if (localStorage.getItem("albionSearchUsed") === "yes") document.body.classList.add("site-search-used");
     const normalise = (value = "") => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
     const cleanText = (value = "") => value.replace(/\s+/g, " ").trim();
     const entries = [];
@@ -1758,15 +1787,35 @@
       setExpanded(true);
     };
 
+    const revealSearchTarget = (target) => {
+      const storyPanel = target.closest?.(".story-panel");
+      if (storyPanel) window.AlbionActivateStoryTab?.(storyPanel.id, { persist: true, revealTab: true });
+      const travelPanel = target.closest?.(".travel-panel");
+      if (travelPanel) window.AlbionActivateTravelTab?.(travelPanel.id);
+      const recordPanel = target.closest?.(".record-panel");
+      if (recordPanel?.hidden) document.querySelector(`.record-tab[data-record="${CSS.escape(recordPanel.id)}"]`)?.click();
+      target.closest?.("details")?.setAttribute("open", "");
+      target.querySelectorAll?.("details").forEach((details) => { if (details.matches("#glossary details")) details.open = true; });
+      const standButton = target.matches?.("[data-stand]") ? target : target.closest?.("[data-stand]");
+      if (standButton?.dataset.stand) window.AlbionSelectStand?.(standButton.dataset.stand);
+      const hiddenParent = target.closest?.("[hidden]");
+      if (hiddenParent && !hiddenParent.matches(".story-panel,.travel-panel,.record-panel")) hiddenParent.hidden = false;
+    };
+
     const chooseResult = (index = 0) => {
       const entry = currentMatches[index];
       if (!entry) return;
       const target = entry.element || $(entry.target);
       closeResults({ clear: true });
       if (!target) return;
-      target.scrollIntoView({ behavior: document.body.classList.contains("user-reduce-motion") ? "auto" : "smooth", block: "start" });
-      target.classList.add("site-search-focus");
-      window.setTimeout(() => target.classList.remove("site-search-focus"), 1800);
+      localStorage.setItem("albionSearchUsed", "yes");
+      document.body.classList.add("site-search-used");
+      revealSearchTarget(target);
+      window.requestAnimationFrame(() => window.setTimeout(() => {
+        target.scrollIntoView({ behavior: document.body.classList.contains("user-reduce-motion") ? "auto" : "smooth", block: "start" });
+        target.classList.add("site-search-focus");
+        window.setTimeout(() => target.classList.remove("site-search-focus"), 1800);
+      }, 40));
       history.replaceState(null, "", `#${entry.target}`);
     };
 
@@ -1944,12 +1993,39 @@
   siteExperience();
   ui();
   initialiseQuiz();
-  // Production release: register a fresh service worker for install and offline support.
+  // Install updates only after the user chooses the ready update.
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker
-        .register("./service-worker.js?v=20260726-r18", { updateViaCache: "none" })
-        .then((registration) => registration.update())
+      let refreshing = false;
+      const notice = $("updateNotice");
+      const reload = $("reloadUpdate");
+      const showReadyUpdate = (registration) => {
+        if (!registration?.waiting || !notice || !reload) return;
+        notice.hidden = false;
+        reload.disabled = false;
+        reload.textContent = "Update site";
+        reload.onclick = () => {
+          reload.disabled = true;
+          reload.textContent = "Updating…";
+          registration.waiting?.postMessage({ type: "SKIP_WAITING" });
+        };
+      };
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+      navigator.serviceWorker.register("./service-worker.js?v=20260726-r19", { updateViaCache: "none" })
+        .then((registration) => {
+          showReadyUpdate(registration);
+          registration.addEventListener("updatefound", () => {
+            const worker = registration.installing;
+            worker?.addEventListener("statechange", () => {
+              if (worker.state === "installed" && navigator.serviceWorker.controller) showReadyUpdate(registration);
+            });
+          });
+          registration.update().catch(() => {});
+        })
         .catch(() => {});
     });
   }

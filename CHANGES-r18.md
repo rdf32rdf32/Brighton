@@ -1,4 +1,4 @@
-# Production r18 – mobile penalties and whole-site search
+# Production r19 – mobile penalties and whole-site search
 
 - Added a prominent whole-site search bar at the top of the page.
 - Rebuilt search indexing for sections, players, fixtures, chants, history, glossary, stands and travel.
@@ -10,4 +10,4 @@
 - Made the pre-penalty crossbar jump reach the bar, visibly shake it and vibrate supported phones.
 - Improved the penalty spot, football appearance, referee angle and added a goalkeeper bottle.
 - Stopped other site audio on an Albion win and limited Sussex by the Sea to ten seconds with a final fade.
-- Unified all asset and service-worker version markers at r18.
+- Unified all asset and service-worker version markers at r19.

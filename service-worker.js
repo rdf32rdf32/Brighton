@@ -1,17 +1,17 @@
-const CACHE_NAME = "albion-production-r18-20260726";
+const CACHE_NAME = "albion-production-r19-20260726";
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=20260726-r18",
-  "./release-fixes.css?v=20260726-r18",
-  "./shootout.css?v=20260726-r18",
-  "./polish.css?v=20260726-r18",
-  "./content-data.js?v=20260726-r18",
-  "./quiz-data.js?v=20260726-r18",
-  "./app.js?v=20260726-r18",
-  "./release-fixes.js?v=20260726-r18",
-  "./shootout.js?v=20260726-r18",
-  "./polish.js?v=20260726-r18",
+  "./style.css?v=20260726-r19",
+  "./release-fixes.css?v=20260726-r19",
+  "./shootout.css?v=20260726-r19",
+  "./polish.css?v=20260726-r19",
+  "./content-data.js?v=20260726-r19",
+  "./quiz-data.js?v=20260726-r19",
+  "./app.js?v=20260726-r19",
+  "./release-fixes.js?v=20260726-r19",
+  "./shootout.js?v=20260726-r19",
+  "./polish.js?v=20260726-r19",
   "./manifest.json",
   "./favicon.svg",
   "./albion-safe-graphic.svg",
@@ -27,7 +27,6 @@ const CORE = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE)));
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {

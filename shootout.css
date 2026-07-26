@@ -427,3 +427,30 @@
   .shootout-v17 .shootout-match-strip #penaltyTakerName{font-size:.98rem}
   .shootout-v17 .shootout-match-strip #shootoutSituation{font-size:.66rem}
 }
+
+
+/* Production r19: unambiguous saves and mobile goalkeeper play */
+.shootout-v17 .save-impact{position:absolute;z-index:46;width:18px;height:18px;transform:translate(-50%,-50%) scale(.35);pointer-events:none;border:3px solid rgba(255,255,255,.95);border-radius:50%;background:radial-gradient(circle,rgba(255,220,68,.98) 0 22%,rgba(255,255,255,.86) 23% 39%,transparent 42%);box-shadow:0 0 16px rgba(255,235,110,.92);animation:r19-save-impact .23s ease-out forwards}
+.shootout-v17 .save-impact.catch-impact{border-color:#8ee8ff;background:radial-gradient(circle,#fff 0 25%,rgba(112,221,255,.9) 28% 42%,transparent 45%)}
+@keyframes r19-save-impact{to{opacity:0;transform:translate(-50%,-50%) scale(1.7)}}
+.shootout-v17 .save-replay:before{content:"REPLAY";position:absolute;z-index:45;top:10px;right:10px;padding:5px 8px;border-radius:999px;background:rgba(4,31,57,.86);color:#fff;font-size:.64rem;font-weight:950;letter-spacing:.1em}
+.shootout-v17 .palace-ready-panel button{min-height:48px}
+.shootout-v17:fullscreen,.shootout-v17.fullscreen-fallback{width:100%;height:100dvh;max-width:none;margin:0;border-radius:0;overflow:auto;background:#071f39}
+.shootout-v17:fullscreen .shootout-shell,.shootout-v17.fullscreen-fallback .shootout-shell{min-height:100dvh;border-radius:0;display:flex;flex-direction:column;justify-content:center}
+.shootout-v17:fullscreen .penalty-stage,.shootout-v17.fullscreen-fallback .penalty-stage{max-height:none;min-height:min(66dvh,720px)}
+@media(max-width:760px){
+  .shootout-v17 .referee-figure{z-index:4!important;left:92%!important;top:44.2%!important;width:6.2%!important;min-width:27px!important;max-width:39px!important;transform:rotate(-8deg)!important}
+  .shootout-v17 .keeper-bottle{left:12.8%!important;top:45%!important;transform:rotate(-7deg) scale(.9)!important}
+  .shootout-v17 .palace-ready-panel{left:8px;right:8px;width:auto}
+  .shootout-v17 .palace-ready-panel button{display:block;width:100%;min-height:50px}
+  .shootout-v17 .swipe-trail{height:5px;opacity:.92}
+  .shootout-v17 .penalty-stage.is-save-window{touch-action:none;overscroll-behavior:none}
+  .shootout-v17 .aim-reticle{transform:translate(-50%,-50%) scale(1.05)}
+}
+@media(max-width:400px){
+  .shootout-v17 .goal-mouth{left:12.5%!important;width:75%!important}
+  .shootout-v17 .referee-figure{left:93%!important;top:45%!important;width:5.7%!important;min-width:23px!important}
+  .shootout-v17 .taker-figure{width:18.4%!important;opacity:.96}
+  .shootout-v17 .crowd-foreground{opacity:.72}
+}
+@media(prefers-reduced-motion:reduce){.shootout-v17 .save-impact{animation:none;opacity:.9}.shootout-v17 .save-replay:before{display:none}}

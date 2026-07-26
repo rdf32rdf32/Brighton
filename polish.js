@@ -37,8 +37,8 @@
       entries.forEach((entry) => visible.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0));
       const active = [...visible.entries()].sort((a, b) => b[1] - a[1])[0];
       if (!active || active[1] <= 0) return;
-      links.forEach((link) => link.classList.remove("active"));
-      (grouped.get(active[0]) || []).forEach((link) => link.classList.add("active"));
+      links.forEach((link) => link.classList.remove("active", "active-section"));
+      (grouped.get(active[0]) || []).forEach((link) => link.classList.add("active", "active-section"));
     }, { rootMargin: "-18% 0px -62% 0px", threshold: [0.01, 0.2, 0.5] });
     sections.forEach((section) => observer.observe(section));
   }
@@ -72,6 +72,31 @@
     };
     new MutationObserver(update).observe(container, { childList: true, subtree: true });
     update();
+  }
+
+  function mobileFocusModes() {
+    const quiz = $("quiz");
+    const quizContainer = $("quizContainer");
+    let quizVisible = false;
+    const syncQuiz = () => {
+      const active = Boolean(quizContainer?.querySelector(".quiz-question:not(.quiz-finish)"));
+      document.body.classList.toggle("quiz-playing", active && quizVisible);
+    };
+    if (quiz && "IntersectionObserver" in window) {
+      new IntersectionObserver((entries) => {
+        quizVisible = Boolean(entries[0]?.isIntersecting);
+        syncQuiz();
+      }, { threshold: [0, .18, .45] }).observe(quiz);
+    }
+    if (quizContainer) new MutationObserver(syncQuiz).observe(quizContainer, { childList: true, subtree: true });
+    syncQuiz();
+
+    const lowPower = matchMedia("(max-width:760px)").matches && (
+      navigator.connection?.saveData ||
+      (Number(navigator.deviceMemory) > 0 && Number(navigator.deviceMemory) <= 4) ||
+      (Number(navigator.hardwareConcurrency) > 0 && Number(navigator.hardwareConcurrency) <= 4)
+    );
+    document.body.classList.toggle("low-power-mobile", Boolean(lowPower));
   }
 
   function lazyMedia() {
@@ -114,6 +139,7 @@
 
   completeControlSemantics();
   activeNavigation();
+  mobileFocusModes();
   progressiveReveal();
   polishQuizStates();
   lazyMedia();

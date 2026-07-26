@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r18" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r18" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r18" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r18" />
-    <meta name="release" content="production-r18-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r19" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r19" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r19" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r19" />
+    <meta name="release" content="production-r19-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -552,6 +552,7 @@
             <div id="shootoutConfetti" class="shootout-confetti" hidden aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             <div id="aimReticle" class="aim-reticle" aria-hidden="true"><i></i></div>
             <div id="swipeTrail" class="swipe-trail" hidden aria-hidden="true"><i></i><b></b></div>
+            <div id="saveImpact" class="save-impact" hidden aria-hidden="true"></div>
             <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">REACT!</div>
             <div id="kickDecision" class="kick-decision-v10" hidden aria-live="assertive"></div>
             <div id="stageInstruction" class="stage-instruction">Drag to aim, release to shoot</div>
@@ -713,7 +714,7 @@
             ><small>Play chant</small>
           </button>
         </div>
-        <audio id="chantAudio" preload="metadata" playsinline></audio>
+        <audio id="chantAudio" preload="none" playsinline></audio>
         <p class="audio-credit">
           Recordings supplied by
           <a
@@ -1056,16 +1057,6 @@
             The club’s journey, the grounds that shaped it and people remembered
             across generations.
           </p>
-        </div>
-        <div class="history-explorer">
-          <label for="historySearch"
-            >Search the Albion archive
-            <input
-              id="historySearch"
-              type="search"
-              placeholder="Try Goldstone, promotion or Dunk"
-          /></label>
-          <div id="historySearchResults" aria-live="polite"></div>
         </div>
         <div class="story-tabs" role="tablist" aria-label="Albion Story">
           <button
@@ -1809,8 +1800,8 @@
       ↑
     </button>
     <aside id="updateNotice" class="update-notice" role="status" hidden>
-      <span>A newer version of the Albion Fan Hub is ready.</span
-      ><button id="reloadUpdate" type="button">Update now</button>
+      <span>A newer version of the Albion Fan Hub is downloaded and ready.</span
+      ><button id="reloadUpdate" type="button">Update site</button>
     </aside>
     <div
       id="siteToast"
@@ -1883,11 +1874,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r18"></script>
-    <script src="quiz-data.js?v=20260726-r18"></script>
-    <script src="app.js?v=20260726-r18"></script>
-    <script src="release-fixes.js?v=20260726-r18"></script>
-    <script src="shootout.js?v=20260726-r18"></script>
-    <script src="polish.js?v=20260726-r18"></script>
+    <script src="content-data.js?v=20260726-r19"></script>
+    <script src="quiz-data.js?v=20260726-r19"></script>
+    <script src="app.js?v=20260726-r19"></script>
+    <script src="release-fixes.js?v=20260726-r19"></script>
+    <script src="shootout.js?v=20260726-r19"></script>
+    <script src="polish.js?v=20260726-r19"></script>
   </body>
 </html>
