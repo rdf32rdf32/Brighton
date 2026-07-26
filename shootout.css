@@ -538,3 +538,29 @@
 .shootout-v17 .keeper-bottle{left:10.8%!important;top:45.4%!important;z-index:5!important;opacity:.72!important;transform:rotate(-8deg) scale(.82)!important}
 @media(max-width:760px){.shootout-v17 .keeper-bottle{left:9.8%!important;top:45.8%!important}}
 @media(max-width:480px){.shootout-v17 .keeper-bottle{left:8.8%!important;top:46.1%!important}}
+
+/* Production r21: run-up cues, ball depth and impact polish */
+.shootout-v17 .shootout-match-strip{grid-template-columns:auto minmax(0,1fr) auto;align-items:center}
+.shootout-v17 .penalty-approach{grid-column:1/-1;margin:1px 0 0;color:#b8d9f3;font-size:.69rem;font-weight:850;letter-spacing:.035em;text-align:center}
+.shootout-v17 .penalty-ball{transform-origin:center;shape-rendering:geometricPrecision}
+.shootout-v17 .ball-dark-panel{filter:drop-shadow(0 .55px .25px rgba(0,0,0,.28))}
+.shootout-v17 .ball-seam{opacity:.82}.shootout-v17 .ball-highlight{opacity:.7}
+.shootout-v17 .penalty-stage[data-runup="stutter"] .crowd-foreground{filter:saturate(.88)}
+.shootout-v17 .penalty-stage.frame-impact{animation:r21-frame-camera .18s ease-out}
+.shootout-v17 .penalty-stage.goal-celebration{animation:r21-goal-camera .16s ease-out}
+.shootout-v17 .penalty-stage.save-contact{animation:r21-save-camera .13s ease-out}
+@keyframes r21-frame-camera{0%,100%{transform:translate(0,0)}35%{transform:translate(-1.5px,1px)}65%{transform:translate(1px,-.5px)}}
+@keyframes r21-goal-camera{0%,100%{transform:translate(0,0)}45%{transform:translateY(1px)}}
+@keyframes r21-save-camera{0%,100%{transform:translate(0,0)}50%{transform:translateX(.8px)}}
+@media(max-width:760px){
+  .shootout-v17 .shootout-match-strip{grid-template-columns:1fr auto}
+  .shootout-v17 .shootout-match-strip #penaltyTakerName{grid-column:1/-1}
+  .shootout-v17 .penalty-approach{font-size:.64rem}
+}
+@media(max-width:480px){
+  .shootout-v17 .penalty-approach{padding:0 5px;white-space:normal}
+  .shootout-v17 .crowd-flag{opacity:.68}
+}
+@media(prefers-reduced-motion:reduce){
+  .shootout-v17 .penalty-stage.frame-impact,.shootout-v17 .penalty-stage.goal-celebration,.shootout-v17 .penalty-stage.save-contact{animation:none!important}
+}

@@ -2702,3 +2702,33 @@ details{scroll-margin-top:90px}details[open]>summary{color:var(--blue)}
   .matchday-quick-view{gap:8px}.matchday-quick-view article{padding:11px}.dashboard{gap:7px}.dashboard article{padding:10px}
   .back-to-story-tabs{width:100%;min-height:44px}.travel-status-label{font-size:.62rem}
 }
+
+/* Production r21: final hierarchy, consistency and interactive Albion timeline */
+:root{--card-radius:20px;--control-radius:12px;--card-shadow:0 9px 24px rgba(5,55,107,.075)}
+.card,.mini-card,.global-site-search,.fan-dashboard{border-radius:var(--card-radius);box-shadow:var(--card-shadow)}
+button,.cta-row a,input,select{border-radius:var(--control-radius)}
+.section-head{margin-bottom:19px}.section-head h2{line-height:1.08}.section-head p:last-child{max-width:68ch}
+.timeline-explorer{position:relative}
+.timeline-nav{display:grid;grid-template-columns:auto minmax(100px,1fr) auto;gap:10px;align-items:center;margin:12px 0}
+.timeline-nav button{min-width:92px;padding:9px 12px}
+.timeline-nav button:disabled{opacity:.42;cursor:not-allowed}
+.timeline-progress{height:5px;overflow:hidden;border-radius:99px;background:#dce9f4}
+.timeline-progress i{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue),#ffcf33);transition:width .24s ease}
+#journey .timeline{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:4px;padding:4px 4px 14px;overscroll-behavior-inline:contain;scrollbar-width:thin}
+#journey .timeline article{flex:0 0 min(320px,82vw);min-height:190px;scroll-snap-align:center;display:flex;flex-direction:column;border:1px solid #cbddeb;border-top:5px solid var(--blue);border-radius:16px;padding:18px;background:linear-gradient(145deg,#fff,#f3f9fe);box-shadow:0 8px 18px rgba(5,55,107,.08);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+#journey .timeline article.timeline-current{border-color:#79acd4;box-shadow:0 0 0 3px rgba(0,87,184,.1),0 12px 28px rgba(5,55,107,.13);transform:translateY(-2px)}
+#journey .timeline article>b{font-size:1.55rem;line-height:1;color:var(--blue)}
+#journey .timeline article h3{margin:8px 0 4px;font-size:1.04rem}
+#journey .timeline article p{margin:4px 0;color:var(--muted)}
+#journey .timeline .history-more{align-self:flex-start;margin-top:auto;padding:7px 10px;font-size:.74rem}
+#journey .timeline .history-extra{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:.78rem}
+.timeline-help{margin:0;color:var(--muted);font-size:.72rem;text-align:center}
+.night-theme #journey .timeline article{border-color:#315a7c;background:linear-gradient(145deg,#0b2941,#102f4a)}
+@media(max-width:760px){
+  .card,.mini-card{padding:20px 16px}
+  .section-head{margin-bottom:16px}.section-head p:last-child{font-size:.9rem}
+  .timeline-nav{grid-template-columns:auto 1fr auto}.timeline-nav button{min-width:76px;padding:8px 9px;font-size:.72rem}
+  #journey .timeline article{flex-basis:84vw;min-height:178px;padding:16px}
+  .dashboard{gap:9px}.dashboard article{padding:12px}
+  .quick-actions a{padding:8px 10px}
+}

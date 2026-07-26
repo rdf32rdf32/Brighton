@@ -1,4 +1,4 @@
-# Albion Fan Hub production r20
+# Albion Fan Hub production r19
 
 - Removed the redundant Albion Story search and connected Story panels to the whole-site search.
 - Search results now reveal hidden Story, travel, record, glossary and stand content before scrolling.

@@ -56,7 +56,7 @@
 
   const GAME = Object.freeze({
     shotSpread: 0.0022,
-    keeperNoise: 0.42,
+    keeperNoise: 0.39,
     keeperReach: 0.115,
     palaceMiss: 0.18,
     saveRadius: 0.66,
@@ -67,16 +67,17 @@
     cueStrength: 0.78,
     diveAssist: 0.88,
     sameSideBonus: 0.29,
-    scoringDifficultyIncrease: 0.10,
+    scoringDifficultyIncrease: 0.19,
     contactDecisionDelay: 285,
+    edgeAccuracyPenalty: 0.008,
   });
 
   const albionTakers = [
-    { name: "Danny Welbeck", number: 18, foot: "right", style: "measured", pose: "relaxed" },
-    { name: "Georginio Rutter", number: 10, foot: "right", style: "stutter", pose: "sleeve" },
-    { name: "Yankuba Minteh", number: 11, foot: "left", style: "quick", pose: "hips" },
-    { name: "Diego Gómez", number: 25, foot: "right", style: "direct", pose: "shoulder" },
-    { name: "Maxim De Cuyper", number: 29, foot: "left", style: "measured", pose: "behind" },
+    { name: "Danny Welbeck", number: 18, foot: "right", style: "measured", pose: "relaxed", accuracy: .84, power: .72, disguise: .68 },
+    { name: "Georginio Rutter", number: 10, foot: "right", style: "stutter", pose: "sleeve", accuracy: .76, power: .68, disguise: .9 },
+    { name: "Yankuba Minteh", number: 11, foot: "left", style: "quick", pose: "hips", accuracy: .69, power: .92, disguise: .56 },
+    { name: "Diego Gómez", number: 25, foot: "right", style: "direct", pose: "shoulder", accuracy: .73, power: .9, disguise: .5 },
+    { name: "Maxim De Cuyper", number: 29, foot: "left", style: "measured", pose: "behind", accuracy: .81, power: .8, disguise: .72 },
   ];
 
   const palaceTakers = [
@@ -149,6 +150,8 @@
   let currentAnimations = [];
   let keeperRoutineIndex = 0;
   let crossbarRoutineBag = [];
+  let runUpProfileBag = [];
+  let lastRunUpProfile = "";
   let chantIndex = -1;
   let chantStopTimer = 0;
   let chantFadeTimer = 0;
@@ -378,11 +381,14 @@
 
   function nudgeShotDifficulty(target) {
     if (!target) return target;
+    const settings = config();
     const nudged = { ...target };
     const edgeBias = nudged.x < .5 ? -1 : 1;
-    if (nudged.x > .18 && nudged.x < .82 && nudged.y > .12 && nudged.y < .82) {
-      nudged.x = clamp(nudged.x + edgeBias * 0.013, 0.02, 0.98);
-      if (nudged.y < .38) nudged.y = clamp(nudged.y - 0.01, 0.02, 0.96);
+    const nearEdge = Math.max(Math.abs(nudged.x - .5), Math.abs(nudged.y - .5));
+    if (nudged.x > .16 && nudged.x < .84 && nudged.y > .1 && nudged.y < .84) {
+      const pressure = .013 + settings.edgeAccuracyPenalty * clamp(nearEdge * 1.6, .4, 1);
+      nudged.x = clamp(nudged.x + edgeBias * pressure, 0.018, 0.982);
+      if (nudged.y < .4) nudged.y = clamp(nudged.y - (.01 + settings.edgeAccuracyPenalty * .55), 0.018, 0.96);
     }
     return nudged;
   }
@@ -416,7 +422,11 @@
     } else {
       const leftA = Math.max(0, 5 - state.albionKicks);
       const leftP = Math.max(0, 5 - state.palaceKicks);
-      $("shootoutSituation").textContent = `${leftA} Albion · ${leftP} Palace left`;
+      const nextSide = state.phase.startsWith("palace") ? "palace" : "albion";
+      const lead = state.albionGoals - state.palaceGoals;
+      const decisiveAlbion = nextSide === "albion" && lead > 0 && state.albionGoals + 1 > state.palaceGoals + leftP;
+      const decisiveSave = nextSide === "palace" && lead > 0 && state.palaceGoals + leftP <= state.albionGoals;
+      $("shootoutSituation").textContent = decisiveAlbion ? "Score to win" : decisiveSave ? "Save to win" : `${leftA} Albion · ${leftP} Palace left`;
     }
   }
 
@@ -591,6 +601,7 @@
     resetCrowd();
     hideSwipeTrail();
     if (saveImpact) { saveImpact.hidden = true; saveImpact.className = "save-impact"; }
+    stage.removeAttribute("data-runup");
     if (turfKick) { turfKick.hidden = true; turfKick.className = "turf-kick"; }
     state.saveResolutionLocked = false;
     stage.classList.remove("crossbar-contact", "save-contact", "save-replay");
@@ -616,14 +627,60 @@
     };
   }
 
-  function animateRunUp(isPalace, foot = "right", target = null, style = "direct") {
+  function shuffled(values) {
+    const copy = [...values];
+    for (let i = copy.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function chooseRunUpProfile(foot = "right", style = "direct") {
+    if (!runUpProfileBag.length) {
+      const weighted = style === "stutter"
+        ? ["stutter", "angle", "straight", "reverse", "stutter"]
+        : style === "quick"
+          ? ["angle", "straight", "angle", "reverse", "stutter"]
+          : style === "measured"
+            ? ["angle", "straight", "reverse", "angle", "stutter"]
+            : ["straight", "angle", "reverse", "angle", "stutter"];
+      runUpProfileBag = shuffled(weighted);
+      if (runUpProfileBag.at(-1) === lastRunUpProfile && runUpProfileBag.length > 1) {
+        [runUpProfileBag[0], runUpProfileBag[runUpProfileBag.length - 1]] = [runUpProfileBag[runUpProfileBag.length - 1], runUpProfileBag[0]];
+      }
+    }
+    const profile = runUpProfileBag.pop();
+    lastRunUpProfile = profile;
+    return profile;
+  }
+
+  function runUpLabel(foot, profile) {
+    const footLabel = foot === "left" ? "Left foot" : "Right foot";
+    const profileLabels = {
+      angle: "natural angle",
+      straight: "straight run-up",
+      reverse: "curved approach",
+      stutter: "stuttered approach",
+    };
+    return `${footLabel} · ${profileLabels[profile] || "natural run-up"}`;
+  }
+
+  function setApproachLabel(foot, profile) {
+    const label = $("penaltyApproach");
+    if (label) label.textContent = runUpLabel(foot, profile);
+  }
+
+  function animateRunUp(isPalace, foot = "right", target = null, style = "direct", profile = chooseRunUpProfile(foot, style)) {
     clearTakerPose();
+    setApproachLabel(foot, profile);
     const footDirection = foot === "left" ? -1 : 1;
     const settings = config();
-    const targetBias = target ? (target.x - .5) * 22 * settings.cueStrength : 0;
-    const styleOffset = style === "stutter" ? 9 : style === "quick" ? -7 : style === "measured" ? 3 : 0;
-    const duration = isPalace ? Math.round(940 * settings.runUpScale) : style === "quick" ? 720 : style === "measured" ? 850 : 790;
+    const targetBias = target ? (target.x - .5) * 20 * settings.cueStrength : 0;
+    const baseDuration = isPalace ? Math.round(940 * settings.runUpScale) : style === "quick" ? 720 : style === "measured" ? 850 : 790;
+    const duration = Math.round(baseDuration * (profile === "stutter" ? 1.14 : profile === "straight" ? .96 : profile === "reverse" ? 1.06 : 1));
     stage.classList.toggle("palace-kick", isPalace);
+    stage.dataset.runup = profile;
     const root = taker.querySelector(".taker-root");
     const kickingLeg = taker.querySelector(foot === "left" ? ".taker-leg-left" : ".taker-leg-right");
     const standingLeg = taker.querySelector(foot === "left" ? ".taker-leg-right" : ".taker-leg-left");
@@ -633,62 +690,81 @@
     const kickingBoot = kickingLeg?.querySelector(".taker-boot");
     const balanceArm = taker.querySelector(foot === "left" ? ".taker-arm-right" : ".taker-arm-left");
     const trailingArm = taker.querySelector(foot === "left" ? ".taker-arm-left" : ".taker-arm-right");
-    const startX = -footDirection * 31 + styleOffset;
+    const profileStart = {
+      angle: -footDirection * 34,
+      straight: footDirection * 2,
+      reverse: footDirection * 28,
+      stutter: -footDirection * 25,
+    }[profile] ?? -footDirection * 31;
+    const styleOffset = style === "quick" ? -footDirection * 4 : style === "measured" ? footDirection * 2 : 0;
+    const startX = profileStart + styleOffset;
     const contactOffset = targetBias + footDirection * 5;
+    const stutter = profile === "stutter";
+    const reverse = profile === "reverse";
     sound("footsteps");
-    window.setTimeout(() => sound("footsteps"), reducedMotion() ? 30 : duration * .25);
-    window.setTimeout(() => sound("footsteps"), reducedMotion() ? 60 : duration * .5);
-    const run = animateElement(taker, [
+    window.setTimeout(() => sound("footsteps"), reducedMotion() ? 30 : duration * .23);
+    window.setTimeout(() => sound("footsteps"), reducedMotion() ? 60 : duration * (stutter ? .58 : .48));
+    if (stutter) window.setTimeout(() => sound("footsteps"), reducedMotion() ? 75 : duration * .73);
+    const runFrames = stutter ? [
       { transform: `translate(calc(-50% + ${startX}px),20px) scale(.965)` },
-      { transform: `translate(calc(-50% + ${startX * .68}px),13px) scale(.978)`, offset: .18 },
-      { transform: `translate(calc(-50% + ${startX * .32}px),3px) scale(.994)`, offset: .38 },
-      { transform: `translate(calc(-50% + ${footDirection * 6}px),-12px) scale(1.012)`, offset: .58 },
+      { transform: `translate(calc(-50% + ${startX * .66}px),12px) scale(.98)`, offset: .2 },
+      { transform: `translate(calc(-50% + ${startX * .42}px),7px) scale(.988)`, offset: .38 },
+      { transform: `translate(calc(-50% + ${startX * .38}px),7px) scale(.988)`, offset: .53 },
+      { transform: `translate(calc(-50% + ${footDirection * 5}px),-10px) scale(1.01)`, offset: .72 },
+      { transform: `translate(calc(-50% + ${contactOffset}px),-39px) scale(1.018)`, offset: .9 },
+      { transform: `translate(calc(-50% + ${contactOffset + footDirection * 11}px),-43px) scale(1.005)` },
+    ] : [
+      { transform: `translate(calc(-50% + ${startX}px),20px) scale(.965)` },
+      { transform: `translate(calc(-50% + ${startX * (reverse ? .78 : .68)}px),13px) scale(.978)`, offset: .18 },
+      { transform: `translate(calc(-50% + ${startX * (reverse ? .46 : .32)}px),3px) scale(.994)`, offset: .38 },
+      { transform: `translate(calc(-50% + ${footDirection * (reverse ? 10 : 6)}px),-12px) scale(1.012)`, offset: .58 },
       { transform: `translate(calc(-50% + ${contactOffset * .35}px),-29px) scale(1.026)`, offset: .76 },
       { transform: `translate(calc(-50% + ${contactOffset}px),-39px) scale(1.018)`, offset: .88 },
       { transform: `translate(calc(-50% + ${contactOffset + footDirection * 12}px),-43px) scale(1.005)` },
-    ], { duration, easing: "cubic-bezier(.16,.58,.18,1)" });
+    ];
+    const run = animateElement(taker, runFrames, { duration, easing: stutter ? "cubic-bezier(.18,.48,.18,1)" : "cubic-bezier(.16,.58,.18,1)" });
     if (root) animateElement(root, [
-      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${reverse ? footDirection * -4 : 0}deg) translateY(0)` },
       { transform: `rotate(${footDirection * -1.5}deg) translateY(-1px)`, offset: .28 },
-      { transform: `rotate(${footDirection * 2.5}deg) translateY(0)`, offset: .56 },
-      { transform: `rotate(${footDirection * 6.5}deg) translateY(1px)`, offset: .78 },
+      { transform: `rotate(${footDirection * 2.5}deg) translateY(0)`, offset: stutter ? .62 : .56 },
+      { transform: `rotate(${footDirection * 6.5}deg) translateY(1px)`, offset: .8 },
       { transform: `rotate(${footDirection * 8}deg) translateY(0)` },
     ], { duration, easing: "cubic-bezier(.2,.5,.25,1)" });
     if (kickingLeg) animateElement(kickingLeg, [
       { transform: "rotate(0deg)" },
       { transform: `rotate(${footDirection * 9}deg)`, offset: .22 },
-      { transform: `rotate(${footDirection * -18}deg)`, offset: .52 },
-      { transform: `rotate(${footDirection * -36}deg)`, offset: .71 },
-      { transform: `rotate(${footDirection * 52}deg)`, offset: .88 },
+      { transform: `rotate(${footDirection * -18}deg)`, offset: stutter ? .61 : .52 },
+      { transform: `rotate(${footDirection * -36}deg)`, offset: .72 },
+      { transform: `rotate(${footDirection * 52}deg)`, offset: .9 },
       { transform: `rotate(${footDirection * 31}deg)` },
     ], { duration, easing: "cubic-bezier(.16,.64,.18,1)" });
     if (standingLeg) animateElement(standingLeg, [
       { transform: "rotate(0deg) translateY(0)" },
       { transform: `rotate(${footDirection * -5}deg) translateY(0)`, offset: .35 },
-      { transform: `rotate(${footDirection * 4}deg) translateY(1px)`, offset: .62 },
-      { transform: `rotate(${footDirection * -2}deg) translateY(3px) scaleY(.985)`, offset: .79 },
-      { transform: `rotate(${footDirection * 1.5}deg) translateY(2px) scaleY(.99)`, offset: .9 },
+      { transform: `rotate(${footDirection * 4}deg) translateY(1px)`, offset: stutter ? .68 : .62 },
+      { transform: `rotate(${footDirection * -2}deg) translateY(3px) scaleY(.985)`, offset: .8 },
+      { transform: `rotate(${footDirection * 1.5}deg) translateY(2px) scaleY(.99)`, offset: .91 },
       { transform: `rotate(${footDirection * 5}deg) translateY(0) scaleY(1)` },
     ], { duration, easing: "cubic-bezier(.2,.58,.2,1)" });
     if (kickingLowerLeg) animateElement(kickingLowerLeg, [
       { transform: "rotate(0deg)" },
       { transform: `rotate(${footDirection * 14}deg)`, offset: .24 },
-      { transform: `rotate(${footDirection * 31}deg)`, offset: .54 },
-      { transform: `rotate(${footDirection * -24}deg)`, offset: .72 },
-      { transform: `rotate(${footDirection * 18}deg)`, offset: .88 },
+      { transform: `rotate(${footDirection * 31}deg)`, offset: stutter ? .63 : .54 },
+      { transform: `rotate(${footDirection * -24}deg)`, offset: .73 },
+      { transform: `rotate(${footDirection * 18}deg)`, offset: .9 },
       { transform: `rotate(${footDirection * 8}deg)` },
     ], { duration, easing: "cubic-bezier(.16,.62,.18,1)" });
     if (standingLowerLeg) animateElement(standingLowerLeg, [
       { transform: "rotate(0deg)" },
       { transform: `rotate(${footDirection * 7}deg)`, offset: .38 },
-      { transform: `rotate(${footDirection * -11}deg)`, offset: .7 },
+      { transform: `rotate(${footDirection * -11}deg)`, offset: stutter ? .72 : .7 },
       { transform: `rotate(${footDirection * -16}deg)`, offset: .82 },
       { transform: `rotate(${footDirection * -8}deg)` },
     ], { duration, easing: "cubic-bezier(.18,.6,.2,1)" });
     if (standingBoot) animateElement(standingBoot, [
       { transform: "rotate(0deg) translate(0,0)" },
       { transform: `rotate(${footDirection * -3}deg) translate(0,0)`, offset: .58 },
-      { transform: `rotate(${footDirection * (target && target.x < .34 ? 10 : target && target.x > .66 ? 4 : 7)}deg) translate(${footDirection * 2.5}px,1px)`, offset: .79 },
+      { transform: `rotate(${footDirection * (target && target.x < .34 ? 10 : target && target.x > .66 ? 4 : 7)}deg) translate(${footDirection * 2.5}px,1px)`, offset: .8 },
       { transform: `rotate(${footDirection * 5}deg) translate(${footDirection}px,1px)`, offset: .92 },
       { transform: `rotate(${footDirection * 2}deg) translate(0,0)` },
     ], { duration, easing: "cubic-bezier(.18,.62,.2,1)" });
@@ -696,51 +772,70 @@
       { transform: "rotate(0deg)" },
       { transform: `rotate(${footDirection * -8}deg)`, offset: .5 },
       { transform: `rotate(${footDirection * 18}deg) scaleY(.98)`, offset: .74 },
-      { transform: `rotate(${footDirection * (target && target.y < .38 ? 28 : 20)}deg) scaleY(.96)`, offset: .88 },
+      { transform: `rotate(${footDirection * (target && target.y < .38 ? 28 : 20)}deg) scaleY(.96)`, offset: .9 },
       { transform: `rotate(${footDirection * 14}deg)` },
     ], { duration, easing: "cubic-bezier(.16,.64,.18,1)" });
     if (balanceArm) animateElement(balanceArm, [
       { transform: "rotate(0deg) translateY(0)" },
       { transform: `rotate(${footDirection * -14}deg) translateY(-1px)`, offset: .24 },
-      { transform: `rotate(${footDirection * -42}deg) translateY(-2px)`, offset: .69 },
-      { transform: `rotate(${footDirection * -56}deg) translateY(-1px)`, offset: .86 },
+      { transform: `rotate(${footDirection * -42}deg) translateY(-2px)`, offset: stutter ? .72 : .69 },
+      { transform: `rotate(${footDirection * -56}deg) translateY(-1px)`, offset: .87 },
       { transform: `rotate(${footDirection * -28}deg) translateY(0)` },
     ], { duration, easing: "cubic-bezier(.16,.58,.18,1)" });
     if (trailingArm) animateElement(trailingArm, [
       { transform: "rotate(0deg) translateY(0)" },
       { transform: `rotate(${footDirection * 12}deg) translateY(1px)`, offset: .3 },
-      { transform: `rotate(${footDirection * 28}deg) translateY(-1px)`, offset: .7 },
+      { transform: `rotate(${footDirection * 28}deg) translateY(-1px)`, offset: stutter ? .73 : .7 },
       { transform: `rotate(${footDirection * 20}deg) translateY(-1px)`, offset: .9 },
       { transform: `rotate(${footDirection * 8}deg) translateY(0)` },
     ], { duration, easing: "cubic-bezier(.18,.6,.2,1)" });
     window.setTimeout(() => {
       if (style === "direct" || style === "quick") showTurfKick(foot, style === "direct" ? 1.18 : 1);
-    }, Math.max(40, duration * .84));
-    return { animation: run, duration };
+    }, Math.max(40, duration * .86));
+    return { animation: run, duration, profile };
+  }
+
+  function ballScaleAt(point, { saved = false, miss = false } = {}) {
+    const depth = clamp((point.y - goalBox.top) / Math.max(.001, ballStart.y - goalBox.top), 0, 1);
+    let scale = .43 + depth * .57;
+    if (point.y < goalBox.top + goalBox.height * .28) scale *= .91;
+    if (saved) scale *= 1.08;
+    if (miss) scale *= .96;
+    return clamp(scale, .38, 1.08);
+  }
+
+  function ballTransform(scaleX, scaleY = scaleX) {
+    return `translate(-50%,-50%) scale(${scaleX},${scaleY})`;
   }
 
   function animateBall(target, duration, saved = false, miss = false, shotType = "driven", options = {}) {
     const point = stagePoint(target);
-    const endScale = saved ? 0.66 : miss ? 0.54 : 0.48;
     const panenkaShot = shotType === "panenka";
+    const placedShot = shotType === "placed";
     const from = options.from || ballStart;
+    const startScale = ballScaleAt(from, { saved: false, miss: false });
+    const endScale = ballScaleAt(point, { saved, miss });
     const midX = from.x + (point.x - from.x) * .52;
     const linearMidY = from.y + (point.y - from.y) * .52;
-    const midY = panenkaShot ? linearMidY - .105 : linearMidY;
+    const lift = panenkaShot ? .105 : placedShot ? .018 : 0;
+    const midY = linearMidY - lift;
+    const midScale = ballScaleAt({ x: midX, y: midY }, { saved, miss });
     if (!options.silentKick) sound("kick");
     if (ballShadow) {
       const shadowEndY = saved ? point.y + .025 : goalBox.top + goalBox.height + .012;
+      const reboundNear = point.y > from.y;
       animateElement(ballShadow, [
-        { left: `${from.x * 100}%`, top: `${(from.y + .012) * 100}%`, opacity: .72, transform: "translate(-50%,-50%) scale(1)" },
-        { left: `${midX * 100}%`, top: `${(from.y - .01) * 100}%`, opacity: panenkaShot ? .16 : .28, transform: "translate(-50%,-50%) scale(.62)" },
-        { left: `${point.x * 100}%`, top: `${shadowEndY * 100}%`, opacity: saved ? .12 : .06, transform: "translate(-50%,-50%) scale(.3)" },
+        { left: `${from.x * 100}%`, top: `${(from.y + .012) * 100}%`, opacity: .72, transform: ballTransform(startScale) },
+        { left: `${midX * 100}%`, top: `${(from.y - .01) * 100}%`, opacity: panenkaShot ? .14 : .28, transform: ballTransform(Math.max(.35, midScale * .7)), offset: .52 },
+        { left: `${point.x * 100}%`, top: `${shadowEndY * 100}%`, opacity: saved ? .14 : reboundNear ? .38 : .06, transform: ballTransform(Math.max(.24, endScale * .55)) },
       ], { duration, easing: "cubic-bezier(.18,.58,.24,1)" });
     }
     return animateElement(ball, [
-      { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: "translate(-50%,-50%) scale(1)" },
-      { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: `translate(-50%,-50%) scale(${panenkaShot ? .78 : .7})`, offset: .5 },
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale})` },
-    ], { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : "linear" });
+      { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: ballTransform(startScale) },
+      { left: `${(from.x + (point.x - from.x) * .045) * 100}%`, top: `${(from.y + (point.y - from.y) * .025) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .055 },
+      { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: ballTransform(midScale), offset: .52 },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
+    ], { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : placedShot ? "cubic-bezier(.16,.5,.22,1)" : "linear" });
   }
 
   function animateBallApproach(target, duration, shotType = "driven") {
@@ -749,14 +844,17 @@
       x: ballStart.x + (targetStage.x - ballStart.x) * .34,
       y: ballStart.y + (targetStage.y - ballStart.y) * .34,
     };
+    const startScale = ballScaleAt(ballStart);
+    const endScale = ballScaleAt(point);
     sound("kick");
     if (ballShadow) animateElement(ballShadow, [
-      { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .72, transform: "translate(-50%,-50%) scale(1)" },
-      { left: `${point.x * 100}%`, top: `${(point.y + .018) * 100}%`, opacity: .34, transform: "translate(-50%,-50%) scale(.72)" },
+      { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .72, transform: ballTransform(startScale) },
+      { left: `${point.x * 100}%`, top: `${(point.y + .018) * 100}%`, opacity: .34, transform: ballTransform(endScale * .72) },
     ], { duration, easing: "linear" });
     const animation = animateElement(ball, [
-      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1)" },
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.82)" },
+      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: ballTransform(startScale) },
+      { left: `${(ballStart.x + (point.x - ballStart.x) * .08) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * .04) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
     ], { duration, easing: "linear" });
     return { point, animation };
   }
@@ -797,29 +895,31 @@
   function animateDeflection(target, saveType) {
     const direction = target.x < 0.47 ? -1 : target.x > 0.53 ? 1 : (state.userDive?.rawX || .5) < .5 ? -1 : 1;
     const point = stagePoint(target);
+    const contactScale = ballScaleAt(point, { saved: true });
     if (saveType === "CATCH") {
       if (ballShadow) animateElement(ballShadow, [
         { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .18 },
         { left: `${point.x * 100}%`, top: `${(point.y + .02) * 100}%`, opacity: 0 },
       ], { duration: 360 });
       return animateElement(ball, [
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.66)" },
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.61)", offset: .55 },
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: .92, transform: "translate(-50%,-50%) scale(.58)" },
-      ], { duration: 360, easing: "ease-out" });
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: ballTransform(contactScale) },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: ballTransform(contactScale * .94, contactScale * .88), offset: .35 },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: .94, transform: ballTransform(contactScale * .9) },
+      ], { duration: 380, easing: "ease-out" });
     }
     const strong = saveType === "PARRIED" || saveType === "BLOCKED";
     const backward = saveType === "BLOCKED" || saveType === "LEG SAVE";
-    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? .13 : strong ? .09 : .07), .012, .988);
-    const endY = clamp(point.y + (saveType === "FINGERTIP SAVE" && target.y < .45 ? -.11 : backward ? .14 : target.y < .42 ? -.07 : .085), .012, .97);
+    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? .15 : strong ? .11 : .08), .012, .988);
+    const endY = clamp(point.y + (saveType === "FINGERTIP SAVE" && target.y < .45 ? -.11 : backward ? .18 : target.y < .42 ? -.07 : .105), .012, .97);
+    const endScale = ballScaleAt({ x: endX, y: endY }, { saved: false });
     if (ballShadow) animateElement(ballShadow, [
-      { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .16, transform: "translate(-50%,-50%) scale(.32)" },
-      { left: `${endX * 100}%`, top: `${(endY + .035) * 100}%`, opacity: .32, transform: "translate(-50%,-50%) scale(.72)" },
-    ], { duration: 430 });
+      { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .16, transform: ballTransform(contactScale * .5) },
+      { left: `${endX * 100}%`, top: `${(endY + .035) * 100}%`, opacity: endY > point.y ? .38 : .22, transform: ballTransform(endScale * .68) },
+    ], { duration: 460 });
     return animateElement(ball, [
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.66)" },
-      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.58)" },
-    ], { duration: 430, easing: "cubic-bezier(.12,.5,.3,1)" });
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(contactScale * .96, contactScale * 1.04) },
+      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: ballTransform(endScale) },
+    ], { duration: 460, easing: "cubic-bezier(.12,.5,.3,1)" });
   }
 
   async function exceptionalSaveReplay(target, saveType, divePoint) {
@@ -1076,6 +1176,30 @@
     ], { duration: 270, easing: "ease-in-out" });
   }
 
+  async function animateWoodworkRebound(target) {
+    const point = stagePoint(target);
+    const crossbar = target.y < 0;
+    const leftPost = target.x < 0;
+    const insidePost = !crossbar && Math.abs(target.x) < .03 || target.x > 1 && target.x < 1.03;
+    const end = crossbar
+      ? { x: clamp(point.x + (point.x < .5 ? .08 : -.08), .08, .92), y: clamp(point.y + .22, .16, .86) }
+      : { x: clamp(point.x + (leftPost ? (insidePost ? .2 : -.15) : (insidePost ? -.2 : .15)), .02, .98), y: clamp(point.y + .12, .12, .92) };
+    const startScale = ballScaleAt(point, { miss: true });
+    const endScale = ballScaleAt(end);
+    stage.classList.add("frame-impact");
+    haptic(28);
+    if (ballShadow) animateElement(ballShadow, [
+      { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .12, transform: ballTransform(startScale * .45) },
+      { left: `${end.x * 100}%`, top: `${(end.y + .035) * 100}%`, opacity: .34, transform: ballTransform(endScale * .7) },
+    ], { duration: 460 });
+    const animation = animateElement(ball, [
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(startScale * .96, startScale * 1.04) },
+      { left: `${end.x * 100}%`, top: `${end.y * 100}%`, transform: ballTransform(endScale) },
+    ], { duration: 460, easing: "cubic-bezier(.12,.52,.28,1)" });
+    await animation?.finished.catch(() => {});
+    window.setTimeout(() => stage.classList.remove("frame-impact"), 180);
+  }
+
   async function animateBallPlacement(side, token) {
     const kickIndex = side === "albion" ? state.albionKicks : state.palaceKicks;
     const routineIndex = (kickIndex + (side === "palace" ? 2 : 0)) % 5;
@@ -1325,22 +1449,49 @@
     const body = keeper.querySelector(".keeper-body-group");
     const leftArm = keeper.querySelector(".keeper-arm-left");
     const rightArm = keeper.querySelector(".keeper-arm-right");
-    const duration = reducedMotion() ? 140 : 720;
-    animateElement(keeper, [
+    const variant = keeperRoutineIndex++ % 4;
+    const duration = reducedMotion() ? 140 : variant === 1 ? 820 : 720;
+    const keeperFrames = variant === 0 ? [
       { transform: "translateX(-50%) translate(0,0) scale(1)" },
       { transform: "translateX(-50%) translate(-7px,1px) scale(1,.985)", offset: .22 },
       { transform: "translateX(-50%) translate(7px,-4px) scale(1.01)", offset: .48 },
       { transform: "translateX(-50%) translate(0,2px) scale(1,.97)", offset: .72 },
       { transform: "translateX(-50%) translate(0,0) scale(1)" },
-    ], { duration, easing: "cubic-bezier(.2,.64,.2,1)" });
+    ] : variant === 1 ? [
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+      { transform: "translateX(-50%) translate(0,3px) scale(1,.975)", offset: .2 },
+      { transform: "translateX(-50%) translate(0,-5px) scale(1.01)", offset: .42 },
+      { transform: "translateX(-50%) translate(0,2px) scale(1,.98)", offset: .66 },
+      { transform: "translateX(-50%) translate(0,-3px) scale(1.008)", offset: .82 },
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+    ] : variant === 2 ? [
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+      { transform: "translateX(-50%) translate(-11px,0) scale(1)", offset: .35 },
+      { transform: "translateX(-50%) translate(-7px,0) scale(1)", offset: .58 },
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+    ] : [
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+      { transform: "translateX(-50%) translate(5px,1px) scale(1)", offset: .3 },
+      { transform: "translateX(-50%) translate(-4px,1px) scale(1)", offset: .58 },
+      { transform: "translateX(-50%) translate(0,0) scale(1)" },
+    ];
+    animateElement(keeper, keeperFrames, { duration, easing: "cubic-bezier(.2,.64,.2,1)" });
     if (body) animateElement(body, [
-      { transform: "translateY(0)" },
-      { transform: "translateY(-2px)", offset: .48 },
-      { transform: "translateY(3px) scaleY(.98)", offset: .72 },
-      { transform: "translateY(0)" },
+      { transform: "translateY(0) rotate(0deg)" },
+      { transform: `translateY(${variant === 1 ? -2 : 1}px) rotate(${variant === 2 ? -2 : variant === 3 ? 2 : 0}deg)`, offset: .48 },
+      { transform: "translateY(2px) scaleY(.985) rotate(0deg)", offset: .72 },
+      { transform: "translateY(0) rotate(0deg)" },
     ], { duration });
-    if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-15deg)", offset: .55 }, { transform: "rotate(-5deg)" }], { duration });
-    if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(15deg)", offset: .55 }, { transform: "rotate(5deg)" }], { duration });
+    if (leftArm) animateElement(leftArm, variant === 3 ? [
+      { transform: "rotate(0deg)" }, { transform: "rotate(-38deg)", offset: .4 }, { transform: "rotate(-10deg)" },
+    ] : variant === 1 ? [
+      { transform: "rotate(0deg)" }, { transform: "rotate(-22deg)", offset: .38 }, { transform: "rotate(-6deg)" },
+    ] : [{ transform: "rotate(0deg)" }, { transform: "rotate(-15deg)", offset: .55 }, { transform: "rotate(-5deg)" }], { duration });
+    if (rightArm) animateElement(rightArm, variant === 3 ? [
+      { transform: "rotate(0deg)" }, { transform: "rotate(72deg)", offset: .4 }, { transform: "rotate(14deg)" },
+    ] : variant === 1 ? [
+      { transform: "rotate(0deg)" }, { transform: "rotate(22deg)", offset: .38 }, { transform: "rotate(6deg)" },
+    ] : [{ transform: "rotate(0deg)" }, { transform: "rotate(15deg)", offset: .55 }, { transform: "rotate(5deg)" }], { duration });
     await sleep(duration);
     if (token !== state.sequence) return false;
     positionKeeperOnLine();
@@ -1508,27 +1659,36 @@
     applyTakerPose(player, state.albionKicks);
     const isPanenka = panenka.checked;
     if (isPanenka) state.panenkaAttempts += 1;
-    setStatus(`${player.name} begins the run-up`, isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact.");
-    const run = animateRunUp(false, player.foot, aim, player.style);
+    const runProfile = chooseRunUpProfile(player.foot, player.style);
+    setApproachLabel(player.foot, runProfile);
+    setStatus(`${player.name} begins the run-up`, `${runUpLabel(player.foot, runProfile)}. ${isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact."}`);
+    const run = animateRunUp(false, player.foot, aim, player.style, runProfile);
     await sleep(reducedMotion() ? 100 : Math.max(390, run.duration - 130));
     if (token !== state.sequence) return;
 
     const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));
-    const spread = settings.shotSpread * (1 + edge * 1.75);
+    const playerAccuracy = player.accuracy ?? .75;
+    const spread = settings.shotSpread * (1 + edge * 1.75) * (1.18 - playerAccuracy * .24);
     const aimedTarget = nudgeShotDifficulty(aim);
     const resolved = isPanenka
       ? { x: clamp(.5 + gaussian() * .024, .43, .57), y: clamp(.61 + gaussian() * .024, .52, .68) }
       : { x: aimedTarget.x + gaussian() * spread, y: aimedTarget.y + gaussian() * spread };
     const frameResult = classifyFrame(resolved);
-    const keeperGuess = {
-      x: clamp(resolved.x + gaussian() * settings.keeperNoise, .04, .96),
-      y: clamp(resolved.y + gaussian() * settings.keeperNoise * .78, .06, .94),
-    };
+    const shotType = isPanenka ? "panenka" : (Math.abs(resolved.x - .5) > .24 || resolved.y < .42 ? "placed" : "driven");
+    const disguise = player.disguise ?? .65;
+    const keeperNoise = settings.keeperNoise * (1.12 - disguise * .22);
+    const keeperHoldsCentre = !isPanenka && Math.random() < .12;
+    const keeperGuess = keeperHoldsCentre
+      ? { x: .5, y: clamp(.56 + gaussian() * .09, .34, .76) }
+      : {
+          x: clamp(resolved.x + gaussian() * keeperNoise, .04, .96),
+          y: clamp(resolved.y + gaussian() * keeperNoise * .78, .06, .94),
+        };
     if (isPanenka && Math.random() < .76) keeperGuess.x = Math.random() < .5 ? .12 : .88;
     const distance = Math.hypot(resolved.x - keeperGuess.x, (resolved.y - keeperGuess.y) * .88);
     const centralPenalty = Math.abs(resolved.x - .5) < .12 && resolved.y > .32;
     let saved = !frameResult && distance < settings.keeperReach + (centralPenalty ? .05 : 0);
-    // A keeper-read rescue on exactly 10% of otherwise scoring shots gives a relative 10% difficulty increase.
+    // A cumulative 19% keeper-read rescue produces a second relative 10% difficulty step from the previous release.
     const extraRead = !frameResult && !saved && Math.random() < settings.scoringDifficultyIncrease;
     if (extraRead) {
       saved = true;
@@ -1538,13 +1698,18 @@
     const scored = !frameResult && !saved;
     const saveType = distance < settings.keeperReach * .48 || (centralPenalty && extraRead) ? "CATCH" : extraRead && resolved.y < .42 ? "FINGERTIP SAVE" : "PARRIED";
 
-    animateKeeperDive(keeperGuess, settings.flight * .9, saved);
-    if (saved) await animateSavedShot(resolved, settings.flight, saveType, keeperGuess, isPanenka ? "panenka" : "driven");
+    const playerPower = player.power ?? .76;
+    const flightDuration = Math.round(settings.flight * (1.07 - playerPower * .13));
+    animateKeeperDive(keeperGuess, flightDuration * .9, saved);
+    if (saved) await animateSavedShot(resolved, flightDuration, saveType, keeperGuess, shotType);
     else {
-      const ballAnimation = animateBall(resolved, settings.flight, false, Boolean(frameResult), isPanenka ? "panenka" : "driven");
+      const ballAnimation = animateBall(resolved, flightDuration, false, Boolean(frameResult), shotType);
       await ballAnimation?.finished.catch(() => {});
     }
-    if (frameResult === "woodwork") frameReaction(resolved);
+    if (frameResult === "woodwork") {
+      frameReaction(resolved);
+      await animateWoodworkRebound(resolved);
+    }
 
     state.albionKicks += 1;
     if (scored) state.albionGoals += 1;
@@ -1552,7 +1717,7 @@
     if (isPanenka && scored) state.panenkaGoals += 1;
     const albionOutcome = frameResult || (saved ? "saved" : "goal");
     state.albionResults.push({ scored, result: albionOutcome });
-    state.albionShots.push({ x: resolved.x, y: resolved.y, result: albionOutcome, name: player.name, number: player.number, panenka: isPanenka });
+    state.albionShots.push({ x: resolved.x, y: resolved.y, result: albionOutcome, name: player.name, number: player.number, panenka: isPanenka, shotType, runUp: runProfile, foot: player.foot });
     refereeSignal(scored);
 
     if (scored) {
@@ -1636,8 +1801,10 @@
     const settings = config();
     const runDuration = Math.round(player.delay * settings.runUpScale);
     state.phase = "palace-run";
-    setStatus("Palace begin the run-up", "Read the approach and standing foot. The save window opens before contact.");
-    const run = animateRunUp(true, player.foot, state.palaceTarget, player.style || "direct");
+    const runProfile = chooseRunUpProfile(player.foot, player.style || "direct");
+    setApproachLabel(player.foot, runProfile);
+    setStatus("Palace begin the run-up", `${runUpLabel(player.foot, runProfile)}. Read the approach and standing foot.`);
+    const run = animateRunUp(true, player.foot, state.palaceTarget, player.style || "direct", runProfile);
     const actualRun = Math.max(runDuration, run.duration);
     const waitBeforeWindow = Math.max(80, actualRun - settings.preContactWindow);
     await sleep(reducedMotion() ? 80 : waitBeforeWindow);

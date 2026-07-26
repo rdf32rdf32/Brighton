@@ -1094,37 +1094,63 @@
   }
 
   function historyDetails() {
-    const details = [
-      "The professional club was established in 1901 and entered the Southern League.",
-      "As Southern League champions, Albion beat Football League champions Aston Villa 1–0 to claim the Charity Shield.",
-      "Albion drew 2–2 with Manchester United at Wembley before the FA Cup final replay.",
-      "Robbie Reinelt’s equaliser at Hereford kept Albion in the Football League on goals scored.",
-      "The first league match at the Amex ended in a dramatic 2–1 win over Doncaster Rovers.",
-      "A 2–1 win over Wigan Athletic confirmed promotion to the Premier League.",
-      "A sixth-place Premier League finish secured the club’s first European campaign.",
-    ];
-    document
-      .querySelectorAll("#journey .timeline article")
-      .forEach((article, index) => {
-        article.insertAdjacentHTML(
-          "beforeend",
-          `<button class="history-more" type="button" aria-expanded="false">More detail</button><p class="history-extra" hidden>${esc(details[index])}</p>`,
-        );
-        const button = article.querySelector(".history-more");
-        const extra = article.querySelector(".history-extra");
-        button.addEventListener("click", () => {
-          const open = extra.toggleAttribute("hidden");
-          button.setAttribute("aria-expanded", String(!open));
-          button.textContent = open ? "More detail" : "Less detail";
-        });
+    document.querySelectorAll("#journey .timeline article").forEach((article) => {
+      const detail = article.dataset.detail || "A defining moment in Brighton & Hove Albion history.";
+      article.insertAdjacentHTML(
+        "beforeend",
+        `<button class="history-more" type="button" aria-expanded="false">More detail</button><p class="history-extra" hidden>${esc(detail)}</p>`,
+      );
+      const button = article.querySelector(".history-more");
+      const extra = article.querySelector(".history-extra");
+      button.addEventListener("click", () => {
+        const willOpen = extra.hasAttribute("hidden");
+        extra.toggleAttribute("hidden", !willOpen);
+        button.setAttribute("aria-expanded", String(willOpen));
+        button.textContent = willOpen ? "Less detail" : "More detail";
       });
+    });
   }
 
   function historyEraFilters() {
     const buttons = [...document.querySelectorAll(".era-filters button")];
-    const entries = [
-      ...document.querySelectorAll("#journey .timeline article"),
-    ];
+    const timeline = $("albionTimeline");
+    const prev = $("timelinePrev");
+    const next = $("timelineNext");
+    const progress = $("timelineProgress");
+    if (!timeline) return;
+    let visibleEntries = [];
+    let activeIndex = 0;
+    let pointerStartX = null;
+
+    const allEntries = [...timeline.querySelectorAll("article")];
+    const updateProgress = () => {
+      if (!visibleEntries.length) return;
+      activeIndex = Math.max(0, Math.min(activeIndex, visibleEntries.length - 1));
+      const value = visibleEntries.length === 1 ? 100 : (activeIndex / (visibleEntries.length - 1)) * 100;
+      if (progress) progress.style.width = `${value}%`;
+      prev?.toggleAttribute("disabled", activeIndex === 0);
+      next?.toggleAttribute("disabled", activeIndex === visibleEntries.length - 1);
+      visibleEntries.forEach((entry, index) => entry.classList.toggle("timeline-current", index === activeIndex));
+    };
+    const goTo = (index, smooth = true) => {
+      if (!visibleEntries.length) return;
+      activeIndex = Math.max(0, Math.min(index, visibleEntries.length - 1));
+      visibleEntries[activeIndex].scrollIntoView({
+        behavior: smooth && !document.body.classList.contains("user-reduce-motion") ? "smooth" : "auto",
+        block: "nearest",
+        inline: "center",
+      });
+      updateProgress();
+    };
+    const refreshVisible = (era = "all") => {
+      allEntries.forEach((entry) => {
+        entry.hidden = era !== "all" && entry.dataset.era !== era;
+      });
+      visibleEntries = allEntries.filter((entry) => !entry.hidden);
+      activeIndex = 0;
+      window.requestAnimationFrame(() => goTo(0, false));
+    };
+
     buttons.forEach((button) =>
       button.addEventListener("click", () => {
         const era = button.dataset.era;
@@ -1132,11 +1158,42 @@
           item.classList.toggle("active", item === button);
           item.classList.toggle("ghost", item !== button);
         });
-        entries.forEach((entry) => {
-          entry.hidden = era !== "all" && entry.dataset.era !== era;
-        });
+        refreshVisible(era);
       }),
     );
+    prev?.addEventListener("click", () => goTo(activeIndex - 1));
+    next?.addEventListener("click", () => goTo(activeIndex + 1));
+    timeline.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") { event.preventDefault(); goTo(activeIndex + 1); }
+      if (event.key === "ArrowLeft") { event.preventDefault(); goTo(activeIndex - 1); }
+      if (event.key === "Home") { event.preventDefault(); goTo(0); }
+      if (event.key === "End") { event.preventDefault(); goTo(visibleEntries.length - 1); }
+    });
+    timeline.addEventListener("pointerdown", (event) => { pointerStartX = event.clientX; });
+    timeline.addEventListener("pointerup", (event) => {
+      if (pointerStartX == null) return;
+      const delta = event.clientX - pointerStartX;
+      pointerStartX = null;
+      if (Math.abs(delta) < 38) return;
+      goTo(activeIndex + (delta < 0 ? 1 : -1));
+    });
+    timeline.addEventListener("scroll", () => {
+      window.clearTimeout(timeline._historyScrollTimer);
+      timeline._historyScrollTimer = window.setTimeout(() => {
+        if (!visibleEntries.length) return;
+        const centre = timeline.scrollLeft + timeline.clientWidth / 2;
+        let nearest = 0;
+        let best = Infinity;
+        visibleEntries.forEach((entry, index) => {
+          const entryCentre = entry.offsetLeft + entry.offsetWidth / 2;
+          const distance = Math.abs(entryCentre - centre);
+          if (distance < best) { best = distance; nearest = index; }
+        });
+        activeIndex = nearest;
+        updateProgress();
+      }, 80);
+    }, { passive: true });
+    refreshVisible("all");
   }
 
   function peopleDetails() {
@@ -2089,7 +2146,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260726-r20", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260726-r21", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {

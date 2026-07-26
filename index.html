@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r20" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r20" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r20" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r20" />
-    <meta name="release" content="production-r20-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r21" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r21" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r21" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r21" />
+    <meta name="release" content="production-r21-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -324,6 +324,7 @@
             <div id="turnBadge" class="turn-badge albion-turn">ALBION PENALTY</div>
             <p id="penaltyTakerName">Danny Welbeck</p>
             <p id="shootoutSituation">Five kicks each</p>
+            <p id="penaltyApproach" class="penalty-approach" aria-live="polite">Right foot · measured angle</p>
           </div>
 
           <div
@@ -1118,35 +1119,45 @@
               Premier League &amp; Europe
             </button>
           </div>
-          <div class="timeline">
-            <article data-era="early">
-              <b>1901</b>
-              <p>Brighton &amp; Hove Albion are founded.</p>
-            </article>
-            <article data-era="early">
-              <b>1910</b>
-              <p>Southern League champions and Charity Shield winners.</p>
-            </article>
-            <article data-era="fightback">
-              <b>1983</b>
-              <p>Albion reach the FA Cup final at Wembley.</p>
-            </article>
-            <article data-era="fightback">
-              <b>1997</b>
-              <p>League status is secured at Hereford.</p>
-            </article>
-            <article data-era="amex">
-              <b>2011</b>
-              <p>The Amex opens at Falmer.</p>
-            </article>
-            <article data-era="premier">
-              <b>2017</b>
-              <p>Promotion to the Premier League.</p>
-            </article>
-            <article data-era="premier">
-              <b>2023</b>
-              <p>First qualification for European football.</p>
-            </article>
+          <div class="timeline-explorer" aria-label="Interactive Albion timeline">
+            <div class="timeline-nav">
+              <button id="timelinePrev" class="ghost" type="button" aria-label="Previous Albion milestone">Previous</button>
+              <div class="timeline-progress" aria-hidden="true"><i id="timelineProgress"></i></div>
+              <button id="timelineNext" class="ghost" type="button" aria-label="Next Albion milestone">Next</button>
+            </div>
+            <div class="timeline" id="albionTimeline" tabindex="0" aria-label="Swipe or use arrow keys to move through Albion history">
+              <article data-era="early" data-year="1901" data-detail="The professional club was established in 1901 and entered the Southern League.">
+                <b>1901</b><h3>Albion founded</h3><p>Brighton &amp; Hove Albion are formed.</p>
+              </article>
+              <article data-era="early" data-year="1910" data-detail="As Southern League champions, Albion beat Football League champions Aston Villa 1–0 to claim the Charity Shield.">
+                <b>1910</b><h3>Champions of England</h3><p>Southern League title and Charity Shield success.</p>
+              </article>
+              <article data-era="early" data-year="1920" data-detail="Albion become founder members of the Football League Third Division and begin a new national chapter.">
+                <b>1920</b><h3>Football League</h3><p>Albion enter the Football League.</p>
+              </article>
+              <article data-era="fightback" data-year="1983" data-detail="Albion draw 2–2 with Manchester United at Wembley before the FA Cup final replay.">
+                <b>1983</b><h3>Wembley final</h3><p>Albion reach the FA Cup final.</p>
+              </article>
+              <article data-era="fightback" data-year="1997" data-detail="Robbie Reinelt’s equaliser at Hereford keeps Albion in the Football League on goals scored.">
+                <b>1997</b><h3>The great escape</h3><p>League status is secured at Hereford.</p>
+              </article>
+              <article data-era="fightback" data-year="1999" data-detail="After two seasons at Gillingham, Albion return to Brighton and begin the Withdean years.">
+                <b>1999</b><h3>Back in Brighton</h3><p>The club returns home at Withdean.</p>
+              </article>
+              <article data-era="amex" data-year="2011" data-detail="The first league match at the Amex ends in a dramatic 2–1 win over Doncaster Rovers.">
+                <b>2011</b><h3>The Amex opens</h3><p>The long-awaited Falmer home begins.</p>
+              </article>
+              <article data-era="premier" data-year="2017" data-detail="A 2–1 win over Wigan Athletic confirms promotion to the Premier League.">
+                <b>2017</b><h3>Premier League</h3><p>Promotion to the top flight is secured.</p>
+              </article>
+              <article data-era="premier" data-year="2023" data-detail="A sixth-place Premier League finish secures the club’s first European campaign.">
+                <b>2023</b><h3>Europe achieved</h3><p>Albion qualify for Europe for the first time.</p>
+              </article>
+              <article data-era="premier" data-year="2024" data-detail="Albion play a first European knockout tie, extending the club’s most ambitious modern chapter.">
+                <b>2024</b><h3>European knockout football</h3><p>The European adventure reaches the knockout stage.</p>
+              </article>
+            </div>
+            <p class="timeline-help">Swipe the cards, use Previous and Next, or press the left and right arrow keys.</p>
           </div>
         </div>
         <div id="grounds" class="story-panel" role="tabpanel" hidden>
@@ -1883,11 +1894,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r20"></script>
-    <script src="quiz-data.js?v=20260726-r20"></script>
-    <script src="app.js?v=20260726-r20"></script>
-    <script src="release-fixes.js?v=20260726-r20"></script>
-    <script src="shootout.js?v=20260726-r20"></script>
-    <script src="polish.js?v=20260726-r20"></script>
+    <script src="content-data.js?v=20260726-r21"></script>
+    <script src="quiz-data.js?v=20260726-r21"></script>
+    <script src="app.js?v=20260726-r21"></script>
+    <script src="release-fixes.js?v=20260726-r21"></script>
+    <script src="shootout.js?v=20260726-r21"></script>
+    <script src="polish.js?v=20260726-r21"></script>
   </body>
 </html>
