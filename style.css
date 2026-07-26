@@ -2674,3 +2674,31 @@ body.low-power-mobile .crowd-dots{opacity:.42;background-size:20px 17px,25px 20p
   body.shootout-playing.shootout-in-view .cookie-notice,
   body.quiz-playing .cookie-notice{bottom:8px!important}
 }
+
+
+/* Release 20: search chips and compact continuation */
+.search-popular{display:flex;flex-wrap:wrap;gap:8px;padding:12px}
+.search-chip{padding:8px 12px;border:1px solid #bdd3e5;border-radius:999px;background:#f3f8fd;color:var(--deep);font:inherit;font-size:.8rem;font-weight:850;cursor:pointer}
+.search-chip:hover,.search-chip:focus{background:#e6f1fb;border-color:#86afd0;outline:0}
+.night-theme .search-chip{background:#163a59;border-color:#355a79;color:#e8f4ff}
+#continueButton{box-shadow:0 8px 18px rgba(5,55,107,.09)}
+@media(max-width:760px){.search-popular{padding:10px}.search-chip{font-size:.76rem;padding:8px 10px}}
+
+
+/* Production r20: search clarity, compact mobile reading and section continuity */
+.popular-searches{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:9px 2px 0;color:var(--muted);font-size:.7rem}.popular-searches>span{font-weight:850}.popular-searches button{min-height:30px;padding:4px 9px;border:1px solid #c4d9ea;border-radius:999px;background:#edf6fd;color:var(--deep);font-size:.68rem;font-weight:850}.popular-searches button:hover{background:var(--blue);color:#fff}
+.site-search-mark{padding:0 .12em;border-radius:.22em;background:#ffe16b;color:#10233c;box-shadow:0 0 0 2px rgba(255,225,107,.3)}
+main>.card>.section-head:after,main>.section-head:after{content:"";display:block;width:54px;height:3px;margin-top:11px;border-radius:99px;background:linear-gradient(90deg,var(--blue),#8dd4ff)}
+.back-to-story-tabs{display:block;margin:18px auto 2px}.travel-status-label{display:inline-flex;margin:0 0 8px;padding:4px 9px;border-radius:999px;background:#e7f4ff;color:var(--deep);font-size:.67rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase}
+#fixtures .month-buttons{position:sticky;top:76px;z-index:12;padding:7px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.94);backdrop-filter:blur(8px)}
+#fixtures .fixture-item{min-height:0}.fixture-item>div:first-child{min-width:122px}.fixture-item strong{line-height:1.15}.fixture-item small{line-height:1.25}
+#amex-stands [data-stand].active,#amex-stands [data-stand][aria-pressed="true"]{outline:3px solid rgba(0,87,184,.28);outline-offset:2px;filter:brightness(1.06)}
+details{scroll-margin-top:90px}details[open]>summary{color:var(--blue)}
+.night-theme .popular-searches button{border-color:#3a6384;background:#173d5d;color:#fff}.night-theme .travel-status-label{background:#173d5d;color:#fff}.night-theme #fixtures .month-buttons{background:rgba(11,41,65,.94)}
+@media(max-width:760px){
+  .global-site-search{box-shadow:0 7px 18px rgba(5,55,107,.09)}.global-search-form>label{font-size:.82rem}.popular-searches{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px;scrollbar-width:none}.popular-searches::-webkit-scrollbar{display:none}.popular-searches>span{flex:0 0 auto}.popular-searches button{flex:0 0 auto}
+  #fixtures .month-buttons{top:8px;margin-inline:-3px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none}#fixtures .month-buttons::-webkit-scrollbar{display:none}#fixtures .month-buttons button{flex:0 0 auto}
+  .fixtures-list .fixture-item{grid-template-columns:92px minmax(0,1fr);gap:8px;padding:10px}.fixtures-list .fixture-item>div:first-child{min-width:0}.fixtures-list .fixture-actions{grid-column:1/-1;display:flex;justify-content:flex-end}.fixtures-list .fixture-item small{font-size:.66rem}
+  .matchday-quick-view{gap:8px}.matchday-quick-view article{padding:11px}.dashboard{gap:7px}.dashboard article{padding:10px}
+  .back-to-story-tabs{width:100%;min-height:44px}.travel-status-label{font-size:.62rem}
+}

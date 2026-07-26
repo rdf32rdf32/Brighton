@@ -454,3 +454,87 @@
   .shootout-v17 .crowd-foreground{opacity:.72}
 }
 @media(prefers-reduced-motion:reduce){.shootout-v17 .save-impact{animation:none;opacity:.9}.shootout-v17 .save-replay:before{display:none}}
+
+
+/* Release 20: more natural takers, cleaner props and deeper crowd */
+.shootout-v17 .taker-figure[data-pose="relaxed"] .taker-arm-left{transform:rotate(8deg)}
+.shootout-v17 .taker-figure[data-pose="relaxed"] .taker-arm-right{transform:rotate(-8deg)}
+.shootout-v17 .taker-figure[data-pose="hands-hips"] .taker-arm-left{transform:rotate(22deg) translate(3px,2px)}
+.shootout-v17 .taker-figure[data-pose="hands-hips"] .taker-arm-right{transform:rotate(-22deg) translate(-3px,2px)}
+.shootout-v17 .taker-figure[data-pose="sleeve-adjust"] .taker-arm-left{transform:rotate(38deg) translate(7px,-3px)}
+.shootout-v17 .taker-figure[data-pose="sleeve-adjust"] .taker-arm-right{transform:rotate(-10deg)}
+.shootout-v17 .taker-figure[data-pose="focus"] .taker-arm-left{transform:rotate(14deg)}
+.shootout-v17 .taker-figure[data-pose="focus"] .taker-arm-right{transform:rotate(-26deg) translate(-3px,-1px)}
+.shootout-v17 .taker-figure[data-pose="behind-back"] .taker-arm-left{transform:rotate(48deg) translate(16px,6px)}
+.shootout-v17 .taker-figure[data-pose="behind-back"] .taker-arm-right{transform:rotate(-48deg) translate(-16px,6px)}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="relaxed"] .taker-arm-left{animation:r20-idle-left 2.1s ease-in-out infinite}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="relaxed"] .taker-arm-right{animation:r20-idle-right 2.1s ease-in-out infinite}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="hands-hips"] .taker-root{animation:r20-weight-shift 2s ease-in-out infinite}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="focus"] .taker-root{animation:r20-focus-breathe 1.8s ease-in-out infinite}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="sleeve-adjust"] .taker-arm-left{animation:r20-sleeve-check 2.4s ease-in-out infinite}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="behind-back"] .taker-root{animation:r20-weight-shift 2.3s ease-in-out infinite}
+@keyframes r20-idle-left{0%,100%{transform:rotate(8deg)}50%{transform:rotate(12deg) translateY(-1px)}}
+@keyframes r20-idle-right{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(-12deg) translateY(-1px)}}
+@keyframes r20-focus-breathe{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-2px) rotate(-1deg)}}
+@keyframes r20-weight-shift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translate(2px,-1px) rotate(1deg)}}
+@keyframes r20-sleeve-check{0%,100%{transform:rotate(38deg) translate(7px,-3px)}50%{transform:rotate(46deg) translate(8px,-4px)}}
+.shootout-v17 .stadium-backdrop::before{content:"";position:absolute;inset:18% 3% 0;border-radius:18px;background:linear-gradient(180deg,rgba(6,26,47,.12),rgba(6,22,34,.46) 48%,rgba(7,17,25,.08));pointer-events:none}
+.shootout-v17 .stadium-backdrop::after{content:"";position:absolute;inset:25% 7% 10%;background:radial-gradient(circle at 14% 18%,rgba(255,255,255,.22),transparent 17%),radial-gradient(circle at 50% 16%,rgba(91,179,240,.22),transparent 20%),radial-gradient(circle at 84% 22%,rgba(255,255,255,.16),transparent 16%);opacity:.65;pointer-events:none}
+.shootout-v17 .crowd-foreground{bottom:1.2%;height:45%}
+.shootout-v17 .crowd-foreground i{opacity:.9;animation:r20-crowd-sway 4.6s ease-in-out infinite}
+.shootout-v17 .crowd-foreground i:nth-child(odd){height:clamp(14px,2.45vw,27px)}
+.shootout-v17 .crowd-foreground i:nth-child(3n){transform:scale(1.06) rotate(-3deg);opacity:.96}
+.shootout-v17 .crowd-foreground i:nth-child(4n){transform:scale(.93) rotate(2deg);opacity:.82}
+.shootout-v17 .crowd-foreground i:nth-child(5n){transform:scale(1.08);background:#0e6cb7}
+.shootout-v17 .crowd-foreground i:nth-child(2n){animation-duration:5.2s;animation-delay:-.8s}
+.shootout-v17 .crowd-foreground i:nth-child(3n+1){animation-duration:4.1s;animation-delay:-1.6s}
+.shootout-v17 .crowd-foreground i:nth-child(4n+2){animation-duration:5.8s;animation-delay:-2.2s}
+.shootout-v17 .crowd-flag{opacity:.94;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+@keyframes r20-crowd-sway{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.shootout-v17 .penalty-stage.crowd-albion-cheer .crowd-foreground i:nth-child(odd){animation:r20-albion-cheer .55s ease 3 alternate}
+.shootout-v17 .penalty-stage.crowd-palace-cheer .crowd-foreground i:nth-child(even){animation:r20-palace-cheer .55s ease 3 alternate}
+.shootout-v17 .penalty-stage.crowd-gasp .crowd-foreground i:nth-child(4n){animation:r20-crowd-gasp .42s ease}
+@keyframes r20-albion-cheer{to{transform:translateY(-36%) rotate(-4deg)}}
+@keyframes r20-palace-cheer{to{transform:translateY(-30%) rotate(4deg)}}
+@keyframes r20-crowd-gasp{50%{transform:translateY(5px) scale(.96);opacity:.72}}
+.shootout-v17 .keeper-bottle{left:10.6%!important;top:45.2%!important;transform:rotate(-8deg) scale(.88)!important;opacity:.88}
+@media(max-width:760px){.shootout-v17 .keeper-bottle{left:10.2%!important;top:45.4%!important}}
+@media(max-width:480px){.shootout-v17 .keeper-bottle{left:9.4%!important;top:45.9%!important;width:8px!important;height:22px!important}.shootout-v17 .crowd-foreground i:nth-child(3n+1){display:block}}
+
+
+/* Production r20: natural takers, crowd depth and restrained mobile detail */
+.shootout-v17 .crowd-depth{position:absolute;left:0;right:0;pointer-events:none;transform-origin:center bottom}
+.shootout-v17 .crowd-far{z-index:0;top:20%;bottom:8%;opacity:.45;filter:blur(1.1px);background:radial-gradient(circle at 10% 30%,#9ec5df 0 2px,transparent 2.5px),radial-gradient(circle at 35% 52%,#e8edf2 0 1.7px,transparent 2.2px),radial-gradient(circle at 72% 38%,#577fa5 0 2px,transparent 2.5px),radial-gradient(circle at 88% 60%,#bd4351 0 1.8px,transparent 2.3px);background-size:23px 18px,29px 22px,27px 20px,31px 23px}
+.shootout-v17 .crowd-mid{z-index:1;left:3%;right:3%;top:34%;bottom:4%;opacity:.62;background:repeating-linear-gradient(91deg,transparent 0 18px,rgba(236,246,253,.5) 19px 22px,transparent 23px 34px),repeating-linear-gradient(87deg,rgba(9,112,183,.34) 0 10px,transparent 11px 24px,rgba(185,36,55,.22) 25px 32px,transparent 33px 46px);clip-path:polygon(0 26%,100% 13%,100% 100%,0 100%)}
+.shootout-v17 .crowd-foreground{z-index:3}.shootout-v17 .crowd-foreground .albion-fan{background:#167fc4}.shootout-v17 .crowd-foreground .palace-fan{background:#b82e45}.shootout-v17 .crowd-foreground i:nth-child(3n){transform:scale(.9)}.shootout-v17 .crowd-foreground i:nth-child(4n){transform:scale(1.08)}
+.shootout-v17 .crowd-scarves,.shootout-v17 .crowd-phones{position:absolute;z-index:4;inset:0;pointer-events:none}.shootout-v17 .crowd-scarves i{position:absolute;bottom:19%;width:38px;height:4px;border-radius:4px;transform-origin:center}.shootout-v17 .albion-scarf{left:22%;background:repeating-linear-gradient(90deg,#fff 0 7px,#0878c9 7px 14px)}.shootout-v17 .palace-scarf{right:20%;background:repeating-linear-gradient(90deg,#b51f35 0 8px,#2d5ca8 8px 16px)}.shootout-v17 .crowd-phones i{position:absolute;bottom:24%;width:3px;height:5px;border-radius:1px;background:#bfe8ff;box-shadow:0 0 5px rgba(191,232,255,.9);opacity:.15}.shootout-v17 .crowd-phones i:nth-child(1){left:12%}.shootout-v17 .crowd-phones i:nth-child(2){left:36%}.shootout-v17 .crowd-phones i:nth-child(3){right:34%}.shootout-v17 .crowd-phones i:nth-child(4){right:13%}
+.shootout-v17 .crowd-albion-cheer .albion-fan,.shootout-v17 .crowd-albion-cheer .albion-scarf{animation:r20-fan-rise .48s ease 2 alternate}.shootout-v17 .crowd-palace-cheer .palace-fan,.shootout-v17 .crowd-palace-cheer .palace-scarf{animation:r20-fan-rise .48s ease 2 alternate}.shootout-v17 .crowd-gasp .crowd-foreground i:nth-child(3n+1){animation:r20-hands-head .55s ease}.shootout-v17 .goal-celebration .crowd-phones i:nth-child(odd){animation:r20-phone-flash .7s ease 2}.shootout-v17 .save-celebration .albion-fan:nth-child(2n){animation:r20-fan-rise .4s ease 2 alternate}
+@keyframes r20-fan-rise{to{transform:translateY(-34%) rotate(4deg)}}@keyframes r20-hands-head{50%{transform:translateY(3px) scale(.94)}}@keyframes r20-phone-flash{40%{opacity:.95;transform:scale(1.3)}100%{opacity:.1}}
+.shootout-v17 .taker-figure.pose-relaxed .taker-arm-left{transform:rotate(-4deg)}.shootout-v17 .taker-figure.pose-relaxed .taker-arm-right{transform:rotate(4deg)}
+.shootout-v17 .taker-figure.pose-sleeve .taker-arm-left{transform:rotate(-26deg)}.shootout-v17 .taker-figure.pose-sleeve .taker-lower-arm-left{transform:rotate(46deg)}.shootout-v17 .taker-figure.pose-sleeve .taker-arm-right{transform:rotate(7deg)}
+.shootout-v17 .taker-figure.pose-hips .taker-arm-left{transform:rotate(-31deg)}.shootout-v17 .taker-figure.pose-hips .taker-lower-arm-left{transform:rotate(64deg)}.shootout-v17 .taker-figure.pose-hips .taker-arm-right{transform:rotate(31deg)}.shootout-v17 .taker-figure.pose-hips .taker-lower-arm-right{transform:rotate(-64deg)}
+.shootout-v17 .taker-figure.pose-shoulder .taker-arm-left{transform:rotate(-14deg)}.shootout-v17 .taker-figure.pose-shoulder .taker-arm-right{transform:rotate(24deg)}.shootout-v17 .taker-figure.pose-shoulder .taker-lower-arm-right{transform:rotate(-48deg)}
+.shootout-v17 .taker-figure.pose-behind .taker-arm-left{transform:rotate(20deg)}.shootout-v17 .taker-figure.pose-behind .taker-lower-arm-left{transform:rotate(-36deg)}.shootout-v17 .taker-figure.pose-behind .taker-arm-right{transform:rotate(-20deg)}.shootout-v17 .taker-figure.pose-behind .taker-lower-arm-right{transform:rotate(36deg)}
+.shootout-v17 .taker-figure[data-foot="left"] .taker-root{transform-origin:49% 94%}.shootout-v17 .taker-figure[data-foot="right"] .taker-root{transform-origin:51% 94%}
+.shootout-v17 .taker-variation-2 .hair{filter:brightness(.72)}.shootout-v17 .taker-variation-3 .hair{filter:brightness(1.18)}.shootout-v17 .taker-variation-4 .skin{filter:saturate(.88) brightness(.93)}.shootout-v17 .taker-variation-5 .skin{filter:saturate(1.06) brightness(1.05)}
+.shootout-v17 .keeper-bottle{left:calc(var(--goal-left,26%) + var(--goal-width,48%) + 2.7%)!important;top:45.2%!important;z-index:5!important;opacity:.72!important;transform:rotate(8deg) scale(.82)!important}
+.shootout-v17 .turf-kick{position:absolute;z-index:20;left:50%;top:77.2%;width:44px;height:24px;transform:translate(-50%,-50%);pointer-events:none}.shootout-v17 .turf-kick i{position:absolute;left:50%;bottom:2px;width:5px;height:3px;border-radius:55% 45%;background:#4c7c3e;box-shadow:0 1px 1px rgba(0,0,0,.25)}.shootout-v17 .turf-kick i:nth-child(1){translate:-13px 0;rotate:-18deg}.shootout-v17 .turf-kick i:nth-child(2){translate:-4px -3px;rotate:12deg}.shootout-v17 .turf-kick i:nth-child(3){translate:6px -1px;rotate:-8deg}.shootout-v17 .turf-kick i:nth-child(4){translate:14px -5px;rotate:22deg}
+@media(max-width:760px){.shootout-v17 .keeper-bottle{left:5.7%!important;top:46%!important;transform:rotate(-8deg) scale(.72)!important}.shootout-v17 .crowd-mid{opacity:.48}.shootout-v17 .crowd-far{filter:blur(.8px);opacity:.34}.shootout-v17 .crowd-phones i:nth-child(even){display:none}.shootout-v17 .crowd-scarves i{width:29px}.shootout-v17 .turf-kick{top:77.5%;scale:.84}}
+@media(max-width:480px){.shootout-v17 .keeper-bottle{left:4.2%!important;top:46.5%!important}.shootout-v17 .crowd-foreground i:nth-child(3n){display:none}.shootout-v17 .crowd-mid{opacity:.36}.shootout-v17 .crowd-far{opacity:.26}.shootout-v17 .crowd-scarves{opacity:.7}}
+@media(prefers-reduced-motion:reduce){.shootout-v17 .crowd-depth,.shootout-v17 .crowd-scarves i,.shootout-v17 .crowd-phones i{animation:none!important}.shootout-v17 .turf-kick{display:none!important}}
+
+/* r20 final calibration: no crossed-arm silhouettes, clearer crowd and bottle just outside the frame */
+.shootout-v17 .taker-figure[data-pose="shoulder-roll"] .taker-arm-left{transform:rotate(-10deg)}
+.shootout-v17 .taker-figure[data-pose="shoulder-roll"] .taker-arm-right{transform:rotate(24deg)}
+.shootout-v17 .taker-figure[data-pose="shoulder-roll"] .taker-lower-arm-right{transform:rotate(-36deg)}
+.shootout-v17 .taker-figure[data-pose="hands-low"] .taker-arm-left{transform:rotate(5deg)}
+.shootout-v17 .taker-figure[data-pose="hands-low"] .taker-arm-right{transform:rotate(-5deg)}
+.shootout-v17 .taker-figure[data-pose="hands-low"] .taker-lower-arm-left{transform:rotate(-8deg)}
+.shootout-v17 .taker-figure[data-pose="hands-low"] .taker-lower-arm-right{transform:rotate(8deg)}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="shoulder-roll"] .taker-root{animation:r20-focus-breathe 2s ease-in-out infinite}
+.shootout-v17 .penalty-stage.is-aiming .taker-figure[data-pose="hands-low"] .taker-root{animation:r20-weight-shift 2.2s ease-in-out infinite}
+.shootout-v17 .crowd-dots{opacity:.42!important;filter:saturate(.84) brightness(.82)}
+.shootout-v17 .crowd-mid{opacity:.46!important}.shootout-v17 .crowd-far{opacity:.3!important}
+.shootout-v17 .keeper-bottle{left:10.8%!important;top:45.4%!important;z-index:5!important;opacity:.72!important;transform:rotate(-8deg) scale(.82)!important}
+@media(max-width:760px){.shootout-v17 .keeper-bottle{left:9.8%!important;top:45.8%!important}}
+@media(max-width:480px){.shootout-v17 .keeper-bottle{left:8.8%!important;top:46.1%!important}}

@@ -1643,11 +1643,21 @@
     const clearButton = $("clearSiteSearch");
     if (localStorage.getItem("albionSearchUsed") === "yes") document.body.classList.add("site-search-used");
     const normalise = (value = "") => value.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, " ").trim();
+    const searchAliases = new Map([
+      ["amex", "american express stadium"], ["goldstone", "goldstone ground"], ["palace", "crystal palace rivalry penalties"],
+      ["pens", "penalty shoot out"], ["penalties", "penalty shoot out"], ["sussex", "sussex by the sea"],
+      ["gk", "goalkeeper verbruggen"], ["keeper", "goalkeeper verbruggen"], ["travel", "train bus parking accessibility"]
+    ]);
+    const expandAlias = (value = "") => {
+      const key = normalise(value);
+      return searchAliases.has(key) ? `${key} ${searchAliases.get(key)}` : key;
+    };
     const cleanText = (value = "") => value.replace(/\s+/g, " ").trim();
     const entries = [];
     const seen = new Set();
     let currentMatches = [];
     let activeResult = -1;
+    const popularSearches = ["Penalty shoot-out", "Albion Story", "Goldstone Ground", "Amex", "Sussex by the Sea", "Getting to the Amex"];
 
     const addEntry = ({ title, category = "Section", target, text = "", keywords = "", element = null }) => {
       const cleanTitle = cleanText(title);
@@ -1682,6 +1692,13 @@
       const element = $(target);
       addEntry({ title, category, target, keywords, text: element?.textContent || "", element });
     });
+    [
+      { title: "Amex", category: "Stadium", target: "amex-stands", keywords: "American Express Stadium ground stadium" },
+      { title: "Goldstone Ground", category: "Albion Story", target: "story", keywords: "historic ground old stadium" },
+      { title: "Pens", category: "Game", target: "shootout", keywords: "penalties penalty shoot out" },
+      { title: "Sussex", category: "Audio", target: "anthem", keywords: "Sussex by the Sea anthem" },
+      { title: "Palace rivalry", category: "Albion Story", target: "story", keywords: "Crystal Palace rivalry derby" },
+    ].forEach((entry) => addEntry(entry));
 
     document.querySelectorAll("main section[id]").forEach((section) => {
       const heading = section.querySelector("h2,h1");
@@ -1759,12 +1776,20 @@
       buttons[activeResult].scrollIntoView({ block: "nearest" });
     };
 
+    const renderPopularSearches = () => {
+      currentMatches = [];
+      activeResult = -1;
+      results.innerHTML = `<div class="search-result-heading">Popular searches</div><div class="search-popular">${popularSearches.map((term) => `<button type="button" class="search-chip" data-popular-search="${esc(term)}">${esc(term)}</button>`).join("")}</div>`;
+      setExpanded(true);
+    };
+
     const renderSearch = () => {
-      const query = normalise(search.value);
+      const query = expandAlias(search.value);
       clearButton.hidden = !search.value;
       activeResult = -1;
       if (query.length < 2) {
-        closeResults();
+        if (document.activeElement === search) renderPopularSearches();
+        else closeResults();
         return;
       }
       const tokens = query.split(" ").filter(Boolean);
@@ -1802,9 +1827,31 @@
       if (hiddenParent && !hiddenParent.matches(".story-panel,.travel-panel,.record-panel")) hiddenParent.hidden = false;
     };
 
+    const highlightMatchedText = (target, rawQuery) => {
+      const plain = normalise(rawQuery).split(" ").find((token) => token.length > 2);
+      if (!plain || !target) return;
+      const walker = document.createTreeWalker(target, NodeFilter.SHOW_TEXT, { acceptNode(node) {
+        if (!node.parentElement || node.parentElement.closest("script,style,button,select,option")) return NodeFilter.FILTER_REJECT;
+        return normalise(node.nodeValue).includes(plain) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      }});
+      const node = walker.nextNode();
+      if (!node) return;
+      const source = node.nodeValue;
+      const match = source.toLowerCase().indexOf(plain.toLowerCase());
+      if (match < 0) return;
+      const mark = document.createElement("mark");
+      mark.className = "site-search-mark";
+      mark.textContent = source.slice(match, match + plain.length);
+      node.parentNode.insertBefore(document.createTextNode(source.slice(0, match)), node);
+      node.parentNode.insertBefore(mark, node);
+      node.nodeValue = source.slice(match + plain.length);
+      window.setTimeout(() => mark.replaceWith(document.createTextNode(mark.textContent)), 2600);
+    };
+
     const chooseResult = (index = 0) => {
       const entry = currentMatches[index];
       if (!entry) return;
+      const rawQuery = search.value.trim();
       const target = entry.element || $(entry.target);
       closeResults({ clear: true });
       if (!target) return;
@@ -1814,13 +1861,14 @@
       window.requestAnimationFrame(() => window.setTimeout(() => {
         target.scrollIntoView({ behavior: document.body.classList.contains("user-reduce-motion") ? "auto" : "smooth", block: "start" });
         target.classList.add("site-search-focus");
+        highlightMatchedText(target, rawQuery);
         window.setTimeout(() => target.classList.remove("site-search-focus"), 1800);
       }, 40));
       history.replaceState(null, "", `#${entry.target}`);
     };
 
     search.addEventListener("input", renderSearch);
-    search.addEventListener("focus", () => { if (normalise(search.value).length >= 2) renderSearch(); });
+    search.addEventListener("focus", () => { if (normalise(search.value).length >= 2) renderSearch(); else renderPopularSearches(); });
     search.addEventListener("keydown", (event) => {
       if (event.key === "ArrowDown") { event.preventDefault(); setActiveResult(activeResult + 1); }
       else if (event.key === "ArrowUp") { event.preventDefault(); setActiveResult(activeResult - 1); }
@@ -1837,11 +1885,37 @@
       search.focus();
     });
     results.addEventListener("click", (event) => {
+      const chip = event.target.closest("[data-popular-search]");
+      if (chip) {
+        search.value = chip.dataset.popularSearch || "";
+        renderSearch();
+        return;
+      }
       const button = event.target.closest("[data-search-result]");
       if (button) chooseResult(Number(button.dataset.searchResult));
     });
     document.addEventListener("pointerdown", (event) => {
       if (!event.target.closest(".global-site-search")) closeResults();
+    });
+    $("popularSearches")?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-search-term]");
+      if (!button) return;
+      search.value = button.dataset.searchTerm;
+      renderSearch();
+      search.focus();
+    });
+    document.querySelectorAll("#story .story-panel").forEach((panel) => {
+      if (panel.querySelector(".back-to-story-tabs")) return;
+      const button = document.createElement("button");
+      button.type = "button"; button.className = "ghost back-to-story-tabs"; button.textContent = "Back to Albion Story tabs";
+      button.addEventListener("click", () => document.querySelector("#story .story-tabs")?.scrollIntoView({ behavior: document.body.classList.contains("user-reduce-motion") ? "auto" : "smooth", block: "center" }));
+      panel.appendChild(button);
+    });
+    const travelLabels = { train: "Train", bus: "Bus", park: "Parking", active: "Walk & cycle", accessible: "Accessibility", away: "Away fans" };
+    document.querySelectorAll("#travel .travel-panel").forEach((panel) => {
+      if (panel.querySelector(".travel-status-label")) return;
+      const label = document.createElement("span"); label.className = "travel-status-label"; label.textContent = travelLabels[panel.id] || "Travel";
+      panel.prepend(label);
     });
     const theme = $("themeToggle");
     const setTheme = (night) => {
@@ -2015,7 +2089,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260726-r19", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260726-r20", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {

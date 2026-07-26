@@ -27,6 +27,7 @@
   const confetti = $("shootoutConfetti");
   const swipeTrail = $("swipeTrail");
   const saveImpact = $("saveImpact");
+  const turfKick = $("turfKick");
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
@@ -71,20 +72,38 @@
   });
 
   const albionTakers = [
-    { name: "Danny Welbeck", number: 18, foot: "right", style: "measured" },
-    { name: "Georginio Rutter", number: 10, foot: "right", style: "stutter" },
-    { name: "Yankuba Minteh", number: 11, foot: "left", style: "quick" },
-    { name: "Diego Gómez", number: 25, foot: "right", style: "direct" },
-    { name: "Maxim De Cuyper", number: 29, foot: "left", style: "measured" },
+    { name: "Danny Welbeck", number: 18, foot: "right", style: "measured", pose: "relaxed" },
+    { name: "Georginio Rutter", number: 10, foot: "right", style: "stutter", pose: "sleeve" },
+    { name: "Yankuba Minteh", number: 11, foot: "left", style: "quick", pose: "hips" },
+    { name: "Diego Gómez", number: 25, foot: "right", style: "direct", pose: "shoulder" },
+    { name: "Maxim De Cuyper", number: 29, foot: "left", style: "measured", pose: "behind" },
   ];
 
   const palaceTakers = [
-    { name: "Palace taker 1", foot: "right", delay: 870 },
-    { name: "Palace taker 2", foot: "left", delay: 980 },
-    { name: "Palace taker 3", foot: "right", delay: 910 },
-    { name: "Palace taker 4", foot: "left", delay: 1040 },
-    { name: "Palace taker 5", foot: "right", delay: 850 },
+    { name: "Palace taker 1", foot: "right", delay: 870, style: "direct", pose: "hips" },
+    { name: "Palace taker 2", foot: "left", delay: 980, style: "measured", pose: "relaxed" },
+    { name: "Palace taker 3", foot: "right", delay: 910, style: "quick", pose: "sleeve" },
+    { name: "Palace taker 4", foot: "left", delay: 1040, style: "stutter", pose: "behind" },
+    { name: "Palace taker 5", foot: "right", delay: 850, style: "direct", pose: "shoulder" },
   ];
+
+  function clearTakerPose() {
+    if (!taker) return;
+    delete taker.dataset.pose;
+  }
+
+  function showTurfKick(foot = "right", strength = 1) {
+    if (!turfKick || reducedMotion()) return;
+    turfKick.hidden = false;
+    turfKick.className = `turf-kick ${foot === "left" ? "turf-left" : "turf-right"} ${strength > 1 ? "turf-strong" : ""}`;
+    turfKick.getAnimations().forEach((animation) => animation.cancel());
+    turfKick.animate([
+      { opacity: 0, transform: "translate(-50%,-50%) scale(.55)" },
+      { opacity: .88, transform: `translate(calc(-50% + ${foot === "left" ? -4 : 4}px),-58%) scale(${.9 + strength * .08})`, offset: .26 },
+      { opacity: 0, transform: `translate(calc(-50% + ${foot === "left" ? -13 : 13}px),-115%) scale(1.22)` },
+    ], { duration: 520, easing: "cubic-bezier(.16,.64,.2,1)" });
+    window.setTimeout(() => { turfKick.hidden = true; }, 540);
+  }
 
   const state = {
     phase: "loading",
@@ -120,6 +139,7 @@
     activePointerId: null,
     pendingDive: null,
     aimPointerActive: false,
+    takerPose: "relaxed",
     aimDragMoved: false,
     standingSaveTimer: 0,
     saveResolutionLocked: false,
@@ -333,6 +353,40 @@
       `Your derby record: ${record.wins} wins from ${record.played} · ${record.saves} Palace penalties saved · best save rate ${record.bestSaveRate}%`;
   }
 
+
+  const TAKER_POSES = ["relaxed", "hands-hips", "focus", "shoulder-roll", "hands-low"];
+  const PLAYER_POSE_MAP = { relaxed: "relaxed", sleeve: "shoulder-roll", hips: "hands-hips", shoulder: "shoulder-roll", behind: "hands-low" };
+
+  function chooseTakerPose(player, turnIndex = 0) {
+    if (player?.pose && PLAYER_POSE_MAP[player.pose]) return PLAYER_POSE_MAP[player.pose];
+    const seed = (player?.name || "Albion").split("").reduce((total, char) => total + char.charCodeAt(0), 0) + turnIndex * 7;
+    return TAKER_POSES[Math.abs(seed) % TAKER_POSES.length];
+  }
+
+  function applyTakerPose(player, turnIndex = 0) {
+    const pose = chooseTakerPose(player, turnIndex);
+    state.takerPose = pose;
+    if (taker) {
+      taker.dataset.pose = pose;
+      taker.dataset.foot = player?.foot || "right";
+      taker.dataset.style = player?.style || "direct";
+      [...taker.classList].filter((name) => name.startsWith("taker-variation-")).forEach((name) => taker.classList.remove(name));
+      taker.classList.add(`taker-variation-${(turnIndex % 5) + 1}`);
+    }
+    return pose;
+  }
+
+  function nudgeShotDifficulty(target) {
+    if (!target) return target;
+    const nudged = { ...target };
+    const edgeBias = nudged.x < .5 ? -1 : 1;
+    if (nudged.x > .18 && nudged.x < .82 && nudged.y > .12 && nudged.y < .82) {
+      nudged.x = clamp(nudged.x + edgeBias * 0.013, 0.02, 0.98);
+      if (nudged.y < .38) nudged.y = clamp(nudged.y - 0.01, 0.02, 0.96);
+    }
+    return nudged;
+  }
+
   function markerHtml(results) {
     const total = Math.max(5, results.length + (results.length >= 5 ? 1 : 0));
     return Array.from({ length: total }, (_, index) => {
@@ -537,8 +591,10 @@
     resetCrowd();
     hideSwipeTrail();
     if (saveImpact) { saveImpact.hidden = true; saveImpact.className = "save-impact"; }
+    if (turfKick) { turfKick.hidden = true; turfKick.className = "turf-kick"; }
     state.saveResolutionLocked = false;
     stage.classList.remove("crossbar-contact", "save-contact", "save-replay");
+    clearTakerPose();
     positionKeeperOnLine();
   }
 
@@ -561,6 +617,7 @@
   }
 
   function animateRunUp(isPalace, foot = "right", target = null, style = "direct") {
+    clearTakerPose();
     const footDirection = foot === "left" ? -1 : 1;
     const settings = config();
     const targetBias = target ? (target.x - .5) * 22 * settings.cueStrength : 0;
@@ -573,6 +630,7 @@
     const kickingLowerLeg = kickingLeg?.querySelector(".taker-lower-leg");
     const standingLowerLeg = standingLeg?.querySelector(".taker-lower-leg");
     const standingBoot = standingLeg?.querySelector(".taker-boot");
+    const kickingBoot = kickingLeg?.querySelector(".taker-boot");
     const balanceArm = taker.querySelector(foot === "left" ? ".taker-arm-right" : ".taker-arm-left");
     const trailingArm = taker.querySelector(foot === "left" ? ".taker-arm-left" : ".taker-arm-right");
     const startX = -footDirection * 31 + styleOffset;
@@ -629,23 +687,35 @@
     ], { duration, easing: "cubic-bezier(.18,.6,.2,1)" });
     if (standingBoot) animateElement(standingBoot, [
       { transform: "rotate(0deg) translate(0,0)" },
-      { transform: `rotate(${footDirection * -2}deg) translate(0,0)`, offset: .62 },
-      { transform: `rotate(${footDirection * 7}deg) translate(${footDirection * 1.5}px,1px)`, offset: .79 },
+      { transform: `rotate(${footDirection * -3}deg) translate(0,0)`, offset: .58 },
+      { transform: `rotate(${footDirection * (target && target.x < .34 ? 10 : target && target.x > .66 ? 4 : 7)}deg) translate(${footDirection * 2.5}px,1px)`, offset: .79 },
       { transform: `rotate(${footDirection * 5}deg) translate(${footDirection}px,1px)`, offset: .92 },
       { transform: `rotate(${footDirection * 2}deg) translate(0,0)` },
     ], { duration, easing: "cubic-bezier(.18,.62,.2,1)" });
-    if (balanceArm) animateElement(balanceArm, [
+    if (kickingBoot) animateElement(kickingBoot, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${footDirection * 9}deg)`, offset: .28 },
-      { transform: `rotate(${footDirection * 38}deg)`, offset: .76 },
-      { transform: `rotate(${footDirection * -16}deg)` },
-    ], { duration });
-    if (trailingArm) animateElement(trailingArm, [
-      { transform: "rotate(0deg)" },
-      { transform: `rotate(${footDirection * -14}deg)`, offset: .32 },
-      { transform: `rotate(${footDirection * -34}deg)`, offset: .72 },
+      { transform: `rotate(${footDirection * -8}deg)`, offset: .5 },
+      { transform: `rotate(${footDirection * 18}deg) scaleY(.98)`, offset: .74 },
+      { transform: `rotate(${footDirection * (target && target.y < .38 ? 28 : 20)}deg) scaleY(.96)`, offset: .88 },
       { transform: `rotate(${footDirection * 14}deg)` },
-    ], { duration });
+    ], { duration, easing: "cubic-bezier(.16,.64,.18,1)" });
+    if (balanceArm) animateElement(balanceArm, [
+      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${footDirection * -14}deg) translateY(-1px)`, offset: .24 },
+      { transform: `rotate(${footDirection * -42}deg) translateY(-2px)`, offset: .69 },
+      { transform: `rotate(${footDirection * -56}deg) translateY(-1px)`, offset: .86 },
+      { transform: `rotate(${footDirection * -28}deg) translateY(0)` },
+    ], { duration, easing: "cubic-bezier(.16,.58,.18,1)" });
+    if (trailingArm) animateElement(trailingArm, [
+      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${footDirection * 12}deg) translateY(1px)`, offset: .3 },
+      { transform: `rotate(${footDirection * 28}deg) translateY(-1px)`, offset: .7 },
+      { transform: `rotate(${footDirection * 20}deg) translateY(-1px)`, offset: .9 },
+      { transform: `rotate(${footDirection * 8}deg) translateY(0)` },
+    ], { duration, easing: "cubic-bezier(.18,.6,.2,1)" });
+    window.setTimeout(() => {
+      if (style === "direct" || style === "quick") showTurfKick(foot, style === "direct" ? 1.18 : 1);
+    }, Math.max(40, duration * .84));
     return { animation: run, duration };
   }
 
@@ -653,7 +723,6 @@
     const point = stagePoint(target);
     const endScale = saved ? 0.66 : miss ? 0.54 : 0.48;
     const panenkaShot = shotType === "panenka";
-    const spin = panenkaShot ? -150 : target.x < .5 ? 82 : -82;
     const from = options.from || ballStart;
     const midX = from.x + (point.x - from.x) * .52;
     const linearMidY = from.y + (point.y - from.y) * .52;
@@ -668,9 +737,9 @@
       ], { duration, easing: "cubic-bezier(.18,.58,.24,1)" });
     }
     return animateElement(ball, [
-      { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(0deg)" },
-      { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: `translate(-50%,-50%) scale(${panenkaShot ? .78 : .7}) rotate(${spin * .42}deg)`, offset: .5 },
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale}) rotate(${spin}deg)` },
+      { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: "translate(-50%,-50%) scale(1)" },
+      { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: `translate(-50%,-50%) scale(${panenkaShot ? .78 : .7})`, offset: .5 },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(${endScale})` },
     ], { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : "linear" });
   }
 
@@ -686,8 +755,8 @@
       { left: `${point.x * 100}%`, top: `${(point.y + .018) * 100}%`, opacity: .34, transform: "translate(-50%,-50%) scale(.72)" },
     ], { duration, easing: "linear" });
     const animation = animateElement(ball, [
-      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(0deg)" },
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: `translate(-50%,-50%) scale(.82) rotate(${target.x < .5 ? 32 : -32}deg)` },
+      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1)" },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.82)" },
     ], { duration, easing: "linear" });
     return { point, animation };
   }
@@ -734,9 +803,9 @@
         { left: `${point.x * 100}%`, top: `${(point.y + .02) * 100}%`, opacity: 0 },
       ], { duration: 360 });
       return animateElement(ball, [
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.66) rotate(0deg)" },
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.61) rotate(20deg)", offset: .55 },
-        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: .92, transform: "translate(-50%,-50%) scale(.58) rotate(30deg)" },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.66)" },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: 1, transform: "translate(-50%,-50%) scale(.61)", offset: .55 },
+        { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: .92, transform: "translate(-50%,-50%) scale(.58)" },
       ], { duration: 360, easing: "ease-out" });
     }
     const strong = saveType === "PARRIED" || saveType === "BLOCKED";
@@ -748,8 +817,8 @@
       { left: `${endX * 100}%`, top: `${(endY + .035) * 100}%`, opacity: .32, transform: "translate(-50%,-50%) scale(.72)" },
     ], { duration: 430 });
     return animateElement(ball, [
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.66) rotate(560deg)" },
-      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.58) rotate(840deg)" },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: "translate(-50%,-50%) scale(.66)" },
+      { left: `${endX * 100}%`, top: `${endY * 100}%`, transform: "translate(-50%,-50%) scale(.58)" },
     ], { duration: 430, easing: "cubic-bezier(.12,.5,.3,1)" });
   }
 
@@ -764,7 +833,7 @@
     ball.style.left = `${start.x * 100}%`;
     ball.style.top = `${start.y * 100}%`;
     ball.style.opacity = "1";
-    ball.style.transform = "translate(-50%,-50%) scale(.78) rotate(0deg)";
+    ball.style.transform = "translate(-50%,-50%) scale(.78)";
     animateKeeperDive(divePoint || target, 820, true);
     await animateSavedShot(target, 820, saveType, divePoint, "driven", { silentKick: true, from: start, hapticEnabled: false });
     await sleep(180);
@@ -941,7 +1010,8 @@
       { transform: `rotate(${direction * -8}deg)` },
     ], { duration: totalDuration });
 
-    return animateElement(keeper, [
+    const diveSequence = state.sequence;
+    const diveAnimation = animateElement(keeper, [
       { transform: "translateX(-50%) translate(0,0) rotate(0deg) scale(1)" },
       { transform: `translateX(-50%) translate(${dx * .12}px,${dy * .08}px) rotate(${bodyRotation * .06}deg) scale(1)`, offset: .2 },
       { transform: `translateX(-50%) translate(${dx * .44}px,${dy * .34}px) rotate(${bodyRotation * .3}deg) scale(1.01)`, offset: .46 },
@@ -949,6 +1019,21 @@
       { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(1.018)`, offset: .88 },
       { transform: `translateX(-50%) translate(${dx * .98}px,${landingY}px) rotate(${bodyRotation * 1.02}deg) scale(1,.98)` },
     ], { duration: totalDuration, easing: "cubic-bezier(.1,.68,.16,1)" });
+    recoverKeeperAfterDive(diveSequence, saved);
+    return diveAnimation;
+  }
+
+  function recoverKeeperAfterDive(token, saved = false) {
+    window.setTimeout(() => {
+      if (token !== state.sequence || state.finished || ["albion-prep", "palace-ready", "palace-prep"].includes(state.phase)) return;
+      const currentTransform = getComputedStyle(keeper).transform;
+      const recovery = animateElement(keeper, [
+        { transform: currentTransform && currentTransform !== "none" ? currentTransform : "translateX(-50%) translateY(0) rotate(0deg) scale(1)" },
+        { transform: "translateX(-50%) translateY(5px) rotate(0deg) scale(.99)", offset: .62 },
+        { transform: "translateX(-50%) translateY(0) rotate(0deg) scale(1)" },
+      ], { duration: reducedMotion() ? 120 : saved ? 520 : 680, easing: "cubic-bezier(.2,.58,.24,1)" });
+      recovery?.finished.finally(() => { if (token === state.sequence) positionKeeperOnLine(); });
+    }, reducedMotion() ? 140 : saved ? 1120 : 1280);
   }
 
   function assistedDivePoint(point) {
@@ -1349,7 +1434,8 @@
     panenka.disabled = true;
     panenka.closest("label")?.removeAttribute("hidden");
     const player = albionTakers[state.albionKicks % albionTakers.length];
-    $("penaltyTakerName").textContent = player.name;
+    applyTakerPose(player, state.albionKicks);
+    $("penaltyTakerName").textContent = `${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
     $("penaltyShirt").textContent = String(player.number);
     $("turnBadge").textContent = "ALBION PENALTY";
     $("turnBadge").className = "turn-badge albion-turn";
@@ -1379,7 +1465,8 @@
     panenka.disabled = true;
     panenka.closest("label")?.setAttribute("hidden", "");
     const player = palaceTakers[state.palaceKicks % palaceTakers.length];
-    $("penaltyTakerName").textContent = player.name;
+    applyTakerPose(player, state.palaceKicks + 20);
+    $("penaltyTakerName").textContent = `${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
     $("penaltyShirt").textContent = String((state.palaceKicks % 5) + 7);
     $("turnBadge").textContent = "PALACE PENALTY · YOU ARE VERBRUGGEN";
     $("turnBadge").className = "turn-badge palace-turn";
@@ -1418,6 +1505,7 @@
     panenka.disabled = true;
     const settings = config();
     const player = albionTakers[state.albionKicks % albionTakers.length];
+    applyTakerPose(player, state.albionKicks);
     const isPanenka = panenka.checked;
     if (isPanenka) state.panenkaAttempts += 1;
     setStatus(`${player.name} begins the run-up`, isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact.");
@@ -1427,9 +1515,10 @@
 
     const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));
     const spread = settings.shotSpread * (1 + edge * 1.75);
+    const aimedTarget = nudgeShotDifficulty(aim);
     const resolved = isPanenka
       ? { x: clamp(.5 + gaussian() * .024, .43, .57), y: clamp(.61 + gaussian() * .024, .52, .68) }
-      : { x: aim.x + gaussian() * spread, y: aim.y + gaussian() * spread };
+      : { x: aimedTarget.x + gaussian() * spread, y: aimedTarget.y + gaussian() * spread };
     const frameResult = classifyFrame(resolved);
     const keeperGuess = {
       x: clamp(resolved.x + gaussian() * settings.keeperNoise, .04, .96),
@@ -1538,6 +1627,7 @@
     stage.classList.remove("is-waiting");
     stage.classList.add("is-locked", "palace-kick");
     const player = palaceTakers[state.palaceKicks % palaceTakers.length];
+    applyTakerPose(player, state.palaceKicks + 20);
     const plan = randomPalaceTarget();
     state.palaceTarget = plan.target;
     state.palaceMiss = plan.miss;
@@ -1547,7 +1637,7 @@
     const runDuration = Math.round(player.delay * settings.runUpScale);
     state.phase = "palace-run";
     setStatus("Palace begin the run-up", "Read the approach and standing foot. The save window opens before contact.");
-    const run = animateRunUp(true, player.foot, state.palaceTarget, "direct");
+    const run = animateRunUp(true, player.foot, state.palaceTarget, player.style || "direct");
     const actualRun = Math.max(runDuration, run.duration);
     const waitBeforeWindow = Math.max(80, actualRun - settings.preContactWindow);
     await sleep(reducedMotion() ? 80 : waitBeforeWindow);
@@ -1850,6 +1940,7 @@
       activePointerId: null,
       pendingDive: null,
       aimPointerActive: false,
+    takerPose: "relaxed",
       aimDragMoved: false,
       standingSaveTimer: 0,
       saveResolutionLocked: false,

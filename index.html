@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r19" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r19" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r19" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r19" />
-    <meta name="release" content="production-r19-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r20" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r20" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r20" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r20" />
+    <meta name="release" content="production-r20-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -119,6 +119,9 @@
             <button class="global-search-submit" type="submit">Search</button>
           </div>
           <p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
+          <div id="popularSearches" class="popular-searches" aria-label="Popular searches">
+            <span>Popular:</span><button type="button" data-search-term="pens">Pens</button><button type="button" data-search-term="Palace">Palace</button><button type="button" data-search-term="Amex">Amex</button><button type="button" data-search-term="Goldstone">Goldstone</button><button type="button" data-search-term="Sussex">Sussex</button>
+          </div>
         </form>
         <div id="siteSearchResults" class="site-search-results global-search-results" role="listbox" aria-live="polite"></div>
       </section>
@@ -334,10 +337,15 @@
               <span class="crowd-banner">SEAGULLS</span>
               <span class="crowd-banner derby">BRIGHTON v PALACE</span>
               <span class="crowd-banner palace-banner">EAGLES</span>
+              <div class="crowd-depth crowd-far"></div>
+              <div class="crowd-depth crowd-mid"></div>
               <div class="crowd-dots"></div>
               <div class="crowd-foreground">
-                <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+                <i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i>
+                <i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i>
               </div>
+              <div class="crowd-scarves"><i class="albion-scarf"></i><i class="palace-scarf"></i></div>
+              <div class="crowd-phones"><i></i><i></i><i></i><i></i></div>
               <span class="crowd-flag crowd-flag-left"></span>
               <span class="crowd-flag crowd-flag-right"></span>
               <div class="stadium-mini-score"><b>BHA</b><span id="stadiumMiniScore">0–0</span><b>PAL</b></div>
@@ -536,6 +544,7 @@
               </g>
             </svg>
             <div id="penaltyBallShadow" class="penalty-ball-shadow" aria-hidden="true"></div>
+            <div id="turfKick" class="turf-kick" hidden aria-hidden="true"><i></i><i></i><i></i><i></i></div>
             <svg id="penaltyBall" class="penalty-ball" viewBox="0 0 64 64" aria-hidden="true">
               <defs>
                 <radialGradient id="ballSurface" cx="34%" cy="27%" r="74%">
@@ -1874,11 +1883,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r19"></script>
-    <script src="quiz-data.js?v=20260726-r19"></script>
-    <script src="app.js?v=20260726-r19"></script>
-    <script src="release-fixes.js?v=20260726-r19"></script>
-    <script src="shootout.js?v=20260726-r19"></script>
-    <script src="polish.js?v=20260726-r19"></script>
+    <script src="content-data.js?v=20260726-r20"></script>
+    <script src="quiz-data.js?v=20260726-r20"></script>
+    <script src="app.js?v=20260726-r20"></script>
+    <script src="release-fixes.js?v=20260726-r20"></script>
+    <script src="shootout.js?v=20260726-r20"></script>
+    <script src="polish.js?v=20260726-r20"></script>
   </body>
 </html>
