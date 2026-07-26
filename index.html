@@ -46,11 +46,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r22" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r22" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r22" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r22" />
-    <meta name="release" content="production-r22-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r23" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r23" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r23" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r23" />
+    <meta name="release" content="production-r23-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -406,7 +406,23 @@
               <span class="goal-crossbar"></span>
               <span class="goal-line"></span>
             </div>
-            <div class="keeper-bottle" aria-hidden="true"><i></i></div>
+            <svg id="keeperBottle" class="keeper-bottle" viewBox="0 0 46 118" role="img" aria-label="Goalkeeper penalty notes bottle">
+              <defs>
+                <linearGradient id="bottleGlass" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stop-color="#e7fbff" stop-opacity=".8"/><stop offset=".48" stop-color="#5ab0d3" stop-opacity=".5"/><stop offset="1" stop-color="#f2fdff" stop-opacity=".75"/>
+                </linearGradient>
+              </defs>
+              <path class="bottle-cap" d="M16 2h14v12H16z" />
+              <path class="bottle-neck" d="M14 12h18l3 15H11z" />
+              <path class="bottle-body" fill="url(#bottleGlass)" d="M10 25q-5 10-5 26v54q0 10 10 10h16q10 0 10-10V51q0-16-5-26z" />
+              <path class="bottle-water" d="M7 78q16-5 32 0v27q0 8-8 8H15q-8 0-8-8z" />
+              <rect class="bottle-label" x="8" y="37" width="30" height="39" rx="3" />
+              <text class="bottle-title" x="23" y="47" text-anchor="middle">PEN</text>
+              <text class="bottle-title" x="23" y="56" text-anchor="middle">NOTES</text>
+              <text id="bottleNote1" class="bottle-note" x="23" y="64" text-anchor="middle">1 · L</text>
+              <text id="bottleNote2" class="bottle-note" x="23" y="70" text-anchor="middle">2 · C</text>
+              <text id="bottleNote3" class="bottle-note" x="23" y="76" text-anchor="middle">3 · R</text>
+            </svg>
             <div class="pitch-stripes" aria-hidden="true"></div>
             <div class="pitch-lines" aria-hidden="true">
               <svg class="pitch-markings-svg" viewBox="0 0 1000 650" preserveAspectRatio="none">
@@ -417,6 +433,7 @@
                 <circle class="pitch-spot-mark" cx="500" cy="495" r="6" />
               </svg>
               <span class="spot-wear"></span>
+              <span class="pitch-boot-marks"><i></i><i></i><i></i></span>
               <span class="goal-line-wear"></span>
             </div>
             <svg id="refereeFigure" class="penalty-figure referee-figure" viewBox="0 0 110 250" aria-hidden="true">
@@ -477,16 +494,26 @@
                     <path class="keeper-sleeve" fill="url(#keeperKitShade)" d="M67 77q-14 3-22 16l11 11 17-17z" />
                     <g class="keeper-lower-arm keeper-lower-arm-left">
                       <path class="keeper-forearm" d="M49 94q-12 19-14 31l12 5 17-29z" />
-                      <ellipse class="keeper-glove" cx="38" cy="129" rx="11" ry="13" transform="rotate(18 38 129)" />
-                      <path class="glove-detail" d="M33 121l8 15M38 118l7 15" />
+                      <g class="keeper-glove keeper-glove-left" transform="rotate(18 38 129)">
+                        <rect class="glove-cuff" x="29" y="136" width="17" height="8" rx="3" />
+                        <path class="glove-palm" d="M28 128q0-9 6-13 6-4 12 1 5 5 3 14l-4 10H32q-5-5-4-12z" />
+                        <path class="glove-finger" d="M31 119q-1-8 3-9 4 0 4 8v9M37 117q0-9 4-9 4 1 3 10v9M43 120q1-7 5-6 3 2 0 10l-3 7" />
+                        <path class="glove-thumb" d="M30 127q-8-2-8 3 1 5 10 6" />
+                        <path class="glove-detail" d="M31 128q8 4 15 0M34 135h10" />
+                      </g>
                     </g>
                   </g>
                   <g class="keeper-arm keeper-arm-right">
                     <path class="keeper-sleeve" fill="url(#keeperKitShade)" d="M113 77q14 3 22 16l-11 11-17-17z" />
                     <g class="keeper-lower-arm keeper-lower-arm-right">
                       <path class="keeper-forearm" d="M131 94q12 19 14 31l-12 5-17-29z" />
-                      <ellipse class="keeper-glove" cx="142" cy="129" rx="11" ry="13" transform="rotate(-18 142 129)" />
-                      <path class="glove-detail" d="M147 121l-8 15M142 118l-7 15" />
+                      <g class="keeper-glove keeper-glove-right" transform="rotate(-18 142 129)">
+                        <rect class="glove-cuff" x="134" y="136" width="17" height="8" rx="3" />
+                        <path class="glove-palm" d="M152 128q0-9-6-13-6-4-12 1-5 5-3 14l4 10h13q5-5 4-12z" />
+                        <path class="glove-finger" d="M149 119q1-8-3-9-4 0-4 8v9M143 117q0-9-4-9-4 1-3 10v9M137 120q-1-7-5-6-3 2 0 10l3 7" />
+                        <path class="glove-thumb" d="M150 127q8-2 8 3-1 5-10 6" />
+                        <path class="glove-detail" d="M149 128q-8 4-15 0M146 135h-10" />
+                      </g>
                     </g>
                   </g>
                   <g class="keeper-leg keeper-leg-left">
@@ -1909,11 +1936,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r22"></script>
-    <script src="quiz-data.js?v=20260726-r22"></script>
-    <script src="app.js?v=20260726-r22"></script>
-    <script src="release-fixes.js?v=20260726-r22"></script>
-    <script src="shootout.js?v=20260726-r22"></script>
-    <script src="polish.js?v=20260726-r22"></script>
+    <script src="content-data.js?v=20260726-r23"></script>
+    <script src="quiz-data.js?v=20260726-r23"></script>
+    <script src="app.js?v=20260726-r23"></script>
+    <script src="release-fixes.js?v=20260726-r23"></script>
+    <script src="shootout.js?v=20260726-r23"></script>
+    <script src="polish.js?v=20260726-r23"></script>
   </body>
 </html>

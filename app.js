@@ -2151,7 +2151,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260726-r22", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260726-r23", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {

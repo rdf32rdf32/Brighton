@@ -28,6 +28,7 @@
   const swipeTrail = $("swipeTrail");
   const saveImpact = $("saveImpact");
   const turfKick = $("turfKick");
+  const keeperBottle = $("keeperBottle");
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
@@ -151,6 +152,7 @@
   let currentAnimations = [];
   let keeperRoutineIndex = 0;
   let crossbarRoutineBag = [];
+  let bottleRoutineBag = [];
   let runUpProfileBag = [];
   let lastRunUpProfile = "";
   let chantIndex = -1;
@@ -607,7 +609,8 @@
     stage.removeAttribute("data-runup");
     if (turfKick) { turfKick.hidden = true; turfKick.className = "turf-kick"; }
     state.saveResolutionLocked = false;
-    stage.classList.remove("crossbar-contact", "save-contact", "save-replay");
+    stage.classList.remove("crossbar-contact", "save-contact", "contact-armed", "save-replay", "bottle-reading");
+    keeperBottle?.classList.remove("is-read");
     clearTakerPose();
     positionKeeperOnLine();
   }
@@ -884,6 +887,7 @@
   }
 
   function saveContactDescriptor(saveType, target) {
+    const targetStage = stagePoint(target);
     const leftGlove = keeper.querySelector('.keeper-arm-left .keeper-glove');
     const rightGlove = keeper.querySelector('.keeper-arm-right .keeper-glove');
     const leftBoot = keeper.querySelector('.keeper-leg-left .keeper-boot');
@@ -892,17 +896,28 @@
     const rightShin = keeper.querySelector('.keeper-lower-leg-right');
     const shirt = keeper.querySelector('.keeper-shirt');
     const shorts = keeper.querySelector('.keeper-shorts');
-    const leftPalm = elementStagePoint(leftGlove, target.x < .5 ? .34 : .66, .52);
-    const rightPalm = elementStagePoint(rightGlove, target.x < .5 ? .34 : .66, .52);
+    const palmAnchor = targetStage.x < .5 ? .38 : .62;
+    const leftPalm = elementStagePoint(leftGlove, palmAnchor, .5);
+    const rightPalm = elementStagePoint(rightGlove, palmAnchor, .5);
     const glovePoints = [leftPalm, rightPalm];
     if (saveType === 'CATCH') {
-      const leading = closestPoint(glovePoints, target);
+      const leading = closestPoint(glovePoints, targetStage);
       const support = leading === leftPalm ? rightPalm : leftPalm;
-      return { point: midpoint(leading, support ? { x: leading.x + (support.x - leading.x) * .34, y: leading.y + (support.y - leading.y) * .34 } : null), element: leading === leftPalm ? leftGlove : rightGlove, kind: 'glove' };
+      const leadingElement = leading === leftPalm ? leftGlove : rightGlove;
+      const supportElement = leading === leftPalm ? rightGlove : leftGlove;
+      return {
+        point: leading,
+        element: leadingElement,
+        supportElement,
+        leadingPoint: leading,
+        supportPoint: support,
+        kind: 'glove',
+        targetStage,
+      };
     }
     if (saveType === 'FINGERTIP SAVE' || saveType === 'PARRIED') {
-      const point = closestPoint(glovePoints, target);
-      return { point, element: point === leftPalm ? leftGlove : rightGlove, kind: 'glove' };
+      const point = closestPoint(glovePoints, targetStage);
+      return { point, element: point === leftPalm ? leftGlove : rightGlove, kind: 'glove', targetStage };
     }
     if (saveType === 'LEG SAVE') {
       const candidates = [
@@ -911,13 +926,13 @@
         { point: elementStagePoint(leftShin, .5, .58), element: leftShin },
         { point: elementStagePoint(rightShin, .5, .58), element: rightShin },
       ];
-      const selected = candidates.filter(item => item.point).sort((a,b) => Math.hypot(a.point.x-target.x,a.point.y-target.y)-Math.hypot(b.point.x-target.x,b.point.y-target.y))[0];
-      return { point: selected?.point, element: selected?.element, kind: 'boot' };
+      const selected = candidates.filter(item => item.point).sort((a,b) => Math.hypot(a.point.x-targetStage.x,a.point.y-targetStage.y)-Math.hypot(b.point.x-targetStage.x,b.point.y-targetStage.y))[0];
+      return { point: selected?.point, element: selected?.element, kind: selected?.element?.classList.contains('keeper-boot') ? 'boot' : 'leg', targetStage };
     }
     const chest = elementStagePoint(shirt, .5, target.y > .62 ? .78 : .55);
     const hip = elementStagePoint(shorts, .5, .48);
     const point = target.y > .62 ? hip || chest : chest || hip;
-    return { point, element: target.y > .62 ? shorts : shirt, kind: target.y > .62 ? 'body' : 'chest' };
+    return { point, element: target.y > .62 ? shorts : shirt, kind: target.y > .62 ? 'body' : 'chest', targetStage };
   }
 
   function fallbackContactPoint(target, saveType, divePoint = null) {
@@ -967,31 +982,72 @@
     ball.style.transform = ballTransform(scale * squashX, scale * squashY);
   }
 
+  function projectPointToSegment(point, start, end) {
+    const dx = end.x - start.x;
+    const dy = end.y - start.y;
+    const lengthSq = dx * dx + dy * dy || 1;
+    const t = clamp(((point.x - start.x) * dx + (point.y - start.y) * dy) / lengthSq, 0, 1);
+    return { t, point: { x: start.x + dx * t, y: start.y + dy * t } };
+  }
+
+  function moveSavePartToContact(descriptor, collisionPoint, duration) {
+    const stageRect = stage.getBoundingClientRect();
+    const moveOne = (element, fromPoint, destination, side = 0) => {
+      if (!element || !fromPoint) return null;
+      const dx = (destination.x - fromPoint.x) * stageRect.width + side;
+      const dy = (destination.y - fromPoint.y) * stageRect.height;
+      element.classList.add('active-save-part');
+      return animateElement(element, [
+        { transform: 'translate(0px,0px) scale(1)' },
+        { transform: `translate(${dx * .72}px,${dy * .72}px) scale(1.04)`, offset: .72 },
+        { transform: `translate(${dx}px,${dy}px) scale(1.06)` },
+      ], { duration, easing: 'cubic-bezier(.16,.72,.18,1)' });
+    };
+    if (descriptor.kind === 'glove' && descriptor.supportElement) {
+      const ballHalf = Math.max(4, ball.getBoundingClientRect().width * .34);
+      const leadSide = descriptor.leadingPoint?.x < descriptor.supportPoint?.x ? -ballHalf : ballHalf;
+      moveOne(descriptor.element, descriptor.leadingPoint, collisionPoint, leadSide);
+      moveOne(descriptor.supportElement, descriptor.supportPoint, collisionPoint, -leadSide);
+    } else {
+      moveOne(descriptor.element, descriptor.point, collisionPoint);
+    }
+  }
+
   function animateBallToLiveContact(target, duration, saveType, divePoint, from) {
     const startPoint = from || ballStart;
     const intended = stagePoint(target);
-    const startTime = performance.now();
+    const descriptor = saveContactDescriptor(saveType, target);
+    const fallback = fallbackContactPoint(target, saveType, divePoint);
+    const bodyPoint = descriptor.point || fallback;
+    const projected = projectPointToSegment(bodyPoint, startPoint, intended);
+    const collisionT = clamp(projected.t, saveType === 'LEG SAVE' ? .5 : .42, .94);
+    const collisionPoint = {
+      x: startPoint.x + (intended.x - startPoint.x) * collisionT,
+      y: startPoint.y + (intended.y - startPoint.y) * collisionT,
+    };
     const total = Math.max(reducedMotion() ? 150 : 390, duration);
+    moveSavePartToContact(descriptor, collisionPoint, total * .92);
+    const startTime = performance.now();
     if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
     return new Promise((resolve) => {
       const frame = (now) => {
         const raw = clamp((now - startTime) / total, 0, 1);
-        const flight = raw < .74 ? raw / .74 : 1;
-        const eased = flight * flight * (3 - 2 * flight);
-        const natural = {
-          x: startPoint.x + (intended.x - startPoint.x) * eased,
-          y: startPoint.y + (intended.y - startPoint.y) * eased,
+        const eased = raw * raw * (3 - 2 * raw);
+        const naturalPoint = {
+          x: startPoint.x + (collisionPoint.x - startPoint.x) * eased,
+          y: startPoint.y + (collisionPoint.y - startPoint.y) * eased,
         };
-        const descriptor = saveContactDescriptor(saveType, target);
-        const live = descriptor.point || fallbackContactPoint(target, saveType, divePoint);
-        const lock = clamp((raw - .46) / .34, 0, 1);
-        const magnet = lock * lock * (3 - 2 * lock);
+        const liveDescriptor = raw > .84 ? saveContactDescriptor(saveType, target) : descriptor;
+        const livePoint = liveDescriptor.point || collisionPoint;
+        const correctionRaw = clamp((raw - .88) / .12, 0, 1);
+        const correction = correctionRaw * correctionRaw * (3 - 2 * correctionRaw);
         const point = {
-          x: natural.x + (live.x - natural.x) * magnet,
-          y: natural.y + (live.y - natural.y) * magnet,
+          x: naturalPoint.x + (livePoint.x - naturalPoint.x) * correction,
+          y: naturalPoint.y + (livePoint.y - naturalPoint.y) * correction,
         };
+        if (raw > .76) stage.classList.add('contact-armed');
         const scale = ballScaleAt(point, { saved: true });
-        setBallFrame(point, scale, raw > .74 ? .94 : 1, raw > .74 ? 1.06 : 1);
+        setBallFrame(point, scale, raw > .88 ? .94 : 1, raw > .88 ? 1.06 : 1);
         if (ballShadow) {
           ballShadow.style.left = `${point.x * 100}%`;
           ballShadow.style.top = `${Math.min(.96, point.y + .028) * 100}%`;
@@ -1003,7 +1059,7 @@
         } else {
           state.collisionFrame = 0;
           const finalDescriptor = saveContactDescriptor(saveType, target);
-          const finalPoint = finalDescriptor.point || live;
+          const finalPoint = finalDescriptor.point || collisionPoint;
           setBallFrame(finalPoint, ballScaleAt(finalPoint, { saved: true }), .92, 1.08);
           resolve({ point: finalPoint, descriptor: finalDescriptor });
         }
@@ -1012,7 +1068,14 @@
     });
   }
 
-  async function secureCatch(target, descriptor, duration = 430) {
+  async function secureCatch(target, descriptor, duration = 520) {
+    const leftGlove = keeper.querySelector('.keeper-glove-left');
+    const rightGlove = keeper.querySelector('.keeper-glove-right');
+    [leftGlove, rightGlove].forEach((glove, index) => glove && animateElement(glove, [
+      { transform: getComputedStyle(glove).transform === 'none' ? 'translate(0,0) scale(1.06)' : getComputedStyle(glove).transform },
+      { transform: `translate(${index ? -4 : 4}px,2px) rotate(${index ? -7 : 7}deg) scale(1.08)`, offset: .34 },
+      { transform: `translate(${index ? -7 : 7}px,5px) rotate(${index ? -11 : 11}deg) scale(1.03)` },
+    ], { duration, easing: 'cubic-bezier(.18,.72,.22,1)' }));
     const started = performance.now();
     return new Promise((resolve) => {
       const frame = (now) => {
@@ -1040,6 +1103,8 @@
     await sleep(reducedMotion() ? 55 : 110);
     if (saveType === 'CATCH') await secureCatch(target, collision.descriptor);
     else await animateDeflection(contact, saveType)?.finished.catch(() => {});
+    stage.classList.remove('contact-armed');
+    keeper.querySelectorAll('.active-save-part').forEach((part) => part.classList.remove('active-save-part'));
     return contact;
   }
 
@@ -1691,6 +1756,77 @@
     return true;
   }
 
+  function refreshBottleNotes() {
+    const directions = shuffled(['L', 'C', 'R']);
+    ['bottleNote1', 'bottleNote2', 'bottleNote3'].forEach((id, index) => {
+      const note = $(id);
+      if (note) note.textContent = `${index + 1} · ${directions[index]}`;
+    });
+  }
+
+  function nextBottleRoutine() {
+    if (state.palaceKicks === 0) return true;
+    if (!bottleRoutineBag.length) bottleRoutineBag = shuffled([true, false, false, false]);
+    return bottleRoutineBag.pop();
+  }
+
+  async function keeperBottleRoutine(token) {
+    if (!keeperBottle) return keeperSettleRoutine(token);
+    positionKeeperOnLine();
+    refreshBottleNotes();
+    const stageRect = stage.getBoundingClientRect();
+    const keeperRect = keeper.getBoundingClientRect();
+    const bottleRect = keeperBottle.getBoundingClientRect();
+    const delta = bottleRect.left + bottleRect.width * .5 - (keeperRect.left + keeperRect.width * .5) + Math.max(10, keeperRect.width * .18);
+    const duration = reducedMotion() ? 250 : 4600;
+    const body = keeper.querySelector('.keeper-body-group');
+    const head = keeper.querySelector('.keeper-head-group');
+    const leftArm = keeper.querySelector('.keeper-arm-left');
+    const rightArm = keeper.querySelector('.keeper-arm-right');
+    stage.classList.add('bottle-reading');
+    keeperBottle.classList.add('is-read');
+    setStatus('Verbruggen checks his notes', 'He walks to the bottle and studies the penalty directions before returning to the line.');
+    animateElement(keeper, [
+      { transform: 'translateX(-50%) translate(0,0) scale(1)' },
+      { transform: `translateX(-50%) translate(${delta * .55}px,2px) scale(1)`, offset: .14 },
+      { transform: `translateX(-50%) translate(${delta}px,5px) scale(.99)`, offset: .25 },
+      { transform: `translateX(-50%) translate(${delta}px,11px) scale(.98,.92)`, offset: .34 },
+      { transform: `translateX(-50%) translate(${delta}px,11px) scale(.98,.92)`, offset: .73 },
+      { transform: `translateX(-50%) translate(${delta}px,2px) scale(1)`, offset: .81 },
+      { transform: `translateX(-50%) translate(${delta * .48}px,0) scale(1)`, offset: .9 },
+      { transform: 'translateX(-50%) translate(0,0) scale(1)' },
+    ], { duration, easing: 'cubic-bezier(.2,.58,.22,1)' });
+    if (body) animateElement(body, [
+      { transform: 'rotate(0deg) translateY(0)' },
+      { transform: 'rotate(-5deg) translateY(0)', offset: .25 },
+      { transform: 'rotate(-14deg) translateY(7px)', offset: .36 },
+      { transform: 'rotate(-14deg) translateY(7px)', offset: .72 },
+      { transform: 'rotate(0deg) translateY(0)' },
+    ], { duration });
+    if (head) animateElement(head, [
+      { transform: 'rotate(0deg)' },
+      { transform: 'rotate(-10deg)', offset: .3 },
+      { transform: 'rotate(-24deg) translateY(2px)', offset: .38 },
+      { transform: 'rotate(-24deg) translateY(2px)', offset: .7 },
+      { transform: 'rotate(7deg)', offset: .86 },
+      { transform: 'rotate(0deg)' },
+    ], { duration });
+    if (leftArm) animateElement(leftArm, [{ transform:'rotate(0deg)' }, { transform:'rotate(-22deg)', offset:.34 }, { transform:'rotate(-46deg)', offset:.48 }, { transform:'rotate(-46deg)', offset:.69 }, { transform:'rotate(0deg)' }], { duration });
+    if (rightArm) animateElement(rightArm, [{ transform:'rotate(0deg)' }, { transform:'rotate(18deg)', offset:.34 }, { transform:'rotate(34deg)', offset:.48 }, { transform:'rotate(34deg)', offset:.69 }, { transform:'rotate(0deg)' }], { duration });
+    animateElement(keeperBottle, [
+      { transform: 'rotate(-8deg) scale(.82)', filter: 'brightness(1)' },
+      { transform: 'rotate(-5deg) scale(.9)', filter: 'brightness(1.35)', offset: .36 },
+      { transform: 'rotate(-5deg) scale(.9)', filter: 'brightness(1.35)', offset: .72 },
+      { transform: 'rotate(-8deg) scale(.82)', filter: 'brightness(1)' },
+    ], { duration });
+    await sleep(duration);
+    stage.classList.remove('bottle-reading');
+    keeperBottle.classList.remove('is-read');
+    if (token !== state.sequence) return false;
+    positionKeeperOnLine();
+    return true;
+  }
+
   function nextCrossbarRoutine() {
     if (!crossbarRoutineBag.length) {
       crossbarRoutineBag = [true, true, false];
@@ -1703,7 +1839,8 @@
   }
 
   async function keeperRoutine(kind, token) {
-    // Verbruggen touches the frame in a shuffled two-out-of-three pattern.
+    if (kind === "palace" && nextBottleRoutine()) return keeperBottleRoutine(token);
+    // On other Palace kicks Verbruggen touches the frame in a shuffled two-out-of-three pattern.
     if (kind === "palace" && nextCrossbarRoutine()) return keeperBarTouchRoutine(kind, token);
     return keeperSettleRoutine(token);
   }
@@ -1742,9 +1879,9 @@
 
   async function preKickCeremony(side, token) {
     crowdReaction("crowd-hush");
-    setStatus("The ball is set", side === "albion" ? "The referee checks the spot and the Palace goalkeeper." : "Verbruggen checks the frame and settles on the goal line.");
+    setStatus("The ball is set", side === "albion" ? "The referee checks the spot and the Palace goalkeeper." : "Verbruggen checks his bottle notes or the frame, then settles on the goal line.");
     if (!(await animateBallPlacement(side, token))) return false;
-    setStatus("Referee checks the penalty", side === "albion" ? "The Palace goalkeeper stays on the line." : "Verbruggen completes his routine and faces the taker.");
+    setStatus("Referee checks the penalty", side === "albion" ? "The Palace goalkeeper stays on the line." : "Verbruggen finishes his routine, returns to the line and faces the taker.");
     const ok = await Promise.all([keeperRoutine(side, token), refereeCheck(token)]);
     if (token !== state.sequence || ok.includes(false)) return false;
     sound("whistle");

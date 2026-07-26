@@ -2751,3 +2751,25 @@ button,.cta-row a,input,select{border-radius:var(--control-radius)}
   #fan-control-centre,#supporter-profile{content-visibility:auto;contain-intrinsic-size:420px}
   .content-freshness{margin-bottom:9px}
 }
+
+
+/* Production r23: compact, collision-free mobile fixtures and cleaner opening */
+@media(max-width:600px){
+  .fixtures-list .fixture-item{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;padding:12px!important}
+  .fixtures-list .fixture-item>div:first-child{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:start!important;gap:3px 8px!important;min-width:0!important;width:100%!important}
+  .fixtures-list .fixture-item>div:first-child>strong{grid-column:1;min-width:0;white-space:normal}
+  .fixtures-list .fixture-item>div:first-child>.fixture-badge{grid-column:2;grid-row:1;justify-self:end;align-self:start;white-space:nowrap}
+  .fixtures-list .fixture-item>div:first-child>small{grid-column:1/-1;white-space:normal;overflow-wrap:anywhere}
+  .fixtures-list .fixture-actions{grid-column:1!important;justify-content:flex-start!important;flex-wrap:wrap}
+  .fixtures-list .fixture-actions button,.fixtures-list .fixture-calendar{min-height:42px}
+  .fixtures-list .fixture-extra{grid-template-columns:1fr!important}
+  .dashboard{grid-template-columns:1fr 1fr}
+  .matchday-quick-view{grid-template-columns:1fr 1fr}
+  .fan-control-centre,.supporter-profile{padding:16px}
+  .fan-control-centre .fan-control-grid,.supporter-profile-grid{grid-template-columns:1fr 1fr}
+  .global-site-search{margin-bottom:12px}
+}
+@media(max-width:390px){
+  .dashboard,.matchday-quick-view,.fan-control-centre .fan-control-grid,.supporter-profile-grid{grid-template-columns:1fr}
+  .fixtures-list .fixture-item>div:first-child{grid-template-columns:1fr auto!important}
+}
