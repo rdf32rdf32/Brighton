@@ -1,11 +1,11 @@
-ALBION FAN HUB r23 — GITHUB PAGES UPLOAD
+ALBION FAN HUB r24 — GITHUB PAGES UPLOAD
 
 1. Extract this ZIP on your computer.
 2. Open the rdf32rdf32/Brighton repository on GitHub and select the main branch.
 3. Upload every extracted file directly to the repository root. Do not upload the enclosing folder or the ZIP itself.
-4. Replace the existing files and commit with a message such as: Deploy Albion Fan Hub r23.
+4. Replace the existing files and commit with a message such as: Deploy Albion Fan Hub r24.
 5. In Settings > Pages, confirm: Deploy from a branch, main, /(root).
 6. Wait for the Pages deployment in Actions to finish with a green tick.
 7. Open the site in an InPrivate/Incognito window. If an older release remains, unregister the old service worker and clear site data, then reload.
 
-Verification: the raw service-worker.js first line should contain albion-production-r23-20260726.
+Verification: the raw service-worker.js first line should contain albion-production-r24-20260726.

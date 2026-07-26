@@ -2753,7 +2753,7 @@ button,.cta-row a,input,select{border-radius:var(--control-radius)}
 }
 
 
-/* Production r23: compact, collision-free mobile fixtures and cleaner opening */
+/* Production r24: compact, collision-free mobile fixtures and cleaner opening */
 @media(max-width:600px){
   .fixtures-list .fixture-item{display:grid!important;grid-template-columns:1fr!important;gap:8px!important;padding:12px!important}
   .fixtures-list .fixture-item>div:first-child{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;align-items:start!important;gap:3px 8px!important;min-width:0!important;width:100%!important}

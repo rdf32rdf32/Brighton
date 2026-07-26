@@ -289,8 +289,11 @@
     if (!state.sound) return;
     const vary = (base, amount = .08) => base * (1 + (Math.random() * 2 - 1) * amount);
     if (kind === "whistle") {
-      tone(vary(1580, .035), .105, "sine", .024, vary(1840, .025));
-      window.setTimeout(() => tone(vary(1470, .03), .07, "sine", .015, vary(1660, .03)), 74);
+      // Referee-style peal: bright harmonics, fast attack and a breathy tail.
+      tone(vary(2850, .025), .135, "square", .018, vary(2380, .02));
+      tone(vary(3650, .02), .11, "sine", .010, vary(3180, .02));
+      noiseBurst(.095, .0085, 5200);
+      window.setTimeout(() => tone(vary(2710, .02), .075, "square", .010, vary(2310, .02)), 78);
     } else if (kind === "finalWhistle") {
       [0, 165, 350].forEach((delay, index) => window.setTimeout(() => tone(vary(index === 1 ? 1775 : 1530, .025), .13, "sine", .028, vary(1840, .02)), delay));
     } else if (kind === "kick") {
@@ -1765,8 +1768,7 @@
   }
 
   function nextBottleRoutine() {
-    if (state.palaceKicks === 0) return true;
-    if (!bottleRoutineBag.length) bottleRoutineBag = shuffled([true, false, false, false]);
+    if (!bottleRoutineBag.length) bottleRoutineBag = shuffled([true, false, false]);
     return bottleRoutineBag.pop();
   }
 
