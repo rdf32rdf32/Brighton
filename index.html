@@ -1,13 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover"
-    />
-    <meta name="theme-color" content="#05376b" />
-    <script>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
+<meta content="#05376b" name="theme-color"/>
+<script>
       (() => {
         if ("scrollRestoration" in history) history.scrollRestoration = "manual";
         const nav = performance.getEntriesByType?.("navigation")?.[0];
@@ -21,1926 +19,1340 @@
         addEventListener("beforeunload", () => window.scrollTo(0, 0));
       })();
     </script>
-    <title>Albion Fan Hub</title>
-    <meta
-      name="description"
-      content="Unofficial Brighton & Hove Albion supporter hub with an Albion quiz, penalty shoot-out, fixtures, XI builder and club story."
-    />
-    <meta property="og:title" content="Albion Fan Hub" />
-    <meta
-      property="og:description"
-      content="Quiz yourself, take five penalties, follow the fixtures and explore Brighton & Hove Albion history."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://rdf32rdf32.github.io/Brighton/" />
-    <meta
-      property="og:image"
-      content="https://rdf32rdf32.github.io/Brighton/social-preview.png"
-    />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" href="favicon.svg" />
-    <link rel="manifest" href="manifest.json" />
-    <link
-      rel="preload"
-      href="albion-safe-graphic.svg"
-      as="image"
-      type="image/svg+xml"
-    />
-    <link rel="stylesheet" href="style.css?v=20260726-r28" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r28" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r28" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r28" />
-    <meta name="release" content="production-r28-20260726" />
+<title>Albion Fan Hub</title>
+<meta content="Unofficial Brighton &amp; Hove Albion supporter hub with an Albion quiz, penalty shoot-out, fixtures, XI builder and club story." name="description"/>
+<meta content="Albion Fan Hub" property="og:title"/>
+<meta content="Quiz yourself, take five penalties, follow the fixtures and explore Brighton &amp; Hove Albion history." property="og:description"/>
+<meta content="website" property="og:type"/>
+<meta content="https://rdf32rdf32.github.io/Brighton/" property="og:url"/>
+<meta content="https://rdf32rdf32.github.io/Brighton/social-preview.png" property="og:image"/>
+<meta content="summary_large_image" name="twitter:card"/>
+<link href="favicon.svg" rel="icon"/>
+<link href="manifest.json" rel="manifest"/>
+<link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
+<link href="style.css?v=20260726-r29" rel="stylesheet"/>
+<link href="shootout.css?v=20260726-r29" rel="stylesheet"/>
+<meta content="production-r29-20260726" name="release"/>
 </head>
-  <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <button id="startTour" class="tour-launch" type="button">
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<button class="tour-launch" id="startTour" type="button">
       New here? Tour the site
     </button>
-    <header class="hero" id="top">
-      <nav class="topbar" aria-label="Main navigation">
-        <a class="brand" href="#top"
-          ><img
-            src="albion-safe-graphic.svg"
-            alt=""
-            fetchpriority="high"
-          /><span>Albion Fan Hub</span></a
-        >
-        <button
-          id="menuToggle"
-          class="menu-toggle"
-          type="button"
-          aria-expanded="false"
-          aria-controls="navLinks"
-        >
+<header class="hero" id="top">
+<nav aria-label="Main navigation" class="topbar">
+<a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
+<button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">
           Menu
         </button>
-        <div id="navLinks" class="nav-links">
-          <a href="#quiz">Quiz</a><a href="#shootout">Shoot-out</a
-          ><a href="#chants">Chants</a><a href="#match-centre">Matchday</a><a href="#xi">Pick XI</a
-          ><a href="#story">Albion Story</a>
-        </div>
-      </nav>
-      <div class="hero-grid">
-        <section class="hero-copy">
-          <p class="eyebrow">2026/27 season</p>
-          <h1>Brighton &amp; Hove Albion</h1>
-          <p class="lead">
+<div class="nav-links" id="navLinks">
+<a href="#quiz">Quiz</a><a href="#shootout">Shoot-out</a><a href="#chants">Chants</a><a href="#match-centre">Matchday</a><a href="#xi">Pick XI</a><a href="#story">Albion Story</a>
+<a href="#fixtures">Fixtures</a></div>
+</nav>
+<div class="hero-grid">
+<section class="hero-copy">
+<p class="eyebrow">2026/27 season</p>
+<h1>Brighton &amp; Hove Albion</h1>
+<p class="lead">
             Quiz yourself, face Palace from the spot, follow the fixtures and
             explore the Albion story.
           </p>
-          <div class="flying-gulls" aria-hidden="true">
-            <span>⌁</span><span>⌁</span><span>⌁</span>
-          </div>
-        </section>
-        <section class="match-card" id="next-match">
-          <p class="eyebrow">Next fixture</p>
-          <h2 id="heroMatchTitle">Albion v Aston Villa</h2>
-          <div id="heroMatchDetail" class="fixture-detail">
-            <span id="heroMatchDate">Sunday 23 August 2026</span>
-            <span id="heroMatchTime">14:00</span>
-            <span id="heroMatchVenue">Amex Stadium</span>
-          </div>
-          <p id="localKickoff" class="local-kickoff"></p>
-          <div id="countdown" class="countdown" aria-live="polite"></div>
-          <p class="small">Premier League dates remain subject to change.</p>
-        </section>
-      </div>
-    </header>
-    <aside class="matchday-bar" aria-label="Next Albion fixture">
-      <b id="stickyMatchTitle">Next: Albion v Aston Villa</b
-      ><span id="stickyMatchDetail">23 Aug · 14:00 · Amex</span
-      ><a href="#next-match">Countdown</a>
-    </aside>
-    <main id="main">
-      <section class="global-site-search" aria-labelledby="globalSearchLabel">
-        <form id="siteSearchForm" class="global-search-form" role="search" novalidate>
-          <label id="globalSearchLabel" for="siteSearch">Search the whole Albion Fan Hub</label>
-          <div class="global-search-control">
-            <span class="global-search-icon" aria-hidden="true">⌕</span>
-            <input
-              id="siteSearch"
-              type="search"
-              placeholder="Try Dunk, Palace, fixtures, chants or the Amex…"
-              autocomplete="off"
-              spellcheck="false"
-              enterkeyhint="search"
-              aria-controls="siteSearchResults"
-              aria-expanded="false"
-              aria-autocomplete="list"
-            />
-            <button id="clearSiteSearch" class="global-search-clear" type="button" hidden aria-label="Clear site search">Clear</button>
-            <button class="global-search-submit" type="submit">Search</button>
-          </div>
-          <p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
-          <div id="popularSearches" class="popular-searches" aria-label="Popular searches">
-            <span>Popular:</span><button type="button" data-search-term="pens">Pens</button><button type="button" data-search-term="Palace">Palace</button><button type="button" data-search-term="Amex">Amex</button><button type="button" data-search-term="Goldstone">Goldstone</button><button type="button" data-search-term="Sussex">Sussex</button>
-          </div>
-        </form>
-        <div id="siteSearchResults" class="site-search-results global-search-results" role="listbox" aria-live="polite"></div>
-      </section>
-      <section class="dashboard" aria-label="Albion at a glance">
-        <article><span>Home</span><b>Amex Stadium</b></article>
-        <article><span>Founded</span><b>1901</b></article>
-        <article><span>Nickname</span><b>The Seagulls</b></article>
-        <article>
-          <span>Next opponent</span><b id="dashboardOpponent">Aston Villa</b>
-        </article>
-      </section>
-      <section class="fan-dashboard" id="fan-dashboard" aria-label="Fan dashboard">
-        <div class="quick-actions">
-          <a href="#quiz">Play quiz</a><a href="#shootout">Penalty shoot-out</a
-          ><a href="#chants">Albion chants</a><a href="#fixtures">Fixtures</a><a href="#xi">Pick your XI</a
-          ><a href="#story">Albion Story</a
-          ><button
-            id="continueButton"
-            class="continue-button"
-            type="button"
-            hidden
-          ></button>
-        </div>
-        <button
-          id="themeToggle"
-          class="ghost"
-          type="button"
-          aria-pressed="false"
-        >
-          Night-match theme
-        </button>
-      </section>
-      <section class="matchday-quick-view" aria-label="Matchday quick view">
-        <article>
-          <span>Next fixture</span
-          ><b id="quickNextFixture">Albion v Aston Villa</b
-          ><small id="quickCountdown"></small>
-        </article>
-        <article>
-          <span>Matchday weather</span
-          ><b id="quickWeather">Available nearer kick-off</b
-          ><a href="#match-centre">Matchday details</a>
-        </article>
-        <article>
-          <span>Your XI</span><b id="quickXIStatus">Not selected yet</b
-          ><a href="#xi">Choose team</a>
-        </article>
-        <article>
-          <span>League prediction</span
-          ><b id="quickLeaguePosition">Not predicted yet</b
-          ><a href="#league-predictor">Move the slider</a>
-        </article>
-      </section>
-      <section class="card fan-control-centre" id="fan-control-centre">
-        <div class="section-head">
-          <p class="eyebrow">Your Albion day</p>
-          <h2>Fan control centre</h2>
-          <p>
-            A personal, device-only overview of the next match and the parts of
-            the site you have used.
-          </p>
-        </div>
-        <div class="control-centre-grid">
-          <article class="matchday-state">
-            <span id="matchdayPhase">Next match</span>
-            <h3 id="matchdayHeadline">Planning for Albion v Aston Villa</h3>
-            <p id="matchdayGuidance"></p>
-            <a href="#match-centre">Open matchday centre</a>
-          </article>
-          <article>
-            <span>Season progress</span>
-            <h3 id="seasonPosition">Season not started</h3>
-            <p id="seasonSummary">0 played · 0 points</p>
-            <a href="#fixtures">Open season centre</a>
-          </article>
-          <article>
-            <span>Continue</span>
-            <h3 id="returningHeadline">Start exploring</h3>
-            <div id="returningActions" class="returning-actions"></div>
-          </article>
-        </div>
-        <div class="guided-tour-row">
-          <span
-            >The guide at the top left only starts when you ask for it.</span
-          >
-        </div>
-      </section>
-      <section
-        class="supporter-profile"
-        id="supporter-profile"
-        aria-labelledby="supporterProfileTitle"
-      >
-        <div>
-          <p class="eyebrow">Your Albion profile</p>
-          <h2 id="supporterProfileTitle">Supporter progress</h2>
-          <p>
+<div aria-hidden="true" class="flying-gulls">
+<span>⌁</span><span>⌁</span><span>⌁</span>
+</div>
+</section>
+<section class="match-card" id="next-match">
+<p class="eyebrow">Next fixture</p>
+<h2 id="heroMatchTitle">Albion v Aston Villa</h2>
+<div class="fixture-detail" id="heroMatchDetail">
+<span id="heroMatchDate">Sunday 23 August 2026</span>
+<span id="heroMatchTime">14:00</span>
+<span id="heroMatchVenue">Amex Stadium</span>
+</div>
+<p class="local-kickoff" id="localKickoff"></p>
+<div aria-live="polite" class="countdown" id="countdown"></div>
+<p class="small">Premier League dates remain subject to change.</p>
+</section>
+</div>
+</header>
+<aside aria-label="Next Albion fixture" class="matchday-bar">
+<b id="stickyMatchTitle">Next: Albion v Aston Villa</b><span id="stickyMatchDetail">23 Aug · 14:00 · Amex</span><a href="#next-match">Countdown</a>
+</aside>
+<main id="main">
+<section aria-labelledby="globalSearchLabel" class="global-site-search">
+<form class="global-search-form" id="siteSearchForm" novalidate="" role="search">
+<label for="siteSearch" id="globalSearchLabel">Search the whole Albion Fan Hub</label>
+<div class="global-search-control">
+<span aria-hidden="true" class="global-search-icon">⌕</span>
+<input aria-autocomplete="list" aria-controls="siteSearchResults" aria-expanded="false" autocomplete="off" enterkeyhint="search" id="siteSearch" placeholder="Try Dunk, Palace, fixtures, chants or the Amex…" spellcheck="false" type="search"/>
+<button aria-label="Clear site search" class="global-search-clear" hidden="" id="clearSiteSearch" type="button">Clear</button>
+<button class="global-search-submit" type="submit">Search</button>
+</div>
+<p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
+<div aria-label="Popular searches" class="popular-searches" id="popularSearches">
+<span>Popular:</span><button data-search-term="pens" type="button">Pens</button><button data-search-term="Palace" type="button">Palace</button><button data-search-term="Amex" type="button">Amex</button><button data-search-term="Goldstone" type="button">Goldstone</button><button data-search-term="Sussex" type="button">Sussex</button>
+</div>
+</form>
+<div aria-live="polite" class="site-search-results global-search-results" id="siteSearchResults" role="listbox"></div>
+</section>
+<section aria-label="Albion at a glance" class="dashboard">
+<article><span>Home</span><b>Amex Stadium</b></article>
+<article><span>Founded</span><b>1901</b></article>
+<article><span>Nickname</span><b>The Seagulls</b></article>
+<article>
+<span>Next opponent</span><b id="dashboardOpponent">Aston Villa</b>
+</article>
+</section>
+
+
+
+<section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
+<div>
+<p class="eyebrow">Your Albion profile</p>
+<h2 id="supporterProfileTitle">Supporter progress</h2>
+<p>
             Quiz knowledge, shoot-out record and season prediction, stored only
             on this device.
           </p>
-        </div>
-        <div class="supporter-profile-grid">
-          <article>
-            <span>Quiz level</span><b id="profileQuizLevel">Not rated yet</b
-            ><small id="profileQuizScore">Play the five-question quiz</small>
-          </article>
-          <article>
-            <span>Shoot-outs</span><b id="profileShootouts">0 played</b
-            ><small id="profileShootoutDetail">No derby record yet</small>
-          </article>
-          <article>
-            <span>League forecast</span><b id="profileLeague">Not saved</b
-            ><small>Choose Albion’s finishing position</small>
-          </article>
-        </div>
-      </section>
-      <section class="card quiz-card first-feature" id="quiz">
-        <div class="section-head">
-          <p class="eyebrow">First up: Albion quiz</p>
-          <h2>Test your Albion knowledge</h2>
-        </div>
-        <div class="quiz-banner">
-          <img
-            src="albion-safe-graphic.svg"
-            alt=""
-            loading="lazy"
-            decoding="async"
-          />
-          <div>
-            <strong>Five random medium and hard questions</strong
-            ><span
-              >Drawn from a carefully checked question bank. Play again for a fresh set.</span
-            >
-          </div>
-        </div>
-        <div class="quiz-tools">
-          <label
-            >Question category<select id="quizCategory">
-              <option value="mixed">Mixed</option>
-              <option value="history">History</option>
-              <option value="people">Players</option>
-              <option value="grounds">Amex &amp; grounds</option>
-              <option value="records">Records</option>
-              <option value="modern">Modern Albion</option>
-            </select></label
-          ><span id="bestScore" class="score-chip"></span>
-        </div>
-        <div id="quizContainer"></div>
-        <div class="button-row">
-          <button id="checkQuiz" type="button" hidden>Check answer</button
-          ><button id="newQuiz" class="ghost" type="button">Start quiz</button
-          ><button id="replayMistakes" class="ghost" type="button" hidden>
+</div>
+<div class="supporter-profile-grid">
+<article>
+<span>Quiz level</span><b id="profileQuizLevel">Not rated yet</b><small id="profileQuizScore">Play the five-question quiz</small>
+</article>
+<article>
+<span>Shoot-outs</span><b id="profileShootouts">0 played</b><small id="profileShootoutDetail">No derby record yet</small>
+</article>
+<article>
+<span>League forecast</span><b id="profileLeague">Not saved</b><small>Choose Albion’s finishing position</small>
+</article>
+</div>
+</section>
+<section class="card quiz-card first-feature" id="quiz">
+<div class="section-head">
+<p class="eyebrow">First up: Albion quiz</p>
+<h2>Test your Albion knowledge</h2>
+</div>
+<div class="quiz-banner">
+<img alt="" decoding="async" loading="lazy" src="albion-safe-graphic.svg"/>
+<div>
+<strong>Five random medium and hard questions</strong><span>Drawn from a carefully checked question bank. Play again for a fresh set.</span>
+</div>
+</div>
+<div class="quiz-tools">
+<label>Question category<select id="quizCategory">
+<option value="mixed">Mixed</option>
+<option value="history">History</option>
+<option value="people">Players</option>
+<option value="grounds">Amex &amp; grounds</option>
+<option value="records">Records</option>
+<option value="modern">Modern Albion</option>
+</select></label><span class="score-chip" id="bestScore"></span>
+</div>
+<div id="quizContainer"></div>
+<div class="button-row">
+<button hidden="" id="checkQuiz" type="button">Check answer</button><button class="ghost" id="newQuiz" type="button">Start quiz</button><button class="ghost" hidden="" id="replayMistakes" type="button">
             Replay missed questions
-          </button
-          ><button id="replayWeakCategory" class="ghost" type="button" hidden>
+          </button><button class="ghost" hidden="" id="replayWeakCategory" type="button">
             Practise weakest area
-          </button
-          ><button id="shareQuiz" class="ghost" type="button" hidden>
+          </button><button class="ghost" hidden="" id="shareQuiz" type="button">
             Share quiz result
           </button>
-        </div>
-        <div id="quizAdvanceCountdown" class="quiz-auto-next" hidden>
-          <span>Next question in a moment…</span><i></i>
-        </div>
-        <div id="quizResult" class="result" aria-live="polite"></div>
-      </section>
-
-      <section class="card shootout-card shootout-v17" id="shootout">
-        <div class="section-head shootout-intro">
-          <div>
-            <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
-            <h2>Seagulls v Eagles</h2>
-            <p class="shootout-lead">
+</div>
+<div class="quiz-auto-next" hidden="" id="quizAdvanceCountdown">
+<span>Next question in a moment…</span><i></i>
+</div>
+<div aria-live="polite" class="result" id="quizResult"></div>
+</section>
+<section class="card shootout-card shootout-v17" id="shootout">
+<div class="section-head shootout-intro">
+<div>
+<p class="eyebrow">Brighton v Palace penalty shoot-out</p>
+<h2>Seagulls v Eagles</h2>
+<p class="shootout-lead">
               Drag inside the goal and release to shoot. For Palace penalties, read the run-up, then swipe anywhere across the pitch or tap left, centre or right. Staying central can stop a penalty hit straight at Verbruggen.
             </p>
-          </div>
-          <div class="shootout-top-controls single-control" aria-label="Penalty game sound">
-            <button id="shootoutSound" class="ghost compact-control" type="button" aria-pressed="true">Sound on</button>
-          </div>
-        </div>
-
-        <div class="shootout-shell">
-          <div class="shootout-scoreboard" aria-label="Shoot-out score">
-            <div class="shootout-team albion">
-              <span>SEAGULLS</span>
-              <b id="albionGoalCount">0</b>
-              <div id="albionPenaltyMarkers" class="penalty-markers" aria-label="Brighton penalties"></div>
-            </div>
-            <div class="shootout-round">
-              <span>Round</span>
-              <b id="shotCount">1/5</b>
-            </div>
-            <div class="shootout-team palace">
-              <span>EAGLES</span>
-              <b id="palaceGoalCount">0</b>
-              <div id="palacePenaltyMarkers" class="penalty-markers" aria-label="Palace penalties"></div>
-            </div>
-          </div>
-
-          <div class="shootout-match-strip">
-            <div id="turnBadge" class="turn-badge albion-turn">ALBION PENALTY</div>
-            <p id="penaltyTakerName">Danny Welbeck</p>
-            <p id="shootoutSituation">Five kicks each</p>
-            <p id="penaltyApproach" class="penalty-approach" aria-live="polite">Right foot · measured angle</p>
-          </div>
-
-          <div
-            id="penaltyStage"
-            class="penalty-stage is-aiming"
-            tabindex="0"
-            role="group"
-            aria-label="Penalty shoot-out game" aria-describedby="stageInstruction"
-          >
-            <div id="crowdLayer" class="stadium-backdrop" aria-hidden="true">
-              <span class="crowd-banner">SEAGULLS</span>
-              <span class="crowd-banner derby">BRIGHTON v PALACE</span>
-              <span class="crowd-banner palace-banner">EAGLES</span>
-              <div class="crowd-depth crowd-far"></div>
-              <div class="crowd-depth crowd-mid"></div>
-              <div class="crowd-dots"></div>
-              <div class="crowd-foreground">
-                <i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i>
-                <i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i>
-              </div>
-              <div class="crowd-scarves"><i class="albion-scarf"></i><i class="palace-scarf"></i></div>
-              <div class="crowd-phones"><i></i><i></i><i></i><i></i></div>
-              <span class="crowd-flag crowd-flag-left"></span>
-              <span class="crowd-flag crowd-flag-right"></span>
-              <div class="stadium-mini-score"><b>BHA</b><span id="stadiumMiniScore">0–0</span><b>PAL</b></div>
-            </div>
-
-            <div class="advertising-boards" aria-hidden="true">
-              <span>ALBION FAN HUB</span><span>SEAGULLS</span><span>BRIGHTON &amp; HOVE</span>
-            </div>
-
-            <div id="goalMouth" class="goal-mouth" aria-hidden="true">
-              <div class="goal-depth" aria-hidden="true">
-                <svg class="goal-net-svg" viewBox="0 0 1000 520" preserveAspectRatio="none">
-                  <defs>
-                    <pattern id="r16BackGrid" width="62" height="54" patternUnits="userSpaceOnUse">
-                      <path d="M62 0H0V54" fill="none" stroke="rgba(245,250,255,.66)" stroke-width="2.5" />
-                    </pattern>
-                    <pattern id="r16SideGrid" width="38" height="44" patternUnits="userSpaceOnUse">
-                      <path d="M38 0H0V44" fill="none" stroke="rgba(250,252,255,.76)" stroke-width="2.5" />
-                    </pattern>
-                    <linearGradient id="r16NetFade" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stop-color="#fff" stop-opacity=".9" />
-                      <stop offset="1" stop-color="#dce7ee" stop-opacity=".42" />
-                    </linearGradient>
-                    <filter id="r16Soft"><feGaussianBlur stdDeviation=".35" /></filter>
-                  </defs>
-                  <path class="goal-roof-net" d="M34 24 Q500 9 966 24 L874 112 Q500 97 126 112 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
-                  <path class="goal-back-net" d="M126 112 Q500 98 874 112 L874 468 Q500 486 126 468 Z" fill="url(#r16BackGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
-                  <path class="goal-side-net goal-side-left" d="M34 24 L126 112 L126 468 L34 500 Q24 260 34 24 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
-                  <path class="goal-side-net goal-side-right" d="M966 24 L874 112 L874 468 L966 500 Q976 260 966 24 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
-                  <g class="goal-perspective-lines" fill="none" stroke="rgba(255,255,255,.66)" stroke-width="2.4" stroke-linecap="round">
-                    <path d="M34 24L126 112M32 116L126 182M31 211L126 252M31 307L126 324M32 403L126 397M966 24L874 112M968 116L874 182M969 211L874 252M969 307L874 324M968 403L874 397" />
-                    <path d="M34 24Q500 9 966 24M66 54Q500 39 934 54M96 83Q500 69 904 83M126 112Q500 98 874 112" />
-                    <path d="M34 24Q24 260 34 500M66 54Q57 262 66 489M96 83Q89 263 96 479M966 24Q976 260 966 500M934 54Q943 262 934 489M904 83Q911 263 904 479" />
-                  </g>
-                  <g class="rear-frame" fill="none" stroke="rgba(221,232,239,.72)" stroke-width="6" stroke-linecap="round">
-                    <path d="M126 112V468M874 112V468M126 112Q500 98 874 112" />
-                  </g>
-                </svg>
-              </div>
-              <div class="goal-net"></div>
-              <span class="goal-post left-post"></span>
-              <span class="goal-post right-post"></span>
-              <span class="goal-crossbar"></span>
-              <span class="goal-line"></span>
-            </div>
-            <svg id="keeperBottle" class="keeper-bottle" viewBox="0 0 46 118" role="img" aria-label="Goalkeeper penalty notes bottle">
-              <defs>
-                <linearGradient id="bottleGlass" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#e7fbff" stop-opacity=".8"/><stop offset=".48" stop-color="#5ab0d3" stop-opacity=".5"/><stop offset="1" stop-color="#f2fdff" stop-opacity=".75"/>
-                </linearGradient>
-              </defs>
-              <path class="bottle-cap" d="M16 2h14v12H16z" />
-              <path class="bottle-neck" d="M14 12h18l3 15H11z" />
-              <path class="bottle-body" fill="url(#bottleGlass)" d="M10 25q-5 10-5 26v54q0 10 10 10h16q10 0 10-10V51q0-16-5-26z" />
-              <path class="bottle-water" d="M7 78q16-5 32 0v27q0 8-8 8H15q-8 0-8-8z" />
-              <rect class="bottle-label" x="8" y="37" width="30" height="39" rx="3" />
-              <text class="bottle-title" x="23" y="47" text-anchor="middle">PEN</text>
-              <text class="bottle-title" x="23" y="56" text-anchor="middle">NOTES</text>
-              <text id="bottleNote1" class="bottle-note" x="23" y="64" text-anchor="middle">1 · L</text>
-              <text id="bottleNote2" class="bottle-note" x="23" y="70" text-anchor="middle">2 · C</text>
-              <text id="bottleNote3" class="bottle-note" x="23" y="76" text-anchor="middle">3 · R</text>
-            </svg>
-            <div class="pitch-stripes" aria-hidden="true"></div>
-            <div class="pitch-lines" aria-hidden="true">
-              <svg class="pitch-markings-svg" viewBox="0 0 1000 650" preserveAspectRatio="none">
-                <path class="pitch-line goal-line-mark" d="M32 315 L968 315" />
-                <path class="pitch-line six-yard-mark" d="M200 315 L125 410 L875 410 L800 315" />
-                <path class="pitch-line penalty-area-mark" d="M78 315 L-44 570 L1044 570 L922 315" />
-                <path class="pitch-line penalty-arc-mark" d="M372 570 C390 622 610 622 628 570" />
-                <circle class="pitch-spot-mark" cx="500" cy="495" r="6" />
-              </svg>
-              <span class="spot-wear"></span>
-              <span class="pitch-boot-marks"><i></i><i></i><i></i></span>
-              <span class="goal-line-wear"></span>
-            </div>
-            <svg id="refereeFigure" class="penalty-figure referee-figure" viewBox="0 0 110 250" aria-hidden="true">
-              <defs>
-                <linearGradient id="refSideShirt" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#090d10"/><stop offset=".58" stop-color="#2d3942"/><stop offset="1" stop-color="#0b1014"/>
-                </linearGradient>
-              </defs>
-              <g class="referee-root">
-                <ellipse class="figure-shadow" cx="55" cy="238" rx="20" ry="5" />
-                <g class="referee-head-group">
-                  <path class="skin" d="M43 19q18-5 23 13l-1 15q-5 13-18 8-9-5-8-20z" />
-                  <path class="skin referee-nose" d="M39 31l-8 5 8 5z" />
-                  <path class="hair" d="M40 31q1-17 19-16 10 3 10 13-12-4-29 3z" />
-                  <path class="ref-face-line" d="M38 44q5 3 10 0" />
-                  <circle class="referee-ear skin" cx="63" cy="37" r="3.5" />
-                </g>
-                <path class="skin" d="M48 53h9l2 13H47z" />
-                <path class="referee-shirt" fill="url(#refSideShirt)" d="M43 65q11-7 23 0l8 67-29 2-8-55z" />
-                <path class="referee-collar" d="M46 63l7 9 7-9-4-3h-6z" />
-                <rect class="referee-pocket" x="57" y="78" width="7" height="10" rx="1.5" />
-                <g class="referee-arm referee-arm-left">
-                  <path class="referee-sleeve" d="M43 69q-11 4-16 14l9 8 12-15z" />
-                  <path class="skin" d="M30 84q-6 23-2 43l9 1 6-38z" />
-                  <circle class="skin" cx="33" cy="130" r="4.5" />
-                </g>
-                <g class="referee-arm referee-arm-right">
-                  <path class="referee-sleeve" d="M65 68q9 6 12 16l-8 7-10-15z" />
-                  <path class="skin" d="M73 84q8 18 5 34l-8 1-8-30z" />
-                  <circle class="referee-whistle" cx="76" cy="118" r="3" />
-                </g>
-                <path class="referee-shorts" d="M44 130h31l-4 28H60l-2-14-3 14H45z" />
-                <g class="referee-leg referee-leg-left"><path class="referee-sock" d="M45 155h11l-3 57H40z"/><path class="referee-boot" d="M38 207h20l6 10H36q-2-6 2-10z"/></g>
-                <g class="referee-leg referee-leg-right"><path class="referee-sock" d="M60 155h11l5 57H64z"/><path class="referee-boot" d="M64 207h21q6 5 4 10H65z"/></g>
-              </g>
-            </svg>
-            <svg id="keeperFigure" class="penalty-figure keeper-figure" viewBox="0 0 180 250" aria-hidden="true">
-              <defs>
-                <linearGradient id="keeperKitShade" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#198b57"/><stop offset=".52" stop-color="#39c47c"/><stop offset="1" stop-color="#13764a"/>
-                </linearGradient>
-                <linearGradient id="keeperShortShade" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#183348"/><stop offset="1" stop-color="#091c2b"/>
-                </linearGradient>
-              </defs>
-              <g class="keeper-root">
-                <ellipse class="figure-shadow" cx="90" cy="233" rx="42" ry="7" />
-                <g class="keeper-body-group">
-                  <ellipse class="skin" cx="90" cy="42" rx="17" ry="19" />
-                  <path class="hair" d="M73 38c4-17 30-22 37-3-10-5-24-5-37 3z" />
-                  <path class="keeper-face" d="M82 47q8 5 16 0M82 40h2M96 40h2" />
-                  <rect class="keeper-neck skin" x="84" y="58" width="12" height="14" rx="5" />
-                  <path class="keeper-shirt" fill="url(#keeperKitShade)" d="M63 73Q90 64 117 73l-5 75H68z" />
-                  <path class="keeper-collar" d="M80 69l10 10 10-10-5-4H85z" />
-                  <path class="keeper-shirt-panel" d="M89 77h3v66h-3z" />
-                  <path class="keeper-shorts" fill="url(#keeperShortShade)" d="M68 143h44l-5 31H93l-3-17-3 17H73z" />
-                  <g class="keeper-arm keeper-arm-left">
-                    <path class="keeper-sleeve" fill="url(#keeperKitShade)" d="M67 77q-14 3-22 16l11 11 17-17z" />
-                    <g class="keeper-lower-arm keeper-lower-arm-left">
-                      <path class="keeper-forearm" d="M49 94q-12 19-14 31l12 5 17-29z" /><path class="keeper-wrist-bridge" d="M35 123l13 4-2 13H31z" />
-                      <g class="keeper-glove keeper-glove-left" transform="rotate(8 38 138)">
-                        <rect class="glove-cuff" x="29" y="136" width="17" height="8" rx="3" />
-                        <path class="glove-palm" d="M28 128q0-9 6-13 6-4 12 1 5 5 3 14l-4 10H32q-5-5-4-12z" />
-                        <path class="glove-finger" d="M31 119q-1-8 3-9 4 0 4 8v9M37 117q0-9 4-9 4 1 3 10v9M43 120q1-7 5-6 3 2 0 10l-3 7" />
-                        <path class="glove-thumb" d="M30 127q-8-2-8 3 1 5 10 6" />
-                        <path class="glove-detail" d="M31 128q8 4 15 0M34 135h10" />
-                      </g>
-                    </g>
-                  </g>
-                  <g class="keeper-arm keeper-arm-right">
-                    <path class="keeper-sleeve" fill="url(#keeperKitShade)" d="M113 77q14 3 22 16l-11 11-17-17z" />
-                    <g class="keeper-lower-arm keeper-lower-arm-right">
-                      <path class="keeper-forearm" d="M131 94q12 19 14 31l-12 5-17-29z" /><path class="keeper-wrist-bridge" d="M145 123l-13 4 2 13h15z" />
-                      <g class="keeper-glove keeper-glove-right" transform="rotate(-8 142 138)">
-                        <rect class="glove-cuff" x="134" y="136" width="17" height="8" rx="3" />
-                        <path class="glove-palm" d="M152 128q0-9-6-13-6-4-12 1-5 5-3 14l4 10h13q5-5 4-12z" />
-                        <path class="glove-finger" d="M149 119q1-8-3-9-4 0-4 8v9M143 117q0-9-4-9-4 1-3 10v9M137 120q-1-7-5-6-3 2 0 10l3 7" />
-                        <path class="glove-thumb" d="M150 127q8-2 8 3-1 5-10 6" />
-                        <path class="glove-detail" d="M149 128q-8 4-15 0M146 135h-10" />
-                      </g>
-                    </g>
-                  </g>
-                  <g class="keeper-leg keeper-leg-left">
-                    <path class="keeper-thigh" d="M73 166h16l-1 26-17 2z" />
-                    <circle class="keeper-knee" cx="79" cy="193" r="5" />
-                    <g class="keeper-lower-leg keeper-lower-leg-left">
-                      <path class="keeper-sock" d="M70 190h17l-2 34H67z" />
-                      <path class="keeper-boot" d="M64 217h29v12H61q-3-7 3-12z" />
-                    </g>
-                  </g>
-                  <g class="keeper-leg keeper-leg-right">
-                    <path class="keeper-thigh" d="M92 166h16l4 26-17 2z" />
-                    <circle class="keeper-knee" cx="103" cy="193" r="5" />
-                    <g class="keeper-lower-leg keeper-lower-leg-right">
-                      <path class="keeper-sock" d="M95 190h17l2 34H97z" />
-                      <path class="keeper-boot" d="M92 217h29q7 5 4 12H92z" />
-                    </g>
-                  </g>
-                  <text class="keeper-back-number" x="90" y="113" text-anchor="middle">1</text>
-                </g>
-              </g>
-            </svg>
-            <svg id="takerFigure" class="penalty-figure taker-figure" viewBox="0 0 170 290" aria-hidden="true">
-              <defs>
-                <linearGradient id="albionBlueShade" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stop-color="#0569ad"/><stop offset=".5" stop-color="#1294e0"/><stop offset="1" stop-color="#055f9e"/>
-                </linearGradient>
-              </defs>
-              <g class="taker-root">
-                <ellipse class="figure-shadow" cx="85" cy="278" rx="42" ry="7" />
-                <ellipse class="skin" cx="85" cy="35" rx="15" ry="17" />
-                <path class="hair" d="M70 32c3-16 28-20 34-2-9-4-22-4-34 2z" />
-                <rect class="skin" x="80" y="49" width="10" height="15" rx="5" />
-                <path class="taker-shirt" fill="url(#albionBlueShade)" d="M54 65Q85 55 116 65l-7 86H61z" />
-                <path class="taker-stripe stripe-one" d="M66 62h12l-2 86H65z" />
-                <path class="taker-stripe stripe-two" d="M92 60h12l2 88H94z" />
-                <path class="taker-collar" d="M75 61l10 10 10-10-5-4H80z" />
-                <text id="penaltyShirt" class="taker-number" x="85" y="116" text-anchor="middle">18</text>
-                <path class="taker-shorts" d="M61 147h48l-5 36H88l-3-19-3 19H66z" />
-                <g class="taker-arm taker-arm-left">
-                  <path class="taker-sleeve" fill="url(#albionBlueShade)" d="M58 69q-15 3-22 15l11 10 17-16z" />
-                  <g class="taker-lower-arm taker-lower-arm-left">
-                    <path class="skin" d="M40 86q-10 25-8 57l12 1 9-50z" />
-                    <circle class="skin" cx="38" cy="145" r="5" />
-                  </g>
-                </g>
-                <g class="taker-arm taker-arm-right">
-                  <path class="taker-sleeve" fill="url(#albionBlueShade)" d="M112 69q15 3 22 15l-11 10-17-16z" />
-                  <g class="taker-lower-arm taker-lower-arm-right">
-                    <path class="skin" d="M130 86q10 25 8 57l-12 1-9-50z" />
-                    <circle class="skin" cx="132" cy="145" r="5" />
-                  </g>
-                </g>
-                <g class="taker-leg taker-leg-left">
-                  <path class="taker-thigh" d="M67 177h18l-2 39-18 3z" />
-                  <circle class="taker-knee" cx="73" cy="217" r="5.5" />
-                  <g class="taker-lower-leg taker-lower-leg-left">
-                    <path class="taker-sock" d="M64 212h18l-2 55H59z" />
-                    <path class="taker-boot" d="M55 260h32v14H52q-3-9 3-14z" />
-                  </g>
-                </g>
-                <g class="taker-leg taker-leg-right">
-                  <path class="taker-thigh" d="M87 177h18l7 39-18 3z" />
-                  <circle class="taker-knee" cx="103" cy="217" r="5.5" />
-                  <g class="taker-lower-leg taker-lower-leg-right">
-                    <path class="taker-sock" d="M92 212h18l5 55H95z" />
-                    <path class="taker-boot" d="M92 260h32q8 5 5 14H92z" />
-                  </g>
-                </g>
-              </g>
-            </svg>
-            <div id="penaltyBallShadow" class="penalty-ball-shadow" aria-hidden="true"></div>
-            <div id="turfKick" class="turf-kick" hidden aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-            <svg id="penaltyBall" class="penalty-ball" viewBox="0 0 64 64" aria-hidden="true">
-              <defs>
-                <radialGradient id="ballSurface" cx="34%" cy="27%" r="74%">
-                  <stop offset="0" stop-color="#ffffff"/><stop offset=".58" stop-color="#edf2f5"/><stop offset=".86" stop-color="#bcc7ce"/><stop offset="1" stop-color="#f9fbfc"/>
-                </radialGradient>
-              </defs>
-              <circle cx="32" cy="32" r="30" fill="url(#ballSurface)" stroke="#89969f" stroke-width="1.5" />
-              <path class="ball-dark-panel" d="M32 14l10 7-4 12H26l-4-12z" />
-              <path class="ball-dark-panel" d="M11 29l10-7 5 11-8 10-9-4zM53 29l-10-7-5 11 8 10 9-4zM23 54l-5-11 8-10h12l8 10-5 11z" />
-              <path class="ball-seam" d="M32 14L20 7M42 21l12-3M38 33l8 10M26 33l-8 10M22 21L10 18M23 54l9 7M41 54l-9 7" />
-              <ellipse class="ball-highlight" cx="23" cy="19" rx="7" ry="5" />
-            </svg>
-            <div id="celebrationPlayers" class="celebration-players" hidden aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-            <div id="shootoutConfetti" class="shootout-confetti" hidden aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <div id="aimReticle" class="aim-reticle" aria-hidden="true"><i></i></div>
-            <div id="swipeTrail" class="swipe-trail" hidden aria-hidden="true"><i></i><b></b></div>
-            <div id="saveImpact" class="save-impact" hidden aria-hidden="true"></div>
-            <div id="reactionCue" class="reaction-cue" hidden aria-live="assertive">REACT!</div>
-            <div id="kickDecision" class="kick-decision-v10" hidden aria-live="assertive"></div>
-            <div id="stageInstruction" class="stage-instruction">Drag to aim, release to shoot</div>
-          </div>
-
-          <div id="shootoutStatus" class="shootout-status-v10" aria-live="polite" aria-atomic="true">
-            <b>Pick your spot</b>
-            <span>Drag inside the goal and release.</span>
-          </div>
-
-          <div id="palaceReadyPanel" class="palace-ready-panel" hidden>
-            <p>You are Verbruggen. Swipe towards the shot, or stay still for a central penalty.</p>
-            <button id="palaceReadyButton" type="button">READY TO SAVE</button>
-          </div>
-
-          <div class="shootout-option-row">
-            <label class="form-check panenka-choice" for="panenkaChoice">
-              <input id="panenkaChoice" class="form-check-input" type="checkbox" />
-              <span class="form-check-label">Try a Panenka on the next Albion kick</span>
-            </label>
-            <span id="keyboardHint">Desktop: move and release to shoot. Mobile: drag to place a kick; when saving, swipe anywhere on the pitch or tap left, centre or right. Stay central for a straight penalty. Keyboard: arrows and Enter.</span>
-          </div>
-
-          <div id="shootoutSummary" class="shootout-summary-v10" hidden></div>
-          <div class="button-row shootout-actions-v10">
-            <button id="resetShootout" class="ghost" type="button">Restart shoot-out</button>
-            <button id="fullscreenShootout" class="ghost" type="button">Full-screen game</button>
-            <button id="shareShootout" class="ghost" type="button" hidden>Share result</button>
-          </div>
-          <p id="shootoutRecords" class="shootout-records-v10" aria-live="polite"></p>
-        </div>
-      </section>
-
-      <section class="card anthem-card" id="anthem">
-        <img
-          src="albion-safe-graphic.svg"
-          alt=""
-          loading="lazy"
-          decoding="async"
-        />
-        <div>
-          <p class="eyebrow">Albion anthem and sound</p>
-          <h2>Sussex by the Sea</h2>
-          <p>
+</div>
+<div aria-label="Penalty game sound" class="shootout-top-controls single-control">
+<button aria-pressed="true" class="ghost compact-control" id="shootoutSound" type="button">Sound on</button>
+</div>
+</div>
+<div class="shootout-shell">
+<div aria-label="Shoot-out score" class="shootout-scoreboard">
+<div class="shootout-team albion">
+<span>SEAGULLS</span>
+<b id="albionGoalCount">0</b>
+<div aria-label="Brighton penalties" class="penalty-markers" id="albionPenaltyMarkers"></div>
+</div>
+<div class="shootout-round">
+<span>Round</span>
+<b id="shotCount">1/5</b>
+</div>
+<div class="shootout-team palace">
+<span>EAGLES</span>
+<b id="palaceGoalCount">0</b>
+<div aria-label="Palace penalties" class="penalty-markers" id="palacePenaltyMarkers"></div>
+</div>
+</div>
+<div class="shootout-match-strip">
+<div class="turn-badge albion-turn" id="turnBadge">ALBION PENALTY</div>
+<p id="penaltyTakerName">Danny Welbeck</p>
+<p id="shootoutSituation">Five kicks each</p>
+<p aria-live="polite" class="penalty-approach" id="penaltyApproach">Right foot · measured angle</p>
+</div>
+<div aria-describedby="stageInstruction" aria-label="Penalty shoot-out game" class="penalty-stage is-aiming" id="penaltyStage" role="group" tabindex="0">
+<div aria-hidden="true" class="stadium-backdrop" id="crowdLayer">
+<span class="crowd-banner">SEAGULLS</span>
+<span class="crowd-banner derby">BRIGHTON v PALACE</span>
+<span class="crowd-banner palace-banner">EAGLES</span>
+<div class="crowd-depth crowd-far"></div>
+<div class="crowd-depth crowd-mid"></div>
+<div class="crowd-dots"></div>
+<div class="crowd-foreground">
+<i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i><i class="albion-fan"></i>
+<i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i><i class="palace-fan"></i>
+</div>
+<div class="crowd-scarves"><i class="albion-scarf"></i><i class="palace-scarf"></i></div>
+<div class="crowd-phones"><i></i><i></i><i></i><i></i></div>
+<span class="crowd-flag crowd-flag-left"></span>
+<span class="crowd-flag crowd-flag-right"></span>
+<div class="stadium-mini-score"><b>BHA</b><span id="stadiumMiniScore">0–0</span><b>PAL</b></div>
+</div>
+<div aria-hidden="true" class="advertising-boards">
+<span>ALBION FAN HUB</span><span>SEAGULLS</span><span>BRIGHTON &amp; HOVE</span>
+</div>
+<div aria-hidden="true" class="goal-mouth" id="goalMouth">
+<div aria-hidden="true" class="goal-depth">
+<svg class="goal-net-svg" preserveaspectratio="none" viewbox="0 0 1000 520">
+<defs>
+<pattern height="54" id="r16BackGrid" patternunits="userSpaceOnUse" width="62">
+<path d="M62 0H0V54" fill="none" stroke="rgba(245,250,255,.66)" stroke-width="2.5"></path>
+</pattern>
+<pattern height="44" id="r16SideGrid" patternunits="userSpaceOnUse" width="38">
+<path d="M38 0H0V44" fill="none" stroke="rgba(250,252,255,.76)" stroke-width="2.5"></path>
+</pattern>
+<lineargradient id="r16NetFade" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#fff" stop-opacity=".9"></stop>
+<stop offset="1" stop-color="#dce7ee" stop-opacity=".42"></stop>
+</lineargradient>
+<filter id="r16Soft"><fegaussianblur stddeviation=".35"></fegaussianblur></filter>
+</defs>
+<path class="goal-roof-net" d="M34 24 Q500 9 966 24 L874 112 Q500 97 126 112 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4"></path>
+<path class="goal-back-net" d="M126 112 Q500 98 874 112 L874 468 Q500 486 126 468 Z" fill="url(#r16BackGrid)" stroke="url(#r16NetFade)" stroke-width="4"></path>
+<path class="goal-side-net goal-side-left" d="M34 24 L126 112 L126 468 L34 500 Q24 260 34 24 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4"></path>
+<path class="goal-side-net goal-side-right" d="M966 24 L874 112 L874 468 L966 500 Q976 260 966 24 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4"></path>
+<g class="goal-perspective-lines" fill="none" stroke="rgba(255,255,255,.66)" stroke-linecap="round" stroke-width="2.4">
+<path d="M34 24L126 112M32 116L126 182M31 211L126 252M31 307L126 324M32 403L126 397M966 24L874 112M968 116L874 182M969 211L874 252M969 307L874 324M968 403L874 397"></path>
+<path d="M34 24Q500 9 966 24M66 54Q500 39 934 54M96 83Q500 69 904 83M126 112Q500 98 874 112"></path>
+<path d="M34 24Q24 260 34 500M66 54Q57 262 66 489M96 83Q89 263 96 479M966 24Q976 260 966 500M934 54Q943 262 934 489M904 83Q911 263 904 479"></path>
+</g>
+<g class="rear-frame" fill="none" stroke="rgba(221,232,239,.72)" stroke-linecap="round" stroke-width="6">
+<path d="M126 112V468M874 112V468M126 112Q500 98 874 112"></path>
+</g>
+</svg>
+</div>
+<div class="goal-net"></div>
+<span class="goal-post left-post"></span>
+<span class="goal-post right-post"></span>
+<span class="goal-crossbar"></span>
+<span class="goal-line"></span>
+</div>
+<svg aria-label="Goalkeeper penalty notes bottle" class="keeper-bottle" id="keeperBottle" role="img" viewbox="0 0 46 118">
+<defs>
+<lineargradient id="bottleGlass" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#e7fbff" stop-opacity=".8"></stop><stop offset=".48" stop-color="#5ab0d3" stop-opacity=".5"></stop><stop offset="1" stop-color="#f2fdff" stop-opacity=".75"></stop>
+</lineargradient>
+</defs>
+<path class="bottle-cap" d="M16 2h14v12H16z"></path>
+<path class="bottle-neck" d="M14 12h18l3 15H11z"></path>
+<path class="bottle-body" d="M10 25q-5 10-5 26v54q0 10 10 10h16q10 0 10-10V51q0-16-5-26z" fill="url(#bottleGlass)"></path>
+<path class="bottle-water" d="M7 78q16-5 32 0v27q0 8-8 8H15q-8 0-8-8z"></path>
+<rect class="bottle-label" height="39" rx="3" width="30" x="8" y="37"></rect>
+<text class="bottle-title" text-anchor="middle" x="23" y="47">PEN</text>
+<text class="bottle-title" text-anchor="middle" x="23" y="56">NOTES</text>
+<text class="bottle-note" id="bottleNote1" text-anchor="middle" x="23" y="64">1 · L</text>
+<text class="bottle-note" id="bottleNote2" text-anchor="middle" x="23" y="70">2 · C</text>
+<text class="bottle-note" id="bottleNote3" text-anchor="middle" x="23" y="76">3 · R</text>
+</svg>
+<div aria-hidden="true" class="pitch-stripes"></div>
+<div aria-hidden="true" class="pitch-lines">
+<svg class="pitch-markings-svg" preserveaspectratio="none" viewbox="0 0 1000 650">
+<path class="pitch-line goal-line-mark" d="M32 315 L968 315"></path>
+<path class="pitch-line six-yard-mark" d="M200 315 L125 410 L875 410 L800 315"></path>
+<path class="pitch-line penalty-area-mark" d="M78 315 L-44 570 L1044 570 L922 315"></path>
+<path class="pitch-line penalty-arc-mark" d="M372 570 C390 622 610 622 628 570"></path>
+<circle class="pitch-spot-mark" cx="500" cy="495" r="6"></circle>
+</svg>
+<span class="spot-wear"></span>
+<span class="pitch-boot-marks"><i></i><i></i><i></i></span>
+<span class="goal-line-wear"></span>
+</div>
+<svg aria-hidden="true" class="penalty-figure referee-figure" id="refereeFigure" viewbox="0 0 110 250">
+<defs>
+<lineargradient id="refSideShirt" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#090d10"></stop><stop offset=".58" stop-color="#2d3942"></stop><stop offset="1" stop-color="#0b1014"></stop>
+</lineargradient>
+</defs>
+<g class="referee-root">
+<ellipse class="figure-shadow" cx="55" cy="238" rx="20" ry="5"></ellipse>
+<g class="referee-head-group">
+<path class="skin" d="M43 19q18-5 23 13l-1 15q-5 13-18 8-9-5-8-20z"></path>
+<path class="skin referee-nose" d="M39 31l-8 5 8 5z"></path>
+<path class="hair" d="M40 31q1-17 19-16 10 3 10 13-12-4-29 3z"></path>
+<path class="ref-face-line" d="M38 44q5 3 10 0"></path>
+<circle class="referee-ear skin" cx="63" cy="37" r="3.5"></circle>
+</g>
+<path class="skin" d="M48 53h9l2 13H47z"></path>
+<path class="referee-shirt" d="M43 65q11-7 23 0l8 67-29 2-8-55z" fill="url(#refSideShirt)"></path>
+<path class="referee-collar" d="M46 63l7 9 7-9-4-3h-6z"></path>
+<rect class="referee-pocket" height="10" rx="1.5" width="7" x="57" y="78"></rect>
+<g class="referee-arm referee-arm-left">
+<path class="referee-sleeve" d="M43 69q-11 4-16 14l9 8 12-15z"></path>
+<path class="skin" d="M30 84q-6 23-2 43l9 1 6-38z"></path>
+<circle class="skin" cx="33" cy="130" r="4.5"></circle>
+</g>
+<g class="referee-arm referee-arm-right">
+<path class="referee-sleeve" d="M65 68q9 6 12 16l-8 7-10-15z"></path>
+<path class="skin" d="M73 84q8 18 5 34l-8 1-8-30z"></path>
+<circle class="referee-whistle" cx="76" cy="118" r="3"></circle>
+</g>
+<path class="referee-shorts" d="M44 130h31l-4 28H60l-2-14-3 14H45z"></path>
+<g class="referee-leg referee-leg-left"><path class="referee-sock" d="M45 155h11l-3 57H40z"></path><path class="referee-boot" d="M38 207h20l6 10H36q-2-6 2-10z"></path></g>
+<g class="referee-leg referee-leg-right"><path class="referee-sock" d="M60 155h11l5 57H64z"></path><path class="referee-boot" d="M64 207h21q6 5 4 10H65z"></path></g>
+</g>
+</svg>
+<svg aria-hidden="true" class="penalty-figure keeper-figure" id="keeperFigure" viewbox="0 0 180 250">
+<defs>
+<lineargradient id="keeperKitShade" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#198b57"></stop><stop offset=".52" stop-color="#39c47c"></stop><stop offset="1" stop-color="#13764a"></stop>
+</lineargradient>
+<lineargradient id="keeperShortShade" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0" stop-color="#183348"></stop><stop offset="1" stop-color="#091c2b"></stop>
+</lineargradient>
+</defs>
+<g class="keeper-root">
+<ellipse class="figure-shadow" cx="90" cy="233" rx="42" ry="7"></ellipse>
+<g class="keeper-body-group">
+<ellipse class="skin" cx="90" cy="42" rx="17" ry="19"></ellipse>
+<path class="hair" d="M73 38c4-17 30-22 37-3-10-5-24-5-37 3z"></path>
+<path class="keeper-face" d="M82 47q8 5 16 0M82 40h2M96 40h2"></path>
+<rect class="keeper-neck skin" height="14" rx="5" width="12" x="84" y="58"></rect>
+<path class="keeper-shirt" d="M63 73Q90 64 117 73l-5 75H68z" fill="url(#keeperKitShade)"></path>
+<path class="keeper-collar" d="M80 69l10 10 10-10-5-4H85z"></path>
+<path class="keeper-shirt-panel" d="M89 77h3v66h-3z"></path>
+<path class="keeper-shorts" d="M68 143h44l-5 31H93l-3-17-3 17H73z" fill="url(#keeperShortShade)"></path>
+<g class="keeper-arm keeper-arm-left">
+<path class="keeper-sleeve" d="M67 77q-14 3-22 16l11 11 17-17z" fill="url(#keeperKitShade)"></path>
+<g class="keeper-lower-arm keeper-lower-arm-left">
+<path class="keeper-forearm" d="M49 94q-12 19-14 31l12 5 17-29z"></path><path class="keeper-wrist-bridge" d="M35 123l13 4-2 13H31z"></path>
+<g class="keeper-glove keeper-glove-left" transform="rotate(8 38 138)">
+<rect class="glove-cuff" height="8" rx="3" width="17" x="29" y="136"></rect>
+<path class="glove-palm" d="M28 128q0-9 6-13 6-4 12 1 5 5 3 14l-4 10H32q-5-5-4-12z"></path>
+<path class="glove-finger" d="M31 119q-1-8 3-9 4 0 4 8v9M37 117q0-9 4-9 4 1 3 10v9M43 120q1-7 5-6 3 2 0 10l-3 7"></path>
+<path class="glove-thumb" d="M30 127q-8-2-8 3 1 5 10 6"></path>
+<path class="glove-detail" d="M31 128q8 4 15 0M34 135h10"></path>
+</g>
+</g>
+</g>
+<g class="keeper-arm keeper-arm-right">
+<path class="keeper-sleeve" d="M113 77q14 3 22 16l-11 11-17-17z" fill="url(#keeperKitShade)"></path>
+<g class="keeper-lower-arm keeper-lower-arm-right">
+<path class="keeper-forearm" d="M131 94q12 19 14 31l-12 5-17-29z"></path><path class="keeper-wrist-bridge" d="M145 123l-13 4 2 13h15z"></path>
+<g class="keeper-glove keeper-glove-right" transform="rotate(-8 142 138)">
+<rect class="glove-cuff" height="8" rx="3" width="17" x="134" y="136"></rect>
+<path class="glove-palm" d="M152 128q0-9-6-13-6-4-12 1-5 5-3 14l4 10h13q5-5 4-12z"></path>
+<path class="glove-finger" d="M149 119q1-8-3-9-4 0-4 8v9M143 117q0-9-4-9-4 1-3 10v9M137 120q-1-7-5-6-3 2 0 10l3 7"></path>
+<path class="glove-thumb" d="M150 127q8-2 8 3-1 5-10 6"></path>
+<path class="glove-detail" d="M149 128q-8 4-15 0M146 135h-10"></path>
+</g>
+</g>
+</g>
+<g class="keeper-leg keeper-leg-left">
+<path class="keeper-thigh" d="M73 166h16l-1 26-17 2z"></path>
+<circle class="keeper-knee" cx="79" cy="193" r="5"></circle>
+<g class="keeper-lower-leg keeper-lower-leg-left">
+<path class="keeper-sock" d="M70 190h17l-2 34H67z"></path>
+<path class="keeper-boot" d="M64 217h29v12H61q-3-7 3-12z"></path>
+</g>
+</g>
+<g class="keeper-leg keeper-leg-right">
+<path class="keeper-thigh" d="M92 166h16l4 26-17 2z"></path>
+<circle class="keeper-knee" cx="103" cy="193" r="5"></circle>
+<g class="keeper-lower-leg keeper-lower-leg-right">
+<path class="keeper-sock" d="M95 190h17l2 34H97z"></path>
+<path class="keeper-boot" d="M92 217h29q7 5 4 12H92z"></path>
+</g>
+</g>
+<text class="keeper-back-number" text-anchor="middle" x="90" y="113">1</text>
+</g>
+</g>
+</svg>
+<svg aria-hidden="true" class="penalty-figure taker-figure" id="takerFigure" viewbox="0 0 170 290">
+<defs>
+<lineargradient id="albionBlueShade" x1="0" x2="1" y1="0" y2="0">
+<stop offset="0" stop-color="#0569ad"></stop><stop offset=".5" stop-color="#1294e0"></stop><stop offset="1" stop-color="#055f9e"></stop>
+</lineargradient>
+</defs>
+<g class="taker-root">
+<ellipse class="figure-shadow" cx="85" cy="278" rx="42" ry="7"></ellipse>
+<ellipse class="skin" cx="85" cy="35" rx="15" ry="17"></ellipse>
+<path class="hair" d="M70 32c3-16 28-20 34-2-9-4-22-4-34 2z"></path>
+<rect class="skin" height="15" rx="5" width="10" x="80" y="49"></rect>
+<path class="taker-shirt" d="M54 65Q85 55 116 65l-7 86H61z" fill="url(#albionBlueShade)"></path>
+<path class="taker-stripe stripe-one" d="M66 62h12l-2 86H65z"></path>
+<path class="taker-stripe stripe-two" d="M92 60h12l2 88H94z"></path>
+<path class="taker-collar" d="M75 61l10 10 10-10-5-4H80z"></path>
+<text class="taker-number" id="penaltyShirt" text-anchor="middle" x="85" y="116">18</text>
+<path class="taker-shorts" d="M61 147h48l-5 36H88l-3-19-3 19H66z"></path>
+<g class="taker-arm taker-arm-left">
+<path class="taker-sleeve" d="M58 69q-15 3-22 15l11 10 17-16z" fill="url(#albionBlueShade)"></path>
+<g class="taker-lower-arm taker-lower-arm-left">
+<path class="skin" d="M40 86q-10 25-8 57l12 1 9-50z"></path>
+<circle class="skin" cx="38" cy="145" r="5"></circle>
+</g>
+</g>
+<g class="taker-arm taker-arm-right">
+<path class="taker-sleeve" d="M112 69q15 3 22 15l-11 10-17-16z" fill="url(#albionBlueShade)"></path>
+<g class="taker-lower-arm taker-lower-arm-right">
+<path class="skin" d="M130 86q10 25 8 57l-12 1-9-50z"></path>
+<circle class="skin" cx="132" cy="145" r="5"></circle>
+</g>
+</g>
+<g class="taker-leg taker-leg-left">
+<path class="taker-thigh" d="M67 177h18l-2 39-18 3z"></path>
+<circle class="taker-knee" cx="73" cy="217" r="5.5"></circle>
+<g class="taker-lower-leg taker-lower-leg-left">
+<path class="taker-sock" d="M64 212h18l-2 55H59z"></path>
+<path class="taker-boot" d="M55 260h32v14H52q-3-9 3-14z"></path>
+</g>
+</g>
+<g class="taker-leg taker-leg-right">
+<path class="taker-thigh" d="M87 177h18l7 39-18 3z"></path>
+<circle class="taker-knee" cx="103" cy="217" r="5.5"></circle>
+<g class="taker-lower-leg taker-lower-leg-right">
+<path class="taker-sock" d="M92 212h18l5 55H95z"></path>
+<path class="taker-boot" d="M92 260h32q8 5 5 14H92z"></path>
+</g>
+</g>
+</g>
+</svg>
+<div aria-hidden="true" class="penalty-ball-shadow" id="penaltyBallShadow"></div>
+<div aria-hidden="true" class="turf-kick" hidden="" id="turfKick"><i></i><i></i><i></i><i></i></div>
+<svg aria-hidden="true" class="penalty-ball" id="penaltyBall" viewbox="0 0 64 64">
+<defs>
+<radialgradient cx="34%" cy="27%" id="ballSurface" r="74%">
+<stop offset="0" stop-color="#ffffff"></stop><stop offset=".58" stop-color="#edf2f5"></stop><stop offset=".86" stop-color="#bcc7ce"></stop><stop offset="1" stop-color="#f9fbfc"></stop>
+</radialgradient>
+</defs>
+<circle cx="32" cy="32" fill="url(#ballSurface)" r="30" stroke="#89969f" stroke-width="1.5"></circle>
+<path class="ball-dark-panel" d="M32 14l10 7-4 12H26l-4-12z"></path>
+<path class="ball-dark-panel" d="M11 29l10-7 5 11-8 10-9-4zM53 29l-10-7-5 11 8 10 9-4zM23 54l-5-11 8-10h12l8 10-5 11z"></path>
+<path class="ball-seam" d="M32 14L20 7M42 21l12-3M38 33l8 10M26 33l-8 10M22 21L10 18M23 54l9 7M41 54l-9 7"></path>
+<ellipse class="ball-highlight" cx="23" cy="19" rx="7" ry="5"></ellipse>
+</svg>
+<div aria-hidden="true" class="celebration-players" hidden="" id="celebrationPlayers"><i></i><i></i><i></i><i></i></div>
+<div aria-hidden="true" class="shootout-confetti" hidden="" id="shootoutConfetti"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<div aria-hidden="true" class="aim-reticle" id="aimReticle"><i></i></div>
+<div aria-hidden="true" class="swipe-trail" hidden="" id="swipeTrail"><i></i><b></b></div>
+<div aria-hidden="true" class="save-impact" hidden="" id="saveImpact"></div>
+<div aria-live="assertive" class="reaction-cue" hidden="" id="reactionCue">REACT!</div>
+<div aria-live="assertive" class="kick-decision-v10" hidden="" id="kickDecision"></div>
+<div class="stage-instruction" id="stageInstruction">Drag to aim, release to shoot</div>
+</div>
+<div aria-atomic="true" aria-live="polite" class="shootout-status-v10" id="shootoutStatus">
+<b>Pick your spot</b>
+<span>Drag inside the goal and release.</span>
+</div>
+<div class="palace-ready-panel" hidden="" id="palaceReadyPanel">
+<p>You are Verbruggen. Swipe towards the shot, or stay still for a central penalty.</p>
+<button id="palaceReadyButton" type="button">READY TO SAVE</button>
+</div>
+<div class="shootout-option-row">
+<label class="form-check panenka-choice" for="panenkaChoice">
+<input class="form-check-input" id="panenkaChoice" type="checkbox"/>
+<span class="form-check-label">Try a Panenka on the next Albion kick</span>
+</label>
+<span id="keyboardHint">Desktop: move and release to shoot. Mobile: drag to place a kick; when saving, swipe anywhere on the pitch or tap left, centre or right. Stay central for a straight penalty. Keyboard: arrows and Enter.</span>
+</div>
+<div class="shootout-summary-v10" hidden="" id="shootoutSummary"></div>
+<div class="button-row shootout-actions-v10">
+<button class="ghost" id="resetShootout" type="button">Restart shoot-out</button>
+<button class="ghost" id="fullscreenShootout" type="button">Full-screen game</button>
+<button class="ghost" hidden="" id="shareShootout" type="button">Share result</button>
+</div>
+<p aria-live="polite" class="shootout-records-v10" id="shootoutRecords"></p>
+</div>
+</section>
+<section class="card anthem-card" id="anthem">
+<img alt="" decoding="async" loading="lazy" src="albion-safe-graphic.svg"/>
+<div>
+<p class="eyebrow">Albion anthem and sound</p>
+<h2>Sussex by the Sea</h2>
+<p>
             Sound never starts automatically. The anthem, chants and match
             effects share one master volume and one clear sound switch.
           </p>
-          <div class="sound-settings">
-            <button id="inlineSoundToggle" type="button" aria-pressed="false">
+<div class="sound-settings">
+<button aria-pressed="false" id="inlineSoundToggle" type="button">
               Turn sound on
             </button>
-            <label for="soundVolume"
-              >Master volume
-              <input id="soundVolume" type="range" min="0" max="100" value="75"
-            /></label>
-            <button id="testSound" class="ghost" type="button">
+<label for="soundVolume">Master volume
+              <input id="soundVolume" max="100" min="0" type="range" value="75"/></label>
+<button class="ghost" id="testSound" type="button">
               Test match sound
             </button>
-          </div>
-          <p id="soundStatus" class="sound-status" role="status">
+</div>
+<p class="sound-status" id="soundStatus" role="status">
             Site sound is off.
           </p>
-          <audio id="anthemAudio" controls preload="none" playsinline>
-            <source src="sussex-by-the-sea.mp3" type="audio/mpeg" />
+<audio controls="" id="anthemAudio" playsinline="" preload="none">
+<source src="sussex-by-the-sea.mp3" type="audio/mpeg"/>
             Your browser does not support the audio player.
           </audio>
-          <p class="audio-credit">
+<p class="audio-credit">
             Music by William Ward-Higgs. This recording is provided by the
-            <a
-              href="https://sfhg.uk/resources/all-other-reference/sussex-by-the-sea"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Sussex Family History Group</a
-            >
+            <a href="https://sfhg.uk/resources/all-other-reference/sussex-by-the-sea" rel="noopener noreferrer" target="_blank">Sussex Family History Group</a>
             and used with permission.
           </p>
-        </div>
-      </section>
-
-      <section class="card chants-card" id="chants">
-        <div class="section-head">
-          <p class="eyebrow">The Albion songbook</p>
-          <h2>Brighton favourite chants</h2>
-          <p>
+</div>
+</section>
+<section class="card chants-card" id="chants">
+<div class="section-head">
+<p class="eyebrow">The Albion songbook</p>
+<h2>Brighton favourite chants</h2>
+<p>
             Choose a terrace classic. Only one recording plays at a time and
             the site’s master sound control governs every chant.
           </p>
-        </div>
-        <div class="chant-now-playing" aria-live="polite">
-          <span id="chantPulse" aria-hidden="true"
-            ><i></i><i></i><i></i><i></i
-          ></span>
-          <div>
-            <small>Now playing</small
-            ><b id="chantNowPlaying">Choose a chant</b>
-          </div>
-          <button id="stopChant" class="ghost" type="button" disabled>
+</div>
+<div aria-live="polite" class="chant-now-playing">
+<span aria-hidden="true" id="chantPulse"><i></i><i></i><i></i><i></i></span>
+<div>
+<small>Now playing</small><b id="chantNowPlaying">Choose a chant</b>
+</div>
+<button class="ghost" disabled="" id="stopChant" type="button">
             Stop
           </button>
-        </div>
-        <div class="chant-grid">
-          <button
-            type="button"
-            data-chant="albion-albion-albion"
-            data-title="Albion, Albion, Albion"
-          >
-            <span>Terrace classic</span><b>Albion, Albion, Albion</b
-            ><small>Play chant</small></button
-          ><button type="button" data-chant="seagulls" data-title="Seagulls">
-            <span>Club call</span><b>Seagulls</b><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="we-are-brighton"
-            data-title="We Are Brighton"
-          >
-            <span>Anthem</span><b>We Are Brighton</b
-            ><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="come-on-brighton"
-            data-title="Come On Brighton"
-          >
-            <span>Matchday</span><b>Come On Brighton</b
-            ><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="we-all-follow-albion"
-            data-title="We All Follow the Albion"
-          >
-            <span>Classic</span><b>We All Follow the Albion</b
-            ><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="brighton-aces"
-            data-title="Brighton Aces"
-          >
-            <span>Classic</span><b>Brighton Aces</b
-            ><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="b-r-i-g-h-t-o-n"
-            data-title="B-R-I-G-H-T-O-N"
-          >
-            <span>Spelling chant</span><b>B-R-I-G-H-T-O-N</b
-            ><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="great-escape"
-            data-title="The Great Escape"
-          >
-            <span>Matchday classic</span><b>The Great Escape</b
-            ><small>Play chant</small></button
-          ><button
-            type="button"
-            data-chant="glory-glory"
-            data-title="Glory Glory Brighton and Hove Albion"
-          >
-            <span>Anthem</span><b>Glory Glory Brighton and Hove Albion</b
-            ><small>Play chant</small>
-          </button>
-        </div>
-        <audio id="chantAudio" preload="none" playsinline></audio>
-        <p class="audio-credit">
+</div>
+<div class="chant-grid">
+<button data-chant="albion-albion-albion" data-title="Albion, Albion, Albion" type="button">
+<span>Terrace classic</span><b>Albion, Albion, Albion</b><small>Play chant</small></button><button data-chant="seagulls" data-title="Seagulls" type="button">
+<span>Club call</span><b>Seagulls</b><small>Play chant</small></button><button data-chant="we-are-brighton" data-title="We Are Brighton" type="button">
+<span>Anthem</span><b>We Are Brighton</b><small>Play chant</small></button><button data-chant="come-on-brighton" data-title="Come On Brighton" type="button">
+<span>Matchday</span><b>Come On Brighton</b><small>Play chant</small></button><button data-chant="we-all-follow-albion" data-title="We All Follow the Albion" type="button">
+<span>Classic</span><b>We All Follow the Albion</b><small>Play chant</small></button><button data-chant="brighton-aces" data-title="Brighton Aces" type="button">
+<span>Classic</span><b>Brighton Aces</b><small>Play chant</small></button><button data-chant="b-r-i-g-h-t-o-n" data-title="B-R-I-G-H-T-O-N" type="button">
+<span>Spelling chant</span><b>B-R-I-G-H-T-O-N</b><small>Play chant</small></button><button data-chant="great-escape" data-title="The Great Escape" type="button">
+<span>Matchday classic</span><b>The Great Escape</b><small>Play chant</small></button><button data-chant="glory-glory" data-title="Glory Glory Brighton and Hove Albion" type="button">
+<span>Anthem</span><b>Glory Glory Brighton and Hove Albion</b><small>Play chant</small>
+</button>
+</div>
+<audio id="chantAudio" playsinline="" preload="none"></audio>
+<p class="audio-credit">
           Recordings supplied by
-          <a
-            href="https://www.fanchants.com/football-team/brighton/"
-            target="_blank"
-            rel="noopener"
-            >FanChants</a
-          >
+          <a href="https://www.fanchants.com/football-team/brighton/" rel="noopener" target="_blank">FanChants</a>
           and used with permission.
         </p>
-      </section>
-
-      <section class="card" id="match-centre">
-        <p class="content-freshness" data-freshness="match-centre">Match and squad information: <b>last checked 26 July 2026</b></p>
-        <div class="section-head">
-          <p class="eyebrow">Matchday</p>
-          <h2 id="centreMatchTitle">Albion v Aston Villa</h2>
-          <p>
+</section>
+<section class="card" id="match-centre">
+<p class="content-freshness" data-freshness="match-centre">Match and squad information: <b>last checked 26 July 2026</b></p>
+<div class="section-head">
+<p class="eyebrow">Matchday</p>
+<h2 id="centreMatchTitle">Albion v Aston Villa</h2>
+<p>
             Confirmed information is shown clearly. Details not yet announced
             are never guessed.
           </p>
-        </div>
-        <div class="match-details">
-          <article>
-            <span>Date</span><b id="centreMatchDate">23 August 2026</b>
-          </article>
-          <article>
-            <span>Kick-off</span><b id="centreMatchTime">14:00</b>
-          </article>
-          <article>
-            <span>Venue</span><b id="centreMatchVenue">Amex Stadium</b>
-          </article>
-          <article><span>Referee / TV</span><b>To be confirmed</b></article>
-        </div>
-        <section
-          class="opponent-briefing"
-          aria-labelledby="opponentBriefingTitle"
-        >
-          <div>
-            <p class="eyebrow">Next-opponent briefing</p>
-            <h3 id="opponentBriefingTitle">Aston Villa</h3>
-            <p id="opponentBriefingText">
+</div>
+<div class="match-details">
+<article>
+<span>Date</span><b id="centreMatchDate">23 August 2026</b>
+</article>
+<article>
+<span>Kick-off</span><b id="centreMatchTime">14:00</b>
+</article>
+<article>
+<span>Venue</span><b id="centreMatchVenue">Amex Stadium</b>
+</article>
+<article><span>Referee / TV</span><b>To be confirmed</b></article>
+</div>
+<section aria-labelledby="opponentBriefingTitle" class="opponent-briefing">
+<div>
+<p class="eyebrow">Next-opponent briefing</p>
+<h3 id="opponentBriefingTitle">Aston Villa</h3>
+<p id="opponentBriefingText">
               Confirmed fixture information only. Team news will not be guessed.
             </p>
-          </div>
-          <div id="opponentBriefingFacts" class="opponent-briefing-facts"></div>
-          <a
-            href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
-            target="_blank"
-            rel="noopener"
-            >Check the official match page</a
-          >
-        </section>
-        <div id="weatherPanel" class="weather-note">
-          <b>Falmer weather</b>
-          <p>
+</div>
+<div class="opponent-briefing-facts" id="opponentBriefingFacts"></div>
+<a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Check the official match page</a>
+</section>
+<div class="weather-note" id="weatherPanel">
+<b>Falmer weather</b>
+<p>
             A detailed forecast will appear within the reliable forecast window.
           </p>
-        </div>
-        <div class="next-three-card embedded-next">
-          <p class="eyebrow">Coming up</p>
-          <h3>Next three fixtures</h3>
-          <div
-            id="nextFixtureCarousel"
-            class="next-fixture-carousel"
-            aria-live="polite"
-          ></div>
-          <div class="carousel-controls">
-            <button
-              id="previousFixture"
-              class="ghost"
-              type="button"
-              aria-label="Previous fixture"
-            >
-              ←</button
-            ><span id="fixtureCarouselPosition">1 of 3</span
-            ><button
-              id="nextFixtureButton"
-              class="ghost"
-              type="button"
-              aria-label="Next fixture"
-            >
+</div>
+<div class="next-three-card embedded-next">
+<p class="eyebrow">Coming up</p>
+<h3>Next three fixtures</h3>
+<div aria-live="polite" class="next-fixture-carousel" id="nextFixtureCarousel"></div>
+<div class="carousel-controls">
+<button aria-label="Previous fixture" class="ghost" id="previousFixture" type="button">
+              ←</button><span id="fixtureCarouselPosition">1 of 3</span><button aria-label="Next fixture" class="ghost" id="nextFixtureButton" type="button">
               →
             </button>
-          </div>
-        </div>
-      </section>
-
-      <section class="card head-to-head" id="head-to-head">
-        <div class="section-head">
-          <p class="eyebrow">Next opponent</p>
-          <h2>Recent Albion v Aston Villa meetings</h2>
-          <p>
+</div>
+</div>
+</section>
+<section class="card head-to-head" id="head-to-head">
+<div class="section-head">
+<p class="eyebrow">Next opponent</p>
+<h2>Recent Albion v Aston Villa meetings</h2>
+<p>
             A verified glance at the last three league meetings before the
             2026/27 opener.
           </p>
-        </div>
-        <div class="head-to-head-grid">
-          <article>
-            <time datetime="2026-02-11">11 Feb 2026</time>
-            <b>Aston Villa 1–0 Albion</b><span>Premier League · Villa Park</span>
-          </article>
-          <article>
-            <time datetime="2025-12-03">3 Dec 2025</time>
-            <b>Albion 3–4 Aston Villa</b><span>Premier League · Amex Stadium</span>
-          </article>
-          <article>
-            <time datetime="2025-04-02">2 Apr 2025</time>
-            <b>Albion 0–3 Aston Villa</b><span>Premier League · Amex Stadium</span>
-          </article>
-        </div>
-        <p class="verified-note">
+</div>
+<div class="head-to-head-grid">
+<article>
+<time datetime="2026-02-11">11 Feb 2026</time>
+<b>Aston Villa 1–0 Albion</b><span>Premier League · Villa Park</span>
+</article>
+<article>
+<time datetime="2025-12-03">3 Dec 2025</time>
+<b>Albion 3–4 Aston Villa</b><span>Premier League · Amex Stadium</span>
+</article>
+<article>
+<time datetime="2025-04-02">2 Apr 2025</time>
+<b>Albion 0–3 Aston Villa</b><span>Premier League · Amex Stadium</span>
+</article>
+</div>
+<p class="verified-note">
           Checked against official Albion and Premier League match reports.
-          <a
-            href="https://www.brightonandhovealbion.com/match-centre?gameId=2562145"
-            target="_blank"
-            rel="noopener"
-            >Latest meeting</a
-          >
-        </p>
-      </section>
-
-      <section class="card" id="fixtures">
-        <p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 26 July 2026</b></p>
-        <div class="section-head">
-          <p class="eyebrow">Premier League</p>
-          <h2>Albion fixtures 2026/27</h2>
-          <p>Search by opponent, venue or month.</p>
-        </div>
-        <div class="season-centre-head">
-          <label for="seasonSelector"
-            >Season
+          <a href="https://www.brightonandhovealbion.com/match-centre?gameId=2562145" rel="noopener" target="_blank">Latest meeting</a>
+</p>
+</section>
+<section class="card" id="fixtures">
+<p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 26 July 2026</b></p>
+<div class="section-head">
+<p class="eyebrow">Premier League</p>
+<h2>Albion fixtures 2026/27</h2>
+<p>Search by opponent, venue or month.</p>
+</div>
+<div class="season-centre-head">
+<label for="seasonSelector">Season
             <select id="seasonSelector">
-              <option value="2026/27">2026/27</option>
-            </select>
-          </label>
-          <div class="season-stat-grid" aria-label="Season statistics">
-            <article><span>Played</span><b id="seasonPlayed">0</b></article>
-            <article><span>Points</span><b id="seasonPoints">0</b></article>
-            <article><span>Record</span><b id="seasonRecord">0-0-0</b></article>
-            <article><span>Goals</span><b id="seasonGoals">0-0</b></article>
-          </div>
-        </div>
-        <div class="next-home-away" aria-label="Next home and away fixtures">
-          <article class="next-home">
-            <span>Next home</span><b id="nextHomeFixture">To be confirmed</b
-            ><small id="nextHomeDate"></small>
-          </article>
-          <article class="next-away">
-            <span>Next away</span><b id="nextAwayFixture">To be confirmed</b
-            ><small id="nextAwayDate"></small>
-          </article>
-        </div>
-        <div class="fixture-key" aria-label="Fixture colour key">
-          <span class="home-key">Home</span><span class="away-key">Away</span>
-        </div>
-        <div class="fixture-actions">
-          <a id="downloadCalendar" class="button-link" href="#"
-            >Add season to calendar</a
-          ><a
-            class="button-link secondary"
-            href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
-            target="_blank"
-            rel="noopener"
-            >Check official fixtures</a
-          >
-        </div>
-        <div class="fixture-tools">
-          <label
-            >Find opponent<input
-              id="fixtureSearch"
-              type="search"
-              placeholder="e.g. Arsenal" /></label
-          ><label
-            >Venue<select id="venueFilter">
-              <option value="all">Home and away</option>
-              <option value="H">Home only</option>
-              <option value="A">Away only</option>
-            </select></label
-          ><label class="month-select"
-            >Month<select id="monthFilter">
-              <option value="all">All months</option>
-            </select></label
-          >
-        </div>
-        <div
-          id="monthButtons"
-          class="month-buttons"
-          aria-label="Filter fixtures by month"
-        ></div>
-        <button
-          id="toggleFixtures"
-          class="ghost fixture-toggle"
-          type="button"
-          aria-expanded="true"
-        >
+<option value="2026/27">2026/27</option>
+</select>
+</label>
+<div aria-label="Season statistics" class="season-stat-grid">
+<article><span>Played</span><b id="seasonPlayed">0</b></article>
+<article><span>Points</span><b id="seasonPoints">0</b></article>
+<article><span>Record</span><b id="seasonRecord">0-0-0</b></article>
+<article><span>Goals</span><b id="seasonGoals">0-0</b></article>
+</div>
+</div>
+<div aria-label="Next home and away fixtures" class="next-home-away">
+<article class="next-home">
+<span>Next home</span><b id="nextHomeFixture">To be confirmed</b><small id="nextHomeDate"></small>
+</article>
+<article class="next-away">
+<span>Next away</span><b id="nextAwayFixture">To be confirmed</b><small id="nextAwayDate"></small>
+</article>
+</div>
+<div aria-label="Fixture colour key" class="fixture-key">
+<span class="home-key">Home</span><span class="away-key">Away</span>
+</div>
+<div class="fixture-actions">
+<button class="button-link" id="downloadCalendar" type="button">Add season to calendar</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Check official fixtures</a>
+</div>
+<div class="fixture-tools">
+<label>Find opponent<input id="fixtureSearch" placeholder="e.g. Arsenal" type="search"/></label><label>Venue<select id="venueFilter">
+<option value="all">Home and away</option>
+<option value="H">Home only</option>
+<option value="A">Away only</option>
+</select></label><label class="month-select">Month<select id="monthFilter">
+<option value="all">All months</option>
+</select></label>
+</div>
+<div aria-label="Filter fixtures by month" class="month-buttons" id="monthButtons"></div>
+<button aria-expanded="true" class="ghost fixture-toggle" id="toggleFixtures" type="button">
           Hide fixtures
         </button>
-        <div id="fixtureList" class="fixtures-list"></div>
-        <details class="prediction-history-panel">
-          <summary>Your season prediction record</summary>
-          <div id="predictionHistory" aria-live="polite">
+<div class="fixtures-list" id="fixtureList"></div>
+<details class="prediction-history-panel">
+<summary>Your season prediction record</summary>
+<div aria-live="polite" id="predictionHistory">
             Save a match prediction to begin your record.
           </div>
-        </details>
-      </section>
-
-      <section class="card" id="xi">
-        <div class="section-head">
-          <p class="eyebrow">Team selector</p>
-          <h2>Predicted XI and Pick Your XI</h2>
-          <p>
+</details>
+</section>
+<section class="card" id="xi">
+<div class="section-head">
+<p class="eyebrow">Team selector</p>
+<h2>Predicted XI and Pick Your XI</h2>
+<p>
             Choose a formation, select the starting eleven and name seven
             substitutes.
           </p>
-        </div>
-        <details class="squad-details">
-          <summary>View the current squad list</summary>
-          <div
-            class="squad-browser"
-            id="squadBrowser"
-            aria-label="Current Albion squad"
-          ></div>
-        </details>
-        <div class="xi-controls">
-          <label
-            >Formation<select id="formation">
-              <option>4-2-3-1</option>
-              <option>4-3-3</option>
-              <option>4-4-2</option>
-              <option>3-4-2-1</option>
-            </select></label
-          ><button id="loadPredicted" type="button">Load predicted XI</button
-          ><button id="completeXI" type="button">Complete my team</button
-          ><button id="clearXI" class="ghost" type="button">Clear</button
-          ><button id="shareXI" class="ghost" type="button">Share XI</button>
-        </div>
-        <div class="xi-tactics" aria-label="Team leadership and tactics">
-          <label
-            >Captain<select id="xiCaptain">
-              <option value="">Choose after selecting your XI</option>
-            </select></label
-          ><label
-            >Penalty taker<select id="xiPenaltyTaker">
-              <option value="">Choose after selecting your XI</option>
-            </select></label
-          ><label
-            >Free-kick taker<select id="xiFreeKickTaker">
-              <option value="">Choose after selecting your XI</option>
-            </select></label
-          ><label
-            >Approach<select id="xiApproach">
-              <option>Balanced</option>
-              <option>Front-foot pressing</option>
-              <option>Patient possession</option>
-              <option>Direct and quick</option>
-              <option>Compact counter-attack</option>
-            </select></label
-          >
-          <button id="copyXILink" class="ghost" type="button">
+</div>
+<details class="squad-details">
+<summary>View the current squad list</summary>
+<div aria-label="Current Albion squad" class="squad-browser" id="squadBrowser"></div>
+</details>
+<div class="xi-controls">
+<label>Formation<select id="formation">
+<option>4-2-3-1</option>
+<option>4-3-3</option>
+<option>4-4-2</option>
+<option>3-4-2-1</option>
+</select></label><button id="loadPredicted" type="button">Load predicted XI</button><button id="completeXI" type="button">Complete my team</button><button class="ghost" id="clearXI" type="button">Clear</button><button class="ghost" id="shareXI" type="button">Share XI</button>
+</div>
+<div aria-label="Team leadership and tactics" class="xi-tactics">
+<label>Captain<select id="xiCaptain">
+<option value="">Choose after selecting your XI</option>
+</select></label><label>Penalty taker<select id="xiPenaltyTaker">
+<option value="">Choose after selecting your XI</option>
+</select></label><label>Free-kick taker<select id="xiFreeKickTaker">
+<option value="">Choose after selecting your XI</option>
+</select></label><label>Approach<select id="xiApproach">
+<option>Balanced</option>
+<option>Front-foot pressing</option>
+<option>Patient possession</option>
+<option>Direct and quick</option>
+<option>Compact counter-attack</option>
+</select></label>
+<button class="ghost" id="copyXILink" type="button">
             Copy recreatable XI link
           </button>
-        </div>
-        <p class="drag-hint">
+</div>
+<p class="drag-hint">
           Desktop: drag one selected player slot onto another to swap them.
         </p>
-        <div id="pitch" class="pitch" aria-live="polite"></div>
-        <details class="bench-section" open>
-          <summary id="benchTitle">Seven substitutes</summary>
-          <div id="bench" class="bench-grid"></div>
-        </details>
-        <div id="xiMessage" class="result" aria-live="polite"></div>
-      </section>
-
-      <section class="card predictor" id="predictor">
-        <div class="section-head">
-          <p class="eyebrow">Match predictor</p>
-          <h2 id="predictorMatchTitle">Albion v Aston Villa</h2>
-        </div>
-        <div class="predictor-grid">
-          <label
-            >Albion goals<input
-              id="homeScore"
-              type="number"
-              min="0"
-              max="15"
-              value="2" /></label
-          ><label
-            ><span id="awayScoreLabel">Villa goals</span
-            ><input
-              id="awayScore"
-              type="number"
-              min="0"
-              max="15"
-              value="1" /></label
-          ><label>First Albion scorer<select id="firstScorer"></select></label
-          ><label>Player of the match<select id="motm"></select></label>
-        </div>
-        <button id="savePrediction" type="button">Save prediction</button>
-        <div id="predictionSummary" class="result"></div>
-      </section>
-
-      <section class="card league-predictor" id="league-predictor">
-        <div class="section-head">
-          <p class="eyebrow">2026/27 prediction</p>
-          <h2>Where will Albion finish?</h2>
-          <p>Move the slider from 1st to 20th and save your forecast.</p>
-        </div>
-        <div class="league-slider-wrap">
-          <output id="leaguePositionOutput" for="leaguePosition">10th</output
-          ><input
-            id="leaguePosition"
-            type="range"
-            min="1"
-            max="20"
-            value="10"
-            aria-describedby="leagueBand"
-          />
-          <div class="league-scale" aria-hidden="true">
-            <span>1st</span><span>Europe</span><span>10th</span
-            ><span>20th</span>
-          </div>
-          <b id="leagueBand">Top half</b>
-        </div>
-        <div class="button-row">
-          <button id="saveLeaguePrediction" type="button">
-            Save league prediction</button
-          ><button id="shareLeaguePrediction" class="ghost" type="button">
+<div aria-live="polite" class="pitch" id="pitch"></div>
+<details class="bench-section" open="">
+<summary id="benchTitle">Seven substitutes</summary>
+<div class="bench-grid" id="bench"></div>
+</details>
+<div aria-live="polite" class="result" id="xiMessage"></div>
+</section>
+<section class="card predictor" id="predictor">
+<div class="section-head">
+<p class="eyebrow">Match predictor</p>
+<h2 id="predictorMatchTitle">Albion v Aston Villa</h2>
+</div>
+<div class="predictor-grid">
+<label>Albion goals<input id="homeScore" max="15" min="0" type="number" value="2"/></label><label><span id="awayScoreLabel">Villa goals</span><input id="awayScore" max="15" min="0" type="number" value="1"/></label><label>First Albion scorer<select id="firstScorer"></select></label><label>Player of the match<select id="motm"></select></label>
+</div>
+<button id="savePrediction" type="button">Save prediction</button>
+<div class="result" id="predictionSummary"></div>
+</section>
+<section class="card league-predictor" id="league-predictor">
+<div class="section-head">
+<p class="eyebrow">2026/27 prediction</p>
+<h2>Where will Albion finish?</h2>
+<p>Move the slider from 1st to 20th and save your forecast.</p>
+</div>
+<div class="league-slider-wrap">
+<output for="leaguePosition" id="leaguePositionOutput">10th</output><input aria-describedby="leagueBand" id="leaguePosition" max="20" min="1" type="range" value="10"/>
+<div aria-hidden="true" class="league-scale">
+<span>1st</span><span>Europe</span><span>10th</span><span>20th</span>
+</div>
+<b id="leagueBand">Top half</b>
+</div>
+<div class="button-row">
+<button id="saveLeaguePrediction" type="button">
+            Save league prediction</button><button class="ghost" id="shareLeaguePrediction" type="button">
             Share prediction
           </button>
-        </div>
-        <div id="leaguePredictionSummary" class="result" aria-live="polite">
+</div>
+<div aria-live="polite" class="result" id="leaguePredictionSummary">
           Choose Albion’s finishing position.
         </div>
-      </section>
-
-      <section class="card" id="story">
-        <div class="section-head">
-          <p class="eyebrow">History, landmarks, facts and supporter memories</p>
-          <h2>Albion Story</h2>
-          <p>
+</section>
+<section class="card" id="story">
+<div class="section-head">
+<p class="eyebrow">History, landmarks, facts and supporter memories</p>
+<h2>Albion Story</h2>
+<p>
             The club’s journey, the grounds that shaped it, and facts and memories woven into one interactive timeline.
           </p>
-        </div>
-        <div class="story-tabs" role="tablist" aria-label="Albion Story">
-          <button
-            class="story-tab active"
-            data-story="journey"
-            role="tab"
-            aria-selected="true"
-          >
-            The journey</button
-          ><button
-            class="story-tab ghost"
-            data-story="grounds"
-            role="tab"
-            aria-selected="false"
-          >
-            Our grounds</button
-          ><button
-            class="story-tab ghost"
-            data-story="people"
-            role="tab"
-            aria-selected="false"
-          >
-            Albion people</button
-          ><button
-            class="story-tab ghost"
-            data-story="rivalry"
-            role="tab"
-            aria-selected="false"
-          >
-            Palace rivalry</button
-          >
-        </div>
-        <div id="journey" class="story-panel active" role="tabpanel">
-          <div class="era-filters" aria-label="Filter Albion history by era">
-            <button class="active" type="button" data-era="all">All eras</button
-            ><button class="ghost" type="button" data-era="early">
-              Early Albion</button
-            ><button class="ghost" type="button" data-era="fightback">
-              The Fightback</button
-            ><button class="ghost" type="button" data-era="amex">
-              Amex era</button
-            ><button class="ghost" type="button" data-era="premier">
+</div>
+<div aria-label="Albion Story" class="story-tabs" role="tablist">
+<button aria-selected="true" class="story-tab active" data-story="journey" role="tab" type="button">
+            The journey</button><button aria-selected="false" class="story-tab ghost" data-story="grounds" role="tab" type="button">
+            Our grounds</button><button aria-selected="false" class="story-tab ghost" data-story="people" role="tab" type="button">
+            Albion people</button><button aria-selected="false" class="story-tab ghost" data-story="rivalry" role="tab" type="button">
+            Palace rivalry</button>
+</div>
+<div class="story-panel active" id="journey" role="tabpanel">
+<div aria-label="Filter Albion history by era" class="era-filters">
+<button class="active" data-era="all" type="button">All eras</button><button class="ghost" data-era="early" type="button">
+              Early Albion</button><button class="ghost" data-era="fightback" type="button">
+              The Fightback</button><button class="ghost" data-era="amex" type="button">
+              Amex era</button><button class="ghost" data-era="premier" type="button">
               Premier League &amp; Europe
             </button>
-          </div>
-          <div class="timeline-explorer" aria-label="Interactive Albion timeline">
-            <div class="timeline-nav">
-              <button id="timelinePrev" class="ghost" type="button" aria-label="Previous Albion milestone">Previous</button>
-              <div class="timeline-progress" aria-hidden="true"><i id="timelineProgress"></i></div>
-              <button id="timelineNext" class="ghost" type="button" aria-label="Next Albion milestone">Next</button>
-              <button id="timelineSurprise" class="ghost timeline-surprise" type="button" aria-label="Jump to a random Albion fact, memory or milestone">Surprise me</button>
-            </div>
-            <div class="timeline" id="albionTimeline" tabindex="0" aria-label="Swipe or use arrow keys to move through Albion history">
-              <article data-era="early" data-year="1901" data-detail="The professional club was established in 1901 and entered the Southern League.">
-                <b>1901</b><h3>Albion founded</h3><p>Brighton &amp; Hove Albion are formed.</p>
-              </article>
-              <article data-era="early" data-year="1910" data-detail="As Southern League champions, Albion beat Football League champions Aston Villa 1–0 to claim the Charity Shield.">
-                <b>1910</b><h3>Champions of England</h3><p>Southern League title and Charity Shield success.</p>
-              </article>
-              <article data-era="early" data-year="1920" data-detail="Albion become founder members of the Football League Third Division and begin a new national chapter.">
-                <b>1920</b><h3>Football League</h3><p>Albion enter the Football League.</p>
-              </article>
-              <article data-era="fightback" data-year="1983" data-detail="Albion draw 2–2 with Manchester United at Wembley before the FA Cup final replay.">
-                <b>1983</b><h3>Wembley final</h3><p>Albion reach the FA Cup final.</p>
-              </article>
-              <article data-era="fightback" data-year="1997" data-detail="Robbie Reinelt’s equaliser at Hereford keeps Albion in the Football League on goals scored.">
-                <b>1997</b><h3>The great escape</h3><p>League status is secured at Hereford.</p>
-              </article>
-              <article data-era="fightback" data-year="1999" data-detail="After two seasons at Gillingham, Albion return to Brighton and begin the Withdean years.">
-                <b>1999</b><h3>Back in Brighton</h3><p>The club returns home at Withdean.</p>
-              </article>
-              <article data-era="amex" data-year="2011" data-detail="The first league match at the Amex ends in a dramatic 2–1 win over Doncaster Rovers.">
-                <b>2011</b><h3>The Amex opens</h3><p>The long-awaited Falmer home begins.</p>
-              </article>
-              <article data-era="premier" data-year="2017" data-detail="A 2–1 win over Wigan Athletic confirms promotion to the Premier League.">
-                <b>2017</b><h3>Premier League</h3><p>Promotion to the top flight is secured.</p>
-              </article>
-              <article data-era="premier" data-year="2023" data-detail="A sixth-place Premier League finish secures the club’s first European campaign.">
-                <b>2023</b><h3>Europe achieved</h3><p>Albion qualify for Europe for the first time.</p>
-              </article>
-              <article data-era="premier" data-year="2024" data-detail="Albion play a first European knockout tie, extending the club’s most ambitious modern chapter.">
-                <b>2024</b><h3>European knockout football</h3><p>The European adventure reaches the knockout stage.</p>
-              </article>
-              <article class="timeline-memory" data-era="fightback" data-year="1997" data-kind="Memory" data-detail="Supporters remember the final whistle at Hereford as the moment Albion survived and the long fight for the club could continue.">
-                <b>Memory · 1997</b><h3>The final whistle at Hereford</h3><p>Relief, defiance and survival.</p>
-              </article>
-              <article class="timeline-fact" data-era="fightback" data-year="1999" data-kind="Fact" data-detail="Albion played two seasons at Priestfield in Gillingham before returning to Brighton at Withdean in 1999.">
-                <b>Fact · 1997–99</b><h3>Two seasons away</h3><p>Priestfield kept Albion playing before the return home.</p>
-              </article>
-              <article class="timeline-memory" data-era="amex" data-year="2011" data-kind="Memory" data-detail="The first league match at the Amex brought a late comeback against Doncaster Rovers and an emotional homecoming after years of campaigning.">
-                <b>Memory · 2011</b><h3>The first Amex league match</h3><p>A long-awaited homecoming ended in celebration.</p>
-              </article>
-              <article class="timeline-fact" data-era="amex" data-year="2011" data-kind="Fact" data-detail="The North Stand became the principal singing end at the Amex, continuing Albion’s tradition of vocal support behind the goal.">
-                <b>Fact · Amex era</b><h3>The singing end</h3><p>The North Stand drives much of the home atmosphere.</p>
-              </article>
-              <article class="timeline-memory" data-era="premier" data-year="2017" data-kind="Memory" data-detail="Promotion under Chris Hughton in 2017 completed the journey from the brink of non-league football to the Premier League.">
-                <b>Memory · 2017</b><h3>Promotion at the Amex</h3><p>The top-flight dream became real.</p>
-              </article>
-              <article class="timeline-fact" data-era="premier" data-year="2023" data-kind="Fact" data-detail="Albion’s sixth-place Premier League finish in 2022/23 secured the club’s first European campaign.">
-                <b>Fact · 2023</b><h3>First European qualification</h3><p>A highest-ever league finish opened a new chapter.</p>
-              </article>
-            </div>
-            <p class="timeline-help">Swipe the cards, use Previous and Next, or press the left and right arrow keys.</p>
-          </div>
-        </div>
-        <div id="grounds" class="story-panel" role="tabpanel" hidden>
-          <div class="ground-grid">
-            <article>
-              <b>Goldstone Ground</b>
-              <p>Albion’s home from 1902 until 1997.</p>
-            </article>
-            <article>
-              <b>Priestfield Stadium</b>
-              <p>Two seasons ground-sharing at Gillingham.</p>
-            </article>
-            <article>
-              <b>Withdean Stadium</b>
-              <p>The club returned to Brighton in 1999.</p>
-            </article>
-            <article>
-              <b>Amex Stadium</b>
-              <p>The long-awaited Falmer home opened in 2011.</p>
-            </article>
-          </div>
-        </div>
-        <div id="people" class="story-panel" role="tabpanel" hidden>
-          <div class="legend-grid">
-            <article>
-              <div class="shirt">9</div>
-              <b>Peter Ward</b>
-              <p>Goalscoring hero of the late 1970s.</p>
-            </article>
-            <article>
-              <div class="shirt">25</div>
-              <b>Bobby Zamora</b>
-              <p>Central to Albion’s rise through the divisions.</p>
-            </article>
-            <article>
-              <div class="shirt">17</div>
-              <b>Glenn Murray</b>
-              <p>Prolific across two memorable spells.</p>
-            </article>
-            <article>
-              <div class="shirt">5</div>
-              <b>Lewis Dunk</b>
-              <p>Academy graduate, captain and modern-era leader.</p>
-            </article>
-            <article>
-              <div class="shirt">2</div>
-              <b>Bruno</b>
-              <p>Captain and symbol of the Amex era.</p>
-            </article>
-            <article>
-              <div class="shirt">13</div>
-              <b>Pascal Groß</b>
-              <p>Albion’s first Premier League goalscorer.</p>
-            </article>
-          </div>
-        </div>
-        <div
-          id="rivalry"
-          class="story-panel rivalry-panel"
-          role="tabpanel"
-          hidden
-        >
-          <div class="rivalry-hero">
-            <span>SEAGULLS v EAGLES</span>
-            <h3>Brighton and Crystal Palace</h3>
-            <p>
+</div>
+<div aria-label="Interactive Albion timeline" class="timeline-explorer">
+<div class="timeline-nav">
+<button aria-label="Previous Albion milestone" class="ghost" id="timelinePrev" type="button">Previous</button>
+<div aria-hidden="true" class="timeline-progress"><i id="timelineProgress"></i></div>
+<button aria-label="Next Albion milestone" class="ghost" id="timelineNext" type="button">Next</button>
+<button aria-label="Jump to a random Albion fact, memory or milestone" class="ghost timeline-surprise" id="timelineSurprise" type="button">Surprise me</button>
+</div>
+<div aria-label="Swipe or use arrow keys to move through Albion history" class="timeline" id="albionTimeline" tabindex="0">
+<article data-detail="The professional club was established in 1901 and entered the Southern League." data-era="early" data-year="1901">
+<b>1901</b><h3>Albion founded</h3><p>Brighton &amp; Hove Albion are formed.</p>
+</article>
+<article data-detail="As Southern League champions, Albion beat Football League champions Aston Villa 1–0 to claim the Charity Shield." data-era="early" data-year="1910">
+<b>1910</b><h3>Champions of England</h3><p>Southern League title and Charity Shield success.</p>
+</article>
+<article data-detail="Albion become founder members of the Football League Third Division and begin a new national chapter." data-era="early" data-year="1920">
+<b>1920</b><h3>Football League</h3><p>Albion enter the Football League.</p>
+</article>
+<article data-detail="Albion draw 2–2 with Manchester United at Wembley before the FA Cup final replay." data-era="fightback" data-year="1983">
+<b>1983</b><h3>Wembley final</h3><p>Albion reach the FA Cup final.</p>
+</article>
+<article data-detail="Robbie Reinelt’s equaliser at Hereford keeps Albion in the Football League on goals scored." data-era="fightback" data-year="1997">
+<b>1997</b><h3>The great escape</h3><p>League status is secured at Hereford.</p>
+</article>
+<article data-detail="After two seasons at Gillingham, Albion return to Brighton and begin the Withdean years." data-era="fightback" data-year="1999">
+<b>1999</b><h3>Back in Brighton</h3><p>The club returns home at Withdean.</p>
+</article>
+<article data-detail="The first league match at the Amex ends in a dramatic 2–1 win over Doncaster Rovers." data-era="amex" data-year="2011">
+<b>2011</b><h3>The Amex opens</h3><p>The long-awaited Falmer home begins.</p>
+</article>
+<article data-detail="A 2–1 win over Wigan Athletic confirms promotion to the Premier League." data-era="premier" data-year="2017">
+<b>2017</b><h3>Premier League</h3><p>Promotion to the top flight is secured.</p>
+</article>
+<article data-detail="A sixth-place Premier League finish secures the club’s first European campaign." data-era="premier" data-year="2023">
+<b>2023</b><h3>Europe achieved</h3><p>Albion qualify for Europe for the first time.</p>
+</article>
+<article data-detail="Albion play a first European knockout tie, extending the club’s most ambitious modern chapter." data-era="premier" data-year="2024">
+<b>2024</b><h3>European knockout football</h3><p>The European adventure reaches the knockout stage.</p>
+</article>
+<article class="timeline-memory" data-detail="Supporters remember the final whistle at Hereford as the moment Albion survived and the long fight for the club could continue." data-era="fightback" data-kind="Memory" data-year="1997">
+<b>Memory · 1997</b><h3>The final whistle at Hereford</h3><p>Relief, defiance and survival.</p>
+</article>
+<article class="timeline-fact" data-detail="Albion played two seasons at Priestfield in Gillingham before returning to Brighton at Withdean in 1999." data-era="fightback" data-kind="Fact" data-year="1999">
+<b>Fact · 1997–99</b><h3>Two seasons away</h3><p>Priestfield kept Albion playing before the return home.</p>
+</article>
+<article class="timeline-memory" data-detail="The first league match at the Amex brought a late comeback against Doncaster Rovers and an emotional homecoming after years of campaigning." data-era="amex" data-kind="Memory" data-year="2011">
+<b>Memory · 2011</b><h3>The first Amex league match</h3><p>A long-awaited homecoming ended in celebration.</p>
+</article>
+<article class="timeline-fact" data-detail="The North Stand became the principal singing end at the Amex, continuing Albion’s tradition of vocal support behind the goal." data-era="amex" data-kind="Fact" data-year="2011">
+<b>Fact · Amex era</b><h3>The singing end</h3><p>The North Stand drives much of the home atmosphere.</p>
+</article>
+<article class="timeline-memory" data-detail="Promotion under Chris Hughton in 2017 completed the journey from the brink of non-league football to the Premier League." data-era="premier" data-kind="Memory" data-year="2017">
+<b>Memory · 2017</b><h3>Promotion at the Amex</h3><p>The top-flight dream became real.</p>
+</article>
+<article class="timeline-fact" data-detail="Albion’s sixth-place Premier League finish in 2022/23 secured the club’s first European campaign." data-era="premier" data-kind="Fact" data-year="2023">
+<b>Fact · 2023</b><h3>First European qualification</h3><p>A highest-ever league finish opened a new chapter.</p>
+</article>
+</div>
+<p class="timeline-help">Swipe the cards, use Previous and Next, or press the left and right arrow keys.</p>
+</div>
+</div>
+<div class="story-panel" hidden="" id="grounds" role="tabpanel">
+<div class="ground-grid">
+<article>
+<b>Goldstone Ground</b>
+<p>Albion’s home from 1902 until 1997.</p>
+</article>
+<article>
+<b>Priestfield Stadium</b>
+<p>Two seasons ground-sharing at Gillingham.</p>
+</article>
+<article>
+<b>Withdean Stadium</b>
+<p>The club returned to Brighton in 1999.</p>
+</article>
+<article>
+<b>Amex Stadium</b>
+<p>The long-awaited Falmer home opened in 2011.</p>
+</article>
+</div>
+</div>
+<div class="story-panel" hidden="" id="people" role="tabpanel">
+<div class="legend-grid">
+<article>
+<div class="shirt">9</div>
+<b>Peter Ward</b>
+<p>Goalscoring hero of the late 1970s.</p>
+</article>
+<article>
+<div class="shirt">25</div>
+<b>Bobby Zamora</b>
+<p>Central to Albion’s rise through the divisions.</p>
+</article>
+<article>
+<div class="shirt">17</div>
+<b>Glenn Murray</b>
+<p>Prolific across two memorable spells.</p>
+</article>
+<article>
+<div class="shirt">5</div>
+<b>Lewis Dunk</b>
+<p>Academy graduate, captain and modern-era leader.</p>
+</article>
+<article>
+<div class="shirt">2</div>
+<b>Bruno</b>
+<p>Captain and symbol of the Amex era.</p>
+</article>
+<article>
+<div class="shirt">13</div>
+<b>Pascal Groß</b>
+<p>Albion’s first Premier League goalscorer.</p>
+</article>
+</div>
+</div>
+<div class="story-panel rivalry-panel" hidden="" id="rivalry" role="tabpanel">
+<div class="rivalry-hero">
+<span>SEAGULLS v EAGLES</span>
+<h3>Brighton and Crystal Palace</h3>
+<p>
               Albion’s defining rivalry grew through fiercely contested
               meetings, particularly during the 1970s. It remains the fixture
               that carries the greatest emotional weight for many supporters.
             </p>
-          </div>
-          <div class="ground-grid">
-            <article>
-              <b>A rivalry of generations</b>
-              <p>
+</div>
+<div class="ground-grid">
+<article>
+<b>A rivalry of generations</b>
+<p>
                 The intensity has passed from the Goldstone era to the Amex and
                 continues across league and cup meetings.
               </p>
-            </article>
-            <article>
-              <b>More than distance</b>
-              <p>
+</article>
+<article>
+<b>More than distance</b>
+<p>
                 The rivalry is rooted in competition, personalities and
                 memorable matches rather than simple geography.
               </p>
-            </article>
-            <article>
-              <b>Matchday atmosphere</b>
-              <p>
+</article>
+<article>
+<b>Matchday atmosphere</b>
+<p>
                 Home and away meetings bring distinctive noise, colour and
                 tension for both sets of supporters.
               </p>
-            </article>
-            <article>
-              <b>Respect the occasion</b>
-              <p>
+</article>
+<article>
+<b>Respect the occasion</b>
+<p>
                 Support the Albion passionately while respecting fellow
                 supporters, staff and the wider community.
               </p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section class="card" id="records">
-        <div class="section-head">
-          <p class="eyebrow">Club milestones</p>
-          <h2>Records &amp; Honours</h2>
-        </div>
-        <div
-          class="record-tabs"
-          role="tablist"
-          aria-label="Records and honours"
-        >
-          <button
-            class="record-tab active"
-            data-record="club-records"
-            aria-selected="true"
-          >
-            Club records</button
-          ><button
-            class="record-tab ghost"
-            data-record="honours"
-            aria-selected="false"
-          >
-            Honours</button
-          ><button
-            class="record-tab ghost"
-            data-record="premier-milestones"
-            aria-selected="false"
-          >
+</article>
+</div>
+</div>
+</section>
+<section class="card" id="records">
+<div class="section-head">
+<p class="eyebrow">Club milestones</p>
+<h2>Records &amp; Honours</h2>
+</div>
+<div aria-label="Records and honours" class="record-tabs" role="tablist">
+<button aria-selected="true" class="record-tab active" data-record="club-records" type="button">
+            Club records</button><button aria-selected="false" class="record-tab ghost" data-record="honours" type="button">
+            Honours</button><button aria-selected="false" class="record-tab ghost" data-record="premier-milestones" type="button">
             Premier League
           </button>
-        </div>
-        <div id="club-records" class="record-panel records">
-          <article>
-            <span>Record competitive scorer</span><b>Tommy Cook · 123</b>
-          </article>
-          <article>
-            <span>Most appearances</span><b>Ernie “Tug” Wilson · 566</b>
-          </article>
-          <article>
-            <span>Most goals in one season</span><b>Peter Ward · 36</b>
-          </article>
-          <article>
-            <span>First Premier League scorer</span><b>Pascal Groß</b>
-          </article>
-        </div>
-        <div id="honours" class="record-panel records honours-cabinet" hidden>
-          <article data-honour="shield">
-            <span>Major honour</span><b>FA Charity Shield · 1910</b>
-          </article>
-          <article data-honour="league">
-            <span>League titles</span
-            ><b>Third tier · 1957/58, 2001/02, 2010/11</b>
-          </article>
-          <article data-honour="cup"><span>FA Cup</span><b>Runners-up · 1982/83</b></article>
-          <article data-honour="southern">
-            <span>Southern League</span><b>Champions · 1909/10</b>
-          </article>
-        </div>
-        <div id="premier-milestones" class="record-panel records" hidden>
-          <article><span>Promotion secured</span><b>2016/17</b></article>
-          <article>
-            <span>Best top-flight finish</span><b>6th · 2022/23</b>
-          </article>
-          <article>
-            <span>European qualification</span
-            ><b>UEFA Europa League · 2023/24</b>
-          </article>
-          <article>
-            <span>First Premier League scorer</span><b>Pascal Groß · 2017</b>
-          </article>
-        </div>
-      </section>
-
-      <section class="card amex-stand-card" id="amex-stands">
-        <div class="section-head">
-          <p class="eyebrow">First visit</p>
-          <h2>Explore the Amex stands</h2>
-          <p>
+</div>
+<div class="record-panel records" id="club-records">
+<article>
+<span>Record competitive scorer</span><b>Tommy Cook · 123</b>
+</article>
+<article>
+<span>Most appearances</span><b>Ernie “Tug” Wilson · 566</b>
+</article>
+<article>
+<span>Most goals in one season</span><b>Peter Ward · 36</b>
+</article>
+<article>
+<span>First Premier League scorer</span><b>Pascal Groß</b>
+</article>
+</div>
+<div class="record-panel records honours-cabinet" hidden="" id="honours">
+<article data-honour="shield">
+<span>Major honour</span><b>FA Charity Shield · 1910</b>
+</article>
+<article data-honour="league">
+<span>League titles</span><b>Third tier · 1957/58, 2001/02, 2010/11</b>
+</article>
+<article data-honour="cup"><span>FA Cup</span><b>Runners-up · 1982/83</b></article>
+<article data-honour="southern">
+<span>Southern League</span><b>Champions · 1909/10</b>
+</article>
+</div>
+<div class="record-panel records" hidden="" id="premier-milestones">
+<article><span>Promotion secured</span><b>2016/17</b></article>
+<article>
+<span>Best top-flight finish</span><b>6th · 2022/23</b>
+</article>
+<article>
+<span>European qualification</span><b>UEFA Europa League · 2023/24</b>
+</article>
+<article>
+<span>First Premier League scorer</span><b>Pascal Groß · 2017</b>
+</article>
+</div>
+</section>
+<section class="card amex-stand-card" id="amex-stands">
+<div class="section-head">
+<p class="eyebrow">First visit</p>
+<h2>Explore the Amex stands</h2>
+<p>
             Compare each side of the stadium, find the area that best fits your
             matchday and save your preference on this device.
           </p>
-          <div class="ground-capacity">
-            <span>Amex Stadium capacity</span><b>31,876</b>
-            <small
-              >Current published ground capacity. Stand allocations can
-              vary.</small
-            >
-          </div>
-        </div>
-        <div class="stand-finder">
-          <label for="standPreference"
-            >What matters most?
+<div class="ground-capacity">
+<span>Amex Stadium capacity</span><b>31,876</b>
+<small>Current published ground capacity. Stand allocations can
+              vary.</small>
+</div>
+</div>
+<div class="stand-finder">
+<label for="standPreference">What matters most?
             <select id="standPreference">
-              <option value="atmosphere">Home atmosphere</option>
-              <option value="family">Family experience</option>
-              <option value="view">Wide tactical view</option>
-              <option value="visitor">Visiting supporter area</option>
-            </select>
-          </label>
-          <button id="findStand" type="button">Find my stand</button>
-          <strong id="standSuggestion" aria-live="polite"></strong>
-        </div>
-        <div
-          class="amex-map"
-          aria-label="Simplified interactive Amex Stadium map"
-        >
-          <span class="map-view-label">Viewed from above</span>
-          <span class="goal-label north-goal">North goal</span>
-          <span class="goal-label south-goal">South goal</span>
-          <span class="pitch-mini">PITCH</span>
-          <button
-            class="stand north"
-            type="button"
-            data-stand="North"
-            aria-pressed="false"
-          >
-            <b>North</b><small>Home end</small>
-          </button>
-          <button
-            class="stand west"
-            type="button"
-            data-stand="West"
-            aria-pressed="false"
-          >
-            <b>West</b><small>Three levels</small>
-          </button>
-          <button
-            class="stand east"
-            type="button"
-            data-stand="East"
-            aria-pressed="false"
-          >
-            <b>East</b><small>Family areas</small>
-          </button>
-          <button
-            class="stand south"
-            type="button"
-            data-stand="South"
-            aria-pressed="false"
-          >
-            <b>South</b><small>Away allocation</small>
-          </button>
-        </div>
-        <div id="standInfo" class="stand-info">
-          <h3>Choose a stand</h3>
-          <p>Select an area on the stadium map for a fuller orientation.</p>
-        </div>
-        <div class="amex-checklist">
-          <h3>Your Amex matchday checklist</h3>
-          <div>
-            <label
-              ><input type="checkbox" /> Check the entrance number on the
-              ticket</label
-            >
-            <label
-              ><input type="checkbox" /> Plan travel and allow for post-match
-              queues</label
-            >
-            <label
-              ><input type="checkbox" /> Check the latest bag and payment
-              guidance</label
-            >
-            <label
-              ><input type="checkbox" /> Review accessibility arrangements if
-              needed</label
-            >
-          </div>
-        </div>
-        <div class="cta-row stand-links">
-          <a
-            href="https://www.brightonandhovealbion.com/amex-matchday"
-            target="_blank"
-            rel="noopener"
-            >Official Amex matchday guide</a
-          ><a
-            class="secondary"
-            href="https://www.brightonandhovealbion.com/amex-accessibility"
-            target="_blank"
-            rel="noopener"
-            >Official accessibility guide</a
-          >
-        </div>
-      </section>
-
-      <section class="card travel-card" id="travel">
-        <p class="content-freshness" data-freshness="travel">Travel guidance: <b>last checked 26 July 2026</b></p>
-        <div class="section-head">
-          <p class="eyebrow">Detailed matchday guide</p>
-          <h2>Getting to the Amex</h2>
-          <p>
+<option value="atmosphere">Home atmosphere</option>
+<option value="family">Family experience</option>
+<option value="view">Wide tactical view</option>
+<option value="visitor">Visiting supporter area</option>
+</select>
+</label>
+<button id="findStand" type="button">Find my stand</button>
+<strong aria-live="polite" id="standSuggestion"></strong>
+</div>
+<div aria-label="Simplified interactive Amex Stadium map" class="amex-map">
+<span class="map-view-label">Viewed from above</span>
+<span class="goal-label north-goal">North goal</span>
+<span class="goal-label south-goal">South goal</span>
+<span class="pitch-mini">PITCH</span>
+<button aria-pressed="false" class="stand north" data-stand="North" type="button">
+<b>North</b><small>Home end</small>
+</button>
+<button aria-pressed="false" class="stand west" data-stand="West" type="button">
+<b>West</b><small>Three levels</small>
+</button>
+<button aria-pressed="false" class="stand east" data-stand="East" type="button">
+<b>East</b><small>Family areas</small>
+</button>
+<button aria-pressed="false" class="stand south" data-stand="South" type="button">
+<b>South</b><small>Away allocation</small>
+</button>
+</div>
+<div class="stand-info" id="standInfo">
+<h3>Choose a stand</h3>
+<p>Select an area on the stadium map for a fuller orientation.</p>
+</div>
+<div class="amex-checklist">
+<h3>Your Amex matchday checklist</h3>
+<div>
+<label><input type="checkbox"/> Check the entrance number on the
+              ticket</label>
+<label><input type="checkbox"/> Plan travel and allow for post-match
+              queues</label>
+<label><input type="checkbox"/> Check the latest bag and payment
+              guidance</label>
+<label><input type="checkbox"/> Review accessibility arrangements if
+              needed</label>
+</div>
+</div>
+<div class="cta-row stand-links">
+<a href="https://www.brightonandhovealbion.com/amex-matchday" rel="noopener" target="_blank">Official Amex matchday guide</a><a class="secondary" href="https://www.brightonandhovealbion.com/amex-accessibility" rel="noopener" target="_blank">Official accessibility guide</a>
+</div>
+</section>
+<section class="card travel-card" id="travel">
+<p class="content-freshness" data-freshness="travel">Travel guidance: <b>last checked 26 July 2026</b></p>
+<div class="section-head">
+<p class="eyebrow">Detailed matchday guide</p>
+<h2>Getting to the Amex</h2>
+<p>
             Choose a travel method for practical guidance. Arrangements can
             change for each match, so always check the club’s latest update
             before setting off.
           </p>
-        </div>
-        <div class="travel-tabs" role="tablist" aria-label="Travel methods">
-          <button
-            class="travel-tab active"
-            data-travel="train"
-            aria-selected="true"
-          >
-            Train</button
-          ><button
-            class="travel-tab ghost"
-            data-travel="bus"
-            aria-selected="false"
-          >
-            Bus &amp; coach</button
-          ><button
-            class="travel-tab ghost"
-            data-travel="park"
-            aria-selected="false"
-          >
-            Park &amp; ride</button
-          ><button
-            class="travel-tab ghost"
-            data-travel="active"
-            aria-selected="false"
-          >
-            Walk &amp; cycle</button
-          ><button
-            class="travel-tab ghost"
-            data-travel="accessible"
-            aria-selected="false"
-          >
-            Accessible travel</button
-          ><button
-            class="travel-tab ghost"
-            data-travel="away"
-            aria-selected="false"
-          >
+</div>
+<div aria-label="Travel methods" class="travel-tabs" role="tablist">
+<button aria-selected="true" class="travel-tab active" data-travel="train" type="button">
+            Train</button><button aria-selected="false" class="travel-tab ghost" data-travel="bus" type="button">
+            Bus &amp; coach</button><button aria-selected="false" class="travel-tab ghost" data-travel="park" type="button">
+            Park &amp; ride</button><button aria-selected="false" class="travel-tab ghost" data-travel="active" type="button">
+            Walk &amp; cycle</button><button aria-selected="false" class="travel-tab ghost" data-travel="accessible" type="button">
+            Accessible travel</button><button aria-selected="false" class="travel-tab ghost" data-travel="away" type="button">
             Away fans
           </button>
-        </div>
-        <div id="train" class="travel-panel active">
-          <h3>Travel by train</h3>
-          <ul>
-            <li>Falmer station is immediately beside the stadium.</li>
-            <li>
+</div>
+<div class="travel-panel active" id="train">
+<h3>Travel by train</h3>
+<ul>
+<li>Falmer station is immediately beside the stadium.</li>
+<li>
               Services normally run from Brighton and Lewes, but matchday queues
               can be lengthy.
             </li>
-            <li>
+<li>
               Allow extra time before kick-off and after the final whistle.
             </li>
-            <li>Check live railway information before travelling.</li>
-          </ul>
-        </div>
-        <div id="bus" class="travel-panel" hidden>
-          <h3>Bus and coach</h3>
-          <ul>
-            <li>Local buses serve Falmer and the surrounding area.</li>
-            <li>
+<li>Check live railway information before travelling.</li>
+</ul>
+</div>
+<div class="travel-panel" hidden="" id="bus">
+<h3>Bus and coach</h3>
+<ul>
+<li>Local buses serve Falmer and the surrounding area.</li>
+<li>
               Eligible match tickets may include travel within the club’s
               designated travel zone.
             </li>
-            <li>
+<li>
               Pre-booked supporter coaches may operate from several Sussex
               pick-up points.
             </li>
-            <li>Confirm the route and ticket conditions for your match.</li>
-          </ul>
-        </div>
-        <div id="park" class="travel-panel" hidden>
-          <h3>Park and ride</h3>
-          <ul>
-            <li>Park-and-ride sites and opening times can vary by fixture.</li>
-            <li>
+<li>Confirm the route and ticket conditions for your match.</li>
+</ul>
+</div>
+<div class="travel-panel" hidden="" id="park">
+<h3>Park and ride</h3>
+<ul>
+<li>Park-and-ride sites and opening times can vary by fixture.</li>
+<li>
               Do not drive directly to the stadium without pre-arranged parking.
             </li>
-            <li>
+<li>
               Follow the club’s match-specific travel notice and local signs.
             </li>
-            <li>Leave time for the return queue after the match.</li>
-          </ul>
-        </div>
-        <div id="active" class="travel-panel" hidden>
-          <h3>Walking and cycling</h3>
-          <ul>
-            <li>
+<li>Leave time for the return queue after the match.</li>
+</ul>
+</div>
+<div class="travel-panel" hidden="" id="active">
+<h3>Walking and cycling</h3>
+<ul>
+<li>
               The stadium can be reached using signed routes around Falmer.
             </li>
-            <li>Cycle parking is available, but bring a suitable lock.</li>
-            <li>Use well-lit routes and allow for large pedestrian crowds.</li>
-            <li>Check weather conditions before setting off.</li>
-          </ul>
-        </div>
-        <div id="accessible" class="travel-panel" hidden>
-          <h3>Accessible travel</h3>
-          <ul>
-            <li>
+<li>Cycle parking is available, but bring a suitable lock.</li>
+<li>Use well-lit routes and allow for large pedestrian crowds.</li>
+<li>Check weather conditions before setting off.</li>
+</ul>
+</div>
+<div class="travel-panel" hidden="" id="accessible">
+<h3>Accessible travel</h3>
+<ul>
+<li>
               Plan assistance with the relevant transport operator in advance.
             </li>
-            <li>Accessible parking must normally be booked before matchday.</li>
-            <li>
+<li>Accessible parking must normally be booked before matchday.</li>
+<li>
               Contact the club for current drop-off, wheelchair and mobility
               guidance.
             </li>
-            <li>Allow additional time when leaving the stadium.</li>
-          </ul>
-        </div>
-        <div id="away" class="travel-panel" hidden>
-          <h3>Visiting supporters</h3>
-          <ul>
-            <li>
+<li>Allow additional time when leaving the stadium.</li>
+</ul>
+</div>
+<div class="travel-panel" hidden="" id="away">
+<h3>Visiting supporters</h3>
+<ul>
+<li>
               Check the visiting-fan guide and your ticket for the correct
               entrance.
             </li>
-            <li>
+<li>
               Use official travel information rather than relying on ordinary
               non-matchday routes.
             </li>
-            <li>Parking near the stadium is extremely limited.</li>
-            <li>Follow steward directions when leaving the away section.</li>
-          </ul>
-        </div>
-        <div class="cta-row">
-          <a
-            href="https://www.brightonandhovealbion.com/amex-travel"
-            target="_blank"
-            rel="noopener"
-            >Official travel information</a
-          ><a
-            class="secondary"
-            href="https://www.brightonandhovealbion.com/fans-matchday-at-the-amex"
-            target="_blank"
-            rel="noopener"
-            >Amex matchday guide</a
-          >
-        </div>
-      </section>
-
-      <section class="card glossary-card" id="glossary">
-        <div class="section-head">
-          <p class="eyebrow">New supporter guide</p>
-          <h2>Albion glossary</h2>
-          <p>Useful names and phrases heard around the club and the Amex.</p>
-        </div>
-        <div class="glossary-grid">
-          <details open>
-            <summary>Albion</summary>
-            <p>The traditional short name for Brighton &amp; Hove Albion.</p>
-          </details>
-          <details>
-            <summary>Seagulls</summary>
-            <p>The club nickname and the reply in the “Seagulls!” chant.</p>
-          </details>
-          <details>
-            <summary>The Amex</summary>
-            <p>The American Express Stadium at Falmer, Albion’s home since 2011.</p>
-          </details>
-          <details>
-            <summary>Sussex by the Sea</summary>
-            <p>The county song adopted as Albion’s anthem.</p>
-          </details>
-          <details>
-            <summary>North Stand</summary>
-            <p>The home end behind the goal, known for leading the atmosphere.</p>
-          </details>
-          <details>
-            <summary>M23 derby</summary>
-            <p>A common modern label for Albion’s rivalry with Crystal Palace.</p>
-          </details>
-        </div>
-      </section>
-
-      <section class="card supporter-settings" id="supporter-settings">
-        <div class="section-head">
-          <p class="eyebrow">Your device</p>
-          <h2>Accessibility, data and site health</h2>
-          <p>
+<li>Parking near the stadium is extremely limited.</li>
+<li>Follow steward directions when leaving the away section.</li>
+</ul>
+</div>
+<div class="cta-row">
+<a href="https://www.brightonandhovealbion.com/amex-travel" rel="noopener" target="_blank">Official travel information</a><a class="secondary" href="https://www.brightonandhovealbion.com/fans-matchday-at-the-amex" rel="noopener" target="_blank">Amex matchday guide</a>
+</div>
+</section>
+<section class="card glossary-card" id="glossary">
+<div class="section-head">
+<p class="eyebrow">New supporter guide</p>
+<h2>Albion glossary</h2>
+<p>Useful names and phrases heard around the club and the Amex.</p>
+</div>
+<div class="glossary-grid">
+<details open="">
+<summary>Albion</summary>
+<p>The traditional short name for Brighton &amp; Hove Albion.</p>
+</details>
+<details>
+<summary>Seagulls</summary>
+<p>The club nickname and the reply in the “Seagulls!” chant.</p>
+</details>
+<details>
+<summary>The Amex</summary>
+<p>The American Express Stadium at Falmer, Albion’s home since 2011.</p>
+</details>
+<details>
+<summary>Sussex by the Sea</summary>
+<p>The county song adopted as Albion’s anthem.</p>
+</details>
+<details>
+<summary>North Stand</summary>
+<p>The home end behind the goal, known for leading the atmosphere.</p>
+</details>
+<details>
+<summary>M23 derby</summary>
+<p>A common modern label for Albion’s rivalry with Crystal Palace.</p>
+</details>
+</div>
+</section>
+<section class="card supporter-settings" id="supporter-settings">
+<div class="section-head">
+<p class="eyebrow">Your device</p>
+<h2>Accessibility, data and site health</h2>
+<p>
             These preferences stay on this device. No account or external
             database is used.
           </p>
-          <button id="closeSettings" class="ghost settings-close" type="button">
+<button class="ghost settings-close" id="closeSettings" type="button">
             Close settings
           </button>
-        </div>
-        <div class="settings-grid">
-          <section>
-            <h3>Display and controls</h3>
-            <label
-              ><input id="largeTextSetting" type="checkbox" /> Larger text and
-              controls</label
-            ><label
-              ><input id="highContrastSetting" type="checkbox" /> Stronger
-              contrast</label
-            ><label
-              ><input id="reduceMotionSetting" type="checkbox" /> Reduce
-              animations</label
-            ><label
-              ><input id="dataSaverSetting" type="checkbox" /> Reduced-data
-              mode</label
-            >
-          </section>
-          <section>
-            <h3>Save or move your choices</h3>
-            <p>
+</div>
+<div class="settings-grid">
+<section>
+<h3>Display and controls</h3>
+<label><input id="largeTextSetting" type="checkbox"/> Larger text and
+              controls</label><label><input id="highContrastSetting" type="checkbox"/> Stronger
+              contrast</label><label><input id="reduceMotionSetting" type="checkbox"/> Reduce
+              animations</label><label><input id="dataSaverSetting" type="checkbox"/> Reduced-data
+              mode</label>
+</section>
+<section>
+<h3>Save or move your choices</h3>
+<p>
               Export your quiz record, predictions, XI, stand and preferences,
               then restore them on another device.
             </p>
-            <div class="button-row">
-              <button id="exportFanData" type="button">Export my data</button>
-              <label class="button-file"
-                >Restore data<input
-                  id="importFanData"
-                  type="file"
-                  accept="application/json"
-              /></label>
-            </div>
-            <p id="dataTransferStatus" class="small" aria-live="polite"></p>
-          </section>
-          <section>
-            <h3>Diagnostics</h3>
-            <p id="diagnosticStatus">Checking locally saved information…</p>
-            <button id="runDiagnostics" class="ghost" type="button">
+<div class="button-row">
+<button id="exportFanData" type="button">Export my data</button>
+<label class="button-file">Restore data<input accept="application/json" id="importFanData" type="file"/></label>
+</div>
+<p aria-live="polite" class="small" id="dataTransferStatus"></p>
+</section>
+<section>
+<h3>Diagnostics</h3>
+<p id="diagnosticStatus">Checking locally saved information…</p>
+<button class="ghost" id="runDiagnostics" type="button">
               Run site checks
             </button>
-            <p id="connectionStatus" class="small" role="status"></p>
-          </section>
-          <section class="reset-controls">
-            <h3>Reset saved choices</h3>
-            <p>Clear one part of your profile without losing everything else.</p>
-            <div class="button-row">
-              <button type="button" class="ghost" data-reset-group="quiz">
+<p class="small" id="connectionStatus" role="status"></p>
+</section>
+<section class="reset-controls">
+<h3>Reset saved choices</h3>
+<p>Clear one part of your profile without losing everything else.</p>
+<div class="button-row">
+<button class="ghost" data-reset-group="quiz" type="button">
                 Quiz
               </button>
-              <button type="button" class="ghost" data-reset-group="penalties">
+<button class="ghost" data-reset-group="penalties" type="button">
                 Penalties
               </button>
-              <button type="button" class="ghost" data-reset-group="predictions">
+<button class="ghost" data-reset-group="predictions" type="button">
                 Predictions
               </button>
-              <button type="button" class="ghost" data-reset-group="team">
+<button class="ghost" data-reset-group="team" type="button">
                 XI and tactics
               </button>
-              <button type="button" class="ghost" data-reset-group="display">
+<button class="ghost" data-reset-group="display" type="button">
                 Display and sound
               </button>
-            </div>
-            <p id="resetStatus" class="small" aria-live="polite"></p>
-          </section>
-        </div>
-      </section>
-
-      <section class="card links">
-        <h2>Useful links</h2>
-        <div class="cta-row">
-          <a
-            href="https://www.brightonandhovealbion.com/"
-            target="_blank"
-            rel="noopener"
-            >Official Albion site</a
-          ><a
-            class="secondary"
-            href="https://www.brightonandhovealbion.com/first-team-men-squad"
-            target="_blank"
-            rel="noopener"
-            >Current squad</a
-          ><a
-            class="secondary"
-            href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
-            target="_blank"
-            rel="noopener"
-            >Official fixtures</a
-          ><button id="installApp" class="secondary" type="button" hidden>
-            Install Albion Hub</button
-          ><a class="secondary" href="#supporter-settings"
-            >Accessibility and data</a
-          >
-        </div>
-        <details class="source-links">
-          <summary>Information sources</summary>
-          <div>
-            <a
-              href="https://www.premierleague.com/en/news/407541"
-              target="_blank"
-              rel="noopener"
-              >Premier League Amex stadium guide</a
-            >
-            <a
-              href="https://www.brightonandhovealbion.com/phase-three"
-              target="_blank"
-              rel="noopener"
-              >Official stadium improvements</a
-            >
-            <a
-              href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
-              target="_blank"
-              rel="noopener"
-              >Official fixtures</a
-            >
-            <a
-              href="https://www.brightonandhovealbion.com/first-team-men-squad"
-              target="_blank"
-              rel="noopener"
-              >Official first-team squad</a
-            >
-            <a
-              href="https://www.brightonandhovealbion.com/amex-accessibility"
-              target="_blank"
-              rel="noopener"
-              >Official accessibility guide</a
-            >
-          </div>
-        </details>
-      </section>
-    </main>
-    <nav class="mobile-jump-nav" aria-label="Quick section navigation">
-      <a href="#quiz">Quiz</a><a href="#shootout">Pens</a
-      ><a href="#match-centre">Match</a><a href="#xi">XI</a
-      ><a href="#story">Story</a>
-    </nav>
-    <button
-      id="settingsToggle"
-      class="settings-toggle"
-      type="button"
-      aria-controls="supporter-settings"
-      aria-expanded="false"
-    >
+</div>
+<p aria-live="polite" class="small" id="resetStatus"></p>
+</section>
+</div>
+</section>
+<section class="card links">
+<h2>Useful links</h2>
+<div class="cta-row">
+<a href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a><a class="secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Current squad</a><a class="secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official fixtures</a><button class="secondary" hidden="" id="installApp" type="button">
+            Install Albion Hub</button><a class="secondary" href="#supporter-settings">Accessibility and data</a>
+</div>
+<details class="source-links">
+<summary>Information sources</summary>
+<div>
+<a href="https://www.premierleague.com/en/news/407541" rel="noopener" target="_blank">Premier League Amex stadium guide</a>
+<a href="https://www.brightonandhovealbion.com/phase-three" rel="noopener" target="_blank">Official stadium improvements</a>
+<a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official fixtures</a>
+<a href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official first-team squad</a>
+<a href="https://www.brightonandhovealbion.com/amex-accessibility" rel="noopener" target="_blank">Official accessibility guide</a>
+</div>
+</details>
+</section>
+</main>
+<nav aria-label="Quick section navigation" class="mobile-jump-nav">
+<a href="#quiz">Quiz</a><a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#xi">XI</a><a href="#story">Story</a>
+</nav>
+<button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">
       ⚙ Settings
     </button>
-    <button
-      id="soundToggle"
-      class="sound-toggle sound-off"
-      type="button"
-      aria-pressed="false"
-      title="Turn site sound on"
-    >
+<button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">
       🔇 Site sound off
     </button>
-    <div
-      id="soundCaption"
-      class="sound-caption"
-      role="status"
-      aria-live="polite"
-      hidden
-    ></div>
-    <button
-      id="backToTop"
-      class="back-to-top"
-      type="button"
-      aria-label="Back to top"
-    >
+<div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
+<button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">
       ↑
     </button>
-    <aside id="updateNotice" class="update-notice" role="status" hidden>
-      <span>A newer version of the Albion Fan Hub is downloaded and ready.</span
-      ><button id="reloadUpdate" type="button">Update site</button>
-    </aside>
-    <div
-      id="siteToast"
-      class="site-toast"
-      role="status"
-      aria-live="polite"
-      hidden
-    ></div>
-    <aside id="tourCoach" class="tour-coach" hidden aria-live="polite">
-      <b id="tourTitle">Welcome</b>
-      <p id="tourText"></p>
-      <div>
-        <button id="tourPrevious" class="ghost" type="button">Previous</button>
-        <span id="tourPosition"></span>
-        <button id="tourNext" type="button">Next</button>
-        <button id="tourClose" class="ghost" type="button">Close</button>
-      </div>
-    </aside>
-    <div id="cookieNotice" class="cookie-notice" role="status">
-      <p>
+<aside class="update-notice" hidden="" id="updateNotice" role="status">
+<span>A newer version of the Albion Fan Hub is downloaded and ready.</span><button id="reloadUpdate" type="button">Update site</button>
+</aside>
+<div aria-live="polite" class="site-toast" hidden="" id="siteToast" role="status"></div>
+<aside aria-live="polite" class="tour-coach" hidden="" id="tourCoach">
+<b id="tourTitle">Welcome</b>
+<p id="tourText"></p>
+<div>
+<button class="ghost" id="tourPrevious" type="button">Previous</button>
+<span id="tourPosition"></span>
+<button id="tourNext" type="button">Next</button>
+<button class="ghost" id="tourClose" type="button">Close</button>
+</div>
+</aside>
+<div class="cookie-notice" id="cookieNotice" role="status">
+<p>
         This fan site stores quiz progress, predictions and sound preferences on
         your device. <a href="cookies.html">Cookies and storage</a>
-      </p>
-      <button id="acceptCookies" type="button">OK</button>
-    </div>
-    <footer>
-      <div class="footer-grid">
-        <section>
-          <b>Albion Fan Hub</b>
-          <p>
+</p>
+<button id="acceptCookies" type="button">OK</button>
+</div>
+<footer>
+<div class="footer-grid">
+<section>
+<b>Albion Fan Hub</b>
+<p>
             Unofficial Brighton &amp; Hove Albion supporter site. Built by
             Richard Freedman.
           </p>
-        </section>
-        <section>
-          <b>Official Albion</b>
-          <p>
-            <a
-              href="https://www.brightonandhovealbion.com/"
-              target="_blank"
-              rel="noopener"
-              >Club website</a
-            ><br /><a
-              href="https://www.brightonandhovealbion.com/fixtures-first-team-men"
-              target="_blank"
-              rel="noopener"
-              >Official fixtures</a
-            ><br /><a
-              href="https://www.brightonandhovealbion.com/amex-travel"
-              target="_blank"
-              rel="noopener"
-              >Travel information</a
-            >
-          </p>
-        </section>
-        <section>
-          <b>Site information</b>
-          <p>
-            <a href="privacy.html">Privacy</a><br /><a href="cookies.html"
-              >Cookies and storage</a
-            ><br /><a href="copyright.html">Copyright</a><br /><a
-              href="contact.html"
-              >Contact</a
-            >
-          </p>
-          <button id="resetSite" class="footer-reset" type="button">
+</section>
+<section>
+<b>Official Albion</b>
+<p>
+<a href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Club website</a><br/><a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official fixtures</a><br/><a href="https://www.brightonandhovealbion.com/amex-travel" rel="noopener" target="_blank">Travel information</a>
+</p>
+</section>
+<section>
+<b>Site information</b>
+<p>
+<a href="privacy.html">Privacy</a><br/><a href="cookies.html">Cookies and storage</a><br/><a href="copyright.html">Copyright</a><br/><a href="contact.html">Contact</a>
+</p>
+<button class="footer-reset" id="resetSite" type="button">
             Reset saved choices
           </button>
-        </section>
-      </div>
-      <p class="footer-copy">© 2026 Albion Fan Hub</p>
-    </footer>
-    <script src="content-data.js?v=20260726-r28"></script>
-    <script src="quiz-data.js?v=20260726-r28"></script>
-    <script src="app.js?v=20260726-r28"></script>
-    <script src="release-fixes.js?v=20260726-r28"></script>
-    <script src="shootout.js?v=20260726-r28"></script>
-    <script src="polish.js?v=20260726-r28"></script>
-  </body>
+</section>
+</div>
+<p class="footer-copy">© 2026 Albion Fan Hub</p>
+</footer>
+<script src="content-data.js?v=20260726-r29"></script>
+<script src="quiz-data.js?v=20260726-r29"></script>
+<script src="app.js?v=20260726-r29"></script>
+<script src="shootout.js?v=20260726-r29"></script>
+</body>
 </html>

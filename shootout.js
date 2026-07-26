@@ -1,4 +1,4 @@
-// Albion Fan Hub r28 clean production shoot-out
+// Albion Fan Hub r29 clean production shoot-out
 (() => {
   "use strict";
 
@@ -152,8 +152,6 @@
   let audioContext = null;
   let currentAnimations = [];
   let keeperRoutineIndex = 0;
-  let crossbarRoutineBag = [];
-  let bottleRoutineBag = [];
   let runUpProfileBag = [];
   let lastRunUpProfile = "";
   let chantIndex = -1;
@@ -1797,9 +1795,6 @@
     });
   }
 
-  function nextBottleRoutine() {
-    return true;
-  }
 
   async function keeperBottleRoutine(token) {
     if (!keeperBottle) return keeperSettleRoutine(token);
@@ -1809,7 +1804,7 @@
     const keeperRect = keeper.getBoundingClientRect();
     const bottleRect = keeperBottle.getBoundingClientRect();
     const delta = bottleRect.left + bottleRect.width * .5 - (keeperRect.left + keeperRect.width * .5) + Math.max(10, keeperRect.width * .18);
-    const duration = reducedMotion() ? 420 : 5200;
+    const duration = reducedMotion() ? 420 : (state.palaceKicks === 0 ? 5000 : 3500);
     const body = keeper.querySelector('.keeper-body-group');
     const head = keeper.querySelector('.keeper-head-group');
     const leftArm = keeper.querySelector('.keeper-arm-left');
@@ -1858,16 +1853,6 @@
     return true;
   }
 
-  function nextCrossbarRoutine() {
-    if (!crossbarRoutineBag.length) {
-      crossbarRoutineBag = [true, true, false];
-      for (let i = crossbarRoutineBag.length - 1; i > 0; i -= 1) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [crossbarRoutineBag[i], crossbarRoutineBag[j]] = [crossbarRoutineBag[j], crossbarRoutineBag[i]];
-      }
-    }
-    return crossbarRoutineBag.pop();
-  }
 
   async function keeperRoutine(kind, token) {
     if (kind !== "palace") return keeperSettleRoutine(token);
@@ -1914,13 +1899,15 @@
 
   async function preKickCeremony(side, token) {
     crowdReaction("crowd-hush");
-    setStatus("The ball is set", side === "albion" ? "The referee checks the spot and the Palace goalkeeper." : "Verbruggen checks his bottle notes or the frame, then settles on the goal line.");
+    setStatus("The ball is set", side === "albion" ? "The referee checks the spot and the Palace goalkeeper." : "Verbruggen reads his notes, checks the crossbar and returns to the goal line.");
     if (!(await animateBallPlacement(side, token))) return false;
     setStatus("Referee checks the penalty", side === "albion" ? "The Palace goalkeeper stays on the line." : "Verbruggen finishes his routine, returns to the line and faces the taker.");
     const ok = await Promise.all([keeperRoutine(side, token), refereeCheck(token)]);
     if (token !== state.sequence || ok.includes(false)) return false;
-    sound("whistle");
-    await sleep(reducedMotion() ? 70 : 180);
+    if (side === "albion") {
+      sound("whistle");
+      await sleep(reducedMotion() ? 70 : 180);
+    }
     return token === state.sequence;
   }
 
@@ -2179,6 +2166,9 @@
     state.palaceTarget = plan.target;
     state.palaceMiss = plan.miss;
     if (!(await preKickCeremony("palace", token))) return;
+    sound("whistle");
+    await sleep(reducedMotion() ? 70 : 180);
+    if (token !== state.sequence) return;
 
     const settings = config();
     const runDuration = Math.round(player.delay * settings.runUpScale);

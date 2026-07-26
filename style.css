@@ -2781,3 +2781,92 @@ button,.cta-row a,input,select{border-radius:var(--control-radius)}
   body.shootout-playing .shootout-option-row .small{display:none}
   .placing-ball .penalty-ball{filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
 }
+
+
+/* Consolidated from release-fixes.css for r29 */
+/* Release 13 utility styles for diagnostics and repaired controls. */
+.diagnostic-results{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:10px}
+.diagnostic-results i{display:block;padding:7px 9px;border-radius:8px;font-style:normal;background:#eef5fb}
+.diagnostic-results .pass{color:#126b43}.diagnostic-results .fail{color:#a62d35}
+.night-theme .diagnostic-results i{background:#173d5d}.night-theme .diagnostic-results .pass{color:#80e3b7}.night-theme .diagnostic-results .fail{color:#ff9da9}
+@media(max-width:700px){.diagnostic-results{grid-template-columns:1fr}}
+
+
+
+/* Consolidated from polish.css for r29 */
+/* Albion Fan Hub v10 interaction and visual polish. */
+html{scroll-padding-top:92px}
+body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main>section[id]{scroll-margin-top:92px}
+.nav-links a,.mobile-jump-nav a{position:relative;border-radius:8px;transition:background-color .18s ease,color .18s ease,transform .18s ease}
+.nav-links a.active{background:rgba(255,255,255,.17);padding:5px 9px;margin:-5px -9px}
+.mobile-jump-nav a.active{background:#0057b8;color:#fff}
+button,input,select,a{transition:filter .16s ease,transform .16s ease,box-shadow .16s ease}
+button:active,.cta-row a:active{transform:translateY(1px)}
+button[disabled]{cursor:not-allowed;opacity:.55;filter:none}
+.card{transition:border-color .2s ease,box-shadow .2s ease,transform .2s ease}
+@media(hover:hover) and (pointer:fine){.card:not(.shootout-v17):hover{border-color:#c5d9eb;box-shadow:0 10px 27px rgba(5,55,107,.075)}}
+.card.reveal-ready{opacity:0;transform:translateY(12px)}.card.reveal-ready.in-view{opacity:1;transform:none}
+.quiz-card .button-row{min-height:44px}.quiz-card #newQuiz[hidden]{display:none}.quiz-card .quiz-question{box-shadow:0 6px 18px rgba(5,55,107,.045)}
+.quiz-card .quiz-question label{min-height:45px;display:flex;align-items:center;gap:9px;cursor:pointer}.quiz-card .quiz-question input{width:18px;height:18px;flex:0 0 auto;accent-color:#0057b8}
+.quiz-card .quiz-feedback:empty{display:none}.quiz-card .quiz-progress-track{height:8px;overflow:hidden}.quiz-card .quiz-progress-track i{transition:width .25s ease}
+.quiz-card.quiz-complete{border-color:#9fcdb2}.quiz-card.quiz-complete .quiz-banner{background:#f1fbf5}
+.settings-toggle,.sound-toggle,.back-to-top{backdrop-filter:blur(10px)}
+.mobile-jump-nav{box-shadow:0 -5px 22px rgba(5,55,107,.14)}
+[data-polish-label]{position:relative}
+.visually-hidden-polish{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.site-smooth-status{display:inline-flex;align-items:center;gap:5px;font-size:.7rem;color:var(--muted)}
+.site-smooth-status:before{content:"";width:7px;height:7px;border-radius:50%;background:#36a269}
+@media(max-width:760px){html{scroll-padding-top:68px}main>section[id]{scroll-margin-top:68px}.card{content-visibility:auto;contain-intrinsic-size:700px}.card:first-of-type,.quiz-card,.shootout-v17{content-visibility:visible}.nav-links a.active{background:#eaf4ff;color:#05376b;margin:0;padding:7px 9px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.card,.nav-links a,.mobile-jump-nav a,button,input,select,a,.quiz-card .quiz-progress-track i{transition:none!important}.card.reveal-ready{opacity:1;transform:none}}
+.user-reduce-motion .card,.user-reduce-motion .nav-links a,.user-reduce-motion .mobile-jump-nav a,.user-reduce-motion button,.user-reduce-motion input,.user-reduce-motion select,.user-reduce-motion a{transition:none!important}.user-reduce-motion .card.reveal-ready{opacity:1;transform:none}
+@media(max-width:760px){body.shootout-in-view .sound-toggle,body.shootout-in-view .settings-toggle{opacity:0;pointer-events:none;transform:translateY(10px)}body.shootout-in-view .back-to-top{opacity:0!important;pointer-events:none!important}}
+.penalty-stage.palace-kick .taker-shirt{fill:#b51f35}.penalty-stage.palace-kick .taker-sleeve{fill:#1b58a7}.penalty-stage.palace-kick .taker-shorts{fill:#173d74}.penalty-stage.palace-kick .taker-sock{fill:#d9e7f4}
+body.shootout-in-view .sound-toggle{opacity:0;pointer-events:none;transform:translateY(10px)}
+@media(min-width:761px){body.shootout-in-view .settings-toggle{opacity:.55}}
+
+/* Release 17 whole-site smoothness and interaction polish. */
+html{scroll-behavior:smooth;scroll-padding-top:88px}
+main>section[id]{scroll-margin-top:96px}
+button,a,input,select{touch-action:manipulation}
+button,.button,a.cta,.ghost{transition:transform .16s ease,box-shadow .16s ease,background-color .16s ease,border-color .16s ease,color .16s ease}
+@media(hover:hover){button:hover,.button:hover,a.cta:hover,.ghost:hover{transform:translateY(-1px)}}
+button:active,.button:active,a.cta:active,.ghost:active{transform:translateY(0) scale(.99)}
+:focus-visible{outline:3px solid #ffd23f;outline-offset:3px}
+main>.card{content-visibility:auto;contain-intrinsic-size:700px}
+main>#quiz,main>#shootout,main>.hero-card{content-visibility:visible;contain-intrinsic-size:auto}
+img,svg{max-width:100%}
+[hidden]{display:none!important}
+@media(max-width:760px){html{scroll-padding-top:72px}main>section[id]{scroll-margin-top:78px}.card{border-radius:18px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button,.button,a.cta,.ghost{transition:none!important}}
+
+@media(max-width:760px){
+  body.shootout-in-view .settings-toggle,
+  body.shootout-in-view .sound-toggle,
+  body.shootout-in-view .back-to-top{opacity:0!important;visibility:hidden!important;pointer-events:none!important;transform:translateY(18px)!important}
+  body.shootout-in-view .cookie-notice{left:auto;right:8px;bottom:calc(60px + env(safe-area-inset-bottom));transform:none;width:min(300px,calc(100% - 16px));padding:8px 9px;gap:8px;border-radius:12px}
+  body.shootout-in-view .cookie-notice p{font-size:.68rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  body.shootout-in-view .cookie-notice button{min-width:48px;min-height:40px;padding:7px 10px}
+}
+
+/* Keep the one-time storage notice away from the playable goal. */
+@media(min-width:761px){
+  body.shootout-in-view .cookie-notice{left:14px;right:auto;bottom:14px;transform:none;width:min(330px,calc(100% - 28px));padding:9px 11px;gap:9px}
+  body.shootout-in-view .cookie-notice p{font-size:.72rem;line-height:1.35}
+}
+@media(max-width:760px){
+  body.shootout-in-view .cookie-notice{left:auto;right:8px;top:74px;bottom:auto;transform:none;width:min(238px,calc(100% - 16px));padding:7px 8px;gap:7px;border-radius:11px}
+  body.shootout-in-view .cookie-notice p{font-size:.64rem;line-height:1.24;-webkit-line-clamp:2}
+  body.shootout-in-view .cookie-notice button{min-width:42px;min-height:36px;padding:5px 8px}
+}
+
+/* Floating utilities must never cover the game or its Penalty Story report. */
+body.shootout-in-view .settings-toggle,
+body.shootout-in-view .back-to-top{opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+
+/* Release 17 whole-site overlap and compactness pass. */
+body.shootout-in-view .settings-fab,body.shootout-in-view .back-to-top,body.shootout-in-view .sound-fab{opacity:.18;pointer-events:none;transform:translateY(10px)}
+#shootout .shootout-lead{max-width:760px}
+@media(max-width:760px){.matchday-quick-view{grid-template-columns:1fr 1fr}.fan-control-centre .control-centre-grid{grid-template-columns:1fr}.supporter-profile-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.matchday-quick-view,.supporter-profile-grid{grid-template-columns:1fr}}
+
