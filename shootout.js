@@ -26,7 +26,7 @@
   const celebrationPlayers = $("celebrationPlayers");
   const confetti = $("shootoutConfetti");
 
-  const goalBox = { left: 0.16, top: 0.12, width: 0.68, height: 0.365 };
+  const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
 
   function syncGoalBox() {
@@ -47,18 +47,18 @@
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
   const GAME = Object.freeze({
-    shotSpread: 0.0035,
-    keeperNoise: 0.34,
-    keeperReach: 0.096,
-    palaceMiss: 0.16,
-    saveRadius: 0.52,
-    preContactWindow: 460,
-    postContactWindow: 900,
-    flight: 830,
-    runUpScale: 1,
-    cueStrength: 0.72,
-    diveAssist: 0.78,
-    sameSideBonus: 0.205,
+    shotSpread: 0.0022,
+    keeperNoise: 0.42,
+    keeperReach: 0.115,
+    palaceMiss: 0.18,
+    saveRadius: 0.66,
+    preContactWindow: 720,
+    postContactWindow: 1220,
+    flight: 880,
+    runUpScale: 1.04,
+    cueStrength: 0.78,
+    diveAssist: 0.88,
+    sameSideBonus: 0.29,
   });
 
   const albionTakers = [
@@ -109,6 +109,7 @@
     pointerStart: null,
     pointerLast: null,
     activePointerId: null,
+    pendingDive: null,
   };
 
   let audioContext = null;
@@ -296,9 +297,9 @@
 
   function showDecision(label, type) {
     decision.textContent = label;
-    decision.className = `kick-decision-v10 ${type}`;
+    decision.className = `kick-decision-v10 result-${type}`;
     decision.hidden = false;
-    window.setTimeout(() => { decision.hidden = true; }, reducedMotion() ? 520 : 900);
+    window.setTimeout(() => { decision.hidden = true; }, reducedMotion() ? 520 : 1050);
   }
 
   function setReticle(nx, ny) {
@@ -388,8 +389,8 @@
     taker.style.opacity = "1";
     taker.style.visibility = "";
     taker.style.transform = "translate(-50%,0)";
-    referee.style.left = "82.2%";
-    referee.style.top = "41.5%";
+    referee.style.left = "89%";
+    referee.style.top = "42.8%";
     referee.style.transform = "translate(-50%,0)";
     keeper.style.opacity = "1";
     keeper.querySelectorAll(".keeper-arm,.keeper-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
@@ -572,12 +573,12 @@
     const baseGloveX = stageWidth * .5 + (gloveXRatio - .5) * keeperWidth;
     const baseGloveY = baseTop + gloveYRatio * keeperHeight;
     const goalWidth = goalBox.width * stageWidth;
-    let dx = (targetX - baseGloveX) * (direction ? 1.1 : .45);
+    let dx = (targetX - baseGloveX) * (direction ? 1.22 : .48);
     let dy = (targetY - baseGloveY) * (direction ? .96 : .62);
-    dx = clamp(dx, -goalWidth * .49, goalWidth * .49);
+    dx = clamp(dx, -goalWidth * .57, goalWidth * .57);
     dy = clamp(dy, -keeperHeight * .78, keeperHeight * .34);
-    if (wide) dx += direction * goalWidth * .05;
-    if (extreme) dx += direction * goalWidth * .025;
+    if (wide) dx += direction * goalWidth * .07;
+    if (extreme) dx += direction * goalWidth * .04;
     if (high) dy -= keeperHeight * .07;
 
     const leftArm = keeper.querySelector(".keeper-arm-left");
@@ -592,10 +593,10 @@
     const trailLeg = direction < 0 ? leftLeg : direction > 0 ? rightLeg : null;
     const leadAngle = direction < 0 ? -132 : 132;
     const trailAngle = direction < 0 ? -96 : 96;
-    const bodyRotation = direction * (low ? 76 : high ? 70 : 73);
+    const bodyRotation = direction * (low ? 78 : high ? 82 : 80);
     const landingY = dy + (low ? keeperHeight * .2 : keeperHeight * .12);
-    const extension = extreme ? 1.22 : wide || high ? 1.16 : 1.075;
-    const totalDuration = Math.max(duration, extreme ? 900 : 800);
+    const extension = extreme ? 1.29 : wide || high ? 1.21 : 1.09;
+    const totalDuration = Math.max(duration, extreme ? 980 : wide ? 900 : 820);
 
     if (pushLeg) animateElement(pushLeg, [
       { transform: "rotate(0deg) translateY(0) scaleY(1)" },
@@ -786,14 +787,13 @@
     const root = taker.querySelector(".taker-root");
     const duration = reducedMotion() ? 160 : 920;
     if (scored) {
-      stage.classList.add("goal-celebration");
       if (root) animateElement(root,[{transform:"rotate(0deg)"},{transform:`rotate(${side === "albion" ? -5 : 5}deg)`,offset:.58},{transform:`rotate(${side === "albion" ? -8 : 8}deg)`}],{duration});
       if (leftArm) animateElement(leftArm,[{transform:"rotate(0deg)"},{transform:"rotate(-46deg)",offset:.45},{transform:"rotate(-72deg)",offset:.72},{transform:"rotate(-54deg)"}],{duration});
       if (rightArm) animateElement(rightArm,[{transform:"rotate(0deg)"},{transform:"rotate(34deg)",offset:.45},{transform:"rotate(68deg)",offset:.72},{transform:"rotate(48deg)"}],{duration});
       animateElement(taker,[
         {transform:taker.style.transform||"translate(-50%,0)"},
-        {transform:`translate(calc(-50% + ${side === "albion" ? -18 : 18}px),-45px) scale(.96)`,offset:.55},
-        {transform:`translate(calc(-50% + ${side === "albion" ? -38 : 38}px),-51px) scale(.94)`}
+        {transform:`translate(calc(-50% + ${side === "albion" ? -10 : 10}px),-10px) scale(.995)`,offset:.46},
+        {transform:`translate(calc(-50% + ${side === "albion" ? -22 : 22}px),-12px) scale(.99)`}
       ],{duration,easing:"cubic-bezier(.2,.58,.25,1)"});
     } else {
       if (leftArm) animateElement(leftArm,[{transform:"rotate(0deg)"},{transform:"rotate(-66deg)",offset:.7},{transform:"rotate(-58deg)"}],{duration});
@@ -834,7 +834,7 @@
 
   async function keeperRoutine(kind, token) {
     positionKeeperOnLine();
-    const routineCycle = ["bar-right", "bar-left", "gloves", "bar-right", "point", "bar-left", "bar-right", "bounce", "bar-left", "bar-right"];
+    const routineCycle = ["bar-right", "bar-left", "bar-right", "gloves", "bar-left", "bar-right", "point", "bar-left", "bar-right", "bar-left"];
     const routine = routineCycle[keeperRoutineIndex++ % routineCycle.length];
     const body = keeper.querySelector(".keeper-body-group");
     const leftArm = keeper.querySelector(".keeper-arm-left");
@@ -851,7 +851,7 @@
       const barRect = bar?.getBoundingClientRect();
       const gloveRect = glove?.getBoundingClientRect();
       const requiredLift = barRect && gloveRect ? Math.max(9, gloveRect.top - barRect.bottom + 7) : keeperDimensions().height * .095;
-      const lift = Math.min(keeperDimensions().height * .15, requiredLift);
+      const lift = Math.min(keeperDimensions().height * .18, requiredLift + 2);
       animateElement(keeper, [
         { transform: "translateX(-50%) translateY(0) scaleY(1)" },
         { transform: `translateX(calc(-50% + ${useLeft ? -3 : 3}px)) translateY(${-lift * .46}px) scaleY(1.018)`, offset: .34 },
@@ -1137,6 +1137,7 @@
     state.pointerStart = null;
     state.pointerLast = null;
     state.activePointerId = null;
+    state.pendingDive = null;
     stage.classList.remove("is-waiting");
     stage.classList.add("is-locked", "palace-kick");
     const player = palaceTakers[state.palaceKicks % palaceTakers.length];
@@ -1165,10 +1166,16 @@
     };
     state.pointerLast = { ...state.pointerStart };
     state.contactAt = performance.now() + (reducedMotion() ? 30 : settings.preContactWindow);
+    const anticipatedDive = state.pendingDive && performance.now() - state.pendingDive.time < 1800 ? state.pendingDive : null;
     stage.classList.remove("is-locked");
     stage.classList.add("is-save-window");
-    $("stageInstruction").textContent = "Move, swipe, click or tap towards the shot";
-    setStatus("Read the final stride", "Commit as the standing foot plants, or react immediately after contact.");
+    $("stageInstruction").textContent = "Move or swipe towards the shot — early movement counts";
+    setStatus("Read the final stride", "You can begin moving before contact and continue reacting after the strike.");
+    if (anticipatedDive) {
+      window.setTimeout(() => {
+        if (state.phase === "save" && state.reactionOpen && !state.userDive) takeUserDive(anticipatedDive.point, anticipatedDive.source || "anticipated");
+      }, reducedMotion() ? 10 : 90);
+    }
 
     await sleep(reducedMotion() ? 30 : settings.preContactWindow);
     if (token !== state.sequence) return;
@@ -1420,6 +1427,7 @@
       pointerStart: null,
       pointerLast: null,
       activePointerId: null,
+      pendingDive: null,
     });
     summary.hidden = true;
     summary.innerHTML = "";
@@ -1451,10 +1459,17 @@
   }
 
   stage.addEventListener("pointermove", (event) => {
-    if (state.phase !== "albion-aim" && state.phase !== "save") return;
+    const keeperPreparing = state.phase === "palace-prep" || state.phase === "palace-run";
+    if (state.phase !== "albion-aim" && state.phase !== "save" && !keeperPreparing) return;
     const point = eventGoalPoint(event);
     if (point.inside && state.phase === "albion-aim") {
       setReticle(point.x, point.y);
+      return;
+    }
+    if (keeperPreparing && point.inside) {
+      previewKeeper(point);
+      const centreDistance = Math.hypot(point.x - .5, (point.y - .58) * .8);
+      if (centreDistance > .12) state.pendingDive = { point: { x: point.x, y: point.y }, time: performance.now(), source: event.pointerType === "touch" ? "early-swipe" : "early-mouse" };
       return;
     }
     if (state.phase !== "save" || !state.reactionOpen || state.userDive || !point.inside) return;
@@ -1469,7 +1484,7 @@
     const fromStart = pointerDistance(state.pointerStart, nowPoint);
     const fromLast = pointerDistance(state.pointerLast, nowPoint);
     state.pointerLast = nowPoint;
-    const threshold = event.pointerType === "touch" ? Math.max(14, stage.clientWidth * .019) : Math.max(11, stage.clientWidth * .014);
+    const threshold = event.pointerType === "touch" ? Math.max(10, stage.clientWidth * .014) : Math.max(6, stage.clientWidth * .008);
     if (fromStart >= threshold || fromLast >= threshold * .72) {
       event.preventDefault();
       takeUserDive(point, event.pointerType === "touch" ? "swipe" : "mouse-flick");
@@ -1485,6 +1500,9 @@
     if (state.phase === "albion-aim") {
       setReticle(point.x, point.y);
       takeAlbionPenalty(point);
+    } else if (state.phase === "palace-prep" || state.phase === "palace-run") {
+      previewKeeper(point);
+      state.pendingDive = { point: { x: point.x, y: point.y }, time: performance.now(), source: event.pointerType === "touch" ? "early-tap" : "early-click" };
     } else if (state.phase === "save") {
       if (event.pointerType === "touch" || event.pointerType === "pen") beginPointerTracking(event);
       else takeUserDive(point, "click");
@@ -1521,7 +1539,7 @@
     if (!touch) return;
     const point = eventGoalPoint(touch);
     const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
-    if (point.inside && distance >= Math.max(14, stage.clientWidth * .02)) {
+    if (point.inside && distance >= Math.max(10, stage.clientWidth * .014)) {
       event.preventDefault();
       takeUserDive(point, "swipe");
       fallbackTouchStart = null;

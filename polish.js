@@ -64,8 +64,8 @@
     if (!container || !replay || !card) return;
     const update = () => {
       const complete = Boolean(container.querySelector(".quiz-finish"));
-      replay.hidden = !complete;
-      replay.textContent = complete ? "Play a fresh five" : "Restart quiz";
+      replay.hidden = false;
+      replay.textContent = complete ? "Play a fresh five" : (container.querySelector(".quiz-question") ? "Restart quiz" : "Start quiz");
       card.classList.toggle("quiz-complete", complete);
       const firstRadio = container.querySelector('input[type="radio"]:not(:disabled)');
       if (firstRadio && document.activeElement === document.body && location.hash === "#quiz") firstRadio.focus({ preventScroll: true });
@@ -109,7 +109,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 15</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 16</span>');
   }
 
   completeControlSemantics();

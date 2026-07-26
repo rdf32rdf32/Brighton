@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r15" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r15" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r15" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r15" />
-    <meta name="release" content="production-r15-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r16" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r16" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r16" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r16" />
+    <meta name="release" content="production-r16-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -258,7 +258,7 @@
         <div id="quizContainer"></div>
         <div class="button-row">
           <button id="checkQuiz" type="button" hidden>Check answer</button
-          ><button id="newQuiz" class="ghost" type="button">Play again</button
+          ><button id="newQuiz" class="ghost" type="button">Start quiz</button
           ><button id="replayMistakes" class="ghost" type="button" hidden>
             Replay missed questions
           </button
@@ -275,7 +275,7 @@
         <div id="quizResult" class="result" aria-live="polite"></div>
       </section>
 
-      <section class="card shootout-card shootout-v14 shootout-v15" id="shootout">
+      <section class="card shootout-card shootout-v16" id="shootout">
         <div class="section-head shootout-intro">
           <div>
             <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
@@ -317,8 +317,8 @@
             id="penaltyStage"
             class="penalty-stage is-aiming"
             tabindex="0"
-            role="application"
-            aria-label="Penalty shoot-out. Move the pointer inside the goal and click to shoot."
+            role="group"
+            aria-label="Penalty shoot-out game" aria-describedby="stageInstruction"
           >
             <div id="crowdLayer" class="stadium-backdrop" aria-hidden="true">
               <span class="crowd-banner">SEAGULLS</span>
@@ -341,22 +341,22 @@
               <div class="goal-depth" aria-hidden="true">
                 <svg class="goal-net-svg" viewBox="0 0 1000 520" preserveAspectRatio="none">
                   <defs>
-                    <pattern id="r14BackGrid" width="62" height="54" patternUnits="userSpaceOnUse">
+                    <pattern id="r16BackGrid" width="62" height="54" patternUnits="userSpaceOnUse">
                       <path d="M62 0H0V54" fill="none" stroke="rgba(245,250,255,.66)" stroke-width="2.5" />
                     </pattern>
-                    <pattern id="r14SideGrid" width="38" height="44" patternUnits="userSpaceOnUse">
+                    <pattern id="r16SideGrid" width="38" height="44" patternUnits="userSpaceOnUse">
                       <path d="M38 0H0V44" fill="none" stroke="rgba(250,252,255,.76)" stroke-width="2.5" />
                     </pattern>
-                    <linearGradient id="r14NetFade" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient id="r16NetFade" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0" stop-color="#fff" stop-opacity=".9" />
                       <stop offset="1" stop-color="#dce7ee" stop-opacity=".42" />
                     </linearGradient>
-                    <filter id="r14Soft"><feGaussianBlur stdDeviation=".35" /></filter>
+                    <filter id="r16Soft"><feGaussianBlur stdDeviation=".35" /></filter>
                   </defs>
-                  <path class="goal-roof-net" d="M34 24 Q500 9 966 24 L874 112 Q500 97 126 112 Z" fill="url(#r14SideGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
-                  <path class="goal-back-net" d="M126 112 Q500 98 874 112 L874 468 Q500 486 126 468 Z" fill="url(#r14BackGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
-                  <path class="goal-side-net goal-side-left" d="M34 24 L126 112 L126 468 L34 500 Q24 260 34 24 Z" fill="url(#r14SideGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
-                  <path class="goal-side-net goal-side-right" d="M966 24 L874 112 L874 468 L966 500 Q976 260 966 24 Z" fill="url(#r14SideGrid)" stroke="url(#r14NetFade)" stroke-width="4" />
+                  <path class="goal-roof-net" d="M34 24 Q500 9 966 24 L874 112 Q500 97 126 112 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
+                  <path class="goal-back-net" d="M126 112 Q500 98 874 112 L874 468 Q500 486 126 468 Z" fill="url(#r16BackGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
+                  <path class="goal-side-net goal-side-left" d="M34 24 L126 112 L126 468 L34 500 Q24 260 34 24 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
+                  <path class="goal-side-net goal-side-right" d="M966 24 L874 112 L874 468 L966 500 Q976 260 966 24 Z" fill="url(#r16SideGrid)" stroke="url(#r16NetFade)" stroke-width="4" />
                   <g class="goal-perspective-lines" fill="none" stroke="rgba(255,255,255,.66)" stroke-width="2.4" stroke-linecap="round">
                     <path d="M34 24L126 112M32 116L126 182M31 211L126 252M31 307L126 324M32 403L126 397M966 24L874 112M968 116L874 182M969 211L874 252M969 307L874 324M968 403L874 397" />
                     <path d="M34 24Q500 9 966 24M66 54Q500 39 934 54M96 83Q500 69 904 83M126 112Q500 98 874 112" />
@@ -376,10 +376,10 @@
             <div class="pitch-stripes" aria-hidden="true"></div>
             <div class="pitch-lines" aria-hidden="true">
               <svg class="pitch-markings-svg" viewBox="0 0 1000 650" preserveAspectRatio="none">
-                <path class="pitch-line goal-line-mark" d="M132 315 L868 315" />
-                <path class="pitch-line six-yard-mark" d="M342 315 L300 410 L700 410 L658 315" />
-                <path class="pitch-line penalty-area-mark" d="M176 315 L72 570 L928 570 L824 315" />
-                <path class="pitch-line penalty-arc-mark" d="M390 570 C405 610 595 610 610 570" />
+                <path class="pitch-line goal-line-mark" d="M32 315 L968 315" />
+                <path class="pitch-line six-yard-mark" d="M200 315 L125 410 L875 410 L800 315" />
+                <path class="pitch-line penalty-area-mark" d="M78 315 L-44 570 L1044 570 L922 315" />
+                <path class="pitch-line penalty-arc-mark" d="M372 570 C390 622 610 622 628 570" />
                 <circle class="pitch-spot-mark" cx="500" cy="495" r="6" />
               </svg>
               <span class="spot-wear"></span>
@@ -1851,11 +1851,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r15"></script>
-    <script src="quiz-data.js?v=20260726-r15"></script>
-    <script src="app.js?v=20260726-r15"></script>
-    <script src="release-fixes.js?v=20260726-r15"></script>
-    <script src="shootout.js?v=20260726-r15"></script>
-    <script src="polish.js?v=20260726-r15"></script>
+    <script src="content-data.js?v=20260726-r16"></script>
+    <script src="quiz-data.js?v=20260726-r16"></script>
+    <script src="app.js?v=20260726-r16"></script>
+    <script src="release-fixes.js?v=20260726-r16"></script>
+    <script src="shootout.js?v=20260726-r16"></script>
+    <script src="polish.js?v=20260726-r16"></script>
   </body>
 </html>
