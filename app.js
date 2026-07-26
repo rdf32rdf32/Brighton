@@ -1,5 +1,52 @@
 (() => {
   "use strict";
+
+  // Storage-safe facade: keeps the site functional when mobile privacy settings block localStorage.
+  const localStorage = (() => {
+    const memory = Object.create(null);
+    let native = null;
+    try {
+      native = window.localStorage;
+      const probe = "__albion_storage_probe__";
+      native.setItem(probe, "1");
+      native.removeItem(probe);
+    } catch { native = null; }
+    const keys = () => {
+      const set = new Set(Object.keys(memory));
+      if (native) {
+        try { for (let i = 0; i < native.length; i += 1) { const key = native.key(i); if (key) set.add(key); } } catch {}
+      }
+      return [...set];
+    };
+    const api = {
+      getItem(key) {
+        const name = String(key);
+        if (native) { try { const value = native.getItem(name); if (value !== null) return value; } catch {} }
+        return Object.prototype.hasOwnProperty.call(memory, name) ? memory[name] : null;
+      },
+      setItem(key, value) {
+        const name = String(key); const text = String(value); memory[name] = text;
+        if (native) { try { native.setItem(name, text); } catch {} }
+      },
+      removeItem(key) {
+        const name = String(key); delete memory[name];
+        if (native) { try { native.removeItem(name); } catch {} }
+      },
+      clear() {
+        Object.keys(memory).forEach((key) => delete memory[key]);
+        if (native) { try { native.clear(); } catch {} }
+      },
+      key(index) { return keys()[Number(index)] ?? null; },
+      get length() { return keys().length; },
+    };
+    return new Proxy(api, {
+      ownKeys() { return keys(); },
+      getOwnPropertyDescriptor(_target, prop) {
+        if (typeof prop === "string" && keys().includes(prop)) return { enumerable: true, configurable: true, value: api.getItem(prop), writable: false };
+        return Object.getOwnPropertyDescriptor(api, prop);
+      },
+    });
+  })();
   const $ = (id) => document.getElementById(id);
   const C = window.ALBION_CONTENT || {};
   const Q = window.ALBION_QUIZ || [];
@@ -1980,20 +2027,25 @@
       panel.prepend(label);
     });
     const theme = $("themeToggle");
-    const setTheme = (night) => {
-      document.body.classList.toggle("night-theme", night);
-      theme.setAttribute("aria-pressed", String(night));
-      theme.textContent = night ? "Day-match theme" : "Night-match theme";
-      localStorage.setItem("albionTheme", night ? "night" : "day");
-    };
-    setTheme(localStorage.getItem("albionTheme") === "night");
-    theme.addEventListener("click", () =>
-      setTheme(!document.body.classList.contains("night-theme")),
-    );
+    if (theme) {
+      const setTheme = (night) => {
+        document.body.classList.toggle("night-theme", night);
+        theme.setAttribute("aria-pressed", String(night));
+        theme.textContent = night ? "Day-match theme" : "Night-match theme";
+        try { localStorage.setItem("albionTheme", night ? "night" : "day"); } catch {}
+      };
+      let savedNightTheme = false;
+      try { savedNightTheme = localStorage.getItem("albionTheme") === "night"; } catch {}
+      setTheme(savedNightTheme);
+      theme.addEventListener("click", () =>
+        setTheme(!document.body.classList.contains("night-theme")),
+      );
+    }
     const continueButton = $("continueButton");
-    const previousSection = localStorage.getItem("albionLastSection");
+    let previousSection = null;
+    try { previousSection = localStorage.getItem("albionLastSection"); } catch {}
     const previousMatch = searchable.find(([id]) => id === previousSection);
-    if (previousMatch) {
+    if (continueButton && previousMatch) {
       continueButton.hidden = false;
       continueButton.textContent = `Continue: ${previousMatch[1]}`;
       continueButton.addEventListener("click", () =>
@@ -2036,16 +2088,18 @@
   function ui() {
     const menu = $("menuToggle");
     const nav = $("navLinks");
-    menu.addEventListener("click", () => {
-      const open = nav.classList.toggle("open");
-      menu.setAttribute("aria-expanded", String(open));
-    });
-    nav.querySelectorAll("a").forEach((link) =>
-      link.addEventListener("click", () => {
-        nav.classList.remove("open");
-        menu.setAttribute("aria-expanded", "false");
-      }),
-    );
+    if (menu && nav && menu.dataset.controlsBound !== "true") {
+      menu.addEventListener("click", () => {
+        const open = nav.classList.toggle("open");
+        menu.setAttribute("aria-expanded", String(open));
+      });
+      nav.querySelectorAll("a").forEach((link) =>
+        link.addEventListener("click", () => {
+          nav.classList.remove("open");
+          menu.setAttribute("aria-expanded", "false");
+        }),
+      );
+    }
     $("fixtureSearch").addEventListener("input", renderFixtures);
     $("venueFilter").addEventListener("change", renderFixtures);
     $("monthFilter").addEventListener("change", () => {
@@ -2256,11 +2310,22 @@
     dataSaverSetting: "user-data-saver",
   };
 
+  const safeSettingStorage = {
+    get(key) {
+      try { return window.localStorage.getItem(key); }
+      catch { return null; }
+    },
+    set(key, value) {
+      try { window.localStorage.setItem(key, value); return true; }
+      catch { return false; }
+    },
+  };
+
   function applySettings() {
     Object.entries(settingsMap).forEach(([id, className]) => {
       const input = $(id);
       if (!input) return;
-      const enabled = localStorage.getItem(`albionSetting:${id}`) === "true";
+      const enabled = safeSettingStorage.get(`albionSetting:${id}`) === "true";
       input.checked = enabled;
       document.body.classList.toggle(className, enabled);
     });
@@ -2271,38 +2336,73 @@
     const openButton = $("settingsToggle");
     const closeButton = $("closeSettings");
     if (!panel || !openButton || !closeButton) return;
+
     document.body.classList.add("settings-enabled");
-    const setOpen = (open) => {
+    let open = false;
+
+    const setOpen = (nextOpen, returnFocus = true) => {
+      open = Boolean(nextOpen);
       document.body.classList.toggle("settings-open", open);
       openButton.setAttribute("aria-expanded", String(open));
       panel.setAttribute("aria-hidden", String(!open));
+      panel.dataset.open = String(open);
+
+      // Avoid relying solely on the inert attribute: some older mobile WebKit
+      // versions can leave descendants untouchable after inert is removed.
+      panel.inert = false;
+      panel.removeAttribute("inert");
+
       if (open) {
-        panel.removeAttribute("inert");
-        closeButton.focus({ preventScroll: true });
-      } else {
-        panel.setAttribute("inert", "");
+        window.requestAnimationFrame(() => closeButton.focus({ preventScroll: true }));
+      } else if (returnFocus) {
         openButton.focus({ preventScroll: true });
       }
     };
-    openButton.addEventListener("click", () => setOpen(!document.body.classList.contains("settings-open")));
-    closeButton.addEventListener("click", () => setOpen(false));
-    document.querySelectorAll('a[href="#supporter-settings"]').forEach((link) => link.addEventListener("click", (event) => {
+
+    const toggleSettings = (event) => {
+      event?.preventDefault();
+      event?.stopPropagation();
+      setOpen(!open);
+    };
+
+    openButton.addEventListener("click", toggleSettings);
+    closeButton.addEventListener("click", (event) => {
       event.preventDefault();
-      setOpen(true);
-    }));
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && document.body.classList.contains("settings-open")) setOpen(false);
+      event.stopPropagation();
+      setOpen(false);
     });
-    Object.entries(settingsMap).forEach(([id, className]) => {
-      $(id)?.addEventListener("change", (event) => {
-        const enabled = event.target.checked;
-        localStorage.setItem(`albionSetting:${id}`, String(enabled));
-        document.body.classList.toggle(className, enabled);
+
+    document.querySelectorAll('a[href="#supporter-settings"]').forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        setOpen(true, false);
       });
     });
-    panel.setAttribute("aria-hidden", "true");
-    panel.setAttribute("inert", "");
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && open) setOpen(false);
+    });
+
+    document.addEventListener("pointerdown", (event) => {
+      if (!open || panel.contains(event.target) || openButton.contains(event.target)) return;
+      setOpen(false, false);
+    });
+
+    Object.entries(settingsMap).forEach(([id, className]) => {
+      const input = $(id);
+      if (!input) return;
+      const update = () => {
+        const enabled = Boolean(input.checked);
+        document.body.classList.toggle(className, enabled);
+        safeSettingStorage.set(`albionSetting:${id}`, String(enabled));
+        input.setAttribute("aria-checked", String(enabled));
+      };
+      input.addEventListener("input", update);
+      input.addEventListener("change", update);
+    });
+
     applySettings();
+    setOpen(false, false);
   }
 
   function dataTools() {
@@ -2448,8 +2548,6 @@
     // The service-worker registration in app.js owns the ready-update flow.
   }
 
-  tour();
-  settings();
   dataTools();
   diagnostics();
   resetGroups();
@@ -2596,7 +2694,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 29</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 32</span>');
   }
 
   completeControlSemantics();
@@ -2612,7 +2710,7 @@
 
 
 
-/* r29 consolidated navigation and sticky-fixture behaviour */
+/* r30 consolidated navigation and sticky-fixture behaviour */
 (() => {
   const heroFixture = document.getElementById('next-match');
   const stickyFixture = document.querySelector('.matchday-bar');

@@ -2870,3 +2870,22 @@ body.shootout-in-view .settings-fab,body.shootout-in-view .back-to-top,body.shoo
 @media(max-width:760px){.matchday-quick-view{grid-template-columns:1fr 1fr}.fan-control-centre .control-centre-grid{grid-template-columns:1fr}.supporter-profile-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.matchday-quick-view,.supporter-profile-grid{grid-template-columns:1fr}}
 
+\n\n/* r30 reliable settings drawer */
+.settings-enabled .supporter-settings{pointer-events:none}
+.settings-enabled.settings-open .supporter-settings{pointer-events:auto}
+.settings-enabled .supporter-settings[aria-hidden="true"]{visibility:hidden}
+.settings-enabled .supporter-settings[aria-hidden="false"]{visibility:visible}
+.settings-grid input[type="checkbox"]{position:relative;z-index:1;pointer-events:auto;touch-action:manipulation}
+.settings-close,.settings-toggle{touch-action:manipulation}
+
+/* r32: keep the Tour button stationary so touch taps are reliable on mobile. */
+.tour-launch.first-visit{animation:tour-invitation-r32 1.35s ease-in-out infinite alternate}
+@keyframes tour-invitation-r32{
+  to{box-shadow:0 0 0 5px rgba(255,207,51,.34),0 8px 22px rgba(0,29,57,.34)}
+}
+
+
+/* r32 mobile control parity */
+.nav-links .nav-action{background:transparent;color:inherit;text-align:left;padding:7px 3px;border-radius:8px;font-weight:650}
+@media(min-width:851px){.mobile-nav-action{display:none!important}}
+@media(max-width:850px){.nav-links .nav-action{display:block;width:100%;background:#edf4fb!important;color:#05376b!important;padding:10px 12px;margin-top:3px}}

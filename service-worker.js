@@ -1,13 +1,14 @@
-const CACHE_NAME = "albion-production-r29-20260726";
+const CACHE_NAME = "albion-production-r32-20260726";
 const CORE = [
   "./",
   "./index.html",
-  "./style.css?v=20260726-r29",
-  "./shootout.css?v=20260726-r29",
-  "./content-data.js?v=20260726-r29",
-  "./quiz-data.js?v=20260726-r29",
-  "./app.js?v=20260726-r29",
-  "./shootout.js?v=20260726-r29",
+  "./style.css?v=20260726-r32",
+  "./shootout.css?v=20260726-r32",
+  "./content-data.js?v=20260726-r32",
+  "./quiz-data.js?v=20260726-r32",
+  "./site-controls.js?v=20260726-r32",
+  "./app.js?v=20260726-r32",
+  "./shootout.js?v=20260726-r32",
   "./manifest.json",
   "./favicon.svg",
   "./albion-safe-graphic.svg",

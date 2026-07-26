@@ -1,6 +1,53 @@
-// Albion Fan Hub r29 clean production shoot-out
+// Albion Fan Hub r30 clean production shoot-out
 (() => {
   "use strict";
+
+  // Storage-safe facade: keeps the site functional when mobile privacy settings block localStorage.
+  const localStorage = (() => {
+    const memory = Object.create(null);
+    let native = null;
+    try {
+      native = window.localStorage;
+      const probe = "__albion_storage_probe__";
+      native.setItem(probe, "1");
+      native.removeItem(probe);
+    } catch { native = null; }
+    const keys = () => {
+      const set = new Set(Object.keys(memory));
+      if (native) {
+        try { for (let i = 0; i < native.length; i += 1) { const key = native.key(i); if (key) set.add(key); } } catch {}
+      }
+      return [...set];
+    };
+    const api = {
+      getItem(key) {
+        const name = String(key);
+        if (native) { try { const value = native.getItem(name); if (value !== null) return value; } catch {} }
+        return Object.prototype.hasOwnProperty.call(memory, name) ? memory[name] : null;
+      },
+      setItem(key, value) {
+        const name = String(key); const text = String(value); memory[name] = text;
+        if (native) { try { native.setItem(name, text); } catch {} }
+      },
+      removeItem(key) {
+        const name = String(key); delete memory[name];
+        if (native) { try { native.removeItem(name); } catch {} }
+      },
+      clear() {
+        Object.keys(memory).forEach((key) => delete memory[key]);
+        if (native) { try { native.clear(); } catch {} }
+      },
+      key(index) { return keys()[Number(index)] ?? null; },
+      get length() { return keys().length; },
+    };
+    return new Proxy(api, {
+      ownKeys() { return keys(); },
+      getOwnPropertyDescriptor(_target, prop) {
+        if (typeof prop === "string" && keys().includes(prop)) return { enumerable: true, configurable: true, value: api.getItem(prop), writable: false };
+        return Object.getOwnPropertyDescriptor(api, prop);
+      },
+    });
+  })();
 
   const $ = (id) => document.getElementById(id);
   const stage = $("penaltyStage");
