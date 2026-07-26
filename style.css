@@ -2773,3 +2773,11 @@ button,.cta-row a,input,select{border-radius:var(--control-radius)}
   .dashboard,.matchday-quick-view,.fan-control-centre .fan-control-grid,.supporter-profile-grid{grid-template-columns:1fr}
   .fixtures-list .fixture-item>div:first-child{grid-template-columns:1fr auto!important}
 }
+
+
+/* r26 production polish */
+@media(max-width:760px){
+  body.shootout-playing .shootout-top-controls .small,
+  body.shootout-playing .shootout-option-row .small{display:none}
+  .placing-ball .penalty-ball{filter:drop-shadow(0 2px 2px rgba(0,0,0,.35))}
+}

@@ -1,3 +1,4 @@
+// Albion Fan Hub r27 clean production shoot-out
 (() => {
   "use strict";
 
@@ -170,13 +171,24 @@
   chantAudio.preload = "none";
   chantAudio.volume = 0.24;
 
-  function config() { return GAME; }
+  function isMobilePenalty() { return window.matchMedia?.("(max-width:760px)").matches; }
+  function config() {
+    if (!isMobilePenalty()) return GAME;
+    return {
+      ...GAME,
+      saveRadius: GAME.saveRadius * 1.18,
+      diveAssist: Math.min(.96, GAME.diveAssist + .07),
+      sameSideBonus: GAME.sameSideBonus + .055,
+      postContactWindow: GAME.postContactWindow + 230,
+      preContactWindow: GAME.preContactWindow + 70,
+    };
+  }
 
   function ensureAudio() {
     if (!state.sound || !state.audioUnlocked) return null;
     try {
       audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
-      if (audioContext.state === "suspended") audioContext.resume();
+      if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
       return audioContext;
     } catch {
       return null;
@@ -189,7 +201,13 @@
     state.audioUnlocked = true;
     try {
       audioContext ||= new (window.AudioContext || window.webkitAudioContext)();
-      if (audioContext.state === "suspended") audioContext.resume();
+      if (audioContext.state === "suspended") audioContext.resume().catch(() => {});
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      gain.gain.value = 0.00001;
+      osc.connect(gain).connect(audioContext.destination);
+      osc.start(); osc.stop(audioContext.currentTime + 0.015);
+      try { chantAudio.load(); } catch {}
     } catch {
       state.audioUnlocked = false;
     }
@@ -429,10 +447,17 @@
       const leftA = Math.max(0, 5 - state.albionKicks);
       const leftP = Math.max(0, 5 - state.palaceKicks);
       const nextSide = state.phase.startsWith("palace") ? "palace" : "albion";
-      const lead = state.albionGoals - state.palaceGoals;
-      const decisiveAlbion = nextSide === "albion" && lead > 0 && state.albionGoals + 1 > state.palaceGoals + leftP;
-      const decisiveSave = nextSide === "palace" && lead > 0 && state.palaceGoals + leftP <= state.albionGoals;
-      $("shootoutSituation").textContent = decisiveAlbion ? "Score to win" : decisiveSave ? "Save to win" : `${leftA} Albion · ${leftP} Palace left`;
+      const albionCanClincheWithGoal = nextSide === "albion" && state.albionGoals + 1 > state.palaceGoals + leftP;
+      const palaceCanClincheWithGoal = nextSide === "palace" && state.palaceGoals + 1 > state.albionGoals + leftA;
+      const albionMustScore = nextSide === "albion" && state.palaceGoals > state.albionGoals + Math.max(0, leftA - 1);
+      const palaceMustScore = nextSide === "palace" && state.albionGoals > state.palaceGoals + Math.max(0, leftP - 1);
+      const albionSaveWins = nextSide === "palace" && state.albionGoals > state.palaceGoals + Math.max(0, leftP - 1);
+      $("shootoutSituation").textContent = albionCanClincheWithGoal ? "Score to win"
+        : palaceCanClincheWithGoal ? "Palace score to win"
+        : albionSaveWins ? "Save to win"
+        : albionMustScore ? "Score to stay alive"
+        : palaceMustScore ? "Palace must score"
+        : `${leftA} Albion · ${leftP} Palace left`;
     }
   }
 
@@ -1465,8 +1490,8 @@
     const kickIndex = side === "albion" ? state.albionKicks : state.palaceKicks;
     const routineIndex = (kickIndex + (side === "palace" ? 2 : 0)) % 5;
     const dramatic = kickIndex === 0 || (state.albionKicks >= 5 && state.palaceKicks >= 5);
-    const duration = reducedMotion() ? 170 : dramatic ? 1580 : 1320 + routineIndex * 55;
-    const settlePause = reducedMotion() ? 25 : 320;
+    const duration = reducedMotion() ? 190 : dramatic ? 2850 : 2500 + routineIndex * 70;
+    const settlePause = reducedMotion() ? 30 : 520;
     stage.classList.add("placing-ball", `placement-${routineIndex + 1}`);
     const root = taker.querySelector(".taker-root");
     const leftArm = taker.querySelector(".taker-arm-left");
@@ -1480,12 +1505,14 @@
     const sideBias = routineIndex === 1 ? -2.5 : routineIndex === 3 ? 2.5 : 0;
     const carryX = 55.5 + sideBias;
     const carryY = routineIndex === 2 ? 55.5 : 57.5;
+    const pickupX = 57.5 + sideBias;
+    const pickupY = 75.5;
     taker.style.left = `${56.5 + sideBias}%`;
     taker.style.top = "49%";
-    ball.style.left = `${carryX}%`;
-    ball.style.top = `${carryY}%`;
-    ball.style.transform = "translate(-50%,-50%) scale(.72)";
-    if (ballShadow) { ballShadow.style.left = `${carryX}%`; ballShadow.style.top = "70%"; ballShadow.style.opacity = ".16"; }
+    ball.style.left = `${pickupX}%`;
+    ball.style.top = `${pickupY}%`;
+    ball.style.transform = "translate(-50%,-50%) scale(.96)";
+    if (ballShadow) { ballShadow.style.left = `${pickupX}%`; ballShadow.style.top = `${pickupY + 1.2}%`; ballShadow.style.opacity = ".52"; }
 
     const bendDepth = routineIndex === 4 ? 15 : routineIndex === 1 ? 10 : 12;
     animateElement(taker, [
@@ -1533,14 +1560,17 @@
     const adjustX = [50, 49.7, 50.3, 50, 50.15][routineIndex];
     const adjustY = [77, 76.8, 77.1, 77, 76.9][routineIndex];
     animateElement(ball, [
-      { left: `${carryX}%`, top: `${carryY}%`, transform: "translate(-50%,-50%) scale(.72) rotate(0deg)" },
-      { left: `${53 + sideBias * .3}%`, top: "66%", transform: `translate(-50%,-50%) scale(.84) rotate(${settleRotation * .35}deg)`, offset: .38 },
-      { left: `${adjustX}%`, top: `${adjustY}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation}deg)`, offset: .62 },
-      { left: `${routineIndex === 1 ? 50.35 : routineIndex === 3 ? 49.75 : 50}%`, top: "77%", transform: `translate(-50%,-50%) scale(${routineIndex === 4 ? .985 : 1}) rotate(${settleRotation + (routineIndex === 1 ? 26 : routineIndex === 3 ? -18 : 6)}deg)`, offset: .76 },
+      { left: `${pickupX}%`, top: `${pickupY}%`, transform: "translate(-50%,-50%) scale(.96) rotate(0deg)" },
+      { left: `${pickupX}%`, top: `${pickupY - 1.2}%`, transform: "translate(-50%,-50%) scale(.94) rotate(8deg)", offset: .11 },
+      { left: `${carryX}%`, top: `${carryY}%`, transform: "translate(-50%,-50%) scale(.72) rotate(18deg)", offset: .27 },
+      { left: `${53 + sideBias * .3}%`, top: "66%", transform: `translate(-50%,-50%) scale(.84) rotate(${settleRotation * .35}deg)`, offset: .48 },
+      { left: `${adjustX}%`, top: `${adjustY}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation}deg)`, offset: .68 },
+      { left: `${routineIndex === 1 ? 50.35 : routineIndex === 3 ? 49.75 : 50}%`, top: "77%", transform: `translate(-50%,-50%) scale(${routineIndex === 4 ? .985 : 1}) rotate(${settleRotation + (routineIndex === 1 ? 26 : routineIndex === 3 ? -18 : 6)}deg)`, offset: .82 },
       { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation + 8}deg)` },
     ], { duration, easing: "cubic-bezier(.18,.58,.22,1)" });
     if (ballShadow) animateElement(ballShadow, [
-      { left: `${carryX}%`, top: "70%", opacity: .14, transform: "translate(-50%,-50%) scale(.5)" },
+      { left: `${pickupX}%`, top: `${pickupY + 1.2}%`, opacity: .52, transform: "translate(-50%,-50%) scale(.85)" },
+      { left: `${carryX}%`, top: "70%", opacity: .12, transform: "translate(-50%,-50%) scale(.44)", offset: .27 },
       { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .7, transform: "translate(-50%,-50%) scale(1)" },
     ], { duration });
     await sleep(duration + settlePause);
@@ -1891,13 +1921,16 @@
   }
 
   function resultDecision() {
+    const regulation = state.albionKicks < 5 || state.palaceKicks < 5;
     const albionLeft = Math.max(0, 5 - state.albionKicks);
     const palaceLeft = Math.max(0, 5 - state.palaceKicks);
-    if (state.albionKicks < 5 || state.palaceKicks < 5) {
+    if (regulation) {
       if (state.albionGoals > state.palaceGoals + palaceLeft) return { finished: true, albionWon: true };
       if (state.palaceGoals > state.albionGoals + albionLeft) return { finished: true, albionWon: false };
+      return { finished: false, albionWon: false };
     }
-    if (state.albionKicks >= 5 && state.palaceKicks >= 5 && state.albionKicks === state.palaceKicks && state.albionGoals !== state.palaceGoals) {
+    // Sudden death can finish only after both sides have taken the same number of kicks.
+    if (state.albionKicks === state.palaceKicks && state.albionGoals !== state.palaceGoals) {
       return { finished: true, albionWon: state.albionGoals > state.palaceGoals };
     }
     return { finished: false, albionWon: false };
@@ -2542,7 +2575,7 @@
     }
 
     if (state.phase !== "save" || !state.reactionOpen || state.userDive) return;
-    const threshold = touchLike ? Math.max(14, stage.clientWidth * .021) : Math.max(7, stage.clientWidth * .01);
+    const threshold = touchLike ? Math.max(6, stage.clientWidth * .0105) : Math.max(6, stage.clientWidth * .009);
     if (distance >= threshold) {
       event.preventDefault();
       takeUserDive(mappedPoint, touchLike ? "swipe" : "mouse-flick");
@@ -2584,7 +2617,7 @@
     const distance = pointerDistance(state.pointerStart, event);
     const fallbackPoint = mobileTapGoalPoint(event);
     const swipePoint = touchLike
-      ? distance <= 4 ? fallbackPoint : distance < Math.max(13, stage.clientWidth * .02) ? { x: .5, y: .58 } : swipeGoalPoint(state.pointerStart, event, fallbackPoint)
+      ? distance <= 4 ? fallbackPoint : distance < Math.max(6, stage.clientWidth * .0105) ? { x: .5, y: .58 } : swipeGoalPoint(state.pointerStart, event, fallbackPoint)
       : fallbackPoint;
 
     if (state.phase === "albion-aim" && state.aimPointerActive) {
@@ -2645,7 +2678,7 @@
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
       const mapped = distance > 10 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
       previewKeeper(mapped);
-      if (distance >= 14) takeUserDive(mapped, "swipe");
+      if (distance >= 8) takeUserDive(mapped, "swipe");
     }
   }, { passive: false });
 
@@ -2682,6 +2715,14 @@
     else handled = false;
     if (handled) event.preventDefault();
   });
+
+
+  // r27: unlock mobile Web Audio on the first genuine user gesture, before any whistle is requested.
+  const primePenaltyAudio = () => {
+    if (state.sound) unlockAudio();
+  };
+  document.addEventListener("pointerdown", primePenaltyAudio, { capture: true, once: true, passive: true });
+  document.addEventListener("touchstart", primePenaltyAudio, { capture: true, once: true, passive: true });
 
   readyButton.addEventListener("click", () => { unlockAudio(); beginPalacePenalty(); });
   $("resetShootout").addEventListener("click", resetGame);

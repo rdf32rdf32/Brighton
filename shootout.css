@@ -280,9 +280,9 @@
 .shootout-v17 .referee-figure{left:89%;top:42.8%;width:6.15%;min-width:43px;max-width:68px;opacity:.96;transform-origin:50% 93%;filter:drop-shadow(0 4px 3px rgba(0,0,0,.16))}
 .shootout-v17 .referee-root{transform:rotateY(-18deg) skewY(-1deg);transform-origin:55% 90%}
 .shootout-v17 .keeper-shirt,.shootout-v17 .taker-shirt{filter:drop-shadow(0 1px 0 rgba(255,255,255,.08))}
-.shootout-v17 .keeper-arm,.shootout-v17 .keeper-leg,.shootout-v17 .taker-arm,.shootout-v17 .taker-leg{transform-box:fill-box}
-.shootout-v17 .keeper-arm-left,.shootout-v17 .taker-arm-left{transform-origin:85% 8%}
-.shootout-v17 .keeper-arm-right,.shootout-v17 .taker-arm-right{transform-origin:15% 8%}
+.shootout-v17 .keeper-leg,.shootout-v17 .taker-arm,.shootout-v17 .taker-leg{transform-box:fill-box}
+.shootout-v17 .taker-arm-left{transform-origin:85% 8%}
+.shootout-v17 .taker-arm-right{transform-origin:15% 8%}
 .shootout-v17 .keeper-leg-left,.shootout-v17 .taker-leg-left{transform-origin:75% 4%}
 .shootout-v17 .keeper-leg-right,.shootout-v17 .taker-leg-right{transform-origin:25% 4%}
 .shootout-v17 .taker-boot{transform-box:fill-box;transform-origin:center}
@@ -569,7 +569,6 @@
 /* Production r22: physically visible goalkeeper contact and final mobile clarity */
 .shootout-v17 .penalty-stage.save-contact .penalty-ball{z-index:11;filter:drop-shadow(0 1px 1px rgba(0,0,0,.42))}
 .shootout-v17 .penalty-stage.save-contact .keeper-figure{z-index:12}
-.shootout-v17 .keeper-glove,.shootout-v17 .keeper-boot,.shootout-v17 .keeper-shirt,.shootout-v17 .keeper-shorts{transform-box:fill-box;transform-origin:center}
 .shootout-v17 .timeline-surprise{white-space:nowrap}
 @media(max-width:760px){
   .shootout-v17 .shootout-status-v10{min-height:58px}
@@ -602,7 +601,7 @@
 .shootout-v17 .goal-net-svg .goal-roof-net{opacity:.55}
 .shootout-v17 .goal-net-svg .goal-side-net{opacity:.57}
 .shootout-v17 .goal-net-svg .rear-frame{opacity:.43}
-.shootout-v17 .keeper-glove{fill:#f6dd36;stroke:#7f6500;stroke-width:1.1;paint-order:stroke fill;transform-box:fill-box;transform-origin:center}
+.shootout-v17 .keeper-glove{fill:#f6dd36;stroke:#7f6500;stroke-width:1.1;paint-order:stroke fill;transform-origin:center}
 .shootout-v17 .keeper-glove .glove-palm,.shootout-v17 .keeper-glove .glove-cuff{fill:#f6dd36}
 .shootout-v17 .keeper-glove .glove-finger,.shootout-v17 .keeper-glove .glove-thumb,.shootout-v17 .keeper-glove .glove-detail{fill:none;stroke:#816800;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
 .shootout-v17 .opposition-keeper .keeper-glove .glove-palm,.shootout-v17 .opposition-keeper .keeper-glove .glove-cuff{fill:#eef4fb}
@@ -716,4 +715,32 @@
 @media(max-width:480px){
   .shootout-v17 .keeper-bottle{left:9.8%!important;top:35.2%!important;width:11px!important;height:29px!important}
   .shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{transform:translateY(-19px) rotate(-3deg) scale(1.34)!important}
+}
+
+
+/* r27 final authoritative penalty polish: natural gloves, mobile referee and deliberate placement. */
+.shootout-v17 .keeper-arm,.shootout-v17 .keeper-lower-arm,.shootout-v17 .keeper-glove{transform-box:view-box!important}
+.shootout-v17 .keeper-arm-left{transform-origin:65px 87px!important}
+.shootout-v17 .keeper-arm-right{transform-origin:115px 87px!important}
+.shootout-v17 .keeper-lower-arm-left{transform-origin:49px 101px!important}
+.shootout-v17 .keeper-lower-arm-right{transform-origin:131px 101px!important}
+.shootout-v17 .keeper-glove-left{transform-origin:38px 138px!important}
+.shootout-v17 .keeper-glove-right{transform-origin:142px 138px!important}
+.shootout-v17 .penalty-stage:not(.save-contact):not(.contact-armed):not(.save-replay) .keeper-lower-arm-left{transform:rotate(10deg)}
+.shootout-v17 .penalty-stage:not(.save-contact):not(.contact-armed):not(.save-replay) .keeper-lower-arm-right{transform:rotate(-10deg)}
+.shootout-v17 .penalty-stage.is-waiting .keeper-arm-left{animation:r27-ready-left 1.9s ease-in-out infinite!important}
+.shootout-v17 .penalty-stage.is-waiting .keeper-arm-right{animation:r27-ready-right 1.9s ease-in-out infinite!important}
+@keyframes r27-ready-left{0%,100%{transform:rotate(5deg)}50%{transform:rotate(2deg)}}
+@keyframes r27-ready-right{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(-2deg)}}
+.shootout-v17 .keeper-wrist-bridge{fill:#986247;stroke:#704330;stroke-width:.8}
+.shootout-v17 .glove-cuff{stroke-width:1.2;paint-order:stroke fill}
+.shootout-v17 .penalty-stage.placing-ball .penalty-ball{z-index:10}
+@media(max-width:760px){
+  .shootout-v17 .referee-figure{left:97%!important;top:41%!important;width:8.5%!important;min-width:42px!important;max-width:58px!important}
+  .shootout-v17 .keeper-figure{width:11.4%!important;min-width:45px!important}
+  .shootout-v17 .shootout-actions button,.shootout-v17 .ready-button{min-height:46px}
+}
+@media(max-width:480px){
+  .shootout-v17 .referee-figure{left:98%!important;top:41.5%!important;width:9.1%!important;min-width:40px!important;max-width:51px!important}
+  .shootout-v17 .keeper-figure{width:11.8%!important;min-width:44px!important}
 }
