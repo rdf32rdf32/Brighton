@@ -32,11 +32,11 @@
       as="image"
       type="image/svg+xml"
     />
-    <link rel="stylesheet" href="style.css?v=20260726-r14" />
-    <link rel="stylesheet" href="release-fixes.css?v=20260726-r14" />
-    <link rel="stylesheet" href="shootout.css?v=20260726-r14" />
-    <link rel="stylesheet" href="polish.css?v=20260726-r14" />
-    <meta name="release" content="production-r14-20260726" />
+    <link rel="stylesheet" href="style.css?v=20260726-r15" />
+    <link rel="stylesheet" href="release-fixes.css?v=20260726-r15" />
+    <link rel="stylesheet" href="shootout.css?v=20260726-r15" />
+    <link rel="stylesheet" href="polish.css?v=20260726-r15" />
+    <meta name="release" content="production-r15-20260726" />
 </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
@@ -275,17 +275,16 @@
         <div id="quizResult" class="result" aria-live="polite"></div>
       </section>
 
-      <section class="card shootout-card shootout-v14" id="shootout">
+      <section class="card shootout-card shootout-v14 shootout-v15" id="shootout">
         <div class="section-head shootout-intro">
           <div>
             <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
             <h2>Seagulls v Eagles</h2>
             <p class="shootout-lead">
-              Move inside the goal and click to shoot. For Palace penalties, read the run-up and move or swipe towards the shot. One balanced level keeps every kick quick and fair.
+              Move inside the goal and click to shoot. For Palace penalties, read the run-up and move or swipe towards the shot. Every kick uses the same clear, responsive controls.
             </p>
           </div>
           <div class="shootout-top-controls single-control" aria-label="Penalty game sound">
-            <span class="balanced-mode">Balanced match mode</span>
             <button id="shootoutSound" class="ghost compact-control" type="button" aria-pressed="true">Sound on</button>
           </div>
         </div>
@@ -376,10 +375,13 @@
             </div>
             <div class="pitch-stripes" aria-hidden="true"></div>
             <div class="pitch-lines" aria-hidden="true">
-              <span class="six-yard-box"></span>
-              <span class="penalty-area"></span>
-              <span class="penalty-arc"></span>
-              <span class="penalty-spot"></span>
+              <svg class="pitch-markings-svg" viewBox="0 0 1000 650" preserveAspectRatio="none">
+                <path class="pitch-line goal-line-mark" d="M132 315 L868 315" />
+                <path class="pitch-line six-yard-mark" d="M342 315 L300 410 L700 410 L658 315" />
+                <path class="pitch-line penalty-area-mark" d="M176 315 L72 570 L928 570 L824 315" />
+                <path class="pitch-line penalty-arc-mark" d="M390 570 C405 610 595 610 610 570" />
+                <circle class="pitch-spot-mark" cx="500" cy="495" r="6" />
+              </svg>
               <span class="spot-wear"></span>
               <span class="goal-line-wear"></span>
             </div>
@@ -1849,11 +1851,11 @@
       </div>
       <p class="footer-copy">© 2026 Albion Fan Hub</p>
     </footer>
-    <script src="content-data.js?v=20260726-r14"></script>
-    <script src="quiz-data.js?v=20260726-r14"></script>
-    <script src="app.js?v=20260726-r14"></script>
-    <script src="release-fixes.js?v=20260726-r14"></script>
-    <script src="shootout.js?v=20260726-r14"></script>
-    <script src="polish.js?v=20260726-r14"></script>
+    <script src="content-data.js?v=20260726-r15"></script>
+    <script src="quiz-data.js?v=20260726-r15"></script>
+    <script src="app.js?v=20260726-r15"></script>
+    <script src="release-fixes.js?v=20260726-r15"></script>
+    <script src="shootout.js?v=20260726-r15"></script>
+    <script src="polish.js?v=20260726-r15"></script>
   </body>
 </html>

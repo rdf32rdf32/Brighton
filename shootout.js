@@ -46,19 +46,19 @@
     document.body.classList.contains("user-reduce-motion") ||
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-  const BALANCED = Object.freeze({
-    shotSpread: 0.006,
-    keeperNoise: 0.255,
-    keeperReach: 0.118,
-    palaceMiss: 0.145,
-    saveRadius: 0.46,
-    preContactWindow: 390,
-    postContactWindow: 760,
-    flight: 850,
+  const GAME = Object.freeze({
+    shotSpread: 0.0035,
+    keeperNoise: 0.34,
+    keeperReach: 0.096,
+    palaceMiss: 0.16,
+    saveRadius: 0.52,
+    preContactWindow: 460,
+    postContactWindow: 900,
+    flight: 830,
     runUpScale: 1,
-    cueStrength: 0.9,
-    diveAssist: 0.67,
-    sameSideBonus: 0.16,
+    cueStrength: 0.72,
+    diveAssist: 0.78,
+    sameSideBonus: 0.205,
   });
 
   const albionTakers = [
@@ -115,7 +115,7 @@
   let currentAnimations = [];
   let keeperRoutineIndex = 0;
 
-  function config() { return BALANCED; }
+  function config() { return GAME; }
 
   function ensureAudio() {
     if (!state.sound || !state.audioUnlocked) return null;
@@ -185,44 +185,53 @@
 
   function sound(kind) {
     if (!state.sound) return;
+    const vary = (base, amount = .08) => base * (1 + (Math.random() * 2 - 1) * amount);
     if (kind === "whistle") {
-      tone(1560, .11, "sine", .026, 1810);
-      window.setTimeout(() => tone(1450, .075, "sine", .018, 1650), 78);
+      tone(vary(1580, .035), .105, "sine", .024, vary(1840, .025));
+      window.setTimeout(() => tone(vary(1470, .03), .07, "sine", .015, vary(1660, .03)), 74);
     } else if (kind === "finalWhistle") {
-      [0, 155, 330].forEach((delay, index) => window.setTimeout(() => tone(index === 1 ? 1760 : 1510, .12, "sine", .03, 1810), delay));
+      [0, 165, 350].forEach((delay, index) => window.setTimeout(() => tone(vary(index === 1 ? 1775 : 1530, .025), .13, "sine", .028, vary(1840, .02)), delay));
     } else if (kind === "kick") {
-      noiseBurst(.055, .075, 680);
-      tone(92, .085, "triangle", .075, 58);
-      window.setTimeout(() => noiseBurst(.035, .024, 1900), 14);
+      noiseBurst(.048, vary(.068, .13), vary(720, .15));
+      tone(vary(88, .16), .09, "triangle", vary(.064, .12), vary(54, .12));
+      window.setTimeout(() => noiseBurst(.026, .019, vary(2300, .16)), 12);
     } else if (kind === "net") {
-      noiseBurst(.19, .038, 2350);
-      window.setTimeout(() => noiseBurst(.13, .018, 3400), 45);
+      noiseBurst(.22, vary(.034, .16), vary(2600, .18));
+      window.setTimeout(() => noiseBurst(.16, .016, vary(3800, .18)), 52);
+      window.setTimeout(() => noiseBurst(.1, .009, vary(1800, .2)), 115);
     } else if (kind === "goal") {
       sound("net");
     } else if (kind === "save") {
-      noiseBurst(.09, .052, 880);
-      tone(128, .12, "triangle", .045, 82);
+      noiseBurst(.085, vary(.048, .16), vary(980, .16));
+      tone(vary(122, .11), .13, "triangle", vary(.041, .12), vary(78, .12));
+      window.setTimeout(() => noiseBurst(.05, .013, 1900), 35);
     } else if (kind === "catch") {
-      noiseBurst(.075, .044, 760);
-      tone(105, .09, "triangle", .036, 72);
+      noiseBurst(.07, vary(.04, .12), vary(820, .14));
+      tone(vary(102, .1), .095, "triangle", .033, vary(68, .1));
+      window.setTimeout(() => noiseBurst(.04, .012, 1300), 28);
     } else if (kind === "post") {
-      tone(1120, .22, "triangle", .042, 730);
-      noiseBurst(.045, .016, 4200);
+      tone(vary(1180, .06), .24, "triangle", .038, vary(735, .06));
+      noiseBurst(.04, .014, 4400);
     } else if (kind === "gloves") {
-      noiseBurst(.045, .018, 1200);
-      tone(220, .04, "triangle", .014, 160);
+      noiseBurst(.045, .017, vary(1300, .12));
+      tone(vary(215, .08), .045, "triangle", .012, vary(155, .08));
+    } else if (kind === "footsteps") {
+      noiseBurst(.025, .008, vary(550, .15));
     } else if (kind === "albionCheer") {
-      crowdLayer(1.28, .72, 185);
-      window.setTimeout(() => crowdLayer(.85, .5, 230), 190);
+      crowdLayer(1.32, .78, vary(184, .05));
+      window.setTimeout(() => crowdLayer(.92, .56, vary(232, .05)), 180);
+      window.setTimeout(() => crowdLayer(.62, .44, vary(270, .05)), 390);
     } else if (kind === "palaceCheer") {
-      crowdLayer(.82, .58, 155);
+      crowdLayer(.82, .62, vary(154, .05));
+      window.setTimeout(() => crowdLayer(.5, .4, vary(188, .05)), 190);
     } else if (kind === "win") {
-      crowdLayer(1.65, 1.05, 180);
-      window.setTimeout(() => crowdLayer(1.25, .9, 245), 210);
-      window.setTimeout(() => tone(440, .38, "sine", .018, 660), 120);
+      crowdLayer(1.72, 1.1, 180);
+      window.setTimeout(() => crowdLayer(1.32, .94, 245), 210);
+      window.setTimeout(() => crowdLayer(.92, .72, 285), 520);
+      window.setTimeout(() => tone(440, .4, "sine", .017, 660), 120);
     } else if (kind === "gasp") {
-      noiseBurst(.22, .022, 760);
-      tone(130, .2, "sine", .012, 98);
+      noiseBurst(.23, .021, 780);
+      tone(128, .21, "sine", .011, 96);
     } else {
       noiseBurst(.08, .018, 1200);
     }
@@ -289,7 +298,7 @@
     decision.textContent = label;
     decision.className = `kick-decision-v10 ${type}`;
     decision.hidden = false;
-    window.setTimeout(() => { decision.hidden = true; }, reducedMotion() ? 650 : 1100);
+    window.setTimeout(() => { decision.hidden = true; }, reducedMotion() ? 520 : 900);
   }
 
   function setReticle(nx, ny) {
@@ -375,11 +384,12 @@
       ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
     }
     taker.style.left = "50%";
-    taker.style.top = "50.5%";
+    taker.style.top = "49%";
     taker.style.opacity = "1";
+    taker.style.visibility = "";
     taker.style.transform = "translate(-50%,0)";
-    referee.style.left = "81%";
-    referee.style.top = "42%";
+    referee.style.left = "82.2%";
+    referee.style.top = "41.5%";
     referee.style.transform = "translate(-50%,0)";
     keeper.style.opacity = "1";
     keeper.querySelectorAll(".keeper-arm,.keeper-leg,.keeper-body-group").forEach((part) => { part.style.transform = ""; });
@@ -418,56 +428,71 @@
   function animateRunUp(isPalace, foot = "right", target = null, style = "direct") {
     const footDirection = foot === "left" ? -1 : 1;
     const settings = config();
-    const targetBias = target ? (target.x - .5) * 34 * settings.cueStrength : 0;
-    const styleOffset = style === "stutter" ? 8 : style === "quick" ? -6 : 0;
-    const duration = isPalace ? Math.round(900 * settings.runUpScale) : style === "quick" ? 670 : 760;
+    const targetBias = target ? (target.x - .5) * 22 * settings.cueStrength : 0;
+    const styleOffset = style === "stutter" ? 9 : style === "quick" ? -7 : style === "measured" ? 3 : 0;
+    const duration = isPalace ? Math.round(940 * settings.runUpScale) : style === "quick" ? 720 : style === "measured" ? 850 : 790;
     stage.classList.toggle("palace-kick", isPalace);
     const root = taker.querySelector(".taker-root");
     const kickingLeg = taker.querySelector(foot === "left" ? ".taker-leg-left" : ".taker-leg-right");
     const standingLeg = taker.querySelector(foot === "left" ? ".taker-leg-right" : ".taker-leg-left");
+    const standingBoot = standingLeg?.querySelector(".taker-boot");
     const balanceArm = taker.querySelector(foot === "left" ? ".taker-arm-right" : ".taker-arm-left");
     const trailingArm = taker.querySelector(foot === "left" ? ".taker-arm-left" : ".taker-arm-right");
-    const startX = -footDirection * 28 + styleOffset;
+    const startX = -footDirection * 31 + styleOffset;
+    const contactOffset = targetBias + footDirection * 5;
+    sound("footsteps");
+    window.setTimeout(() => sound("footsteps"), reducedMotion() ? 30 : duration * .25);
+    window.setTimeout(() => sound("footsteps"), reducedMotion() ? 60 : duration * .5);
     const run = animateElement(taker, [
-      { transform: `translate(calc(-50% + ${startX}px),18px) scale(.96)` },
-      { transform: `translate(calc(-50% + ${startX * .5}px),8px) scale(.98)`, offset: .22 },
-      { transform: `translate(calc(-50% + ${footDirection * 5}px),-5px) scale(1.015)`, offset: .48 },
-      { transform: `translate(calc(-50% + ${targetBias * .35}px),-25px) scale(1.025)`, offset: .68 },
-      { transform: `translate(calc(-50% + ${targetBias}px),-40px) scale(1.01)`, offset: .84 },
-      { transform: `translate(calc(-50% + ${targetBias + footDirection * 10}px),-42px) scale(.995)` },
-    ], { duration, easing: "cubic-bezier(.19,.58,.22,1)" });
+      { transform: `translate(calc(-50% + ${startX}px),20px) scale(.965)` },
+      { transform: `translate(calc(-50% + ${startX * .68}px),13px) scale(.978)`, offset: .18 },
+      { transform: `translate(calc(-50% + ${startX * .32}px),3px) scale(.994)`, offset: .38 },
+      { transform: `translate(calc(-50% + ${footDirection * 6}px),-12px) scale(1.012)`, offset: .58 },
+      { transform: `translate(calc(-50% + ${contactOffset * .35}px),-29px) scale(1.026)`, offset: .76 },
+      { transform: `translate(calc(-50% + ${contactOffset}px),-39px) scale(1.018)`, offset: .88 },
+      { transform: `translate(calc(-50% + ${contactOffset + footDirection * 12}px),-43px) scale(1.005)` },
+    ], { duration, easing: "cubic-bezier(.16,.58,.18,1)" });
     if (root) animateElement(root, [
       { transform: "rotate(0deg) translateY(0)" },
-      { transform: `rotate(${footDirection * -2}deg) translateY(-1px)`, offset: .38 },
-      { transform: `rotate(${footDirection * 5}deg) translateY(1px)`, offset: .75 },
-      { transform: `rotate(${footDirection * 7}deg) translateY(0)` },
-    ], { duration, easing: "ease-in-out" });
+      { transform: `rotate(${footDirection * -1.5}deg) translateY(-1px)`, offset: .28 },
+      { transform: `rotate(${footDirection * 2.5}deg) translateY(0)`, offset: .56 },
+      { transform: `rotate(${footDirection * 6.5}deg) translateY(1px)`, offset: .78 },
+      { transform: `rotate(${footDirection * 8}deg) translateY(0)` },
+    ], { duration, easing: "cubic-bezier(.2,.5,.25,1)" });
     if (kickingLeg) animateElement(kickingLeg, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${footDirection * 12}deg)`, offset: .22 },
-      { transform: `rotate(${footDirection * -24}deg)`, offset: .58 },
-      { transform: `rotate(${footDirection * -39}deg)`, offset: .72 },
-      { transform: `rotate(${footDirection * 48}deg)`, offset: .86 },
-      { transform: `rotate(${footDirection * 27}deg)` },
-    ], { duration, easing: "cubic-bezier(.2,.55,.2,1)" });
+      { transform: `rotate(${footDirection * 9}deg)`, offset: .22 },
+      { transform: `rotate(${footDirection * -18}deg)`, offset: .52 },
+      { transform: `rotate(${footDirection * -36}deg)`, offset: .71 },
+      { transform: `rotate(${footDirection * 52}deg)`, offset: .88 },
+      { transform: `rotate(${footDirection * 31}deg)` },
+    ], { duration, easing: "cubic-bezier(.16,.64,.18,1)" });
     if (standingLeg) animateElement(standingLeg, [
-      { transform: "rotate(0deg)" },
-      { transform: `rotate(${footDirection * -8}deg)`, offset: .24 },
-      { transform: `rotate(${footDirection * 7}deg)`, offset: .52 },
-      { transform: `rotate(${footDirection * -3}deg)`, offset: .8 },
-      { transform: `rotate(${footDirection * 5}deg)` },
-    ], { duration });
+      { transform: "rotate(0deg) translateY(0)" },
+      { transform: `rotate(${footDirection * -5}deg) translateY(0)`, offset: .35 },
+      { transform: `rotate(${footDirection * 4}deg) translateY(1px)`, offset: .62 },
+      { transform: `rotate(${footDirection * -2}deg) translateY(3px) scaleY(.985)`, offset: .79 },
+      { transform: `rotate(${footDirection * 1.5}deg) translateY(2px) scaleY(.99)`, offset: .9 },
+      { transform: `rotate(${footDirection * 5}deg) translateY(0) scaleY(1)` },
+    ], { duration, easing: "cubic-bezier(.2,.58,.2,1)" });
+    if (standingBoot) animateElement(standingBoot, [
+      { transform: "rotate(0deg) translate(0,0)" },
+      { transform: `rotate(${footDirection * -2}deg) translate(0,0)`, offset: .62 },
+      { transform: `rotate(${footDirection * 7}deg) translate(${footDirection * 1.5}px,1px)`, offset: .79 },
+      { transform: `rotate(${footDirection * 5}deg) translate(${footDirection}px,1px)`, offset: .92 },
+      { transform: `rotate(${footDirection * 2}deg) translate(0,0)` },
+    ], { duration, easing: "cubic-bezier(.18,.62,.2,1)" });
     if (balanceArm) animateElement(balanceArm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${footDirection * 12}deg)`, offset: .3 },
-      { transform: `rotate(${footDirection * 35}deg)`, offset: .74 },
-      { transform: `rotate(${footDirection * -14}deg)` },
+      { transform: `rotate(${footDirection * 9}deg)`, offset: .28 },
+      { transform: `rotate(${footDirection * 38}deg)`, offset: .76 },
+      { transform: `rotate(${footDirection * -16}deg)` },
     ], { duration });
     if (trailingArm) animateElement(trailingArm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${footDirection * -18}deg)`, offset: .35 },
-      { transform: `rotate(${footDirection * -30}deg)`, offset: .7 },
-      { transform: `rotate(${footDirection * 12}deg)` },
+      { transform: `rotate(${footDirection * -14}deg)`, offset: .32 },
+      { transform: `rotate(${footDirection * -34}deg)`, offset: .72 },
+      { transform: `rotate(${footDirection * 14}deg)` },
     ], { duration });
     return { animation: run, duration };
   }
@@ -528,7 +553,7 @@
     return `${point.y < 0.48 ? "high" : "low"}-${side}`;
   }
 
-  function animateKeeperDive(point, duration = 760, saved = false) {
+  function animateKeeperDive(point, duration = 840, saved = false) {
     positionKeeperOnLine();
     const stageWidth = stage.clientWidth;
     const stageHeight = stage.clientHeight;
@@ -537,22 +562,23 @@
     const target = stagePoint(point);
     const targetX = target.x * stageWidth;
     const targetY = target.y * stageHeight;
-    const zone = diveZone(point);
-    const direction = point.x < .42 ? -1 : point.x > .58 ? 1 : 0;
-    const wide = direction !== 0 && Math.abs(point.x - .5) > .24;
-    const high = point.y < .46;
-    const low = point.y > .62;
-    const gloveXRatio = direction < 0 ? 35 / 180 : direction > 0 ? 145 / 180 : .5;
+    const direction = point.x < .41 ? -1 : point.x > .59 ? 1 : 0;
+    const wide = direction !== 0 && Math.abs(point.x - .5) > .23;
+    const extreme = direction !== 0 && Math.abs(point.x - .5) > .34;
+    const high = point.y < .45;
+    const low = point.y > .63;
+    const gloveXRatio = direction < 0 ? 31 / 180 : direction > 0 ? 149 / 180 : .5;
     const gloveYRatio = direction === 0 ? .51 : 124 / 250;
     const baseGloveX = stageWidth * .5 + (gloveXRatio - .5) * keeperWidth;
     const baseGloveY = baseTop + gloveYRatio * keeperHeight;
     const goalWidth = goalBox.width * stageWidth;
-    let dx = (targetX - baseGloveX) * (direction ? 1.02 : .42);
-    let dy = (targetY - baseGloveY) * (direction ? .92 : .6);
-    dx = clamp(dx, -goalWidth * .46, goalWidth * .46);
-    dy = clamp(dy, -keeperHeight * .72, keeperHeight * .32);
-    if (wide) dx += direction * goalWidth * .045;
-    if (high) dy -= keeperHeight * .055;
+    let dx = (targetX - baseGloveX) * (direction ? 1.1 : .45);
+    let dy = (targetY - baseGloveY) * (direction ? .96 : .62);
+    dx = clamp(dx, -goalWidth * .49, goalWidth * .49);
+    dy = clamp(dy, -keeperHeight * .78, keeperHeight * .34);
+    if (wide) dx += direction * goalWidth * .05;
+    if (extreme) dx += direction * goalWidth * .025;
+    if (high) dy -= keeperHeight * .07;
 
     const leftArm = keeper.querySelector(".keeper-arm-left");
     const rightArm = keeper.querySelector(".keeper-arm-right");
@@ -564,72 +590,80 @@
     const trailingArm = direction < 0 ? rightArm : direction > 0 ? leftArm : null;
     const pushLeg = direction < 0 ? rightLeg : direction > 0 ? leftLeg : null;
     const trailLeg = direction < 0 ? leftLeg : direction > 0 ? rightLeg : null;
-    const leadAngle = direction < 0 ? -122 : 122;
-    const trailAngle = direction < 0 ? -78 : 78;
-    const bodyRotation = direction * (low ? 78 : high ? 66 : 72);
-    const landingY = dy + (low ? keeperHeight * .17 : keeperHeight * .10);
-    const extension = wide || high ? 1.11 : 1.055;
+    const leadAngle = direction < 0 ? -132 : 132;
+    const trailAngle = direction < 0 ? -96 : 96;
+    const bodyRotation = direction * (low ? 76 : high ? 70 : 73);
+    const landingY = dy + (low ? keeperHeight * .2 : keeperHeight * .12);
+    const extension = extreme ? 1.22 : wide || high ? 1.16 : 1.075;
+    const totalDuration = Math.max(duration, extreme ? 900 : 800);
 
     if (pushLeg) animateElement(pushLeg, [
-      { transform: "rotate(0deg)" },
-      { transform: `rotate(${direction * -13}deg) scaleY(.94)`, offset: .18 },
-      { transform: `rotate(${direction * 28}deg) scaleY(1.04)`, offset: .52 },
-      { transform: `rotate(${direction * 16}deg)` },
-    ], { duration: duration * .92, easing: "cubic-bezier(.18,.7,.2,1)" });
+      { transform: "rotate(0deg) translateY(0) scaleY(1)" },
+      { transform: `rotate(${direction * -10}deg) translateY(3px) scaleY(.9)`, offset: .14 },
+      { transform: `rotate(${direction * 13}deg) translateY(1px) scaleY(.97)`, offset: .29 },
+      { transform: `rotate(${direction * 34}deg) translateY(-2px) scaleY(1.07)`, offset: .53 },
+      { transform: `rotate(${direction * 22}deg) translateY(0) scaleY(1.02)` },
+    ], { duration: totalDuration * .94, easing: "cubic-bezier(.12,.72,.16,1)" });
     if (trailLeg) animateElement(trailLeg, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${direction * -8}deg)`, offset: .22 },
-      { transform: `rotate(${direction * -34}deg)`, offset: .64 },
-      { transform: `rotate(${direction * -21}deg)` },
-    ], { duration });
+      { transform: `rotate(${direction * -5}deg)`, offset: .22 },
+      { transform: `rotate(${direction * -28}deg)`, offset: .57 },
+      { transform: `rotate(${direction * -44}deg)`, offset: .79 },
+      { transform: `rotate(${direction * -28}deg)` },
+    ], { duration: totalDuration });
     if (leadingArm) animateElement(leadingArm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${leadAngle * .2}deg)`, offset: .24 },
-      { transform: `rotate(${leadAngle * .72}deg)`, offset: .56 },
-      { transform: `rotate(${leadAngle}deg)`, offset: .78 },
-      { transform: `rotate(${leadAngle * .94}deg)` },
-    ], { duration: duration * .96, easing: "cubic-bezier(.16,.66,.2,1)" });
+      { transform: `rotate(${leadAngle * .11}deg)`, offset: .18 },
+      { transform: `rotate(${leadAngle * .44}deg)`, offset: .39 },
+      { transform: `rotate(${leadAngle * .79}deg)`, offset: .61 },
+      { transform: `rotate(${leadAngle}deg) scaleY(1.08)`, offset: .82 },
+      { transform: `rotate(${leadAngle * .96}deg) scaleY(1.04)` },
+    ], { duration: totalDuration * .98, easing: "cubic-bezier(.12,.68,.16,1)" });
     if (trailingArm) animateElement(trailingArm, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${trailAngle * .12}deg)`, offset: .31 },
-      { transform: `rotate(${trailAngle * .7}deg)`, offset: .64 },
-      { transform: `rotate(${trailAngle}deg)`, offset: .84 },
-      { transform: `rotate(${trailAngle * .9}deg)` },
-    ], { duration });
+      { transform: `rotate(${trailAngle * .08}deg)`, offset: .25 },
+      { transform: `rotate(${trailAngle * .48}deg)`, offset: .48 },
+      { transform: `rotate(${trailAngle * .84}deg)`, offset: .72 },
+      { transform: `rotate(${trailAngle}deg)`, offset: .88 },
+      { transform: `rotate(${trailAngle * .92}deg)` },
+    ], { duration: totalDuration });
     if (!direction) {
       [leftArm, rightArm].forEach((arm, index) => arm && animateElement(arm, [
         { transform: "rotate(0deg)" },
-        { transform: `rotate(${index ? 84 : -84}deg)`, offset: .64 },
-        { transform: `rotate(${index ? 70 : -70}deg)` },
-      ], { duration }));
+        { transform: `rotate(${index ? 88 : -88}deg)`, offset: .65 },
+        { transform: `rotate(${index ? 72 : -72}deg)` },
+      ], { duration: totalDuration }));
       [leftLeg, rightLeg].forEach((leg, index) => leg && animateElement(leg, [
         { transform: "rotate(0deg)" },
-        { transform: `rotate(${index ? -24 : 24}deg)`, offset: .62 },
-        { transform: `rotate(${index ? -16 : 16}deg)` },
-      ], { duration }));
+        { transform: `rotate(${index ? -27 : 27}deg)`, offset: .62 },
+        { transform: `rotate(${index ? -18 : 18}deg)` },
+      ], { duration: totalDuration }));
     }
     if (body) animateElement(body, [
       { transform: "translate(0,0) rotate(0deg) scale(1)" },
-      { transform: `translate(${direction * -2}px,4px) rotate(${direction * -2}deg) scale(.99,.96)`, offset: .17 },
-      { transform: `translate(${direction * 3}px,-2px) rotate(${direction * 4}deg) scale(1.025)`, offset: .48 },
-      { transform: `translate(${direction * 5}px,1px) rotate(${direction * 7}deg) scale(1.035,1)`, offset: .76 },
-      { transform: `translate(${direction * 4}px,5px) rotate(${direction * 8}deg) scale(1.01,.98)` },
-    ], { duration });
+      { transform: `translate(${direction * -1}px,4px) rotate(${direction * -1}deg) scale(.99,.95)`, offset: .13 },
+      { transform: `translate(${direction * 2}px,1px) rotate(${direction * 2.5}deg) scale(1.01,.98)`, offset: .31 },
+      { transform: `translate(${direction * 4}px,-2px) rotate(${direction * 5}deg) scale(1.04,1)`, offset: .54 },
+      { transform: `translate(${direction * 6}px,1px) rotate(${direction * 8}deg) scale(1.055,1)`, offset: .78 },
+      { transform: `translate(${direction * 5}px,6px) rotate(${direction * 9}deg) scale(1.02,.97)` },
+    ], { duration: totalDuration, easing: "cubic-bezier(.14,.62,.16,1)" });
     if (head) animateElement(head, [
       { transform: "rotate(0deg)" },
-      { transform: `rotate(${direction * -3}deg)`, offset: .32 },
-      { transform: `rotate(${direction * -9}deg)`, offset: .72 },
-      { transform: `rotate(${direction * -7}deg)` },
-    ], { duration });
+      { transform: `rotate(${direction * -2}deg)`, offset: .28 },
+      { transform: `rotate(${direction * -7}deg)`, offset: .56 },
+      { transform: `rotate(${direction * -10}deg)`, offset: .79 },
+      { transform: `rotate(${direction * -8}deg)` },
+    ], { duration: totalDuration });
 
     return animateElement(keeper, [
       { transform: "translateX(-50%) translate(0,0) rotate(0deg) scale(1)" },
-      { transform: `translateX(-50%) translate(${direction * -4}px,4px) rotate(${bodyRotation * -.025}deg) scale(.99,.97)`, offset: .16 },
-      { transform: `translateX(-50%) translate(${dx * .24}px,${dy * .18}px) rotate(${bodyRotation * .18}deg) scale(1.01)`, offset: .34 },
-      { transform: `translateX(-50%) translate(${dx * .62}px,${dy * .56}px) rotate(${bodyRotation * .56}deg) scale(${extension},1)`, offset: .58 },
-      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(${extension},1)`, offset: .79 },
-      { transform: `translateX(-50%) translate(${dx * .96}px,${landingY}px) rotate(${bodyRotation * 1.06}deg) scale(1.03,.97)` },
-    ], { duration, easing: "cubic-bezier(.13,.66,.18,1)" });
+      { transform: `translateX(-50%) translate(${direction * -2}px,4px) rotate(${bodyRotation * -.018}deg) scale(.99,.96)`, offset: .12 },
+      { transform: `translateX(-50%) translate(${dx * .16}px,${dy * .11}px) rotate(${bodyRotation * .1}deg) scale(1.005)`, offset: .27 },
+      { transform: `translateX(-50%) translate(${dx * .46}px,${dy * .37}px) rotate(${bodyRotation * .36}deg) scale(1.04,1)`, offset: .47 },
+      { transform: `translateX(-50%) translate(${dx * .78}px,${dy * .72}px) rotate(${bodyRotation * .72}deg) scale(${extension},1)`, offset: .68 },
+      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(${extension},1)`, offset: .84 },
+      { transform: `translateX(-50%) translate(${dx * .97}px,${landingY}px) rotate(${bodyRotation * 1.04}deg) scale(1.05,.95)` },
+    ], { duration: totalDuration, easing: "cubic-bezier(.1,.7,.14,1)" });
   }
 
   function assistedDivePoint(point) {
@@ -673,63 +707,76 @@
   }
 
   async function animateBallPlacement(side, token) {
-    const suddenDeath = state.albionKicks >= 5 && state.palaceKicks >= 5;
-    const fullPlacement = side === "albion" && (state.albionKicks === 0 || suddenDeath);
-    if (!fullPlacement) {
-      animateElement(ball, [{ transform: "translate(-50%,-50%) scale(.94) rotate(-8deg)" }, { transform: "translate(-50%,-50%) scale(1) rotate(0deg)" }], { duration: reducedMotion() ? 80 : 240 });
-      await sleep(reducedMotion() ? 70 : 180);
-      return token === state.sequence;
-    }
-    stage.classList.add("placing-ball");
-    const duration = reducedMotion() ? 150 : 1180;
+    const kickIndex = side === "albion" ? state.albionKicks : state.palaceKicks;
+    const routineIndex = (kickIndex + (side === "palace" ? 2 : 0)) % 5;
+    const dramatic = kickIndex === 0 || (state.albionKicks >= 5 && state.palaceKicks >= 5);
+    const duration = reducedMotion() ? 150 : dramatic ? 1040 : 650 + routineIndex * 45;
+    stage.classList.add("placing-ball", `placement-${routineIndex + 1}`);
     const root = taker.querySelector(".taker-root");
     const leftArm = taker.querySelector(".taker-arm-left");
     const rightArm = taker.querySelector(".taker-arm-right");
     const leftLeg = taker.querySelector(".taker-leg-left");
     const rightLeg = taker.querySelector(".taker-leg-right");
-    taker.style.left = "58%";
-    taker.style.top = "50.5%";
-    ball.style.left = "57.5%";
-    ball.style.top = "58%";
+    const sideBias = routineIndex === 1 ? -2.5 : routineIndex === 3 ? 2.5 : 0;
+    const carryX = 55.5 + sideBias;
+    const carryY = routineIndex === 2 ? 55.5 : 57.5;
+    taker.style.left = `${56.5 + sideBias}%`;
+    taker.style.top = "49%";
+    ball.style.left = `${carryX}%`;
+    ball.style.top = `${carryY}%`;
     ball.style.transform = "translate(-50%,-50%) scale(.72)";
-    if (ballShadow) { ballShadow.style.left = "57.5%"; ballShadow.style.top = "71%"; ballShadow.style.opacity = ".2"; }
+    if (ballShadow) { ballShadow.style.left = `${carryX}%`; ballShadow.style.top = "70%"; ballShadow.style.opacity = ".16"; }
+
+    const bendDepth = routineIndex === 4 ? 15 : routineIndex === 1 ? 10 : 12;
     animateElement(taker, [
-      { transform: "translate(-50%,10px) scale(.94)" },
-      { transform: "translate(-50%,2px) scale(.97)", offset: .24 },
-      { transform: "translate(-50%,8px) scale(.97)", offset: .56 },
-      { transform: "translate(-50%,3px) scale(.98)", offset: .78 },
-      { transform: "translate(-50%,0) scale(.98)" },
-    ], { duration, easing: "cubic-bezier(.22,.58,.25,1)" });
+      { transform: "translate(-50%,12px) scale(.95)" },
+      { transform: "translate(-50%,4px) scale(.975)", offset: .22 },
+      { transform: `translate(-50%,${bendDepth}px) scale(.98)`, offset: .5 },
+      { transform: "translate(-50%,4px) scale(.988)", offset: .76 },
+      { transform: `translate(calc(-50% + ${routineIndex === 3 ? -4 : 0}px),0) scale(.99)` },
+    ], { duration, easing: "cubic-bezier(.18,.58,.2,1)" });
     if (root) animateElement(root, [
-      { transform: "rotate(0deg) translateY(0)" },
-      { transform: "rotate(4deg) translateY(3px) scaleY(.9)", offset: .34 },
-      { transform: "rotate(7deg) translateY(12px) scaleY(.78)", offset: .58 },
-      { transform: "rotate(2deg) translateY(3px) scaleY(.94)", offset: .79 },
       { transform: "rotate(0deg) translateY(0) scaleY(1)" },
+      { transform: `rotate(${routineIndex % 2 ? -3 : 3}deg) translateY(3px) scaleY(.93)`, offset: .32 },
+      { transform: `rotate(${routineIndex % 2 ? -6 : 6}deg) translateY(${bendDepth}px) scaleY(.8)`, offset: .53 },
+      { transform: `rotate(${routineIndex % 2 ? -2 : 2}deg) translateY(3px) scaleY(.96)`, offset: .76 },
+      { transform: "rotate(0deg) translateY(0) scaleY(1)" },
+    ], { duration, easing: "cubic-bezier(.2,.55,.22,1)" });
+    [leftArm, rightArm].forEach((arm, index) => arm && animateElement(arm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${index ? 38 : -38}deg)`, offset: .34 },
+      { transform: `rotate(${index ? 72 + routineIndex * 2 : -72 - routineIndex * 2}deg)`, offset: .55 },
+      { transform: `rotate(${index ? 28 : -28}deg)`, offset: .72 },
+      { transform: "rotate(0deg)" },
+    ], { duration }));
+    if (leftLeg) animateElement(leftLeg, [
+      { transform: "rotate(0deg)" }, { transform: `rotate(${routineIndex % 2 ? 7 : 11}deg)`, offset: .52 }, { transform: "rotate(0deg)" },
     ], { duration });
-    [leftArm,rightArm].forEach((arm,index)=>arm&&animateElement(arm,[
-      {transform:"rotate(0deg)"},{transform:`rotate(${index ? 42 : -42}deg)`,offset:.38},{transform:`rotate(${index ? 68 : -68}deg)`,offset:.58},{transform:"rotate(0deg)"}
-    ],{duration}));
-    if (leftLeg) animateElement(leftLeg,[{transform:"rotate(0deg)"},{transform:"rotate(9deg)",offset:.56},{transform:"rotate(0deg)"}],{duration});
-    if (rightLeg) animateElement(rightLeg,[{transform:"rotate(0deg)"},{transform:"rotate(-11deg)",offset:.56},{transform:"rotate(0deg)"}],{duration});
+    if (rightLeg) animateElement(rightLeg, [
+      { transform: "rotate(0deg)" }, { transform: `rotate(${routineIndex % 2 ? -12 : -7}deg)`, offset: .52 }, { transform: "rotate(0deg)" },
+    ], { duration });
+
+    const settleRotation = [36, 70, -22, 95, 52][routineIndex];
+    const adjustX = [50, 49.7, 50.3, 50, 50.15][routineIndex];
+    const adjustY = [77, 76.8, 77.1, 77, 76.9][routineIndex];
     animateElement(ball, [
-      { left: "57.5%", top: "58%", transform: "translate(-50%,-50%) scale(.72) rotate(0deg)" },
-      { left: "54.5%", top: "65%", transform: "translate(-50%,-50%) scale(.8) rotate(18deg)", offset: .34 },
-      { left: "51.5%", top: "72%", transform: "translate(-50%,-50%) scale(.91) rotate(36deg)", offset: .56 },
-      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(52deg)", offset: .67 },
-      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: "translate(-50%,-50%) scale(1) rotate(58deg)" },
-    ], { duration, easing: "cubic-bezier(.2,.58,.28,1)" });
-    if (ballShadow) animateElement(ballShadow,[
-      {left:"57.5%",top:"71%",opacity:.16,transform:"translate(-50%,-50%) scale(.5)"},
-      {left:`${ballStart.x*100}%`,top:`${(ballStart.y+.012)*100}%`,opacity:.72,transform:"translate(-50%,-50%) scale(1)"}
-    ],{duration});
-    await sleep(duration + (reducedMotion()?20:50));
+      { left: `${carryX}%`, top: `${carryY}%`, transform: "translate(-50%,-50%) scale(.72) rotate(0deg)" },
+      { left: `${53 + sideBias * .3}%`, top: "66%", transform: `translate(-50%,-50%) scale(.84) rotate(${settleRotation * .35}deg)`, offset: .38 },
+      { left: `${adjustX}%`, top: `${adjustY}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation}deg)`, offset: .62 },
+      { left: `${routineIndex === 1 ? 50.35 : routineIndex === 3 ? 49.75 : 50}%`, top: "77%", transform: `translate(-50%,-50%) scale(${routineIndex === 4 ? .985 : 1}) rotate(${settleRotation + (routineIndex === 1 ? 26 : routineIndex === 3 ? -18 : 6)}deg)`, offset: .76 },
+      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation + 8}deg)` },
+    ], { duration, easing: "cubic-bezier(.18,.58,.22,1)" });
+    if (ballShadow) animateElement(ballShadow, [
+      { left: `${carryX}%`, top: "70%", opacity: .14, transform: "translate(-50%,-50%) scale(.5)" },
+      { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .7, transform: "translate(-50%,-50%) scale(1)" },
+    ], { duration });
+    await sleep(duration + (reducedMotion() ? 20 : 55));
     if (token !== state.sequence) return false;
-    stage.classList.remove("placing-ball");
+    stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
     taker.style.left = "50%";
-    taker.style.top = "50.5%";
+    taker.style.top = "49%";
     taker.style.transform = "translate(-50%,0)";
-    taker.querySelectorAll(".taker-root,.taker-arm,.taker-leg").forEach(part=>{part.style.transform="";});
+    taker.querySelectorAll(".taker-root,.taker-arm,.taker-leg").forEach((part) => { part.style.transform = ""; });
     return true;
   }
 
@@ -787,46 +834,57 @@
 
   async function keeperRoutine(kind, token) {
     positionKeeperOnLine();
-    const routines = ["bar", "point", "gloves", "bounce"];
-    const routine = routines[keeperRoutineIndex++ % routines.length];
+    const routineCycle = ["bar-right", "bar-left", "gloves", "bar-right", "point", "bar-left", "bar-right", "bounce", "bar-left", "bar-right"];
+    const routine = routineCycle[keeperRoutineIndex++ % routineCycle.length];
     const body = keeper.querySelector(".keeper-body-group");
     const leftArm = keeper.querySelector(".keeper-arm-left");
     const rightArm = keeper.querySelector(".keeper-arm-right");
     const leftLeg = keeper.querySelector(".keeper-leg-left");
     const rightLeg = keeper.querySelector(".keeper-leg-right");
-    const duration = reducedMotion() ? 120 : 820;
+    const duration = reducedMotion() ? 130 : 850;
 
-    if (routine === "bar") {
-      const lift = Math.max(8, keeperDimensions().height * .08);
+    if (routine.startsWith("bar")) {
+      const useLeft = routine.endsWith("left");
+      const arm = useLeft ? leftArm : rightArm;
+      const bar = goalMouth.querySelector(".goal-crossbar");
+      const glove = arm?.querySelector(".keeper-glove");
+      const barRect = bar?.getBoundingClientRect();
+      const gloveRect = glove?.getBoundingClientRect();
+      const requiredLift = barRect && gloveRect ? Math.max(9, gloveRect.top - barRect.bottom + 7) : keeperDimensions().height * .095;
+      const lift = Math.min(keeperDimensions().height * .15, requiredLift);
       animateElement(keeper, [
         { transform: "translateX(-50%) translateY(0) scaleY(1)" },
-        { transform: `translateX(-50%) translateY(${-lift}px) scaleY(1.035)`, offset: .56 },
+        { transform: `translateX(calc(-50% + ${useLeft ? -3 : 3}px)) translateY(${-lift * .46}px) scaleY(1.018)`, offset: .34 },
+        { transform: `translateX(calc(-50% + ${useLeft ? -4 : 4}px)) translateY(${-lift}px) scaleY(1.045)`, offset: .58 },
+        { transform: "translateX(-50%) translateY(0) scaleY(1)", offset: .92 },
         { transform: "translateX(-50%) translateY(0) scaleY(1)" },
-      ], { duration, easing: "cubic-bezier(.2,.72,.3,1)" });
-      if (rightArm) animateElement(rightArm, [
+      ], { duration, easing: "cubic-bezier(.18,.72,.22,1)" });
+      if (arm) animateElement(arm, [
         { transform: "rotate(0deg)" },
-        { transform: "rotate(148deg)", offset: .55 },
+        { transform: `rotate(${useLeft ? -84 : 84}deg)`, offset: .32 },
+        { transform: `rotate(${useLeft ? -154 : 154}deg) scaleY(1.08)`, offset: .58 },
+        { transform: `rotate(${useLeft ? -72 : 72}deg)`, offset: .78 },
         { transform: "rotate(0deg)" },
       ], { duration });
-      const bar = goalMouth.querySelector(".goal-crossbar");
-      if (bar) animateElement(bar, [{ filter: "brightness(1)" }, { filter: "brightness(1.35)", offset: .56 }, { filter: "brightness(1)" }], { duration });
+      if (bar) animateElement(bar, [{ filter: "brightness(1)" }, { filter: "brightness(1.42)", offset: .58 }, { filter: "brightness(1)" }], { duration });
+      window.setTimeout(() => sound("gloves"), reducedMotion() ? 45 : duration * .56);
     } else if (routine === "point") {
       const pointLeft = (state.albionKicks + state.palaceKicks) % 2 === 0;
       const arm = pointLeft ? leftArm : rightArm;
       if (arm) animateElement(arm, [
         { transform: "rotate(0deg)" },
-        { transform: `rotate(${pointLeft ? -54 : 54}deg)`, offset: .42 },
+        { transform: `rotate(${pointLeft ? -58 : 58}deg)`, offset: .42 },
         { transform: "rotate(0deg)" },
       ], { duration });
       animateElement(keeper, [{ transform: "translateX(-50%)" }, { transform: `translateX(calc(-50% + ${pointLeft ? -8 : 8}px))`, offset: .42 }, { transform: "translateX(-50%)" }], { duration });
     } else if (routine === "gloves") {
-      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-82deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
-      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(82deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
+      if (leftArm) animateElement(leftArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(-84deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
+      if (rightArm) animateElement(rightArm, [{ transform: "rotate(0deg)" }, { transform: "rotate(84deg)", offset: .45 }, { transform: "rotate(0deg)" }], { duration });
       window.setTimeout(() => sound("gloves"), reducedMotion() ? 40 : 360);
     } else {
-      if (body) animateElement(body, [{ transform: "translateY(0) scaleY(1)" }, { transform: "translateY(-3px) scaleY(1.02)", offset: .28 }, { transform: "translateY(0) scaleY(.99)", offset: .55 }, { transform: "translateY(-2px) scaleY(1.01)", offset: .75 }, { transform: "translateY(0) scaleY(1)" }], { duration });
-      if (leftLeg) animateElement(leftLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(5deg)" }, { transform: "rotate(0deg)" }], { duration });
-      if (rightLeg) animateElement(rightLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(-5deg)" }, { transform: "rotate(0deg)" }], { duration });
+      if (body) animateElement(body, [{ transform: "translateY(0) scaleY(1)" }, { transform: "translateY(-3px) scaleY(1.02)", offset: .28 }, { transform: "translateY(1px) scaleY(.985)", offset: .55 }, { transform: "translateY(-2px) scaleY(1.01)", offset: .75 }, { transform: "translateY(0) scaleY(1)" }], { duration });
+      if (leftLeg) animateElement(leftLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(6deg)" }, { transform: "rotate(0deg)" }], { duration });
+      if (rightLeg) animateElement(rightLeg, [{ transform: "rotate(0deg)" }, { transform: "rotate(-6deg)" }, { transform: "rotate(0deg)" }], { duration });
     }
     await sleep(duration);
     if (token !== state.sequence) return false;
@@ -1018,7 +1076,7 @@
       showDecision(isPanenka ? "PANENKA!" : "GOAL!", "goal");
       $("stageInstruction").textContent = "Goal for Brighton";
       setStatus("Goal for Brighton", isPanenka ? "The keeper commits and the chip drops centrally." : resolved.x < .3 || resolved.x > .7 ? "Driven into the side netting." : "Placed beyond the goalkeeper.");
-      sound("goal"); window.setTimeout(() => sound("albionCheer"), 110);
+      sound("goal"); window.setTimeout(() => sound("albionCheer"), 170);
     } else if (saved) {
       crowdReaction("crowd-palace-cheer");
       takerReaction(false, "albion");
@@ -1197,7 +1255,7 @@
       showDecision("PALACE SCORE", "goal");
       $("stageInstruction").textContent = "Palace score";
       setStatus("Palace score", state.userDive ? "Verbruggen stretches but cannot quite reach it." : "No dive was made in the available window.");
-      sound("goal"); window.setTimeout(() => sound("palaceCheer"), 110);
+      sound("goal"); window.setTimeout(() => sound("palaceCheer"), 170);
     }
 
     renderScore();
@@ -1226,8 +1284,8 @@
       const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
       if (chosenSide === targetSide) {
         assisted = {
-          x: clamp(assisted.x + (state.palaceTarget.x - assisted.x) * .34, .015, .985),
-          y: clamp(assisted.y + (state.palaceTarget.y - assisted.y) * .28, .02, .98),
+          x: clamp(assisted.x + (state.palaceTarget.x - assisted.x) * .48, .015, .985),
+          y: clamp(assisted.y + (state.palaceTarget.y - assisted.y) * .40, .02, .98),
         };
       }
     }
@@ -1286,6 +1344,13 @@
     refereeSignal(albionWon);
     crowdReaction(albionWon ? "crowd-albion-cheer" : "crowd-palace-cheer", 2600);
     victoryCelebration(albionWon);
+    if (albionWon && stage.classList.contains("palace-kick")) {
+      animateElement(taker, [
+        { opacity: 1, transform: taker.style.transform || "translate(-50%,0)" },
+        { opacity: 0, transform: "translate(calc(-50% + 54px),8px) scale(.94)" }
+      ], { duration: reducedMotion() ? 120 : 520, easing: "ease-out", fill: "forwards" });
+      window.setTimeout(() => { taker.style.visibility = "hidden"; }, reducedMotion() ? 130 : 540);
+    }
     if (albionWon && state.userSaves && state.palaceResults.at(-1)?.result === "saved") keeperCelebration();
     else if (albionWon) takerReaction(true, "albion");
     setStatus(albionWon ? "Brighton win the shoot-out" : "Palace take the shoot-out", albionWon ? "The players and home end celebrate the derby win." : "Restart and try to turn it around.");
