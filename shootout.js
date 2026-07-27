@@ -655,7 +655,7 @@
       ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
     }
     taker.style.left = "50%";
-    taker.style.top = "49%";
+    taker.style.top = getComputedStyle(stage).getPropertyValue("--taker-rest-top").trim() || "54%";
     taker.style.opacity = "1";
     taker.style.visibility = "";
     taker.style.transform = "translate(-50%,0)";
@@ -1553,7 +1553,7 @@
     const pickupX = 57.5 + sideBias;
     const pickupY = 75.5;
     taker.style.left = `${56.5 + sideBias}%`;
-    taker.style.top = "49%";
+    taker.style.top = getComputedStyle(stage).getPropertyValue("--taker-rest-top").trim() || "54%";
     ball.style.left = `${pickupX}%`;
     ball.style.top = `${pickupY}%`;
     ball.style.transform = "translate(-50%,-50%) scale(.96)";
@@ -1622,7 +1622,7 @@
     if (token !== state.sequence) return false;
     stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
     taker.style.left = "50%";
-    taker.style.top = "49%";
+    taker.style.top = getComputedStyle(stage).getPropertyValue("--taker-rest-top").trim() || "54%";
     taker.style.transform = "translate(-50%,0)";
     taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
     return true;

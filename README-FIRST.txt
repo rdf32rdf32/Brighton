@@ -1,8 +1,11 @@
-BRIGHTON SUPER SITE v45
+BRIGHTON FAN SITE — R40 PERSPECTIVE FIX
 
-1. Extract every file directly into the root of your GitHub Pages repository.
-2. Do not put the files inside an extra folder.
-3. Commit and wait for GitHub Pages to deploy.
-4. In Edge, press Ctrl+F5 once after deployment to clear the previous service-worker page.
+This package contains 37 files only. All files are placed directly at the top level of the ZIP.
 
-This build restores the full site and uses an isolated penalty engine with aiming, a moving power/accuracy bar, ball placement, goalkeeper gestures, delayed reactions, alternating save mode and best-of-five logic.
+Upload or drag all 37 files into the root of your GitHub Pages repository, replacing the existing versions.
+Do not upload the ZIP itself and do not place the files inside an additional folder.
+
+Main update:
+- corrected goal, goalkeeper, player, ball and pitch perspective on desktop and mobile
+- removed obsolete rollback/version files from the delivery
+- corrected the service-worker cache list for the current R40 files

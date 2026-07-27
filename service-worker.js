@@ -1,18 +1,51 @@
-const CACHE_NAME = "albion-production-r38-20260727";
+const CACHE_NAME = "albion-production-r40-20260727";
 const CORE = [
-  "./", "./index.html", "./style.css?v=20260727-r38", "./shootout.css?v=20260727-r38",
-  "./r35-polish.css?v=20260727-r38", "./r38-layout.css?v=20260727-r38", "./content-data.js?v=20260727-r38", "./quiz-data.js?v=20260727-r38",
-  "./site-controls.js?v=20260727-r38", "./app.js?v=20260727-r38", "./shootout.js?v=20260727-r38",
-  "./r35-polish.js?v=20260727-r38", "./manifest.json", "./favicon.svg", "./albion-safe-graphic.svg",
-  "./icon-192.png", "./icon-512.png", "./social-preview.png", "./offline.html", "./contact.html",
-  "./cookies.html", "./copyright.html", "./privacy.html"
+  "./", "./index.html",
+  "./style.css?v=20260727-r40", "./shootout.css?v=20260727-r40",
+  "./r35-polish.css?v=20260727-r40", "./r37-layout.css?v=20260727-r40",
+  "./r38-mobile.css?v=20260727-r40", "./r39-geometry.css?v=20260727-r40",
+  "./content-data.js?v=20260727-r40", "./quiz-data.js?v=20260727-r40",
+  "./site-controls.js?v=20260727-r40", "./app.js?v=20260727-r40",
+  "./shootout.js?v=20260727-r40", "./r35-polish.js?v=20260727-r40",
+  "./manifest.json", "./favicon.svg", "./albion-safe-graphic.svg",
+  "./icon-192.png", "./icon-512.png", "./social-preview.png",
+  "./offline.html", "./contact.html", "./cookies.html", "./copyright.html", "./privacy.html"
 ];
-self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(CORE))); });
-self.addEventListener("activate", e => e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))).then(() => self.clients.claim())));
-self.addEventListener("fetch", e => {
-  const r=e.request; if(r.method!=="GET") return; const u=new URL(r.url); if(u.origin!==location.origin) return;
-  if(r.mode==="navigate") { e.respondWith(fetch(r).then(res=>{if(res.ok)caches.open(CACHE_NAME).then(c=>c.put(r,res.clone()));return res;}).catch(async()=>await caches.match(r)||await caches.match("./index.html")||await caches.match("./offline.html"))); return; }
-  if(/\.(mp3|wav|ogg)$/i.test(u.pathname)){e.respondWith(caches.match(r).then(c=>c||fetch(r).then(res=>{if(res.ok)caches.open(CACHE_NAME).then(x=>x.put(r,res.clone()));return res;})));return;}
-  e.respondWith(caches.match(r).then(c=>{const n=fetch(r).then(res=>{if(res.ok&&res.type==="basic")caches.open(CACHE_NAME).then(x=>x.put(r,res.clone()));return res;}).catch(()=>c);return c||n;}));
+self.addEventListener("install", event => {
+  self.skipWaiting();
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(CORE)));
 });
-self.addEventListener("message", e => { if(e.data?.type==="SKIP_WAITING") self.skipWaiting(); });
+self.addEventListener("activate", event => event.waitUntil(
+  caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME).map(key => caches.delete(key))))
+    .then(() => self.clients.claim())
+));
+self.addEventListener("fetch", event => {
+  const request = event.request;
+  if (request.method !== "GET") return;
+  const url = new URL(request.url);
+  if (url.origin !== location.origin) return;
+  if (request.mode === "navigate") {
+    event.respondWith(fetch(request).then(response => {
+      if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+      return response;
+    }).catch(async () => await caches.match(request) || await caches.match("./index.html") || await caches.match("./offline.html")));
+    return;
+  }
+  if (/\.(mp3|wav|ogg)$/i.test(url.pathname)) {
+    event.respondWith(caches.match(request).then(cached => cached || fetch(request).then(response => {
+      if (response.ok) caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+      return response;
+    })));
+    return;
+  }
+  event.respondWith(caches.match(request).then(cached => {
+    const network = fetch(request).then(response => {
+      if (response.ok && response.type === "basic") caches.open(CACHE_NAME).then(cache => cache.put(request, response.clone()));
+      return response;
+    }).catch(() => cached);
+    return cached || network;
+  }));
+});
+self.addEventListener("message", event => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
+});
