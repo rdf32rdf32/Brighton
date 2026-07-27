@@ -80,9 +80,6 @@
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
-  const compactScene = () => window.matchMedia("(max-width: 900px)").matches;
-  const takerStartLeft = () => compactScene() ? 42 : 46;
-  const takerStartTop = () => compactScene() ? 58 : 52;
 
   function syncGoalBox() {
     const stageRect = stage.getBoundingClientRect();
@@ -657,8 +654,8 @@
       ballShadow.style.opacity = "1";
       ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
     }
-    taker.style.left = `${takerStartLeft()}%`;
-    taker.style.top = `${takerStartTop()}%`;
+    taker.style.left = "50%";
+    taker.style.top = "49%";
     taker.style.opacity = "1";
     taker.style.visibility = "";
     taker.style.transform = "translate(-50%,0)";
@@ -787,7 +784,7 @@
     window.setTimeout(() => sound("footsteps"), reducedMotion() ? 30 : duration * .23);
     window.setTimeout(() => sound("footsteps"), reducedMotion() ? 60 : duration * (stutter ? .58 : .48));
     if (stutter) window.setTimeout(() => sound("footsteps"), reducedMotion() ? 75 : duration * .73);
-    let runFrames = stutter ? [
+    const runFrames = stutter ? [
       { transform: `translate(calc(-50% + ${startX}px),20px) scale(.965)` },
       { transform: `translate(calc(-50% + ${startX * .66}px),12px) scale(.98)`, offset: .2 },
       { transform: `translate(calc(-50% + ${startX * .42}px),7px) scale(.988)`, offset: .38 },
@@ -804,11 +801,6 @@
       { transform: `translate(calc(-50% + ${contactOffset}px),-39px) scale(1.018)`, offset: .88 },
       { transform: `translate(calc(-50% + ${contactOffset + footDirection * 12}px),-43px) scale(1.005)` },
     ];
-    const startLeft = takerStartLeft();
-    runFrames = runFrames.map((frame, index) => ({
-      ...frame,
-      left: `${startLeft + (50 - startLeft) * (index / Math.max(1, runFrames.length - 1))}%`,
-    }));
     const run = animateElement(taker, runFrames, { duration, easing: stutter ? "cubic-bezier(.18,.48,.18,1)" : "cubic-bezier(.16,.58,.18,1)" });
     if (root) animateElement(root, [
       { transform: `rotate(${reverse ? footDirection * -4 : 0}deg) translateY(0)` },
@@ -1629,8 +1621,8 @@
     await sleep(duration + settlePause);
     if (token !== state.sequence) return false;
     stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
-    taker.style.left = `${takerStartLeft()}%`;
-    taker.style.top = `${takerStartTop()}%`;
+    taker.style.left = "50%";
+    taker.style.top = "49%";
     taker.style.transform = "translate(-50%,0)";
     taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
     return true;

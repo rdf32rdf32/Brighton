@@ -62,7 +62,7 @@
   document.querySelectorAll('select').forEach(select => { if (!select.getAttribute('aria-label') && !select.labels?.length) select.setAttribute('aria-label',select.id || 'Selection'); });
 
   const release = document.querySelector('.site-smooth-status');
-  if (release) release.textContent='Release 36';
+  if (release) release.textContent='Release 37';
 
   if ('serviceWorker' in navigator) navigator.serviceWorker.addEventListener('controllerchange', () => location.reload(), {once:true});
 })();

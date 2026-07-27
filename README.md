@@ -1,7 +1,12 @@
-# Albion Fan Hub — Release 36
+# Albion Fan Hub — Release 37
 
-Clean GitHub Pages production build.
+Desktop penalty width is centred correctly without transform drift. Mobile penalty depth and player/ball geometry are rolled back to the stable Release 35 version.
 
-Release 36 makes the penalty game full-width on desktop and rebuilds its responsive scene geometry. Mobile now uses a taller camera crop, a smaller goal, corrected goalkeeper scaling and a player run-up that begins behind and to the side of the ball before moving into contact.
+Upload all files directly to the GitHub repository root.
 
-Upload all files in this ZIP directly to the repository root.
+
+## Release 38 mobile validation
+- Locked the restored 1000:650 penalty perspective below 900px.
+- Prevented horizontal overflow and inherited desktop centring on phones.
+- Added compact scoreboard, 44px touch targets, safe-area spacing and landscape handling.
+- Kept the desktop full-width centred correction from Release 37.
