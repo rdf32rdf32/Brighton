@@ -65,6 +65,7 @@
   const status = $("shootoutStatus");
   const readyPanel = $("palaceReadyPanel");
   const readyButton = $("palaceReadyButton");
+  if (readyPanel && stage && readyPanel.parentElement !== stage) stage.appendChild(readyPanel);
   const panenka = $("panenkaChoice");
   const soundButton = $("shootoutSound");
   const summary = $("shootoutSummary");
@@ -1901,6 +1902,41 @@
   }
 
 
+  async function keeperPointRoutine(token) {
+    positionKeeperOnLine();
+    const pointLeft = Math.random() < .5;
+    const arm = keeper.querySelector(pointLeft ? ".keeper-arm-left" : ".keeper-arm-right");
+    const otherArm = keeper.querySelector(pointLeft ? ".keeper-arm-right" : ".keeper-arm-left");
+    const body = keeper.querySelector(".keeper-body-group");
+    const direction = pointLeft ? -1 : 1;
+    const duration = reducedMotion() ? 140 : 760;
+    setStatus("Verbruggen points to a corner", "He tries to influence the taker, then returns to the centre of the goal.");
+    animateElement(keeper, [
+      { transform: "translateX(-50%) translateY(0)" },
+      { transform: `translateX(calc(-50% + ${direction * 8}px)) translateY(0)`, offset: .35 },
+      { transform: "translateX(-50%) translateY(0)" },
+    ], { duration, easing: "cubic-bezier(.2,.7,.25,1)" });
+    if (body) animateElement(body, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * 5}deg)`, offset: .4 },
+      { transform: "rotate(0deg)" },
+    ], { duration });
+    if (arm) animateElement(arm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * -82}deg)`, offset: .32 },
+      { transform: `rotate(${direction * -82}deg)`, offset: .68 },
+      { transform: "rotate(0deg)" },
+    ], { duration });
+    if (otherArm) animateElement(otherArm, [
+      { transform: "rotate(0deg)" },
+      { transform: `rotate(${direction * 12}deg)`, offset: .4 },
+      { transform: "rotate(0deg)" },
+    ], { duration });
+    await sleep(duration);
+    return token === state.sequence;
+  }
+
+
   async function keeperRoutine(kind, token) {
     if (kind !== "palace") return keeperSettleRoutine(token);
     // r28: every Palace penalty uses the complete visible routine.
@@ -1908,6 +1944,8 @@
     if (token !== state.sequence) return false;
     setStatus("Verbruggen checks the frame", "He returns to the line, jumps to touch the crossbar and settles before the whistle.");
     if (!(await keeperBarTouchRoutine(kind, token))) return false;
+    if (token !== state.sequence) return false;
+    if (!(await keeperPointRoutine(token))) return false;
     if (token !== state.sequence) return false;
     return keeperSettleRoutine(token);
   }
@@ -1977,6 +2015,8 @@
   async function prepareAlbionKick() {
     const token = ++state.sequence;
     resetVisuals();
+    state.aim = { x: 0.5, y: 0.5 };
+    setReticle(0.5, 0.5);
     keeper.classList.add("opposition-keeper");
     stage.classList.remove("palace-kick");
     state.phase = "albion-prep";
@@ -2767,7 +2807,7 @@
   document.addEventListener("pointerdown", primePenaltyAudio, { capture: true, once: true, passive: true });
   document.addEventListener("touchstart", primePenaltyAudio, { capture: true, once: true, passive: true });
 
-  readyButton.addEventListener("click", () => { unlockAudio(); beginPalacePenalty(); });
+  readyButton.addEventListener("click", () => { readyPanel.hidden = true; unlockAudio(); beginPalacePenalty(); });
   $("resetShootout").addEventListener("click", resetGame);
   summary.addEventListener("click", (event) => {
     if (event.target?.id === "retakeShootoutFinal") resetGame();
