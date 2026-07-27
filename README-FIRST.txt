@@ -1,11 +1,14 @@
-BRIGHTON FAN SITE — R40 PERSPECTIVE FIX
+ALBION FAN HUB — R42 CLEAN PENALTY REBUILD
 
-This package contains 37 files only. All files are placed directly at the top level of the ZIP.
+Upload all files directly to the root of the GitHub Pages repository.
 
-Upload or drag all 37 files into the root of your GitHub Pages repository, replacing the existing versions.
-Do not upload the ZIP itself and do not place the files inside an additional folder.
+Penalty rebuild:
+- One authoritative responsive geometry layer in shootout.css.
+- Removed the conflicting r37, r38 and r39 penalty override stylesheets.
+- Ordered pre-kick sequence: deliberate placement, referee check, bottle visit, crossbar touch, pointing gesture, set position, whistle, run-up and strike.
+- Player remains behind the ball after placement.
+- Ready-to-save control appears on the pitch and disappears after activation.
+- Brighton aim resets to the centre for every new Brighton penalty.
+- Updated service-worker cache version to R42.
 
-Main update:
-- corrected goal, goalkeeper, player, ball and pitch perspective on desktop and mobile
-- removed obsolete rollback/version files from the delivery
-- corrected the service-worker cache list for the current R40 files
+After uploading, use the site's Update now button or clear the old site cache once if GitHub Pages still shows an earlier version.

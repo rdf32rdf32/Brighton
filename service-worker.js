@@ -1,12 +1,10 @@
-const CACHE_NAME = "albion-production-r41-20260727";
+const CACHE_NAME = "albion-production-r42-20260727";
 const CORE = [
   "./", "./index.html",
-  "./style.css?v=20260727-r41", "./shootout.css?v=20260727-r41",
-  "./r35-polish.css?v=20260727-r41", "./r37-layout.css?v=20260727-r41",
-  "./r38-mobile.css?v=20260727-r41", "./r39-geometry.css?v=20260727-r41",
-  "./content-data.js?v=20260727-r41", "./quiz-data.js?v=20260727-r41",
-  "./site-controls.js?v=20260727-r41", "./app.js?v=20260727-r41",
-  "./shootout.js?v=20260727-r41", "./r35-polish.js?v=20260727-r41",
+  "./style.css?v=20260727-r42", "./shootout.css?v=20260727-r42",
+  "./content-data.js?v=20260727-r42", "./quiz-data.js?v=20260727-r42",
+  "./site-controls.js?v=20260727-r42", "./app.js?v=20260727-r42",
+  "./shootout.js?v=20260727-r42", "./r35-polish.js?v=20260727-r42",
   "./manifest.json", "./favicon.svg", "./albion-safe-graphic.svg",
   "./icon-192.png", "./icon-512.png", "./social-preview.png",
   "./offline.html", "./contact.html", "./cookies.html", "./copyright.html", "./privacy.html"

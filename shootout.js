@@ -83,7 +83,6 @@
   const ballStart = { x: 0.5, y: 0.77 };
 
   function syncGoalBox() {
-    const stageRect = stage.getBoundingClientRect();
     const goalRect = goalMouth.getBoundingClientRect();
     if (!stageRect.width || !stageRect.height || !goalRect.width || !goalRect.height) return goalBox;
     goalBox.left = (goalRect.left - stageRect.left) / stageRect.width;
@@ -941,7 +940,6 @@
 
   function elementStagePoint(element, anchorX = .5, anchorY = .5) {
     if (!element) return null;
-    const stageRect = stage.getBoundingClientRect();
     const rect = element.getBoundingClientRect();
     if (!stageRect.width || !stageRect.height || !rect.width || !rect.height) return null;
     return {
@@ -1065,7 +1063,6 @@
   }
 
   function moveSavePartToContact(descriptor, collisionPoint, duration) {
-    const stageRect = stage.getBoundingClientRect();
     const moveOne = (element, fromPoint, destination, side = 0) => {
       if (!element || !fromPoint) return null;
       const dx = (destination.x - fromPoint.x) * stageRect.width + side;
@@ -1533,99 +1530,89 @@
   }
 
   async function animateBallPlacement(side, token) {
-    const kickIndex = side === "albion" ? state.albionKicks : state.palaceKicks;
-    const routineIndex = (kickIndex + (side === "palace" ? 2 : 0)) % 5;
-    const dramatic = kickIndex === 0 || (state.albionKicks >= 5 && state.palaceKicks >= 5);
-    const duration = reducedMotion() ? 190 : dramatic ? 2850 : 2500 + routineIndex * 70;
-    const settlePause = reducedMotion() ? 30 : 520;
-    stage.classList.add("placing-ball", `placement-${routineIndex + 1}`);
+    const duration = reducedMotion() ? 240 : 3600;
     const root = taker.querySelector(".taker-root");
     const leftArm = taker.querySelector(".taker-arm-left");
     const rightArm = taker.querySelector(".taker-arm-right");
     const leftLeg = taker.querySelector(".taker-leg-left");
     const rightLeg = taker.querySelector(".taker-leg-right");
-    const leftLowerArm = taker.querySelector(".taker-lower-arm-left");
-    const rightLowerArm = taker.querySelector(".taker-lower-arm-right");
-    const leftLowerLeg = taker.querySelector(".taker-lower-leg-left");
-    const rightLowerLeg = taker.querySelector(".taker-lower-leg-right");
-    const sideBias = routineIndex === 1 ? -2.5 : routineIndex === 3 ? 2.5 : 0;
-    const carryX = 55.5 + sideBias;
-    const carryY = routineIndex === 2 ? 55.5 : 57.5;
-    const pickupX = 57.5 + sideBias;
-    const pickupY = 75.5;
-    taker.style.left = `${56.5 + sideBias}%`;
-    taker.style.top = getComputedStyle(stage).getPropertyValue("--taker-rest-top").trim() || "54%";
-    ball.style.left = `${pickupX}%`;
-    ball.style.top = `${pickupY}%`;
-    ball.style.transform = "translate(-50%,-50%) scale(.96)";
-    if (ballShadow) { ballShadow.style.left = `${pickupX}%`; ballShadow.style.top = `${pickupY + 1.2}%`; ballShadow.style.opacity = ".52"; }
 
-    const bendDepth = routineIndex === 4 ? 15 : routineIndex === 1 ? 10 : 12;
-    animateElement(taker, [
-      { transform: "translate(-50%,12px) scale(.95)" },
-      { transform: "translate(-50%,4px) scale(.975)", offset: .22 },
-      { transform: `translate(-50%,${bendDepth}px) scale(.98)`, offset: .5 },
-      { transform: "translate(-50%,4px) scale(.988)", offset: .76 },
-      { transform: `translate(calc(-50% + ${routineIndex === 3 ? -4 : 0}px),0) scale(.99)` },
-    ], { duration, easing: "cubic-bezier(.18,.58,.2,1)" });
-    if (root) animateElement(root, [
-      { transform: "rotate(0deg) translateY(0) scaleY(1)" },
-      { transform: `rotate(${routineIndex % 2 ? -3 : 3}deg) translateY(3px) scaleY(.93)`, offset: .32 },
-      { transform: `rotate(${routineIndex % 2 ? -6 : 6}deg) translateY(${bendDepth}px) scaleY(.9)`, offset: .53 },
-      { transform: `rotate(${routineIndex % 2 ? -2 : 2}deg) translateY(3px) scaleY(.96)`, offset: .76 },
-      { transform: "rotate(0deg) translateY(0) scaleY(1)" },
-    ], { duration, easing: "cubic-bezier(.2,.55,.22,1)" });
-    [leftArm, rightArm].forEach((arm, index) => arm && animateElement(arm, [
-      { transform: "rotate(0deg)" },
-      { transform: `rotate(${index ? 30 : -30}deg)`, offset: .3 },
-      { transform: `rotate(${index ? 58 + routineIndex * 1.5 : -58 - routineIndex * 1.5}deg)`, offset: .56 },
-      { transform: `rotate(${index ? 24 : -24}deg)`, offset: .76 },
-      { transform: "rotate(0deg)" },
-    ], { duration }));
-    [leftLowerArm, rightLowerArm].forEach((arm, index) => arm && animateElement(arm, [
-      { transform: "rotate(0deg)" },
-      { transform: `rotate(${index ? 24 : -24}deg)`, offset: .42 },
-      { transform: `rotate(${index ? 38 : -38}deg)`, offset: .56 },
-      { transform: `rotate(${index ? 14 : -14}deg)`, offset: .75 },
-      { transform: "rotate(0deg)" },
-    ], { duration }));
-    if (leftLeg) animateElement(leftLeg, [
-      { transform: "rotate(0deg)" }, { transform: `rotate(${routineIndex % 2 ? 7 : 11}deg)`, offset: .52 }, { transform: "rotate(0deg)" },
-    ], { duration });
-    if (rightLeg) animateElement(rightLeg, [
-      { transform: "rotate(0deg)" }, { transform: `rotate(${routineIndex % 2 ? -12 : -7}deg)`, offset: .52 }, { transform: "rotate(0deg)" },
-    ], { duration });
-    [leftLowerLeg, rightLowerLeg].forEach((leg, index) => leg && animateElement(leg, [
-      { transform: "rotate(0deg)" },
-      { transform: `rotate(${index ? -17 : 17}deg)`, offset: .48 },
-      { transform: `rotate(${index ? -22 : 22}deg)`, offset: .58 },
-      { transform: "rotate(0deg)" },
-    ], { duration }));
+    stage.dataset.sequenceStep = "placement";
+    stage.classList.add("placing-ball");
+    setStatus("Placing the ball", `${side === "albion" ? "The Albion taker" : "The Palace taker"} walks in, sets the ball carefully and steps back.`);
 
-    const settleRotation = [36, 70, -22, 95, 52][routineIndex];
-    const adjustX = [50, 49.7, 50.3, 50, 50.15][routineIndex];
-    const adjustY = [77, 76.8, 77.1, 77, 76.9][routineIndex];
-    animateElement(ball, [
-      { left: `${pickupX}%`, top: `${pickupY}%`, transform: "translate(-50%,-50%) scale(.96) rotate(0deg)" },
-      { left: `${pickupX}%`, top: `${pickupY - 1.2}%`, transform: "translate(-50%,-50%) scale(.94) rotate(8deg)", offset: .11 },
-      { left: `${carryX}%`, top: `${carryY}%`, transform: "translate(-50%,-50%) scale(.72) rotate(18deg)", offset: .27 },
-      { left: `${53 + sideBias * .3}%`, top: "66%", transform: `translate(-50%,-50%) scale(.84) rotate(${settleRotation * .35}deg)`, offset: .48 },
-      { left: `${adjustX}%`, top: `${adjustY}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation}deg)`, offset: .68 },
-      { left: `${routineIndex === 1 ? 50.35 : routineIndex === 3 ? 49.75 : 50}%`, top: "77%", transform: `translate(-50%,-50%) scale(${routineIndex === 4 ? .985 : 1}) rotate(${settleRotation + (routineIndex === 1 ? 26 : routineIndex === 3 ? -18 : 6)}deg)`, offset: .82 },
-      { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: `translate(-50%,-50%) scale(1) rotate(${settleRotation + 8}deg)` },
-    ], { duration, easing: "cubic-bezier(.18,.58,.22,1)" });
-    if (ballShadow) animateElement(ballShadow, [
-      { left: `${pickupX}%`, top: `${pickupY + 1.2}%`, opacity: .52, transform: "translate(-50%,-50%) scale(.85)" },
-      { left: `${carryX}%`, top: "70%", opacity: .12, transform: "translate(-50%,-50%) scale(.44)", offset: .27 },
-      { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .7, transform: "translate(-50%,-50%) scale(1)" },
-    ], { duration });
-    await sleep(duration + settlePause);
-    if (token !== state.sequence) return false;
-    stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
+    // Start with the player carrying the ball, then lower it deliberately onto the spot.
     taker.style.left = "50%";
-    taker.style.top = getComputedStyle(stage).getPropertyValue("--taker-rest-top").trim() || "54%";
+    taker.style.top = "57%";
     taker.style.transform = "translate(-50%,0)";
-    taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
+    ball.style.left = "51.8%";
+    ball.style.top = "59%";
+    ball.style.transform = "translate(-50%,-50%) scale(.72) rotate(0deg)";
+    if (ballShadow) {
+      ballShadow.style.left = "51.8%";
+      ballShadow.style.top = "72%";
+      ballShadow.style.opacity = ".12";
+    }
+
+    const animations = [];
+    animations.push(animateElement(taker, [
+      { transform: "translate(-50%,7%) scale(.94)" },
+      { transform: "translate(-50%,2%) scale(.965)", offset: .18 },
+      { transform: "translate(-50%,0) scale(.98)", offset: .34 },
+      { transform: "translate(-50%,7%) scale(.985,.92)", offset: .52 },
+      { transform: "translate(-50%,7%) scale(.985,.92)", offset: .68 },
+      { transform: "translate(-50%,0) scale(.99)", offset: .78 },
+      { transform: "translate(-50%,-9%) scale(.98)", offset: .9 },
+      { transform: "translate(-50%,-13%) scale(.98)" },
+    ], { duration, easing: "cubic-bezier(.2,.55,.22,1)" }));
+    if (root) animations.push(animateElement(root, [
+      { transform: "rotate(0deg)" },
+      { transform: "rotate(0deg)", offset: .34 },
+      { transform: "rotate(5deg) translateY(13px) scaleY(.9)", offset: .54 },
+      { transform: "rotate(5deg) translateY(13px) scaleY(.9)", offset: .68 },
+      { transform: "rotate(1deg) translateY(2px)", offset: .8 },
+      { transform: "rotate(0deg)" },
+    ], { duration }));
+    [leftArm,rightArm].forEach((arm,index)=>arm && animations.push(animateElement(arm,[
+      { transform:"rotate(0deg)" },
+      { transform:`rotate(${index ? 20 : -20}deg)`, offset:.36 },
+      { transform:`rotate(${index ? 58 : -58}deg)`, offset:.55 },
+      { transform:`rotate(${index ? 58 : -58}deg)`, offset:.68 },
+      { transform:"rotate(0deg)" },
+    ],{duration})));
+    [leftLeg,rightLeg].forEach((leg,index)=>leg && animations.push(animateElement(leg,[
+      {transform:"rotate(0deg)"},
+      {transform:`rotate(${index ? -7 : 7}deg)`,offset:.55},
+      {transform:"rotate(0deg)"}
+    ],{duration})));
+    animations.push(animateElement(ball,[
+      { left:"51.8%", top:"59%", transform:"translate(-50%,-50%) scale(.72) rotate(0deg)" },
+      { left:"51.8%", top:"61%", transform:"translate(-50%,-50%) scale(.76) rotate(18deg)", offset:.34 },
+      { left:"50.8%", top:"68%", transform:"translate(-50%,-50%) scale(.86) rotate(38deg)", offset:.5 },
+      { left:"50%", top:`${ballStart.y*100}%`, transform:"translate(-50%,-50%) scale(1) rotate(58deg)", offset:.62 },
+      { left:"50%", top:`${ballStart.y*100}%`, transform:"translate(-50%,-50%) scale(1) rotate(70deg)", offset:.7 },
+      { left:"50%", top:`${ballStart.y*100}%`, transform:"translate(-50%,-50%) scale(1) rotate(70deg)" },
+    ],{duration,easing:"cubic-bezier(.18,.58,.22,1)"}));
+    if(ballShadow) animations.push(animateElement(ballShadow,[
+      {left:"51.8%",top:"72%",opacity:.12,transform:"translate(-50%,-50%) scale(.45)"},
+      {left:"50%",top:`${(ballStart.y+.012)*100}%`,opacity:.68,transform:"translate(-50%,-50%) scale(1)",offset:.62},
+      {left:"50%",top:`${(ballStart.y+.012)*100}%`,opacity:.68,transform:"translate(-50%,-50%) scale(1)"}
+    ],{duration}));
+
+    await Promise.all(animations.filter(Boolean).map(a=>a.finished?.catch(()=>{})));
+    if (token !== state.sequence) return false;
+    await sleep(reducedMotion() ? 30 : 650);
+    if (token !== state.sequence) return false;
+
+    stage.classList.remove("placing-ball");
+    stage.dataset.sequenceStep = "set";
+    taker.style.left = "50%";
+    taker.style.top = getComputedStyle(stage).getPropertyValue("--taker-rest-top").trim() || "55%";
+    taker.style.transform = "translate(-50%,0)";
+    taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach(part=>{part.style.transform="";});
+    ball.style.left = `${ballStart.x*100}%`;
+    ball.style.top = `${ballStart.y*100}%`;
+    ball.style.transform = "translate(-50%,-50%) scale(1)";
     return true;
   }
 
@@ -1848,18 +1835,17 @@
     if (!keeperBottle) return keeperSettleRoutine(token);
     positionKeeperOnLine();
     refreshBottleNotes();
-    const stageRect = stage.getBoundingClientRect();
     const keeperRect = keeper.getBoundingClientRect();
     const bottleRect = keeperBottle.getBoundingClientRect();
     const delta = bottleRect.left + bottleRect.width * .5 - (keeperRect.left + keeperRect.width * .5) + Math.max(10, keeperRect.width * .18);
-    const duration = reducedMotion() ? 420 : (state.palaceKicks === 0 ? 5000 : 3500);
+    const duration = reducedMotion() ? 420 : 2800;
     const body = keeper.querySelector('.keeper-body-group');
     const head = keeper.querySelector('.keeper-head-group');
     const leftArm = keeper.querySelector('.keeper-arm-left');
     const rightArm = keeper.querySelector('.keeper-arm-right');
     stage.classList.add('bottle-reading');
     keeperBottle.classList.add('is-read');
-    setStatus('Verbruggen reads his penalty notes', 'He walks behind the post, lifts the bottle and studies the notes before returning to the goal line.');
+    setStatus('Verbruggen reads his penalty notes', 'He walks to the bottle, reads the notes, replaces it and returns to the centre of the goal.');
     animateElement(keeper, [
       { transform: 'translateX(-50%) translate(0,0) scale(1)' },
       { transform: `translateX(-50%) translate(${delta * .55}px,2px) scale(1)`, offset: .14 },
@@ -1984,15 +1970,36 @@
 
   async function preKickCeremony(side, token) {
     crowdReaction("crowd-hush");
-    setStatus("The ball is set", side === "albion" ? "The referee checks the spot and the Palace goalkeeper." : "Verbruggen reads his notes, checks the crossbar and returns to the goal line.");
+    stage.dataset.sequenceStep = "placement";
     if (!(await animateBallPlacement(side, token))) return false;
-    setStatus("Referee checks the penalty", side === "albion" ? "The Palace goalkeeper stays on the line." : "Verbruggen finishes his routine, returns to the line and faces the taker.");
-    const ok = await Promise.all([keeperRoutine(side, token), refereeCheck(token)]);
-    if (token !== state.sequence || ok.includes(false)) return false;
-    if (side === "albion") {
-      sound("whistle");
-      await sleep(reducedMotion() ? 70 : 180);
+    if (token !== state.sequence) return false;
+
+    stage.dataset.sequenceStep = "referee";
+    setStatus("The referee checks the spot", "The taker waits behind the ball while the goalkeeper prepares.");
+    if (!(await refereeCheck(token))) return false;
+    if (token !== state.sequence) return false;
+
+    if (side === "palace") {
+      stage.dataset.sequenceStep = "bottle";
+      if (!(await keeperBottleRoutine(token))) return false;
+      if (token !== state.sequence) return false;
+      stage.dataset.sequenceStep = "bar";
+      if (!(await keeperBarTouchRoutine(side, token))) return false;
+      if (token !== state.sequence) return false;
+      stage.dataset.sequenceStep = "point";
+      if (!(await keeperPointRoutine(token))) return false;
+      if (token !== state.sequence) return false;
+      stage.dataset.sequenceStep = "set";
+      if (!(await keeperSettleRoutine(token))) return false;
+    } else {
+      if (!(await keeperSettleRoutine(token))) return false;
     }
+
+    if (token !== state.sequence) return false;
+    stage.dataset.sequenceStep = "whistle";
+    setStatus("Ready for the kick", side === "albion" ? "Choose the target, then release to begin the run-up." : "Watch the taker's standing foot and react at the strike.");
+    sound("whistle");
+    await sleep(reducedMotion() ? 60 : 300);
     return token === state.sequence;
   }
 
