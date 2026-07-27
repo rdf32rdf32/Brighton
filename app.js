@@ -2205,7 +2205,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260726-r25", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260727-r35", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {
@@ -2694,7 +2694,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 32</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 34</span>');
   }
 
   completeControlSemantics();

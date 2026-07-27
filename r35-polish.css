@@ -1,0 +1,73 @@
+/* Albion Fan Hub r35: consolidated responsive, accessibility and interaction polish */
+:root{--safe-vh:1vh;--tap:48px;--focus:#ffdd57;scroll-padding-top:88px}
+html{scroll-behavior:smooth}
+body{overflow-x:hidden;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased}
+.skip-link{position:fixed;left:12px;top:10px;z-index:10000;transform:translateY(-150%);padding:.75rem 1rem;border-radius:.6rem;background:#fff;color:#041f3d;font-weight:800;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.skip-link:focus{transform:none}
+:where(a,button,input,select,textarea,[tabindex]):focus-visible{outline:3px solid var(--focus)!important;outline-offset:3px!important}
+button,.button,a.button,select,input[type=range]{min-height:44px}
+button{touch-action:manipulation}
+.card{content-visibility:auto;contain-intrinsic-size:700px}
+.hero,.shootout-card,.quiz-card{content-visibility:visible}
+img{max-width:100%;height:auto}
+.section-head{gap:1rem}
+.shootout-card{isolation:isolate}
+.shootout-shell{max-width:1180px;margin-inline:auto}
+.penalty-stage{height:min(68vw,690px);max-height:calc(var(--safe-vh)*78);min-height:420px;overscroll-behavior:contain;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;cursor:crosshair}
+.shootout-scoreboard,.shootout-match-strip,.shootout-status-v10,.palace-ready-panel{backdrop-filter:blur(9px)}
+.shootout-status-v10{min-height:66px}
+.stage-instruction{max-width:min(92%,560px);text-wrap:balance}
+.penalty-approach{min-height:1.4em}
+.shootout-option-row{align-items:center;gap:.8rem}
+#keyboardHint{line-height:1.45}
+.mobile-save-controls{display:none;grid-template-columns:repeat(3,1fr);gap:.55rem;margin:.7rem auto 0;max-width:620px}
+.mobile-save-controls button{min-height:52px;border-radius:.8rem;font-weight:900;letter-spacing:.02em}
+.mobile-save-controls[hidden]{display:none!important}
+.back-to-top{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:1200;width:48px;height:48px;min-height:48px;border-radius:50%;opacity:0;pointer-events:none;transform:translateY(14px);transition:.2s ease}
+.back-to-top.is-visible{opacity:1;pointer-events:auto;transform:none}
+body.shootout-in-view .back-to-top{opacity:0;pointer-events:none}
+.quiz-tools label{display:grid;gap:.35rem}
+#quizCategory{min-width:190px}
+#checkQuiz{display:none!important}
+[aria-live]{overflow-wrap:anywhere}
+@media (max-width:760px){
+  :root{scroll-padding-top:72px}
+  body{font-size:16px}
+  main{padding-inline:max(10px,env(safe-area-inset-left));}
+  .card{border-radius:16px;padding:clamp(14px,4vw,20px)}
+  .section-head{align-items:flex-start}
+  .shootout-lead{font-size:.95rem;line-height:1.45}
+  .shootout-scoreboard{position:sticky;top:4px;z-index:30;border-radius:12px}
+  .shootout-match-strip{gap:.2rem;padding:.55rem .65rem}
+  .shootout-match-strip p{margin:.05rem 0}
+  .penalty-stage{height:clamp(410px,112vw,600px);min-height:0;max-height:calc(var(--safe-vh)*72);border-radius:14px}
+  .goal-mouth{filter:none}
+  .mobile-save-controls{display:grid}
+  .shootout-actions-v10{display:grid;grid-template-columns:1fr 1fr;gap:.55rem}
+  .shootout-actions-v10 button{width:100%;padding-inline:.5rem}
+  .shootout-option-row{display:grid}
+  #keyboardHint{font-size:.82rem}
+  .quiz-tools{display:grid;grid-template-columns:1fr;gap:.8rem}
+  #quizCategory{width:100%;min-width:0}
+  .footer-nav{gap:.45rem}
+}
+@media (max-width:420px){
+  .shootout-team span,.shootout-round span{font-size:.66rem}
+  .shootout-team b,.shootout-round b{font-size:1.35rem}
+  .turn-badge{font-size:.72rem}
+  .penalty-stage{height:clamp(390px,126vw,520px)}
+  .mobile-save-controls button{font-size:.82rem;padding:.55rem .25rem}
+  .shootout-actions-v10{grid-template-columns:1fr}
+}
+@media (max-height:520px) and (orientation:landscape){
+  .shootout-card{padding:8px}
+  .shootout-intro .shootout-lead,.shootout-option-row{display:none}
+  .shootout-shell{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:8px;align-items:start}
+  .shootout-scoreboard,.shootout-match-strip,.penalty-stage{grid-column:1}
+  .penalty-stage{height:calc(var(--safe-vh)*78);min-height:320px;max-height:none}
+  .shootout-status-v10,.palace-ready-panel,.mobile-save-controls,.shootout-summary-v10,.shootout-actions-v10,.shootout-records-v10{grid-column:2}
+  .mobile-save-controls{display:grid;grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.back-to-top,*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+body.user-reduce-motion *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+@media (forced-colors:active){.penalty-stage,.card,button{border:1px solid CanvasText}.aim-reticle{forced-color-adjust:none}}
