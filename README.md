@@ -1,5 +1,7 @@
-# Albion Fan Hub — Release 35
+# Albion Fan Hub — Release 36
 
-Clean GitHub Pages production build. Upload all files in this folder directly to the repository root.
+Clean GitHub Pages production build.
 
-Release 35 removes obsolete release layers, test/editor pages and historical notes while retaining the live quiz, penalty shoot-out, chants, legal pages, offline support and mobile/desktop polish.
+Release 36 makes the penalty game full-width on desktop and rebuilds its responsive scene geometry. Mobile now uses a taller camera crop, a smaller goal, corrected goalkeeper scaling and a player run-up that begins behind and to the side of the ball before moving into contact.
+
+Upload all files in this ZIP directly to the repository root.

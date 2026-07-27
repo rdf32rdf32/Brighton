@@ -1,0 +1,176 @@
+/* Albion Fan Hub r36 — penalty scene geometry rebuild */
+
+/* Break the game out of the normal 1180px article column on desktop. */
+@media (min-width: 901px) {
+  main > .shootout-card {
+    width: min(1800px, calc(100vw - 32px));
+    max-width: none;
+    margin-left: 50%;
+    margin-right: 0;
+    transform: translateX(-50%);
+    padding: clamp(18px, 2vw, 32px);
+  }
+
+  .shootout-v17 .shootout-intro,
+  .shootout-v17 .shootout-top-controls {
+    max-width: 1180px;
+  }
+
+  .shootout-v17 .shootout-shell {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  .shootout-v17 .penalty-stage {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: 16 / 7.8;
+  }
+
+  .shootout-v17 .goal-mouth {
+    left: 25% !important;
+    top: 11.5% !important;
+    width: 50% !important;
+    height: 35.5% !important;
+  }
+
+  .shootout-v17 .keeper-figure {
+    width: 8.6% !important;
+    min-width: 58px;
+    max-width: 126px;
+  }
+
+  .shootout-v17 .taker-figure {
+    top: 52% !important;
+    width: 11.2% !important;
+    min-width: 92px;
+    max-width: 154px;
+  }
+}
+
+/* A taller mobile camera crop with all scene elements scaled together. */
+@media (max-width: 900px) {
+  .shootout-v17 {
+    overflow: visible;
+  }
+
+  .shootout-v17 .shootout-shell {
+    width: 100%;
+    max-width: none;
+    padding: 8px;
+  }
+
+  .shootout-v17 .penalty-stage {
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    aspect-ratio: 4 / 5;
+    border-radius: 14px;
+  }
+
+  .shootout-v17 .goal-mouth {
+    left: 19% !important;
+    top: 9.5% !important;
+    width: 62% !important;
+    height: 29.5% !important;
+  }
+
+  .shootout-v17 .keeper-figure {
+    width: 9.2% !important;
+    min-width: 39px !important;
+    max-width: 68px !important;
+  }
+
+  .shootout-v17 .taker-figure {
+    top: 58% !important;
+    width: 14.6% !important;
+    min-width: 58px !important;
+    max-width: 92px !important;
+    z-index: 8;
+  }
+
+  .shootout-v17 .penalty-ball {
+    z-index: 11;
+    width: 3.4% !important;
+    min-width: 14px;
+    max-width: 22px;
+  }
+
+  .shootout-v17 .penalty-ball-shadow {
+    z-index: 7;
+    width: 4.2% !important;
+  }
+
+  .shootout-v17 .referee-figure {
+    left: 88% !important;
+    top: 42% !important;
+    width: 5.2% !important;
+    min-width: 25px !important;
+    max-width: 38px !important;
+  }
+
+  .shootout-v17 .shootout-match-strip,
+  .shootout-v17 .shootout-status-v10,
+  .shootout-v17 .palace-ready-panel,
+  .shootout-v17 .mobile-save-controls,
+  .shootout-v17 .shootout-option-row,
+  .shootout-v17 .shootout-actions-v10 {
+    position: relative;
+    z-index: 20;
+  }
+}
+
+@media (max-width: 480px) {
+  main > .shootout-card {
+    margin-inline: -6px;
+    width: calc(100% + 12px);
+    padding: 12px 6px;
+  }
+
+  .shootout-v17 .shootout-scoreboard {
+    padding: 7px 6px;
+  }
+
+  .shootout-v17 .goal-mouth {
+    left: 20% !important;
+    width: 60% !important;
+    height: 28.5% !important;
+  }
+
+  .shootout-v17 .taker-figure {
+    top: 59% !important;
+    width: 14% !important;
+    min-width: 52px !important;
+    max-width: 76px !important;
+  }
+
+  .shootout-v17 .stage-instruction {
+    display: block;
+    max-width: calc(100% - 24px);
+    font-size: .68rem;
+  }
+}
+
+/* Landscape phones: pitch gets priority and controls stay outside it. */
+@media (max-width: 900px) and (orientation: landscape) {
+  .shootout-v17 .penalty-stage {
+    aspect-ratio: 16 / 8.2;
+    max-height: 76dvh !important;
+  }
+
+  .shootout-v17 .goal-mouth {
+    left: 24% !important;
+    top: 10% !important;
+    width: 52% !important;
+    height: 35% !important;
+  }
+
+  .shootout-v17 .taker-figure {
+    top: 51% !important;
+    width: 11.5% !important;
+  }
+}
