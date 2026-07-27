@@ -34,3 +34,33 @@
 @media(max-width:430px){.penalty-stage{height:430px;min-height:430px;--goal-left:7%;--goal-width:86%;--goal-top:14%;--goal-height:32%;--spot-y:73%;--keeper-width:14%;--taker-width:14%}.keeper-figure{top:calc(var(--goal-top) + var(--goal-height) - 33.5%)}.goal-post{width:2%}.goal-crossbar{height:4.6%}.referee-figure{width:8%;left:86%}.aim-reticle{width:28px;height:28px}.advertising-boards span:nth-child(2){display:none}.advertising-boards{grid-template-columns:1fr 1fr}.shootout-status-v10{align-items:flex-start;flex-direction:column}.shootout-top-controls{margin-top:10px}}
 @media(orientation:landscape) and (max-height:520px){.penalty-stage{height:330px;min-height:330px;--goal-top:10%;--goal-height:39%;--spot-y:79%;--keeper-width:9%;--taker-width:9.5%}.keeper-figure{top:calc(var(--goal-top) + var(--goal-height) - 23%)}.stage-instruction{bottom:1%}.palace-ready-panel{bottom:5%;width:55%}}
 @media(prefers-reduced-motion:reduce){.penalty-stage *{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+/* r44 final choreography and geometry lock */
+.penalty-stage{isolation:isolate;overflow:hidden;touch-action:none}
+.penalty-stage .keeper-figure{bottom:auto!important;transform-origin:50% 96%;}
+.penalty-stage .taker-figure{top:68%;transform-origin:50% 96%;}
+.penalty-stage .keeper-bottle{transform-origin:50% 100%}
+.penalty-stage.palace-kick .taker-shirt{fill:#c7213f!important}
+.penalty-stage.palace-kick .taker-sleeve{fill:#2259a7!important}
+.penalty-stage.palace-kick .taker-stripe{display:none!important}
+.penalty-stage.palace-kick .taker-shorts{fill:#163c73!important}
+.penalty-stage.palace-kick .taker-sock{fill:#dce8f5!important}
+.penalty-stage.placing .taker-figure{animation:r44PlaceTaker 3.85s cubic-bezier(.33,.02,.22,1) both!important}
+.penalty-stage.placing .penalty-ball{animation:r44PlaceBall 3.85s linear both!important}
+.penalty-stage.placed .taker-figure{transform:translate(-50%,0)}
+.penalty-stage.runup .taker-figure{animation:r44RunUp 1.15s cubic-bezier(.32,.74,.3,1) both!important}
+.penalty-stage.strike .taker-leg-right{transform-origin:94px 181px;animation:r44StrikeLeg .42s ease-out both!important}
+.penalty-stage.gk-bottle .keeper-figure{animation:r44BottleWalk 3.25s ease-in-out both!important}
+.penalty-stage.gk-bar .keeper-figure{animation:r44BarTouch 1.05s ease-in-out both!important}
+.penalty-stage.gk-dive-left .keeper-figure{animation:r44DiveLeft .68s cubic-bezier(.2,.72,.25,1) both!important}
+.penalty-stage.gk-dive-right .keeper-figure{animation:r44DiveRight .68s cubic-bezier(.2,.72,.25,1) both!important}
+@keyframes r44PlaceTaker{0%{transform:translate(-50%,12%) scale(.96)}22%{transform:translate(-18%,-10%) scale(.93)}48%{transform:translate(-10%,-18%) scale(.91) rotate(3deg)}67%{transform:translate(-10%,-18%) scale(.91) rotate(3deg)}83%{transform:translate(-28%,-6%) scale(.95)}100%{transform:translate(-50%,0) scale(1)}}
+@keyframes r44PlaceBall{0%,30%{left:56%;top:69%;transform:translate(-50%,-50%) scale(.9)}48%,100%{left:50%;top:76%;transform:translate(-50%,-50%) scale(1)}}
+@keyframes r44RunUp{0%{transform:translate(-50%,0)}25%{transform:translate(-47%,-5%)}52%{transform:translate(-53%,-11%)}78%{transform:translate(-49%,-17%)}100%{transform:translate(-50%,-23%) scale(.97)}}
+@keyframes r44StrikeLeg{0%{transform:rotate(0)}48%{transform:rotate(-30deg)}100%{transform:rotate(50deg)}}
+@keyframes r44BottleWalk{0%{transform:translateX(-50%)}28%{transform:translateX(145%)}55%{transform:translateX(145%) rotate(2deg)}72%{transform:translateX(145%)}100%{transform:translateX(-50%)}}
+@keyframes r44BarTouch{0%,100%{transform:translateX(-50%) translateY(0)}45%,64%{transform:translateX(-50%) translateY(-22%) scaleY(1.025)}}
+@keyframes r44DiveLeft{100%{transform:translateX(-165%) translateY(4%) rotate(-66deg)}}
+@keyframes r44DiveRight{100%{transform:translateX(65%) translateY(4%) rotate(66deg)}}
+@media(max-width:760px){.penalty-stage{height:min(68vh,500px);min-height:400px}.penalty-stage .taker-figure{top:67%;}.penalty-stage .keeper-bottle{top:39%;left:84%;}.palace-ready-panel{bottom:7%;}}
+@media(max-width:430px){.penalty-stage{height:450px;min-height:450px;--goal-top:13%;--goal-height:33%;--spot-y:75%;--keeper-width:13.5%;--taker-width:13.5%}.penalty-stage .keeper-figure{top:calc(var(--goal-top) + var(--goal-height) - 32.8%)}.penalty-stage .taker-figure{top:67.5%}.stage-instruction{font-size:.69rem}}

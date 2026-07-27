@@ -1,14 +1,17 @@
-ALBION FAN HUB — R43 CLEAN PENALTY REBUILD
+BRIGHTON FAN HUB r44 - FULL SITE
 
-Upload all files directly to the root of the GitHub Pages repository.
+Upload every file in this ZIP directly to the root of the GitHub Brighton repository, replacing the existing files.
 
-Penalty rebuild:
-- One authoritative responsive geometry layer in shootout.css.
-- Removed the conflicting r37, r38 and r39 penalty override stylesheets.
-- Ordered pre-kick sequence: deliberate placement, referee check, bottle visit, crossbar touch, pointing gesture, set position, whistle, run-up and strike.
-- Player remains behind the ball after placement.
-- Ready-to-save control appears on the pitch and disappears after activation.
-- Brighton aim resets to the centre for every new Brighton penalty.
-- Updated service-worker cache version to R43.
+Important: delete obsolete files in the repository that are not in this ZIP, especially old penalty version, rollback, rebuild and release-fix files.
 
-After uploading, use the site's Update now button or clear the old site cache once if GitHub Pages still shows an earlier version.
+After GitHub Pages deploys, open the site in an InPrivate/incognito window once to bypass the old service-worker cache.
+
+Penalty sequence rebuilt as one controller and one stylesheet:
+- Brighton target resets to centre
+- slow deliberate ball placement
+- player starts behind the ball, steps back, runs up and strikes
+- goalkeeper reacts at the strike
+- Palace player uses red/blue kit
+- Ready to Save panel disappears on click
+- goalkeeper reads bottle, returns, touches/vibrates crossbar, lands and points
+- mobile and desktop geometry rules included
