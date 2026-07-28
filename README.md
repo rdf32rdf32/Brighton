@@ -1,3 +1,5 @@
+R52 MOBILE RUN-UP AND BALL POLISH
+
 # Albion Fan Hub — Release 37
 
 Desktop penalty width is centred correctly without transform drift. Mobile penalty depth and player/ball geometry are rolled back to the stable Release 35 version.

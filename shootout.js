@@ -1,4 +1,4 @@
-// Albion Fan Hub r30 clean production shoot-out
+// Albion Fan Hub r52 mobile run-up and ball polish
 (() => {
   "use strict";
 
@@ -85,6 +85,23 @@
   const ballStart = { x: 0.5, y: 0.77 };
   const MOBILE_PENALTY_QUERY = "(max-width: 760px), (max-height: 520px) and (orientation: landscape) and (pointer: coarse)";
   const mobilePenaltyLayout = () => window.matchMedia(MOBILE_PENALTY_QUERY).matches;
+  const takerBootRatio = 0.948;
+
+  function mobileReadyTopPx() {
+    const stageHeight = Math.max(1, stage.clientHeight);
+    const renderedHeight = taker.getBoundingClientRect().height || stageHeight * .2;
+    // The visible 18-yard line is y=570 in the 650-unit pitch-marking viewBox.
+    const penaltyAreaLineY = stageHeight * (570 / 650);
+    const clearance = Math.max(9, stageHeight * .018);
+    return clamp(penaltyAreaLineY + clearance - renderedHeight * takerBootRatio, stageHeight * .64, stageHeight * .83);
+  }
+
+  function setTakerReadyPosition() {
+    taker.style.left = "50%";
+    taker.style.top = mobilePenaltyLayout() ? `${mobileReadyTopPx()}px` : "49%";
+    taker.style.transform = "translate(-50%,0)";
+    stage.dataset.takerReady = mobilePenaltyLayout() ? "outside-box" : "desktop";
+  }
 
   function syncGoalBox() {
     const stageRect = stage.getBoundingClientRect();
@@ -660,11 +677,9 @@
       ballShadow.style.opacity = "1";
       ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
     }
-    taker.style.left = "50%";
-    taker.style.top = mobilePenaltyLayout() ? "61%" : "49%";
+    setTakerReadyPosition();
     taker.style.opacity = "1";
     taker.style.visibility = "";
-    taker.style.transform = "translate(-50%,0)";
     referee.style.left = "89%";
     referee.style.top = "42.8%";
     referee.style.transform = "translate(-50%,0)";
@@ -762,7 +777,10 @@
     const footDirection = foot === "left" ? -1 : 1;
     const settings = config();
     const targetBias = target ? (target.x - .5) * 20 * settings.cueStrength : 0;
-    const baseDuration = isPalace ? Math.round(940 * settings.runUpScale) : style === "quick" ? 720 : style === "measured" ? 850 : 790;
+    const mobileRun = mobilePenaltyLayout();
+    const desktopBase = isPalace ? Math.round(940 * settings.runUpScale) : style === "quick" ? 720 : style === "measured" ? 850 : 790;
+    const mobileBase = isPalace ? Math.round(1060 * settings.runUpScale) : style === "quick" ? 850 : style === "measured" ? 1030 : style === "stutter" ? 1040 : 930;
+    const baseDuration = mobileRun ? mobileBase : desktopBase;
     const duration = Math.round(baseDuration * (profile === "stutter" ? 1.14 : profile === "straight" ? .96 : profile === "reverse" ? 1.06 : 1));
     stage.classList.toggle("palace-kick", isPalace);
     stage.dataset.runup = profile;
@@ -784,12 +802,9 @@
     const styleOffset = style === "quick" ? -footDirection * 4 : style === "measured" ? footDirection * 2 : 0;
     const startX = profileStart + styleOffset;
     const contactOffset = targetBias + footDirection * 5;
-    const mobileRun = mobilePenaltyLayout();
-    const runStartY = mobileRun ? 36 : 20;
-    const runMidY = mobileRun ? 22 : 7;
-    const runNearY = mobileRun ? -6 : -10;
-    // Derive mobile contact from the rendered ball and boot positions. This keeps
-    // the foot at the ball across 360–430px portrait phones and phone landscape.
+    // Derive contact from the rendered ball and boot positions. On mobile the
+    // player begins beyond the 18-yard line, so the required forward travel is
+    // much larger than in earlier releases.
     let contactLift = -39;
     if (mobileRun) {
       const ballRect = ball.getBoundingClientRect();
@@ -797,12 +812,15 @@
       if (bootRect?.height && ballRect?.height) {
         const ballContactY = ballRect.top + ballRect.height * .58;
         const bootContactY = bootRect.top + bootRect.height * .72;
-        contactLift = Math.round(clamp(ballContactY - bootContactY, -46, 8));
+        contactLift = Math.round(clamp(ballContactY - bootContactY, -96, 10));
       } else {
-        contactLift = -16;
+        contactLift = -58;
       }
     }
-    const followLift = contactLift - (mobileRun ? 6 : 4);
+    const runStartY = mobileRun ? 0 : 20;
+    const runMidY = mobileRun ? Math.round(contactLift * .34) : 7;
+    const runNearY = mobileRun ? Math.round(contactLift * .72) : -10;
+    const followLift = contactLift - (mobileRun ? 7 : 4);
     const stutter = profile === "stutter";
     const reverse = profile === "reverse";
     sound("footsteps");
@@ -1689,13 +1707,55 @@
       { left: `${carryX}%`, top: "70%", opacity: .12, transform: "translate(-50%,-50%) scale(.44)", offset: .27 },
       { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .7, transform: "translate(-50%,-50%) scale(1)" },
     ], { duration });
-    await sleep(duration + settlePause);
+    await sleep(duration);
     if (token !== state.sequence) return false;
-    stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
-    taker.style.left = "50%";
-    taker.style.top = mobilePenaltyLayout() ? "61%" : "49%";
-    taker.style.transform = "translate(-50%,0)";
+
+    // Commit the ball to the spot before the player retreats. This prevents the
+    // completed placement animation from being disturbed by the next sequence.
+    ball.style.left = `${ballStart.x * 100}%`;
+    ball.style.top = `${ballStart.y * 100}%`;
+    ball.style.transform = `translate(-50%,-50%) scale(1) rotate(${settleRotation + 8}deg)`;
+    ball.getAnimations().forEach((animation) => animation.cancel());
+    if (ballShadow) {
+      ballShadow.style.left = `${ballStart.x * 100}%`;
+      ballShadow.style.top = `${(ballStart.y + .012) * 100}%`;
+      ballShadow.style.opacity = ".7";
+      ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
+      ballShadow.getAnimations().forEach((animation) => animation.cancel());
+    }
+    taker.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
     taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
+    stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
+
+    if (mobilePenaltyLayout()) {
+      const retreatDuration = reducedMotion() ? 120 : 900;
+      const readyTop = mobileReadyTopPx();
+      const currentTop = stage.clientHeight * .60;
+      stage.classList.add("taker-retreating");
+      setStatus("The taker steps back", "He retreats beyond the 18-yard line before beginning the run-up.");
+      const retreat = animateElement(taker, [
+        { left: `${56.5 + sideBias}%`, top: `${currentTop}px`, transform: "translate(-50%,0) scale(.99)" },
+        { left: `${53.5 + sideBias * .35}%`, top: `${currentTop + (readyTop-currentTop) * .34}px`, transform: "translate(-50%,2px) scale(.985)", offset: .32 },
+        { left: "50.7%", top: `${currentTop + (readyTop-currentTop) * .72}px`, transform: "translate(-50%,0) scale(.98)", offset: .68 },
+        { left: "50%", top: `${readyTop}px`, transform: "translate(-50%,0) scale(1)" },
+      ], { duration: retreatDuration, easing: "cubic-bezier(.25,.5,.22,1)" });
+      if (leftLeg) animateElement(leftLeg, [
+        { transform:"rotate(0deg)" }, { transform:"rotate(-10deg)", offset:.28 }, { transform:"rotate(9deg)", offset:.58 }, { transform:"rotate(0deg)" },
+      ], { duration: retreatDuration });
+      if (rightLeg) animateElement(rightLeg, [
+        { transform:"rotate(0deg)" }, { transform:"rotate(10deg)", offset:.28 }, { transform:"rotate(-9deg)", offset:.58 }, { transform:"rotate(0deg)" },
+      ], { duration: retreatDuration });
+      await retreat?.finished.catch(() => {});
+      if (token !== state.sequence) return false;
+      taker.getAnimations({ subtree: true }).forEach((animation) => animation.cancel());
+      taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
+      setTakerReadyPosition();
+      stage.classList.remove("taker-retreating");
+      await sleep(settlePause);
+    } else {
+      setTakerReadyPosition();
+      await sleep(settlePause);
+    }
     return true;
   }
 
@@ -2152,7 +2212,7 @@
     setApproachLabel(player.foot, runProfile);
     setStatus(`${player.name} begins the run-up`, `${runUpLabel(player.foot, runProfile)}. ${isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact."}`);
     const run = animateRunUp(false, player.foot, aim, player.style, runProfile);
-    await sleep(reducedMotion() ? 100 : Math.max(390, run.duration * (mobilePenaltyLayout() ? .875 : .84)));
+    await sleep(reducedMotion() ? 100 : Math.max(390, run.duration * (mobilePenaltyLayout() ? .90 : .84)));
     if (token !== state.sequence) return;
 
     const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));

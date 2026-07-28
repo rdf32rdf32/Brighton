@@ -1,4 +1,4 @@
-/* r51 authoritative mobile and phone-landscape penalty camera. Desktop untouched. */
+/* r52 authoritative mobile and phone-landscape penalty camera. Desktop untouched. */
 @media (max-width: 760px), (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
   .shootout-v17 {
     --mobile-goal-left: 19%;
@@ -23,9 +23,9 @@
     perspective: 760px !important;
   }
   .shootout-v17 .keeper-figure {
-    width: 12.1% !important;
+    width: 12.55% !important;
     min-width: 46px !important;
-    max-width: 64px !important;
+    max-width: 67px !important;
   }
   .shootout-v17 .taker-figure {
     width: 13.5% !important;
@@ -35,23 +35,23 @@
     transform-origin: 50% 92% !important;
   }
   .shootout-v17 .penalty-ball {
-    width: clamp(15px,4.2vw,18px) !important;
-    height: clamp(15px,4.2vw,18px) !important;
+    width: clamp(18px,4.9vw,21px) !important;
+    height: clamp(18px,4.9vw,21px) !important;
   }
 
   /* Ball position is deliberately NOT set here. JavaScript owns left/top/transform
      throughout placement and flight so Web Animations can move it towards goal. */
   .shootout-v17 .penalty-ball {
-    filter: drop-shadow(0 2px 1px rgba(0,0,0,.42)) drop-shadow(0 0 1px rgba(255,255,255,.62)) !important;
+    filter: drop-shadow(0 2px 1px rgba(0,0,0,.48)) drop-shadow(0 0 1.5px rgba(255,255,255,.76)) !important;
     transform-origin: 50% 50% !important;
   }
   .shootout-v17 .penalty-ball circle {
-    stroke: #737f87 !important;
-    stroke-width: 1.35 !important;
+    stroke: #6f7d87 !important;
+    stroke-width: 1.25 !important;
   }
-  .shootout-v17 .penalty-ball .ball-dark-panel { fill:#111820 !important; }
-  .shootout-v17 .penalty-ball .ball-seam { stroke:#77858e !important; stroke-width:1.45 !important; opacity:.96 !important; }
-  .shootout-v17 .penalty-ball .ball-highlight { opacity:.84 !important; }
+  .shootout-v17 .penalty-ball .ball-dark-panel { fill:#0d1720 !important; stroke:#25323b !important; stroke-width:.45 !important; }
+  .shootout-v17 .penalty-ball .ball-seam { stroke:#687984 !important; stroke-width:1.18 !important; opacity:.9 !important; }
+  .shootout-v17 .penalty-ball .ball-highlight { opacity:.9 !important; fill:rgba(255,255,255,.92) !important; }
   .shootout-v17 .penalty-ball-shadow {
     background: radial-gradient(ellipse at center, rgba(0,18,7,.42) 0 38%, rgba(0,18,7,.16) 68%, transparent 100%) !important;
     filter: blur(.65px) !important;
@@ -126,7 +126,7 @@
   .shootout-v17 { --mobile-goal-left: 19.5%; --mobile-goal-width: 61%; }
   .shootout-v17 .penalty-stage { height: clamp(430px,120vw,495px) !important; min-height:430px !important; }
   .shootout-v17 .taker-figure { width: 13.2% !important; min-width:50px !important; }
-  .shootout-v17 .keeper-figure { width: 11.8% !important; min-width:44px !important; }
+  .shootout-v17 .keeper-figure { width: 12.2% !important; min-width:46px !important; }
   .shootout-v17 .goal-side-net { width: 6% !important; }
 }
 @media (max-width: 370px) {
@@ -136,7 +136,24 @@
 }
 
 
-/* r51 mobile score labels and landscape camera. */
+/* Active mobile game focus and visible retreat beyond the penalty-area line. */
+@media (max-width: 760px) {
+  body.shootout-playing .shootout-v17 .shootout-intro { margin-bottom:4px !important; align-items:center !important; }
+  body.shootout-playing .shootout-v17 .shootout-intro .eyebrow,
+  body.shootout-playing .shootout-v17 .shootout-lead { display:none !important; }
+  body.shootout-playing .shootout-v17 .shootout-intro h2 { margin:0 !important; font-size:1.18rem !important; }
+  body.shootout-playing .shootout-v17 .shootout-scoreboard { padding:6px 8px !important; gap:4px !important; }
+  body.shootout-playing .shootout-v17 .shootout-match-strip { padding:5px 7px !important; }
+  body.shootout-playing .shootout-v17 .shootout-option-row,
+  body.shootout-playing .shootout-v17 .shootout-actions-v10,
+  body.shootout-playing .shootout-v17 .shootout-records-v10 { display:none !important; }
+  body.shootout-playing .shootout-v17 .shootout-status-v10 { margin-top:6px !important; padding:7px 9px !important; }
+  .shootout-v17 .penalty-stage.taker-retreating .aim-reticle { opacity:0 !important; }
+  .shootout-v17 .penalty-stage.taker-retreating .stage-instruction::after { content:" · stepping outside the box"; }
+}
+
+
+/* r52 mobile score labels and landscape camera. */
 @media (max-width: 760px) {
   main > .shootout-card { margin-inline: -8px; border-radius: 18px; }
   .shootout-v17 .shootout-shell { padding-inline: 6px; }
@@ -170,7 +187,7 @@
     width: min(100%, 900px) !important;
     margin-inline:auto !important;
   }
-  .shootout-v17 .keeper-figure { width:10.7% !important; min-width:44px !important; max-width:62px !important; }
+  .shootout-v17 .keeper-figure { width:11.1% !important; min-width:45px !important; max-width:65px !important; }
   .shootout-v17 .taker-figure { width:10.4% !important; min-width:47px !important; max-width:68px !important; }
   .shootout-v17 .referee-figure { width:5.5% !important; min-width:27px !important; }
   .shootout-v17 .stage-instruction { display:block !important; }

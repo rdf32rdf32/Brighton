@@ -1,6 +1,5 @@
-/* Albion Fan Hub r38 — final mobile guardrails.
-   This file intentionally loads last so older release patches cannot alter
-   the restored penalty perspective or mobile interaction layout. */
+/* Albion Fan Hub r52 — general mobile guardrails.
+   The final phone and phone-landscape penalty camera lives in shootout-mobile.css. */
 
 /* Prevent any section or game control from widening the mobile viewport. */
 html, body { max-width: 100%; overflow-x: clip; }
@@ -25,7 +24,7 @@ html, body { max-width: 100%; overflow-x: clip; }
     border-radius: 16px;
   }
 
-  /* Authoritative restored camera: same 1000:650 scene used by the stable build. */
+  /* Tablet fallback camera; phones are finalised by shootout-mobile.css. */
   .shootout-v17 .penalty-stage {
     width: 100%;
     min-height: 0;
