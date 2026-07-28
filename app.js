@@ -455,7 +455,7 @@
           .map(
             (fixture) => `
       <article class="fixture-item ${fixture.venue === "H" ? "fixture-home" : "fixture-away"} ${fixture === nextFixture ? "fixture-next" : ""}"><div>${fixture === nextFixture ? '<span class="next-fixture-label">NEXT FIXTURE</span>' : ""}<b>${esc(fixture.date)}</b><span class="fixture-badge ${fixture.venue === "H" ? "home-badge" : "away-badge"}">${fixture.venue === "H" ? "HOME" : "AWAY"}</span><small>Premier League</small></div>
-      <div><strong>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === "H" ? "Amex Stadium" : "Away"} · Date provisional until confirmed by the club</small><div class="fixture-extra" id="fixture-extra-${C.fixtures.indexOf(fixture)}" hidden><span><b>Competition</b>Premier League</span><span><b>Venue</b>${fixture.venue === "H" ? "American Express Stadium" : `${esc(fixture.opponent)} away`}</span><span><b>Status</b>Check official listings before travelling</span></div></div><div class="fixture-actions"><button class="fixture-more ghost" type="button" data-fixture-expand="${C.fixtures.indexOf(fixture)}" aria-expanded="false" aria-controls="fixture-extra-${C.fixtures.indexOf(fixture)}">Details</button><button class="fixture-calendar ghost" type="button" data-calendar-index="${C.fixtures.indexOf(fixture)}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></div></article>`,
+      <div><strong>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === "H" ? "Amex Stadium" : "Away"}${fixture.time ? ` · ${esc(fixture.time)}` : ""} · Date provisional until confirmed by the club</small><div class="fixture-extra" id="fixture-extra-${C.fixtures.indexOf(fixture)}" hidden><span><b>Competition</b>Premier League</span><span><b>Venue</b>${fixture.venue === "H" ? "American Express Stadium" : `${esc(fixture.opponent)} away`}</span><span><b>Status</b>Check official listings before travelling</span></div></div><div class="fixture-actions"><button class="fixture-more ghost" type="button" data-fixture-expand="${C.fixtures.indexOf(fixture)}" aria-expanded="false" aria-controls="fixture-extra-${C.fixtures.indexOf(fixture)}">Details</button><button class="fixture-calendar ghost" type="button" data-calendar-index="${C.fixtures.indexOf(fixture)}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></div></article>`,
           )
           .join("")
       : "<p>No fixtures match that search.</p>";
@@ -1337,7 +1337,7 @@
     const render = () => {
       const fixture = fixtures[index];
       $("nextFixtureCarousel").innerHTML =
-        `<article class="${fixture.venue === "H" ? "fixture-home" : "fixture-away"}"><span>${fixture.venue === "H" ? "HOME" : "AWAY"}</span><b>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</b><small>${esc(fixture.date)}</small></article>`;
+        `<article class="${fixture.venue === "H" ? "fixture-home" : "fixture-away"}"><span>${fixture.venue === "H" ? "HOME" : "AWAY"}</span><b>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</b><small>${esc(fixture.date)}${fixture.time ? ` · ${esc(fixture.time)}` : ""}</small></article>`;
       $("fixtureCarouselPosition").textContent =
         `${index + 1} of ${fixtures.length}`;
     };
@@ -1791,6 +1791,7 @@
       ["anthem", "Sussex by the Sea", "Audio", "anthem music song"],
       ["match-centre", "Matchday centre", "Matchday", "next match opponent weather referee television"],
       ["fixtures", "2026/27 fixtures", "Fixtures", "opponents home away month results"],
+      ["players", "Albion player profiles", "Players", "squad goalkeeper defender midfielder forward nationality role"],
       ["xi", "Pick your Albion XI", "Team", "formation players captain substitutes tactics"],
       ["predictor", "Match predictor", "Prediction", "score first scorer player of the match"],
       ["league-predictor", "League position predictor", "Prediction", "finish table Europe relegation"],
@@ -1823,6 +1824,7 @@
 
     const detailSelectors = [
       ["#fixtureList .fixture-item", "Fixture", "fixtures"],
+      ["#playerProfileGrid .player-profile-card", "Player profile", "players"],
       ["#squadBrowser li", "Player", "xi"],
       ["#story article", "Albion Story", "story"],
       ["#records article", "Record", "records"],
@@ -2211,7 +2213,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260727-r37", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260728-r54", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {
@@ -2255,6 +2257,7 @@
       ["quiz", "Test your Albion knowledge", "Play five medium and difficult questions, one at a time."],
       ["shootout", "Seagulls v Eagles", "Drag and release to shoot, then read the run-up and move Bart Verbruggen as the standing foot plants."],
       ["fixtures", "Follow the season", "Search and filter fixtures by venue and month."],
+      ["players", "Explore the current squad", "Search player profiles and add a player to your XI."],
       ["xi", "Build your Albion XI", "Choose a formation, players and set-piece takers."],
       ["story", "Explore the Albion story", "Browse the club journey, grounds, people, rivalry and memories."],
       ["amex-stands", "Explore the Amex", "Compare the stands and find the area that suits your matchday."],
@@ -2700,7 +2703,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 51</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 54</span>');
   }
 
   completeControlSemantics();

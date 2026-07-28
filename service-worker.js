@@ -1,9 +1,9 @@
-const CACHE_NAME = 'albion-fan-hub-r53';
+const CACHE_NAME = 'albion-fan-hub-r54';
 const CORE = [
-  "./", "./index.html", "./style.css?v=20260728-r53", "./shootout.css?v=20260728-r53",
-  "./r35-polish.css?v=20260728-r53", "./r37-layout.css?v=20260728-r53", "./r38-mobile.css?v=20260728-r53", "./r39-geometry.css?v=20260728-r53", "./shootout-mobile.css?v=20260728-r53", "./content-data.js?v=20260728-r53", "./quiz-data.js?v=20260728-r53",
-  "./site-controls.js?v=20260728-r53", "./app.js?v=20260728-r53", "./shootout.js?v=20260728-r53",
-  "./r35-polish.js?v=20260728-r53", "./manifest.json", "./favicon.svg", "./albion-safe-graphic.svg",
+  "./", "./index.html", "./style.css?v=20260728-r54", "./shootout.css?v=20260728-r54",
+  "./r35-polish.css?v=20260728-r54", "./r37-layout.css?v=20260728-r54", "./r38-mobile.css?v=20260728-r54", "./r39-geometry.css?v=20260728-r54", "./shootout-mobile.css?v=20260728-r54", "./content-data.js?v=20260728-r54", "./quiz-data.js?v=20260728-r54",
+  "./site-controls.js?v=20260728-r54", "./app.js?v=20260728-r54", "./match-player.js?v=20260728-r54", "./shootout.js?v=20260728-r54",
+  "./r35-polish.js?v=20260728-r54", "./manifest.json", "./favicon.svg", "./albion-safe-graphic.svg",
   "./icon-192.png", "./icon-512.png", "./social-preview.png", "./offline.html", "./contact.html",
   "./cookies.html", "./copyright.html", "./privacy.html"
 ];
