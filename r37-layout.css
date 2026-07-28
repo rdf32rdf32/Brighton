@@ -1,0 +1,34 @@
+/* Albion Fan Hub r37 — desktop width correction only.
+   Mobile penalty geometry deliberately remains on the stable r35 layout. */
+
+@media (min-width: 901px) {
+  main > .shootout-card {
+    box-sizing: border-box;
+    width: calc(100vw - 32px);
+    max-width: 1800px;
+    margin-left: calc(50% - 50vw + 16px);
+    margin-right: 0;
+    padding: clamp(18px, 2vw, 32px);
+    transform: none;
+  }
+
+  .shootout-v17 .shootout-shell {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+  }
+
+  .shootout-v17 .penalty-stage {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    aspect-ratio: 16 / 8.25;
+  }
+}
+
+@media (min-width: 1832px) {
+  main > .shootout-card {
+    margin-left: calc(50% - 900px);
+  }
+}
