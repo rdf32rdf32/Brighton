@@ -783,11 +783,13 @@
     const startX = profileStart + styleOffset;
     const contactOffset = targetBias + footDirection * 5;
     const mobileRun = mobilePenaltyLayout();
-    const runStartY = mobileRun ? 30 : 20;
-    const runMidY = mobileRun ? 14 : 7;
-    const runNearY = mobileRun ? -34 : -10;
-    const contactLift = mobileRun ? -78 : -39;
-    const followLift = mobileRun ? -84 : -43;
+    const runStartY = mobileRun ? 36 : 20;
+    const runMidY = mobileRun ? 22 : 7;
+    const runNearY = mobileRun ? -6 : -10;
+    // Mobile taker now starts outside the box and meets the rendered ball.
+    // The old -78px lift carried the boots well beyond the spot.
+    const contactLift = mobileRun ? -30 : -39;
+    const followLift = mobileRun ? -35 : -43;
     const stutter = profile === "stutter";
     const reverse = profile === "reverse";
     sound("footsteps");
@@ -905,14 +907,54 @@
     const startScale = ballScaleAt(from, { saved: false, miss: false });
     const endScale = ballScaleAt(point, { saved, miss });
     const mobileFlight = mobilePenaltyLayout();
-    const midXFactor = mobileFlight ? .32 : .52;
-    const midYFactor = mobileFlight ? .60 : .52;
-    const midX = from.x + (point.x - from.x) * midXFactor;
-    const linearMidY = from.y + (point.y - from.y) * midYFactor;
+    if (!options.silentKick) sound("kick");
+
+    if (mobileFlight) {
+      // Explicit mobile depth path: vertical travel dominates before the ball
+      // develops its left/right direction. This prevents a sideways slide.
+      const path = [
+        { o: 0,    xf: 0,    yf: 0,    sf: 1.00 },
+        { o: .10,  xf: .008, yf: .18,  sf: .98 },
+        { o: .25,  xf: .045, yf: .42,  sf: .93 },
+        { o: .48,  xf: .16,  yf: .68,  sf: .82 },
+        { o: .72,  xf: .42,  yf: .88,  sf: .68 },
+        { o: 1,    xf: 1,    yf: 1,    sf: endScale },
+      ];
+      const liftAt = (factor, offset) => {
+        const base = from.y + (point.y - from.y) * factor;
+        if (panenkaShot) return base - Math.sin(Math.PI * factor) * .095;
+        if (placedShot) return base - Math.sin(Math.PI * factor) * .012;
+        return base;
+      };
+      const ballFrames = path.map((k, i) => {
+        const x = from.x + (point.x - from.x) * k.xf;
+        const y = liftAt(k.yf, k.o);
+        const scale = i === path.length - 1 ? endScale : startScale * k.sf;
+        return {
+          left: `${x * 100}%`, top: `${y * 100}%`,
+          transform: ballTransform(scale), offset: k.o,
+        };
+      });
+      if (ballShadow) {
+        const shadowFrames = path.map((k, i) => {
+          const x = from.x + (point.x - from.x) * k.xf;
+          const groundY = from.y + (point.y - from.y) * Math.min(1, k.yf * .92) + .014;
+          const opacity = i === path.length - 1 ? (saved ? .14 : .05) : Math.max(.12, .72 * (1 - k.o * .9));
+          return {
+            left: `${x * 100}%`, top: `${groundY * 100}%`, opacity,
+            transform: ballTransform(Math.max(.25, startScale * (1 - k.o * .55))), offset: k.o,
+          };
+        });
+        animateElement(ballShadow, shadowFrames, { duration, easing: "cubic-bezier(.16,.62,.22,1)" });
+      }
+      return animateElement(ball, ballFrames, { duration, easing: "cubic-bezier(.16,.62,.22,1)" });
+    }
+
+    const midX = from.x + (point.x - from.x) * .52;
+    const linearMidY = from.y + (point.y - from.y) * .52;
     const lift = panenkaShot ? .105 : placedShot ? .018 : 0;
     const midY = linearMidY - lift;
     const midScale = ballScaleAt({ x: midX, y: midY }, { saved, miss });
-    if (!options.silentKick) sound("kick");
     if (ballShadow) {
       const shadowEndY = saved ? point.y + .025 : goalBox.top + goalBox.height + .012;
       const reboundNear = point.y > from.y;
@@ -924,7 +966,7 @@
     }
     return animateElement(ball, [
       { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: ballTransform(startScale) },
-      { left: `${(from.x + (point.x - from.x) * (mobileFlight ? .018 : .045)) * 100}%`, top: `${(from.y + (point.y - from.y) * (mobileFlight ? .11 : .025)) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .055 },
+      { left: `${(from.x + (point.x - from.x) * .045) * 100}%`, top: `${(from.y + (point.y - from.y) * .025) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .055 },
       { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: ballTransform(midScale), offset: .52 },
       { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
     ], { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : placedShot ? "cubic-bezier(.16,.5,.22,1)" : "linear" });
@@ -933,8 +975,8 @@
   function animateBallApproach(target, duration, shotType = "driven") {
     const targetStage = stagePoint(target);
     const point = {
-      x: ballStart.x + (targetStage.x - ballStart.x) * (mobilePenaltyLayout() ? .20 : .34),
-      y: ballStart.y + (targetStage.y - ballStart.y) * (mobilePenaltyLayout() ? .48 : .34),
+      x: ballStart.x + (targetStage.x - ballStart.x) * (mobilePenaltyLayout() ? .08 : .34),
+      y: ballStart.y + (targetStage.y - ballStart.y) * (mobilePenaltyLayout() ? .58 : .34),
     };
     const startScale = ballScaleAt(ballStart);
     const endScale = ballScaleAt(point);
@@ -945,7 +987,7 @@
     ], { duration, easing: "linear" });
     const animation = animateElement(ball, [
       { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: ballTransform(startScale) },
-      { left: `${(ballStart.x + (point.x - ballStart.x) * (mobilePenaltyLayout() ? .025 : .08)) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * (mobilePenaltyLayout() ? .18 : .04)) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
+      { left: `${(ballStart.x + (point.x - ballStart.x) * (mobilePenaltyLayout() ? .006 : .08)) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * (mobilePenaltyLayout() ? .24 : .04)) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
       { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
     ], { duration, easing: "linear" });
     return { point, animation };
@@ -2094,7 +2136,7 @@
     setApproachLabel(player.foot, runProfile);
     setStatus(`${player.name} begins the run-up`, `${runUpLabel(player.foot, runProfile)}. ${isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact."}`);
     const run = animateRunUp(false, player.foot, aim, player.style, runProfile);
-    await sleep(reducedMotion() ? 100 : Math.max(390, run.duration - 130));
+    await sleep(reducedMotion() ? 100 : Math.max(390, run.duration * (mobilePenaltyLayout() ? .875 : .84)));
     if (token !== state.sequence) return;
 
     const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));

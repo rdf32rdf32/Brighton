@@ -1,4 +1,4 @@
-/* r48 authoritative mobile penalty camera. Loaded last; desktop is untouched. */
+/* r49 authoritative mobile penalty camera and contact geometry. Desktop untouched. */
 @media (max-width: 760px) {
   .shootout-v17 {
     --mobile-goal-left: 17%;
@@ -29,7 +29,7 @@
   }
   .shootout-v17 .taker-figure {
     left: 50% !important;
-    top: 66% !important;
+    top: 72% !important;
     width: 14.2% !important;
     min-width: 55px !important;
     max-width: 72px !important;
@@ -96,7 +96,7 @@
 @media (max-width: 430px) {
   .shootout-v17 { --mobile-goal-left: 18%; --mobile-goal-width: 64%; }
   .shootout-v17 .penalty-stage { height: clamp(420px,118vw,485px) !important; min-height:420px !important; }
-  .shootout-v17 .taker-figure { top: 66.5% !important; width: 14% !important; min-width:53px !important; }
+  .shootout-v17 .taker-figure { top: 72.5% !important; width: 14% !important; min-width:53px !important; }
   .shootout-v17 .keeper-figure { width: 10.5% !important; min-width:40px !important; }
   .shootout-v17 .goal-side-net { width: 6% !important; }
 }
