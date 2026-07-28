@@ -1,16 +1,7 @@
-BRIGHTON FAN HUB r46 — PENALTY SEQUENCE REPAIR
+BRIGHTON FAN HUB r47 — PENALTY VISUAL POLISH
 
-Upload every file in this folder directly to the root of the GitHub Brighton repository.
-Replace matching files. Do not upload the enclosing folder.
+Upload every file in this site folder directly to the root of the GitHub Brighton repository. Replace matching files.
 
-Penalty repairs:
-- goalkeeper boots anchored to the goal line
-- ball and player animations no longer pinned by CSS
-- ball flight starts during the strike sequence
-- Ready to Save appears inside the goal and only on Palace turns
-- Brighton aiming target resets to the centre for every kick
-- target hidden during Palace penalties
-- bottle remains fixed beside the post
-- existing site features preserved
+Changes: improved ball appearance and pitch depth; Ready/save helper text clears immediately after clicking; desktop format retained; mobile goal reduced; mobile taker placed clearly behind the ball; mobile depth rebuilt independently.
 
-After GitHub Pages deploys, open the site in an InPrivate window and use Ctrl+Shift+R once.
+After deployment, test once in an InPrivate window and refresh with Ctrl+Shift+R.

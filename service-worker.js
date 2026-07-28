@@ -1,4 +1,4 @@
-const CACHE_NAME = 'albion-fan-hub-r46';
+const CACHE_NAME = 'albion-fan-hub-r47';
 const CORE = [
   "./", "./index.html", "./style.css?v=20260727-r38", "./shootout.css?v=20260727-r38",
   "./r35-polish.css?v=20260727-r38", "./r38-layout.css?v=20260727-r38", "./content-data.js?v=20260727-r38", "./quiz-data.js?v=20260727-r38",

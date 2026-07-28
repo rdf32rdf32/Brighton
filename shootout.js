@@ -1982,6 +1982,7 @@
     state.locked = true;
     state.reactionOpen = false;
     readyPanel.hidden = true;
+    $("keyboardHint")?.removeAttribute("hidden");
     panenka.disabled = true;
     panenka.closest("label")?.removeAttribute("hidden");
     const player = albionTakers[state.albionKicks % albionTakers.length];
@@ -2201,6 +2202,9 @@
     ensureAudio();
     const token = ++state.sequence;
     readyPanel.hidden = true;
+    $("keyboardHint")?.setAttribute("hidden", "");
+    $("stageInstruction").textContent = "Watch the run-up";
+    setStatus("Watch the run-up", "React only as the Palace player reaches the ball.");
     reticle.hidden = true;
     state.phase = "palace-prep";
     state.locked = true;
