@@ -462,16 +462,22 @@
   }
 
   function renderFixtureHighlights() {
-    const home = (C.fixtures || []).find((fixture) => fixture.venue === "H");
-    const away = (C.fixtures || []).find((fixture) => fixture.venue === "A");
-    if (home) {
-      $("nextHomeFixture").textContent = `Albion v ${home.opponent}`;
-      $("nextHomeDate").textContent = `${home.date} · Amex Stadium`;
-    }
-    if (away) {
-      $("nextAwayFixture").textContent = `${away.opponent} v Albion`;
-      $("nextAwayDate").textContent = `${away.date} · Away`;
-    }
+    const monthNumbers = { Jan:0, Feb:1, Mar:2, Apr:3, May:4, Jun:5, Jul:6, Aug:7, Sep:8, Oct:9, Nov:10, Dec:11 };
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const upcoming = (C.fixtures || [])
+      .map((fixture) => {
+        const [day, month, year] = fixture.date.split(" ");
+        return { fixture, date: new Date(Number(year), monthNumbers[month], Number(day), 12) };
+      })
+      .filter((item) => !Number.isNaN(item.date.valueOf()) && item.date >= today)
+      .sort((a,b) => a.date - b.date);
+    const home = upcoming.find((item) => item.fixture.venue === "H")?.fixture;
+    const away = upcoming.find((item) => item.fixture.venue === "A")?.fixture;
+    $("nextHomeFixture").textContent = home ? `Albion v ${home.opponent}` : "To be confirmed";
+    $("nextHomeDate").textContent = home ? `${home.date} · Amex Stadium` : "";
+    $("nextAwayFixture").textContent = away ? `${away.opponent} v Albion` : "To be confirmed";
+    $("nextAwayDate").textContent = away ? `${away.date} · Away` : "";
   }
 
   function initFixtureMonths() {
@@ -2694,7 +2700,7 @@
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 34</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 51</span>');
   }
 
   completeControlSemantics();

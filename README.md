@@ -10,3 +10,6 @@ Upload all files directly to the GitHub repository root.
 - Prevented horizontal overflow and inherited desktop centring on phones.
 - Added compact scoreboard, 44px touch targets, safe-area spacing and landscape handling.
 - Kept the desktop full-width centred correction from Release 37.
+
+
+r51: mobile taker contact is measured from the ball, goalkeeper is slightly larger, portrait and phone-landscape cameras are unified, score labels are compact, fixtures and cache versions are consistent.

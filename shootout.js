@@ -83,7 +83,8 @@
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
-  const mobilePenaltyLayout = () => window.matchMedia("(max-width: 760px)").matches;
+  const MOBILE_PENALTY_QUERY = "(max-width: 760px), (max-height: 520px) and (orientation: landscape) and (pointer: coarse)";
+  const mobilePenaltyLayout = () => window.matchMedia(MOBILE_PENALTY_QUERY).matches;
 
   function syncGoalBox() {
     const stageRect = stage.getBoundingClientRect();
@@ -220,7 +221,7 @@
   chantAudio.preload = "none";
   chantAudio.volume = 0.24;
 
-  function isMobilePenalty() { return window.matchMedia?.("(max-width:760px)").matches; }
+  function isMobilePenalty() { return window.matchMedia?.(MOBILE_PENALTY_QUERY).matches; }
   function config() {
     if (!isMobilePenalty()) return GAME;
     return {
@@ -622,7 +623,8 @@
     syncGoalBox();
     const dimensions = keeperDimensions();
     const goalLineY = (goalBox.top + goalBox.height) * stage.clientHeight;
-    const top = goalLineY - dimensions.height * keeperBootRatio;
+    const baselineNudge = mobilePenaltyLayout() ? 4 : 7;
+    const top = goalLineY - dimensions.height * keeperBootRatio - baselineNudge;
     keeper.style.left = "50%";
     keeper.style.top = `${top}px`;
     keeper.style.transform = "translateX(-50%)";
@@ -659,7 +661,7 @@
       ballShadow.style.transform = "translate(-50%,-50%) scale(1)";
     }
     taker.style.left = "50%";
-    taker.style.top = "49%";
+    taker.style.top = mobilePenaltyLayout() ? "61%" : "49%";
     taker.style.opacity = "1";
     taker.style.visibility = "";
     taker.style.transform = "translate(-50%,0)";
@@ -786,10 +788,21 @@
     const runStartY = mobileRun ? 36 : 20;
     const runMidY = mobileRun ? 22 : 7;
     const runNearY = mobileRun ? -6 : -10;
-    // Mobile taker now starts outside the box and meets the rendered ball.
-    // The old -78px lift carried the boots well beyond the spot.
-    const contactLift = mobileRun ? -30 : -39;
-    const followLift = mobileRun ? -35 : -43;
+    // Derive mobile contact from the rendered ball and boot positions. This keeps
+    // the foot at the ball across 360–430px portrait phones and phone landscape.
+    let contactLift = -39;
+    if (mobileRun) {
+      const ballRect = ball.getBoundingClientRect();
+      const bootRect = kickingBoot?.getBoundingClientRect() || standingBoot?.getBoundingClientRect();
+      if (bootRect?.height && ballRect?.height) {
+        const ballContactY = ballRect.top + ballRect.height * .58;
+        const bootContactY = bootRect.top + bootRect.height * .72;
+        contactLift = Math.round(clamp(ballContactY - bootContactY, -46, 8));
+      } else {
+        contactLift = -16;
+      }
+    }
+    const followLift = contactLift - (mobileRun ? 6 : 4);
     const stutter = profile === "stutter";
     const reverse = profile === "reverse";
     sound("footsteps");
@@ -1611,7 +1624,7 @@
     const pickupX = 57.5 + sideBias;
     const pickupY = 75.5;
     taker.style.left = `${56.5 + sideBias}%`;
-    taker.style.top = "49%";
+    taker.style.top = mobilePenaltyLayout() ? "60%" : "49%";
     ball.style.left = `${pickupX}%`;
     ball.style.top = `${pickupY}%`;
     ball.style.transform = "translate(-50%,-50%) scale(.96)";
@@ -1680,7 +1693,7 @@
     if (token !== state.sequence) return false;
     stage.classList.remove("placing-ball", "placement-1", "placement-2", "placement-3", "placement-4", "placement-5");
     taker.style.left = "50%";
-    taker.style.top = "49%";
+    taker.style.top = mobilePenaltyLayout() ? "61%" : "49%";
     taker.style.transform = "translate(-50%,0)";
     taker.querySelectorAll(".taker-root,.taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg").forEach((part) => { part.style.transform = ""; });
     return true;
@@ -2306,7 +2319,7 @@
     const anticipatedDive = state.pendingDive && performance.now() - state.pendingDive.time < 1800 ? state.pendingDive : null;
     stage.classList.remove("is-locked");
     stage.classList.add("is-save-window");
-    $("stageInstruction").textContent = matchMedia("(max-width:760px)").matches ? "Swipe anywhere or tap left, centre or right" : "Move or swipe towards the shot — early movement counts";
+    $("stageInstruction").textContent = matchMedia(MOBILE_PENALTY_QUERY).matches ? "Swipe anywhere or tap left, centre or right" : "Move or swipe towards the shot — early movement counts";
     setStatus("Read the final stride", "You can begin moving before contact and continue reacting after the strike.");
     if (anticipatedDive) {
       window.setTimeout(() => {
@@ -2317,7 +2330,7 @@
     await sleep(reducedMotion() ? 30 : settings.preContactWindow);
     if (token !== state.sequence) return;
     cue.hidden = false;
-    setStatus("REACT!", matchMedia("(max-width:760px)").matches ? "Swipe anywhere on the pitch or tap left, centre or right." : "Move or swipe towards the shot. Choosing the correct side is strongly rewarded.");
+    setStatus("REACT!", matchMedia(MOBILE_PENALTY_QUERY).matches ? "Swipe anywhere on the pitch or tap left, centre or right." : "Move or swipe towards the shot. Choosing the correct side is strongly rewarded.");
     window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 350);
     window.clearTimeout(state.standingSaveTimer);
     const straightAtKeeper = !state.palaceMiss && Math.abs(state.palaceTarget.x - .5) < .13 && state.palaceTarget.y > .34;
@@ -2922,6 +2935,7 @@
   };
   window.addEventListener("scroll", scheduleVisibilitySync, { passive: true });
   window.addEventListener("resize", scheduleVisibilitySync, { passive: true });
+
 
   window.requestAnimationFrame(() => {
     positionKeeperOnLine();

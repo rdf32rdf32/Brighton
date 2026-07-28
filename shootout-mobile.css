@@ -1,17 +1,17 @@
-/* r50 authoritative mobile penalty camera, unrestricted ball flight and pitch depth. Desktop untouched. */
-@media (max-width: 760px) {
+/* r51 authoritative mobile and phone-landscape penalty camera. Desktop untouched. */
+@media (max-width: 760px), (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
   .shootout-v17 {
-    --mobile-goal-left: 17%;
-    --mobile-goal-width: 66%;
+    --mobile-goal-left: 19%;
+    --mobile-goal-width: 62%;
     --mobile-goal-top: 18.5%;
     --mobile-goal-height: 25.5%;
   }
   .shootout-v17 .penalty-stage {
     position: relative !important;
     aspect-ratio: auto !important;
-    height: clamp(410px, 112vw, 500px) !important;
-    min-height: 410px !important;
-    max-height: 500px !important;
+    height: clamp(420px, 116vw, 510px) !important;
+    min-height: 420px !important;
+    max-height: 510px !important;
     overflow: hidden !important;
     perspective: 900px;
   }
@@ -23,16 +23,14 @@
     perspective: 760px !important;
   }
   .shootout-v17 .keeper-figure {
-    width: 10.8% !important;
-    min-width: 42px !important;
-    max-width: 58px !important;
+    width: 12.1% !important;
+    min-width: 46px !important;
+    max-width: 64px !important;
   }
   .shootout-v17 .taker-figure {
-    left: 50% !important;
-    top: 72% !important;
-    width: 14.2% !important;
-    min-width: 55px !important;
-    max-width: 72px !important;
+    width: 13.5% !important;
+    min-width: 51px !important;
+    max-width: 68px !important;
     transform: translate(-50%,0);
     transform-origin: 50% 92% !important;
   }
@@ -60,7 +58,7 @@
   }
   .shootout-v17 .pitch-lines { opacity:.98 !important; }
   .shootout-v17 .pitch-markings-svg { filter: drop-shadow(0 1px 0 rgba(0,55,22,.22)); }
-  .shootout-v17 .pitch-line { stroke:rgba(248,255,249,.92) !important; stroke-width:4.2 !important; }
+  .shootout-v17 .pitch-line { stroke:rgba(248,255,249,.92) !important; stroke-width:3.7 !important; }
   .shootout-v17 .pitch-spot-mark { fill:rgba(248,255,249,.96) !important; stroke:rgba(0,75,32,.34) !important; stroke-width:2 !important; }
   .shootout-v17 .spot-wear {
     background: radial-gradient(ellipse at center,rgba(154,132,79,.48),rgba(79,105,54,.22) 52%,transparent 74%) !important;
@@ -125,14 +123,62 @@
   .shootout-v17 .stage-instruction { bottom: 4px !important; max-width: 92% !important; }
 }
 @media (max-width: 430px) {
-  .shootout-v17 { --mobile-goal-left: 18%; --mobile-goal-width: 64%; }
-  .shootout-v17 .penalty-stage { height: clamp(420px,118vw,485px) !important; min-height:420px !important; }
-  .shootout-v17 .taker-figure { top: 72.5% !important; width: 14% !important; min-width:53px !important; }
-  .shootout-v17 .keeper-figure { width: 10.5% !important; min-width:40px !important; }
+  .shootout-v17 { --mobile-goal-left: 19.5%; --mobile-goal-width: 61%; }
+  .shootout-v17 .penalty-stage { height: clamp(430px,120vw,495px) !important; min-height:430px !important; }
+  .shootout-v17 .taker-figure { width: 13.2% !important; min-width:50px !important; }
+  .shootout-v17 .keeper-figure { width: 11.8% !important; min-width:44px !important; }
   .shootout-v17 .goal-side-net { width: 6% !important; }
 }
 @media (max-width: 370px) {
-  .shootout-v17 { --mobile-goal-left: 19%; --mobile-goal-width: 62%; }
+  .shootout-v17 { --mobile-goal-left: 20%; --mobile-goal-width: 60%; }
   .shootout-v17 .penalty-stage { min-height:410px !important; height:116vw !important; }
   .shootout-v17 .taker-figure { width:13.6% !important; min-width:49px !important; }
+}
+
+
+/* r51 mobile score labels and landscape camera. */
+@media (max-width: 760px) {
+  main > .shootout-card { margin-inline: -8px; border-radius: 18px; }
+  .shootout-v17 .shootout-shell { padding-inline: 6px; }
+  .shootout-v17 .team-short { display:none; }
+  .shootout-v17 .team-full { display:inline; }
+}
+@media (max-width: 480px) {
+  .shootout-v17 .team-full { display:none; }
+  .shootout-v17 .team-short { display:inline; }
+  .shootout-v17 .shootout-team > .team-label { font-size:.67rem; letter-spacing:.08em; overflow:visible; }
+  .shootout-v17 .shootout-scoreboard { grid-template-columns:minmax(0,1fr) 46px minmax(0,1fr) !important; }
+  .shootout-v17 .shootout-round span { font-size:.56rem; }
+  .shootout-v17 .shootout-round b { font-size:.9rem; }
+}
+@media (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+  .shootout-v17 {
+    --mobile-goal-left: 25%;
+    --mobile-goal-width: 50%;
+    --mobile-goal-top: 13%;
+    --mobile-goal-height: 34%;
+  }
+  main > .shootout-card { margin-inline:0; padding:8px 10px; }
+  .shootout-v17 .shootout-intro { display:none !important; }
+  .shootout-v17 .shootout-shell { padding:6px; }
+  .shootout-v17 .shootout-scoreboard { padding:5px 8px; }
+  .shootout-v17 .shootout-match-strip { padding:4px 6px; }
+  .shootout-v17 .penalty-stage {
+    height: calc(100dvh - 116px) !important;
+    min-height: 300px !important;
+    max-height: 430px !important;
+    width: min(100%, 900px) !important;
+    margin-inline:auto !important;
+  }
+  .shootout-v17 .keeper-figure { width:10.7% !important; min-width:44px !important; max-width:62px !important; }
+  .shootout-v17 .taker-figure { width:10.4% !important; min-width:47px !important; max-width:68px !important; }
+  .shootout-v17 .referee-figure { width:5.5% !important; min-width:27px !important; }
+  .shootout-v17 .stage-instruction { display:block !important; }
+}
+
+@media (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
+  .shootout-v17 .shootout-shell { display:block !important; grid-template-columns:none !important; }
+  .shootout-v17 .team-full { display:none !important; }
+  .shootout-v17 .team-short { display:inline !important; }
+  .shootout-v17 .shootout-team > .team-label { font-size:.66rem; letter-spacing:.08em; }
 }

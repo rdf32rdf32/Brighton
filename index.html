@@ -30,14 +30,14 @@
 <link href="favicon.svg" rel="icon"/>
 <link href="manifest.json" rel="manifest"/>
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
-<link href="style.css?v=20260728-r48" rel="stylesheet"/>
-<link href="shootout.css?v=20260728-r48" rel="stylesheet"/>
+<link href="style.css?v=20260728-r51" rel="stylesheet"/>
+<link href="shootout.css?v=20260728-r51" rel="stylesheet"/>
 <meta content="production-r45-morning-restore-20260727" name="release"/>
-<link href="r35-polish.css?v=20260728-r48" rel="stylesheet"/>
-<link href="r37-layout.css?v=20260728-r48" rel="stylesheet"/>
-<link href="r38-mobile.css?v=20260728-r48" rel="stylesheet"/>
-<link href="r39-geometry.css?v=20260728-r50" rel="stylesheet"/>
-<link href="shootout-mobile.css?v=20260728-r50" rel="stylesheet"/>
+<link href="r35-polish.css?v=20260728-r51" rel="stylesheet"/>
+<link href="r37-layout.css?v=20260728-r51" rel="stylesheet"/>
+<link href="r38-mobile.css?v=20260728-r51" rel="stylesheet"/>
+<link href="r39-geometry.css?v=20260728-r51" rel="stylesheet"/>
+<link href="shootout-mobile.css?v=20260728-r51" rel="stylesheet"/>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -184,7 +184,7 @@
 <div class="shootout-shell">
 <div aria-label="Shoot-out score" class="shootout-scoreboard">
 <div class="shootout-team albion">
-<span>SEAGULLS</span>
+<span class="team-label" aria-label="Seagulls"><span class="team-full">SEAGULLS</span><span aria-hidden="true" class="team-short">BHA</span></span>
 <b id="albionGoalCount">0</b>
 <div aria-label="Brighton penalties" class="penalty-markers" id="albionPenaltyMarkers"></div>
 </div>
@@ -193,7 +193,7 @@
 <b id="shotCount">1/5</b>
 </div>
 <div class="shootout-team palace">
-<span>EAGLES</span>
+<span class="team-label" aria-label="Eagles"><span class="team-full">EAGLES</span><span aria-hidden="true" class="team-short">PAL</span></span>
 <b id="palaceGoalCount">0</b>
 <div aria-label="Palace penalties" class="penalty-markers" id="palacePenaltyMarkers"></div>
 </div>
@@ -759,7 +759,7 @@
 <p>Move the slider from 1st to 20th and save your forecast.</p>
 </div>
 <div class="league-slider-wrap">
-<output for="leaguePosition" id="leaguePositionOutput">10th</output><input aria-describedby="leagueBand" id="leaguePosition" max="20" min="1" type="range" value="10"/>
+<label class="visually-hidden" for="leaguePosition">Predicted finishing position</label><output for="leaguePosition" id="leaguePositionOutput">10th</output><input aria-describedby="leagueBand" id="leaguePosition" max="20" min="1" type="range" value="10"/>
 <div aria-hidden="true" class="league-scale">
 <span>1st</span><span>Europe</span><span>10th</span><span>20th</span>
 </div>
@@ -1355,11 +1355,11 @@
 </div>
 <p class="footer-copy">© 2026 Albion Fan Hub</p>
 </footer>
-<script src="content-data.js?v=20260728-r48"></script>
-<script src="quiz-data.js?v=20260728-r48"></script>
-<script src="site-controls.js?v=20260728-r48"></script>
-<script src="app.js?v=20260728-r48"></script>
-<script src="shootout.js?v=20260728-r48"></script>
-<script src="r35-polish.js?v=20260728-r48"></script>
+<script src="content-data.js?v=20260728-r51"></script>
+<script src="quiz-data.js?v=20260728-r51"></script>
+<script src="site-controls.js?v=20260728-r51"></script>
+<script src="app.js?v=20260728-r51"></script>
+<script src="shootout.js?v=20260728-r51"></script>
+<script src="r35-polish.js?v=20260728-r51"></script>
 </body>
 </html>
