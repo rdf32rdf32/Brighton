@@ -1,0 +1,107 @@
+/* r48 authoritative mobile penalty camera. Loaded last; desktop is untouched. */
+@media (max-width: 760px) {
+  .shootout-v17 {
+    --mobile-goal-left: 17%;
+    --mobile-goal-width: 66%;
+    --mobile-goal-top: 18.5%;
+    --mobile-goal-height: 25.5%;
+  }
+  .shootout-v17 .penalty-stage {
+    position: relative !important;
+    aspect-ratio: auto !important;
+    height: clamp(410px, 112vw, 500px) !important;
+    min-height: 410px !important;
+    max-height: 500px !important;
+    overflow: hidden !important;
+    perspective: 900px;
+  }
+  .shootout-v17 .goal-mouth {
+    left: var(--mobile-goal-left) !important;
+    top: var(--mobile-goal-top) !important;
+    width: var(--mobile-goal-width) !important;
+    height: var(--mobile-goal-height) !important;
+    perspective: 760px !important;
+  }
+  .shootout-v17 .keeper-figure {
+    width: 10.8% !important;
+    min-width: 42px !important;
+    max-width: 58px !important;
+  }
+  .shootout-v17 .taker-figure {
+    left: 50% !important;
+    top: 66% !important;
+    width: 14.2% !important;
+    min-width: 55px !important;
+    max-width: 72px !important;
+    transform: translate(-50%,0);
+    transform-origin: 50% 92% !important;
+  }
+  .shootout-v17 .penalty-ball {
+    width: clamp(15px,4.2vw,18px) !important;
+    height: clamp(15px,4.2vw,18px) !important;
+  }
+  .shootout-v17 .spot-wear {
+    width: 21px !important;
+    height: 10px !important;
+  }
+  .shootout-v17 .keeper-bottle {
+    left: 12.8% !important;
+    top: 41.2% !important;
+    width: 9px !important;
+    height: 24px !important;
+    opacity: .78 !important;
+    transform: rotate(-7deg) scale(.72) !important;
+  }
+  .shootout-v17 .penalty-stage.bottle-reading .keeper-bottle {
+    transform: rotate(-7deg) scale(.72) !important;
+  }
+  .shootout-v17 .palace-ready-panel {
+    position: absolute !important;
+    left: 50% !important;
+    top: 23.5% !important;
+    bottom: auto !important;
+    width: min(55%, 205px) !important;
+    margin: 0 !important;
+    padding: 7px 9px !important;
+    transform: translateX(-50%) !important;
+    z-index: 40 !important;
+    border-radius: 10px !important;
+    background: rgba(2,31,57,.92) !important;
+    color: #fff !important;
+  }
+  .shootout-v17 .palace-ready-panel p { display:none !important; }
+  .shootout-v17 .palace-ready-panel button {
+    min-height: 48px !important;
+    padding: 8px 10px !important;
+    font-size: .88rem !important;
+  }
+  .shootout-v17 .pitch-stripes {
+    opacity: .25 !important;
+    background:
+      linear-gradient(90deg,transparent 0 18%,rgba(255,255,255,.045) 18% 27%,transparent 27% 40%,rgba(0,70,35,.08) 40% 60%,transparent 60% 73%,rgba(255,255,255,.045) 73% 82%,transparent 82%),
+      linear-gradient(180deg,rgba(255,255,255,.035),rgba(0,35,16,.12)) !important;
+    clip-path: polygon(41% 0,59% 0,100% 100%,0 100%) !important;
+    transform-origin: 50% 0 !important;
+  }
+  .shootout-v17 .referee-figure {
+    left: 91% !important;
+    top: 39.5% !important;
+    width: 7.2% !important;
+    min-width: 31px !important;
+    max-width: 42px !important;
+  }
+  .shootout-v17 .aim-reticle { width: 31px !important; height:31px !important; }
+  .shootout-v17 .stage-instruction { bottom: 4px !important; max-width: 92% !important; }
+}
+@media (max-width: 430px) {
+  .shootout-v17 { --mobile-goal-left: 18%; --mobile-goal-width: 64%; }
+  .shootout-v17 .penalty-stage { height: clamp(420px,118vw,485px) !important; min-height:420px !important; }
+  .shootout-v17 .taker-figure { top: 66.5% !important; width: 14% !important; min-width:53px !important; }
+  .shootout-v17 .keeper-figure { width: 10.5% !important; min-width:40px !important; }
+  .shootout-v17 .goal-side-net { width: 6% !important; }
+}
+@media (max-width: 370px) {
+  .shootout-v17 { --mobile-goal-left: 19%; --mobile-goal-width: 62%; }
+  .shootout-v17 .penalty-stage { min-height:410px !important; height:116vw !important; }
+  .shootout-v17 .taker-figure { width:13.6% !important; min-width:49px !important; }
+}

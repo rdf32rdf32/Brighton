@@ -1,7 +1,5 @@
-BRIGHTON FAN HUB r47 — PENALTY VISUAL POLISH
+BRIGHTON FULL SITE r48 – MOBILE PENALTY REBUILD
 
-Upload every file in this site folder directly to the root of the GitHub Brighton repository. Replace matching files.
-
-Changes: improved ball appearance and pitch depth; Ready/save helper text clears immediately after clicking; desktop format retained; mobile goal reduced; mobile taker placed clearly behind the ball; mobile depth rebuilt independently.
-
-After deployment, test once in an InPrivate window and refresh with Ctrl+Shift+R.
+Upload every file in this folder to the root of the GitHub repository.
+Desktop penalty geometry is unchanged. Mobile penalty geometry is controlled by shootout-mobile.css, loaded last.
+The mobile run-up and ball flight use mobile-specific depth and contact values in shootout.js.
