@@ -1,17 +1,13 @@
-R52 MOBILE RUN-UP AND BALL POLISH
+R53 CONTACT UPDATE
 
-# Albion Fan Hub — Release 37
+This full-site build is based on r52.
 
-Desktop penalty width is centred correctly without transform drift. Mobile penalty depth and player/ball geometry are rolled back to the stable Release 35 version.
+Changes in r53:
+- Added rdf32rdf32@gmail.com to the Contact page.
+- Added the same clickable email address to the footer Site information section.
+- Improved the Contact page wording and mobile presentation.
+- Updated asset and service-worker cache versions consistently to r53.
 
-Upload all files directly to the GitHub repository root.
+Penalty behaviour and geometry are unchanged from r52.
 
-
-## Release 38 mobile validation
-- Locked the restored 1000:650 penalty perspective below 900px.
-- Prevented horizontal overflow and inherited desktop centring on phones.
-- Added compact scoreboard, 44px touch targets, safe-area spacing and landscape handling.
-- Kept the desktop full-width centred correction from Release 37.
-
-
-r51: mobile taker contact is measured from the ball, goalkeeper is slightly larger, portrait and phone-landscape cameras are unified, score labels are compact, fixtures and cache versions are consistent.
+Upload every file inside the site folder to the root of the GitHub repository.

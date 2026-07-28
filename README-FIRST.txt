@@ -1,12 +1,6 @@
-R52 MOBILE RUN-UP AND BALL POLISH
+R53 CONTACT UPDATE
 
-BRIGHTON FULL SITE r51 — MOBILE BALL AND PITCH FIX
+UPLOAD EVERYTHING INSIDE THE site FOLDER TO THE ROOT OF THE GITHUB REPOSITORY.
 
-Upload every file in this site folder to the root of the GitHub repository, replacing matching files.
-
-Core repair: removed old mobile top: ... !important locks from the penalty ball and shadow. JavaScript now controls the complete forward flight into the goal. Desktop geometry is unchanged.
-
-After deployment, open an InPrivate window and hard refresh once.
-
-
-r51: mobile taker contact is measured from the ball, goalkeeper is slightly larger, portrait and phone-landscape cameras are unified, score labels are compact, fixtures and cache versions are consistent.
+The email rdf32rdf32@gmail.com has been added to the Contact page and footer.
+Penalty behaviour is unchanged from r52.

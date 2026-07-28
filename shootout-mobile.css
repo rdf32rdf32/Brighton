@@ -1,4 +1,4 @@
-/* r52 authoritative mobile and phone-landscape penalty camera. Desktop untouched. */
+/* r53 authoritative mobile and phone-landscape penalty camera. Desktop untouched. */
 @media (max-width: 760px), (max-height: 520px) and (orientation: landscape) and (pointer: coarse) {
   .shootout-v17 {
     --mobile-goal-left: 19%;
@@ -153,7 +153,7 @@
 }
 
 
-/* r52 mobile score labels and landscape camera. */
+/* r53 mobile score labels and landscape camera. */
 @media (max-width: 760px) {
   main > .shootout-card { margin-inline: -8px; border-radius: 18px; }
   .shootout-v17 .shootout-shell { padding-inline: 6px; }

@@ -1,4 +1,4 @@
-/* Albion Fan Hub r52 — shared desktop geometry; phone geometry lives only in shootout-mobile.css. */
+/* Albion Fan Hub r53 — shared desktop geometry; phone geometry lives only in shootout-mobile.css. */
 .shootout-v17 .penalty-stage{position:relative;overflow:hidden;touch-action:none;overscroll-behavior:contain}
 .shootout-v17 .keeper-figure{left:50%;width:8.65%;min-width:54px;max-width:104px;transform-origin:50% 92.4%}
 .shootout-v17 .taker-figure{left:50%;top:49%;width:12.2%;min-width:88px;max-width:142px}
