@@ -1,105 +1,21 @@
-/* Albion Fan Hub r39 — authoritative penalty geometry.
-   Loaded last. Desktop and mobile deliberately use different camera scales. */
-
-/* Desktop: wide pitch, smaller distant goal and keeper, taker behind the ball. */
-@media (min-width: 901px) {
-  .shootout-v17 .penalty-stage {
-    aspect-ratio: 16 / 8.55;
-  }
-
-  .shootout-v17 .goal-mouth {
-    left: 28%;
-    top: 11.5%;
-    width: 44%;
-    height: 34.5%;
-  }
-
-  .shootout-v17 .keeper-figure {
-    left: 50% !important;
-    top: 0 !important;
-    width: 8.65% !important;
-    min-width: 54px !important;
-    max-width: 104px !important;
-    transform: translateX(-50%) !important;
-  }
-
-  .shootout-v17 .taker-figure {
-    left: 50% !important;
-    top: 39.5% !important;
-    width: 12.2% !important;
-    min-width: 88px !important;
-    max-width: 142px !important;
-    transform: translateX(-50%) !important;
-  }
-
-  .shootout-v17 .penalty-ball {
-    top: 77% !important;
-  }
-
-  .shootout-v17 .penalty-ball-shadow {
-    top: 78.2% !important;
-  }
-}
-
-/* Tablet/mobile: closer camera, larger readable keeper, but a narrower goal. */
-@media (max-width: 900px) {
-  .shootout-v17 .goal-mouth {
-    left: 21%;
-    top: 12.5%;
-    width: 58%;
-    height: 34.5%;
-  }
-
-  .shootout-v17 .keeper-figure {
-    left: 50% !important;
-    top: 0 !important;
-    width: 15.8% !important;
-    min-width: 62px !important;
-    max-width: 92px !important;
-    transform: translateX(-50%) !important;
-  }
-
-  .shootout-v17 .taker-figure {
-    left: 50% !important;
-    top: 42.5% !important;
-    width: 13.4% !important;
-    min-width: 58px !important;
-    max-width: 82px !important;
-    transform: translateX(-50%) !important;
-  }
-
-  .shootout-v17 .penalty-ball {
-    top: 77% !important;
-  }
-
-  .shootout-v17 .penalty-ball-shadow {
-    top: 78.1% !important;
-  }
-}
-
-@media (max-width: 480px) {
-  .shootout-v17 .goal-mouth {
-    left: 20%;
-    width: 60%;
-    height: 35%;
-  }
-
-  .shootout-v17 .keeper-figure {
-    width: 16.6% !important;
-    min-width: 58px !important;
-    max-width: 74px !important;
-  }
-
-  .shootout-v17 .taker-figure {
-    top: 42% !important;
-    width: 13.8% !important;
-    min-width: 52px !important;
-    max-width: 68px !important;
-  }
-}
-
-/* Preserve the deliberate geometry during fullscreen play. */
-.shootout-v17:fullscreen .goal-mouth,
-.shootout-v17.fullscreen-fallback .goal-mouth {
-  transform-origin: 50% 50%;
-}
+/* Albion Fan Hub r46 — authoritative, animation-safe penalty geometry. */
+.shootout-v17 .penalty-stage{position:relative;overflow:hidden;touch-action:none;overscroll-behavior:contain}
+.shootout-v17 .keeper-figure{left:50%;width:8.65%;min-width:54px;max-width:104px;transform-origin:50% 92.4%}
+.shootout-v17 .taker-figure{left:50%;top:49%;width:12.2%;min-width:88px;max-width:142px}
+.shootout-v17 .penalty-ball{top:77%}
+.shootout-v17 .penalty-ball-shadow{top:78.2%}
+.shootout-v17 .penalty-stage .palace-ready-panel{position:absolute!important;left:50%!important;top:48%!important;right:auto!important;bottom:auto!important;width:min(290px,70%)!important;margin:0!important;transform:translate(-50%,-50%)!important;z-index:40!important;display:grid!important;grid-template-columns:1fr!important;gap:8px!important;padding:12px!important;border:2px solid rgba(255,255,255,.9)!important;border-radius:14px!important;background:rgba(8,28,54,.92)!important;color:#fff!important;text-align:center!important;box-shadow:0 10px 28px rgba(0,0,0,.35)!important}
+.shootout-v17 .penalty-stage .palace-ready-panel[hidden]{display:none!important}
+.shootout-v17 .penalty-stage .palace-ready-panel p{margin:0!important;color:#fff!important;font-size:.82rem!important}
+.shootout-v17 .penalty-stage .palace-ready-panel button{width:100%!important;min-height:52px!important;border-radius:11px!important;font-weight:900!important;letter-spacing:.035em!important}
+.shootout-v17 .keeper-bottle,.shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{left:17.5%!important;top:42.5%!important;width:14px!important;height:36px!important;z-index:5!important;opacity:.82!important;transform:rotate(-7deg)!important;filter:none!important}
+.shootout-v17 .penalty-stage.bottle-reading::after{display:none!important}
+@media(min-width:901px){.shootout-v17 .penalty-stage{aspect-ratio:16/8.55}.shootout-v17 .goal-mouth{left:28%;top:11.5%;width:44%;height:34.5%}}
+@media(max-width:900px){.shootout-v17 .goal-mouth{left:21%;top:12.5%;width:58%;height:34.5%}.shootout-v17 .keeper-figure{width:15.8%;min-width:62px;max-width:92px}.shootout-v17 .taker-figure{top:48%;width:15.5%;min-width:64px;max-width:94px}.shootout-v17 .penalty-stage .palace-ready-panel{width:min(300px,76%)!important;top:49%!important}.shootout-v17 .keeper-bottle{left:12.5%!important;top:43.5%!important}}
+@media(max-width:480px){.shootout-v17 .goal-mouth{left:20%;width:60%;height:35%}.shootout-v17 .keeper-figure{width:16.6%;min-width:58px;max-width:74px}.shootout-v17 .taker-figure{top:47.5%;width:16.5%;min-width:58px;max-width:76px}.shootout-v17 .penalty-stage .palace-ready-panel{width:78%!important;top:49%!important;padding:10px!important}.shootout-v17 .penalty-stage .palace-ready-panel p{font-size:.72rem!important}.shootout-v17 .penalty-stage .palace-ready-panel button{min-height:54px!important;font-size:1rem!important}.shootout-v17 .keeper-bottle{left:11%!important;top:44%!important;width:12px!important;height:31px!important}}
+/* r46 final prompt calibration: compact prompt high in the net, clear of keeper and ball. */
+.shootout-v17 .penalty-stage .palace-ready-panel{top:20.5%!important;width:min(240px,62%)!important;padding:7px!important}
+.shootout-v17 .penalty-stage .palace-ready-panel p{display:none!important}
+.shootout-v17 .penalty-stage .palace-ready-panel button{min-height:50px!important}
+@media(max-width:900px){.shootout-v17 .penalty-stage .palace-ready-panel{top:21%!important;width:64%!important}}
+@media(max-width:480px){.shootout-v17 .penalty-stage .palace-ready-panel{top:21.5%!important;width:66%!important;padding:6px!important}.shootout-v17 .penalty-stage .palace-ready-panel button{min-height:52px!important}}

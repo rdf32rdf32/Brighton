@@ -78,6 +78,9 @@
   const turfKick = $("turfKick");
   const keeperBottle = $("keeperBottle");
 
+  // The save prompt belongs inside the playing scene.
+  if (readyPanel && readyPanel.parentElement !== stage) stage.appendChild(readyPanel);
+
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
 
@@ -1858,7 +1861,7 @@
     const rightArm = keeper.querySelector('.keeper-arm-right');
     stage.classList.add('bottle-reading');
     keeperBottle.classList.add('is-read');
-    setStatus('Verbruggen reads his penalty notes', 'He walks behind the post, lifts the bottle and studies the notes before returning to the goal line.');
+    setStatus('Verbruggen reads his penalty notes', 'He walks to the bottle, studies the notes, then returns to the centre of the goal line.');
     animateElement(keeper, [
       { transform: 'translateX(-50%) translate(0,0) scale(1)' },
       { transform: `translateX(-50%) translate(${delta * .55}px,2px) scale(1)`, offset: .14 },
@@ -1886,12 +1889,7 @@
     ], { duration });
     if (leftArm) animateElement(leftArm, [{ transform:'rotate(0deg)' }, { transform:'rotate(-22deg)', offset:.34 }, { transform:'rotate(-46deg)', offset:.48 }, { transform:'rotate(-46deg)', offset:.69 }, { transform:'rotate(0deg)' }], { duration });
     if (rightArm) animateElement(rightArm, [{ transform:'rotate(0deg)' }, { transform:'rotate(18deg)', offset:.34 }, { transform:'rotate(34deg)', offset:.48 }, { transform:'rotate(34deg)', offset:.69 }, { transform:'rotate(0deg)' }], { duration });
-    animateElement(keeperBottle, [
-      { transform: 'rotate(-8deg) scale(.82)', filter: 'brightness(1)' },
-      { transform: 'translateY(-18px) rotate(-3deg) scale(1.32)', filter: 'brightness(1.45)', offset: .34 },
-      { transform: 'translateY(-18px) rotate(-3deg) scale(1.32)', filter: 'brightness(1.45)', offset: .74 },
-      { transform: 'rotate(-8deg) scale(.82)', filter: 'brightness(1)' },
-    ], { duration });
+    // The bottle remains fixed beside the post; only the goalkeeper moves.
     await sleep(duration);
     stage.classList.remove('bottle-reading');
     keeperBottle.classList.remove('is-read');
@@ -1995,9 +1993,13 @@
     $("stageInstruction").textContent = "Wait for the whistle";
     stage.setAttribute("aria-label", "Albion penalty. Wait for the referee, then drag or move inside the goal and release to shoot.");
     renderScore();
-    setReticle(state.aim.x, state.aim.y);
+    state.aim = { x: 0.5, y: 0.5 };
+    setReticle(0.5, 0.5);
+    reticle.hidden = true;
     if (!(await preKickCeremony("albion", token))) return;
     state.phase = "albion-aim";
+    setReticle(0.5, 0.5);
+    reticle.hidden = false;
     state.locked = false;
     stage.classList.add("is-aiming");
     stage.classList.remove("is-locked", "crowd-hush");
@@ -2027,6 +2029,8 @@
     state.phase = "palace-ready";
     state.locked = true;
     state.reactionOpen = false;
+    state.aim = { x: 0.5, y: 0.5 };
+    reticle.hidden = true;
     readyPanel.hidden = false;
     panenka.disabled = true;
     panenka.closest("label")?.setAttribute("hidden", "");
@@ -2197,6 +2201,7 @@
     ensureAudio();
     const token = ++state.sequence;
     readyPanel.hidden = true;
+    reticle.hidden = true;
     state.phase = "palace-prep";
     state.locked = true;
     state.userDive = null;
@@ -2815,7 +2820,7 @@
 
   soundButton.textContent = state.sound ? "Sound on" : "Sound off";
   soundButton.setAttribute("aria-pressed", String(state.sound));
-  setReticle(0.5, 0.48);
+  setReticle(0.5, 0.5);
   renderRecord();
 
   const resizeObserver = typeof ResizeObserver === "function"
