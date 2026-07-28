@@ -1,4 +1,4 @@
-/* r49 authoritative mobile penalty camera and contact geometry. Desktop untouched. */
+/* r50 authoritative mobile penalty camera, unrestricted ball flight and pitch depth. Desktop untouched. */
 @media (max-width: 760px) {
   .shootout-v17 {
     --mobile-goal-left: 17%;
@@ -40,6 +40,37 @@
     width: clamp(15px,4.2vw,18px) !important;
     height: clamp(15px,4.2vw,18px) !important;
   }
+
+  /* Ball position is deliberately NOT set here. JavaScript owns left/top/transform
+     throughout placement and flight so Web Animations can move it towards goal. */
+  .shootout-v17 .penalty-ball {
+    filter: drop-shadow(0 2px 1px rgba(0,0,0,.42)) drop-shadow(0 0 1px rgba(255,255,255,.62)) !important;
+    transform-origin: 50% 50% !important;
+  }
+  .shootout-v17 .penalty-ball circle {
+    stroke: #737f87 !important;
+    stroke-width: 1.35 !important;
+  }
+  .shootout-v17 .penalty-ball .ball-dark-panel { fill:#111820 !important; }
+  .shootout-v17 .penalty-ball .ball-seam { stroke:#77858e !important; stroke-width:1.45 !important; opacity:.96 !important; }
+  .shootout-v17 .penalty-ball .ball-highlight { opacity:.84 !important; }
+  .shootout-v17 .penalty-ball-shadow {
+    background: radial-gradient(ellipse at center, rgba(0,18,7,.42) 0 38%, rgba(0,18,7,.16) 68%, transparent 100%) !important;
+    filter: blur(.65px) !important;
+  }
+  .shootout-v17 .pitch-lines { opacity:.98 !important; }
+  .shootout-v17 .pitch-markings-svg { filter: drop-shadow(0 1px 0 rgba(0,55,22,.22)); }
+  .shootout-v17 .pitch-line { stroke:rgba(248,255,249,.92) !important; stroke-width:4.2 !important; }
+  .shootout-v17 .pitch-spot-mark { fill:rgba(248,255,249,.96) !important; stroke:rgba(0,75,32,.34) !important; stroke-width:2 !important; }
+  .shootout-v17 .spot-wear {
+    background: radial-gradient(ellipse at center,rgba(154,132,79,.48),rgba(79,105,54,.22) 52%,transparent 74%) !important;
+    filter: blur(.25px) !important;
+  }
+  .shootout-v17 .goal-line-wear {
+    opacity:.38 !important;
+    background:linear-gradient(90deg,transparent,rgba(171,151,99,.38) 18%,rgba(121,122,76,.32) 50%,rgba(171,151,99,.38) 82%,transparent) !important;
+  }
+
   .shootout-v17 .spot-wear {
     width: 21px !important;
     height: 10px !important;
@@ -78,8 +109,8 @@
   .shootout-v17 .pitch-stripes {
     opacity: .25 !important;
     background:
-      linear-gradient(90deg,transparent 0 18%,rgba(255,255,255,.045) 18% 27%,transparent 27% 40%,rgba(0,70,35,.08) 40% 60%,transparent 60% 73%,rgba(255,255,255,.045) 73% 82%,transparent 82%),
-      linear-gradient(180deg,rgba(255,255,255,.035),rgba(0,35,16,.12)) !important;
+      repeating-linear-gradient(90deg,rgba(255,255,255,.055) 0 9%,rgba(0,64,30,.075) 9% 18%),
+      linear-gradient(180deg,rgba(255,255,255,.025) 0,rgba(0,50,22,.075) 48%,rgba(0,30,12,.16) 100%) !important;
     clip-path: polygon(41% 0,59% 0,100% 100%,0 100%) !important;
     transform-origin: 50% 0 !important;
   }

@@ -45,8 +45,8 @@
   .shootout-v17 .goal-mouth{left:13%!important;top:15%!important;width:74%!important;height:29%!important}
   .shootout-v17 .keeper-figure{width:11.8%!important;min-width:46px!important;max-width:68px!important}
   .shootout-v17 .taker-figure{left:50%!important;top:80.5%!important;width:12.8%!important;min-width:51px!important;max-width:72px!important}
-  .shootout-v17 .penalty-ball{top:72.2%!important;width:4.15%!important;min-width:15px!important;max-width:19px!important}
-  .shootout-v17 .penalty-ball-shadow{top:73.4%!important;width:5.1%!important}
+  .shootout-v17 .penalty-ball{width:4.15%!important;min-width:15px!important;max-width:19px!important}
+  .shootout-v17 .penalty-ball-shadow{width:5.1%!important}
   .shootout-v17 .keeper-bottle,.shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{left:8.8%!important;top:41.5%!important;width:9px!important;height:25px!important}
   .shootout-v17 .penalty-stage .palace-ready-panel{top:20.5%!important;width:min(230px,58%)!important}
   .shootout-v17 .pitch-stripes{clip-path:polygon(29% 0,71% 0,100% 100%,0 100%)!important;opacity:.15!important}
@@ -56,8 +56,8 @@
   .shootout-v17 .goal-mouth{left:14%!important;top:15.5%!important;width:72%!important;height:28%!important}
   .shootout-v17 .keeper-figure{width:11.2%!important;min-width:43px!important;max-width:54px!important}
   .shootout-v17 .taker-figure{top:82%!important;width:12.2%!important;min-width:47px!important;max-width:59px!important}
-  .shootout-v17 .penalty-ball{top:72.5%!important;width:4.2%!important;min-width:15px!important;max-width:17px!important}
-  .shootout-v17 .penalty-ball-shadow{top:73.7%!important;width:5.3%!important}
+  .shootout-v17 .penalty-ball{width:4.2%!important;min-width:15px!important;max-width:17px!important}
+  .shootout-v17 .penalty-ball-shadow{width:5.3%!important}
   .shootout-v17 .keeper-bottle,.shootout-v17 .penalty-stage.bottle-reading .keeper-bottle{left:9%!important;top:40.8%!important;width:8px!important;height:22px!important}
   .shootout-v17 .penalty-stage .palace-ready-panel{top:20.2%!important;width:60%!important;padding:5px!important}
   .shootout-v17 .penalty-stage .palace-ready-panel button{min-height:48px!important;font-size:.92rem!important}

@@ -913,12 +913,12 @@
       // Explicit mobile depth path: vertical travel dominates before the ball
       // develops its left/right direction. This prevents a sideways slide.
       const path = [
-        { o: 0,    xf: 0,    yf: 0,    sf: 1.00 },
-        { o: .10,  xf: .008, yf: .18,  sf: .98 },
-        { o: .25,  xf: .045, yf: .42,  sf: .93 },
-        { o: .48,  xf: .16,  yf: .68,  sf: .82 },
-        { o: .72,  xf: .42,  yf: .88,  sf: .68 },
-        { o: 1,    xf: 1,    yf: 1,    sf: endScale },
+        { o: 0,    xf: 0,    yf: 0,    sf: 1.00, spin: 0 },
+        { o: .08,  xf: 0,    yf: .17,  sf: .995, spin: 54 },
+        { o: .22,  xf: .025, yf: .39,  sf: .965, spin: 142 },
+        { o: .44,  xf: .12,  yf: .65,  sf: .875, spin: 292 },
+        { o: .70,  xf: .40,  yf: .87,  sf: .72,  spin: 486 },
+        { o: 1,    xf: 1,    yf: 1,    sf: endScale, spin: 720 },
       ];
       const liftAt = (factor, offset) => {
         const base = from.y + (point.y - from.y) * factor;
@@ -930,9 +930,10 @@
         const x = from.x + (point.x - from.x) * k.xf;
         const y = liftAt(k.yf, k.o);
         const scale = i === path.length - 1 ? endScale : startScale * k.sf;
+        const direction = point.x < from.x ? -1 : 1;
         return {
           left: `${x * 100}%`, top: `${y * 100}%`,
-          transform: ballTransform(scale), offset: k.o,
+          transform: `translate(-50%,-50%) scale(${scale}) rotate(${direction * k.spin}deg)`, offset: k.o,
         };
       });
       if (ballShadow) {
@@ -985,11 +986,13 @@
       { left: `${ballStart.x * 100}%`, top: `${(ballStart.y + .012) * 100}%`, opacity: .72, transform: ballTransform(startScale) },
       { left: `${point.x * 100}%`, top: `${(point.y + .018) * 100}%`, opacity: .34, transform: ballTransform(endScale * .72) },
     ], { duration, easing: "linear" });
+    const mobileApproach = mobilePenaltyLayout();
+    const approachDirection = targetStage.x < ballStart.x ? -1 : 1;
     const animation = animateElement(ball, [
       { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: ballTransform(startScale) },
-      { left: `${(ballStart.x + (point.x - ballStart.x) * (mobilePenaltyLayout() ? .006 : .08)) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * (mobilePenaltyLayout() ? .24 : .04)) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
-      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
-    ], { duration, easing: "linear" });
+      { left: `${(ballStart.x + (point.x - ballStart.x) * (mobileApproach ? .006 : .08)) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * (mobileApproach ? .24 : .04)) * 100}%`, transform: mobileApproach ? `translate(-50%,-50%) scale(${startScale * .98}) rotate(${approachDirection * 45}deg)` : ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
+      { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: mobileApproach ? `translate(-50%,-50%) scale(${endScale}) rotate(${approachDirection * 300}deg)` : ballTransform(endScale) },
+    ], { duration, easing: mobileApproach ? "cubic-bezier(.15,.62,.2,1)" : "linear" });
     return { point, animation };
   }
 
