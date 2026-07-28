@@ -83,6 +83,7 @@
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
   const ballStart = { x: 0.5, y: 0.77 };
+  const mobilePenaltyLayout = () => window.matchMedia("(max-width: 760px)").matches;
 
   function syncGoalBox() {
     const stageRect = stage.getBoundingClientRect();
@@ -781,6 +782,12 @@
     const styleOffset = style === "quick" ? -footDirection * 4 : style === "measured" ? footDirection * 2 : 0;
     const startX = profileStart + styleOffset;
     const contactOffset = targetBias + footDirection * 5;
+    const mobileRun = mobilePenaltyLayout();
+    const runStartY = mobileRun ? 30 : 20;
+    const runMidY = mobileRun ? 14 : 7;
+    const runNearY = mobileRun ? -34 : -10;
+    const contactLift = mobileRun ? -78 : -39;
+    const followLift = mobileRun ? -84 : -43;
     const stutter = profile === "stutter";
     const reverse = profile === "reverse";
     sound("footsteps");
@@ -788,21 +795,21 @@
     window.setTimeout(() => sound("footsteps"), reducedMotion() ? 60 : duration * (stutter ? .58 : .48));
     if (stutter) window.setTimeout(() => sound("footsteps"), reducedMotion() ? 75 : duration * .73);
     const runFrames = stutter ? [
-      { transform: `translate(calc(-50% + ${startX}px),20px) scale(.965)` },
-      { transform: `translate(calc(-50% + ${startX * .66}px),12px) scale(.98)`, offset: .2 },
-      { transform: `translate(calc(-50% + ${startX * .42}px),7px) scale(.988)`, offset: .38 },
-      { transform: `translate(calc(-50% + ${startX * .38}px),7px) scale(.988)`, offset: .53 },
-      { transform: `translate(calc(-50% + ${footDirection * 5}px),-10px) scale(1.01)`, offset: .72 },
-      { transform: `translate(calc(-50% + ${contactOffset}px),-39px) scale(1.018)`, offset: .9 },
-      { transform: `translate(calc(-50% + ${contactOffset + footDirection * 11}px),-43px) scale(1.005)` },
+      { transform: `translate(calc(-50% + ${startX}px),${runStartY}px) scale(.965)` },
+      { transform: `translate(calc(-50% + ${startX * .66}px),${Math.round(runStartY*.62)}px) scale(.98)`, offset: .2 },
+      { transform: `translate(calc(-50% + ${startX * .42}px),${runMidY}px) scale(.988)`, offset: .38 },
+      { transform: `translate(calc(-50% + ${startX * .38}px),${runMidY}px) scale(.988)`, offset: .53 },
+      { transform: `translate(calc(-50% + ${footDirection * 5}px),${runNearY}px) scale(1.01)`, offset: .72 },
+      { transform: `translate(calc(-50% + ${contactOffset}px),${contactLift}px) scale(1.018)`, offset: .9 },
+      { transform: `translate(calc(-50% + ${contactOffset + footDirection * 11}px),${followLift}px) scale(1.005)` },
     ] : [
-      { transform: `translate(calc(-50% + ${startX}px),20px) scale(.965)` },
+      { transform: `translate(calc(-50% + ${startX}px),${runStartY}px) scale(.965)` },
       { transform: `translate(calc(-50% + ${startX * (reverse ? .78 : .68)}px),13px) scale(.978)`, offset: .18 },
       { transform: `translate(calc(-50% + ${startX * (reverse ? .46 : .32)}px),3px) scale(.994)`, offset: .38 },
       { transform: `translate(calc(-50% + ${footDirection * (reverse ? 10 : 6)}px),-12px) scale(1.012)`, offset: .58 },
       { transform: `translate(calc(-50% + ${contactOffset * .35}px),-29px) scale(1.026)`, offset: .76 },
-      { transform: `translate(calc(-50% + ${contactOffset}px),-39px) scale(1.018)`, offset: .88 },
-      { transform: `translate(calc(-50% + ${contactOffset + footDirection * 12}px),-43px) scale(1.005)` },
+      { transform: `translate(calc(-50% + ${contactOffset}px),${contactLift}px) scale(1.018)`, offset: .88 },
+      { transform: `translate(calc(-50% + ${contactOffset + footDirection * 12}px),${followLift}px) scale(1.005)` },
     ];
     const run = animateElement(taker, runFrames, { duration, easing: stutter ? "cubic-bezier(.18,.48,.18,1)" : "cubic-bezier(.16,.58,.18,1)" });
     if (root) animateElement(root, [
@@ -897,8 +904,11 @@
     const from = options.from || ballStart;
     const startScale = ballScaleAt(from, { saved: false, miss: false });
     const endScale = ballScaleAt(point, { saved, miss });
-    const midX = from.x + (point.x - from.x) * .52;
-    const linearMidY = from.y + (point.y - from.y) * .52;
+    const mobileFlight = mobilePenaltyLayout();
+    const midXFactor = mobileFlight ? .32 : .52;
+    const midYFactor = mobileFlight ? .60 : .52;
+    const midX = from.x + (point.x - from.x) * midXFactor;
+    const linearMidY = from.y + (point.y - from.y) * midYFactor;
     const lift = panenkaShot ? .105 : placedShot ? .018 : 0;
     const midY = linearMidY - lift;
     const midScale = ballScaleAt({ x: midX, y: midY }, { saved, miss });
@@ -914,7 +924,7 @@
     }
     return animateElement(ball, [
       { left: `${from.x * 100}%`, top: `${from.y * 100}%`, transform: ballTransform(startScale) },
-      { left: `${(from.x + (point.x - from.x) * .045) * 100}%`, top: `${(from.y + (point.y - from.y) * .025) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .055 },
+      { left: `${(from.x + (point.x - from.x) * (mobileFlight ? .018 : .045)) * 100}%`, top: `${(from.y + (point.y - from.y) * (mobileFlight ? .11 : .025)) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .055 },
       { left: `${midX * 100}%`, top: `${midY * 100}%`, transform: ballTransform(midScale), offset: .52 },
       { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
     ], { duration, easing: panenkaShot ? "cubic-bezier(.22,.42,.32,1)" : placedShot ? "cubic-bezier(.16,.5,.22,1)" : "linear" });
@@ -923,8 +933,8 @@
   function animateBallApproach(target, duration, shotType = "driven") {
     const targetStage = stagePoint(target);
     const point = {
-      x: ballStart.x + (targetStage.x - ballStart.x) * .34,
-      y: ballStart.y + (targetStage.y - ballStart.y) * .34,
+      x: ballStart.x + (targetStage.x - ballStart.x) * (mobilePenaltyLayout() ? .20 : .34),
+      y: ballStart.y + (targetStage.y - ballStart.y) * (mobilePenaltyLayout() ? .48 : .34),
     };
     const startScale = ballScaleAt(ballStart);
     const endScale = ballScaleAt(point);
@@ -935,7 +945,7 @@
     ], { duration, easing: "linear" });
     const animation = animateElement(ball, [
       { left: `${ballStart.x * 100}%`, top: `${ballStart.y * 100}%`, transform: ballTransform(startScale) },
-      { left: `${(ballStart.x + (point.x - ballStart.x) * .08) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * .04) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
+      { left: `${(ballStart.x + (point.x - ballStart.x) * (mobilePenaltyLayout() ? .025 : .08)) * 100}%`, top: `${(ballStart.y + (point.y - ballStart.y) * (mobilePenaltyLayout() ? .18 : .04)) * 100}%`, transform: ballTransform(startScale * .92, startScale * 1.06), offset: .08 },
       { left: `${point.x * 100}%`, top: `${point.y * 100}%`, transform: ballTransform(endScale) },
     ], { duration, easing: "linear" });
     return { point, animation };
