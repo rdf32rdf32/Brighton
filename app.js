@@ -2213,7 +2213,7 @@
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260728-r54", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260728-r55", { updateViaCache: "none" })
         .then((registration) => {
           showReadyUpdate(registration);
           registration.addEventListener("updatefound", () => {

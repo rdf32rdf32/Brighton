@@ -10,6 +10,10 @@
     remove(key) { try { localStorage.removeItem(key); } catch {} },
   };
   const profileList = Array.isArray(C.playerProfiles) ? C.playerProfiles : [];
+  const profileCategories = ["Goalkeeper", "Defender", "Midfielder", "Forward"];
+  const profileMobileQuery = matchMedia("(max-width: 760px), (max-height: 520px) and (orientation: landscape)");
+  let activeProfileCategory = safeStorage.get("albionPlayerCategory");
+  if (!profileCategories.includes(activeProfileCategory)) activeProfileCategory = "Goalkeeper";
 
   function matchCountdown() {
     const target = $("matchCentreCountdown");
@@ -71,17 +75,47 @@
     </article>`;
   }
 
+  function categoryLabel(position, count) {
+    const plural = position === "Goalkeeper" ? "Goalkeepers" : position === "Defender" ? "Defenders" : position === "Midfielder" ? "Midfielders" : "Forwards";
+    return `${plural} (${count})`;
+  }
+
+  function renderCategoryTabs(queryActive = false) {
+    const tabs = $("playerCategoryTabs");
+    if (!tabs) return;
+    tabs.innerHTML = profileCategories.map((position) => {
+      const count = profileList.filter((player) => player.position === position).length;
+      const selected = !queryActive && position === activeProfileCategory;
+      return `<button aria-selected="${selected}" class="player-category-tab${selected ? " active" : ""}" data-player-category="${esc(position)}" role="tab" tabindex="${selected ? "0" : "-1"}" type="button">${esc(categoryLabel(position, count))}</button>`;
+    }).join("");
+    tabs.classList.toggle("search-active", queryActive);
+  }
+
   function renderProfiles() {
     const grid = $("playerProfileGrid");
     if (!grid) return;
     const query = ($("playerProfileSearch")?.value || "").trim().toLowerCase();
-    const position = $("playerPositionFilter")?.value || "all";
+    const desktopPosition = $("playerPositionFilter")?.value || "all";
+    const mobile = profileMobileQuery.matches;
     const visible = profileList.filter((player) => {
       const search = `${player.name} ${player.nationality} ${player.role} ${player.position}`.toLowerCase();
-      return (!query || search.includes(query)) && (position === "all" || player.position === position);
+      if (query) return search.includes(query);
+      if (mobile) return player.position === activeProfileCategory;
+      return desktopPosition === "all" || player.position === desktopPosition;
     });
+    renderCategoryTabs(Boolean(query));
+    grid.dataset.profileMode = mobile ? "carousel" : "grid";
+    grid.dataset.profileCategory = query ? "search" : (mobile ? activeProfileCategory.toLowerCase() : desktopPosition.toLowerCase());
     grid.innerHTML = visible.map(profileMarkup).join("") || '<p class="empty-profile-state">No players match that search.</p>';
-    if ($("playerProfileCount")) $("playerProfileCount").textContent = `${visible.length} player${visible.length === 1 ? "" : "s"}`;
+    const count = $("playerProfileCount");
+    if (count) {
+      if (query) count.textContent = `${visible.length} search result${visible.length === 1 ? "" : "s"}`;
+      else if (mobile) count.textContent = categoryLabel(activeProfileCategory, visible.length);
+      else count.textContent = `${visible.length} player${visible.length === 1 ? "" : "s"}`;
+    }
+    const hint = $("playerMobileHint");
+    if (hint) hint.textContent = query ? "Swipe sideways through the matching players." : `Showing ${categoryLabel(activeProfileCategory, visible.length).toLowerCase()}. Swipe sideways to browse.`;
+    if (mobile) grid.scrollTo({ left: 0, behavior: "auto" });
   }
 
   function showProfile(name) {
@@ -147,6 +181,28 @@
     renderProfiles();
     $("playerProfileSearch")?.addEventListener("input", renderProfiles);
     $("playerPositionFilter")?.addEventListener("change", renderProfiles);
+    $("playerCategoryTabs")?.addEventListener("click", (event) => {
+      const button = event.target.closest("[data-player-category]");
+      if (!button) return;
+      activeProfileCategory = button.dataset.playerCategory;
+      safeStorage.set("albionPlayerCategory", activeProfileCategory);
+      if ($("playerProfileSearch")) $("playerProfileSearch").value = "";
+      renderProfiles();
+    });
+    $("playerCategoryTabs")?.addEventListener("keydown", (event) => {
+      if (!['ArrowLeft','ArrowRight','Home','End'].includes(event.key)) return;
+      const buttons = [...event.currentTarget.querySelectorAll('[data-player-category]')];
+      const current = Math.max(0, buttons.indexOf(document.activeElement));
+      let next = current;
+      if (event.key === 'ArrowRight') next = (current + 1) % buttons.length;
+      if (event.key === 'ArrowLeft') next = (current - 1 + buttons.length) % buttons.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = buttons.length - 1;
+      event.preventDefault();
+      buttons[next]?.focus();
+      buttons[next]?.click();
+    });
+    profileMobileQuery.addEventListener?.("change", renderProfiles);
     $("playerProfileGrid")?.addEventListener("click", (event) => {
       const profileButton = event.target.closest("[data-profile-name]");
       const addButton = event.target.closest("[data-add-player]");

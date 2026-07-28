@@ -11,3 +11,8 @@ Changes in r53:
 Penalty behaviour and geometry are unchanged from r52.
 
 Upload every file inside the site folder to the root of the GitHub repository.
+
+
+## r55 layout update
+- Match Centre and Player Profiles now follow the quiz and penalty shoot-out.
+- Mobile player profiles use category tabs and a horizontal carousel to reduce page length.
