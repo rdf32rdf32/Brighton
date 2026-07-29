@@ -32,14 +32,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r57-20260729" name="release"/>
+<meta content="professional-r58-20260729" name="release"/>
 
 
 
 
 
 
-<link href="site-r57.css?v=20260729-r57" rel="stylesheet"/></head>
+<link href="site-r58.css?v=20260729-r58" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -51,6 +51,23 @@
         </button>
 <div class="nav-links" id="navLinks"><a href="#quiz">Play</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#story">Club</a><a href="#prototype">About</a></div>
 </nav>
+<div class="hero-utility-row"><button class="top-tour-button" id="startTour" type="button">Tour the site</button></div>
+<section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
+<form class="global-search-form" id="siteSearchForm" novalidate="" role="search">
+<label for="siteSearch" id="globalSearchLabel">Search the whole Albion Fan Hub</label>
+<div class="global-search-control">
+<span aria-hidden="true" class="global-search-icon">⌕</span>
+<input aria-autocomplete="list" aria-controls="siteSearchResults" aria-expanded="false" autocomplete="off" enterkeyhint="search" id="siteSearch" placeholder="Try Dunk, Palace, fixtures, chants or the Amex…" spellcheck="false" type="search"/>
+<button aria-label="Clear site search" class="global-search-clear" hidden="" id="clearSiteSearch" type="button">Clear</button>
+<button class="global-search-submit" type="submit">Search</button>
+</div>
+<p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
+<div aria-label="Popular searches" class="popular-searches" id="popularSearches">
+<span>Popular:</span><button data-search-term="pens" type="button">Pens</button><button data-search-term="Palace" type="button">Palace</button><button data-search-term="Amex" type="button">Amex</button><button data-search-term="Goldstone" type="button">Goldstone</button><button data-search-term="Sussex" type="button">Sussex</button>
+</div>
+</form>
+<div aria-live="polite" class="site-search-results global-search-results" id="siteSearchResults" role="listbox"></div>
+</section>
 <div class="hero-grid">
 <section class="hero-copy">
 <p class="eyebrow">2026/27 season</p>
@@ -82,7 +99,7 @@
 <p>Albion Fan Hub explores how match information, interactive games, club heritage and practical supporter guidance could be brought together in one accessible experience.</p>
 <p class="prototype-disclaimer">This site is independently built by a supporter. It is not affiliated with, endorsed by or operated by Brighton &amp; Hove Albion FC.</p>
 </div>
-<div class="prototype-actions"><button class="ghost" id="startTour" type="button">Tour the site</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a></div>
+<div class="prototype-actions"><a class="button-link secondary" href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a></div>
 </section>
 
 <section aria-label="Albion at a glance" class="dashboard">
@@ -539,22 +556,7 @@
 <button aria-label="Close player profile" class="dialog-close" id="closePlayerProfile" type="button">×</button>
 <div id="playerProfileDialogContent"></div>
 </dialog>
-</section><details class="my-hub-panel"><summary>My Albion Hub: search and saved progress</summary><section aria-labelledby="globalSearchLabel" class="global-site-search">
-<form class="global-search-form" id="siteSearchForm" novalidate="" role="search">
-<label for="siteSearch" id="globalSearchLabel">Search the whole Albion Fan Hub</label>
-<div class="global-search-control">
-<span aria-hidden="true" class="global-search-icon">⌕</span>
-<input aria-autocomplete="list" aria-controls="siteSearchResults" aria-expanded="false" autocomplete="off" enterkeyhint="search" id="siteSearch" placeholder="Try Dunk, Palace, fixtures, chants or the Amex…" spellcheck="false" type="search"/>
-<button aria-label="Clear site search" class="global-search-clear" hidden="" id="clearSiteSearch" type="button">Clear</button>
-<button class="global-search-submit" type="submit">Search</button>
-</div>
-<p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
-<div aria-label="Popular searches" class="popular-searches" id="popularSearches">
-<span>Popular:</span><button data-search-term="pens" type="button">Pens</button><button data-search-term="Palace" type="button">Palace</button><button data-search-term="Amex" type="button">Amex</button><button data-search-term="Goldstone" type="button">Goldstone</button><button data-search-term="Sussex" type="button">Sussex</button>
-</div>
-</form>
-<div aria-live="polite" class="site-search-results global-search-results" id="siteSearchResults" role="listbox"></div>
-</section><section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
+</section><details class="my-hub-panel"><summary>My Albion Hub: saved progress</summary><section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
 <div>
 <p class="eyebrow">Your Albion profile</p>
 <h2 id="supporterProfileTitle">Supporter progress</h2>
@@ -1391,5 +1393,5 @@
 
 
 
-<script defer="True" src="app-r57.js?v=20260729-r57"></script><script defer="True" src="shootout-r57.js?v=20260729-r57"></script></body>
+<script defer="True" src="app-r58.js?v=20260729-r58"></script><script defer="True" src="shootout-r58.js?v=20260729-r58"></script></body>
 </html>

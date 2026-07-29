@@ -1,0 +1,10 @@
+Albion Fan Hub professional release r58
+Date: 29 July 2026
+
+Changes from r57:
+- Whole-site search moved into the top hero area.
+- Tour control moved to the upper-left.
+- Tour first-step target corrected.
+- Fixed an initialisation fault that could pull desktop visitors down to the Albion Story timeline on first load.
+- Full internal link, JavaScript, responsive and interaction audit completed.
+- Active CSS and JavaScript renamed for a clean GitHub Pages refresh.
