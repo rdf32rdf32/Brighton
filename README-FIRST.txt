@@ -1,16 +1,11 @@
-R54 adds the Albion Match Centre and current first-team Player Profiles.
+ALBION FAN HUB — PROFESSIONAL RELEASE r57
 
-R53 CONTACT UPDATE
+This is a clean static release for GitHub Pages.
 
-UPLOAD EVERYTHING INSIDE THE site FOLDER TO THE ROOT OF THE GITHUB REPOSITORY.
+IMPORTANT DEPLOYMENT STEP
+1. In the GitHub repository, delete the existing published website files first, or publish this release from a new clean branch.
+2. Upload every file from this folder directly to the repository root.
+3. In Settings > Pages, publish main / (root).
+4. After deployment, open the site in a private window once. This release unregisters the earlier service worker.
 
-The email rdf32rdf32@gmail.com has been added to the Contact page and footer.
-Penalty behaviour is unchanged from r52.
-
-R56 FINAL UPDATE
-- Mobile penalty aiming target enlarged by 50% with a clearer halo and finger offset.
-- Mobile save guide, tighter scoreboard and full-width game focus.
-- Match Centre and Player Profiles remain immediately after Quiz and Shoot-out.
-- Fixtures, XI, Albion Story, Amex stands and Travel collapse on mobile to reduce scrolling.
-- Desktop Match Centre and four-column player grid polished.
-- Site updates activate automatically and static assets use network-first refresh handling.
+The release deliberately contains no manifest, service worker, offline page, historical patch stylesheets or old version scripts.

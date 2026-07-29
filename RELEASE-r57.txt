@@ -1,0 +1,11 @@
+Professional presentation release — 29 July 2026
+
+Key changes:
+- Clean codebase with one site stylesheet, one main script and one shoot-out script.
+- Earlier service worker and PWA update banner removed.
+- Simplified navigation and opening screen.
+- Independent prototype explanation and disclaimer added.
+- Provisional first-team squad updated for confirmed July 2026 movements.
+- Unconfirmed 2026/27 squad numbers omitted.
+- History wording refined and 125-year reference added.
+- Desktop and mobile presentation polished.

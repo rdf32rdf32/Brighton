@@ -20,7 +20,7 @@
       })();
     </script>
 <title>Albion Fan Hub</title>
-<meta content="Unofficial Brighton &amp; Hove Albion supporter hub with an Albion match centre, player profiles, quiz, penalty shoot-out, fixtures and XI builder." name="description"/>
+<meta content="Independent supporter-built Brighton &amp; Hove Albion prototype with a match centre, player profiles, quiz, penalty shoot-out, fixtures and XI builder." name="description"/>
 <meta content="Albion Fan Hub" property="og:title"/>
 <meta content="Open the Albion Match Centre, explore player profiles, take penalties, follow fixtures and build your XI." property="og:description"/>
 <meta content="website" property="og:type"/>
@@ -28,45 +28,36 @@
 <meta content="https://rdf32rdf32.github.io/Brighton/social-preview.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <link href="favicon.svg" rel="icon"/>
-<link href="manifest.json" rel="manifest"/>
+
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
-<link href="style.css?v=20260728-r56" rel="stylesheet"/>
-<link href="shootout.css?v=20260728-r56" rel="stylesheet"/>
-<meta content="production-r56-final-mobile-target-focus-compact-sections-20260728" name="release"/>
-<link href="r35-polish.css?v=20260728-r56" rel="stylesheet"/>
-<link href="r37-layout.css?v=20260728-r56" rel="stylesheet"/>
-<link href="r38-mobile.css?v=20260728-r56" rel="stylesheet"/>
-<link href="r39-geometry.css?v=20260728-r56" rel="stylesheet"/>
-<link href="shootout-mobile.css?v=20260728-r56" rel="stylesheet"/>
-<link href="r56-final.css?v=20260728-r56" rel="stylesheet"/>
-</head>
+
+
+<meta content="professional-r57-20260729" name="release"/>
+
+
+
+
+
+
+<link href="site-r57.css?v=20260729-r57" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
-<button class="tour-launch" id="startTour" type="button">
-      New here? Tour the site
-    </button>
+
 <header class="hero" id="top">
 <nav aria-label="Main navigation" class="topbar">
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">
           Menu
         </button>
-<div class="nav-links" id="navLinks">
-<a href="#quiz">Quiz</a><a href="#shootout">Shoot-out</a><a href="#match-centre">Match centre</a><a href="#players">Players</a><a href="#chants">Chants</a><a href="#xi">Pick XI</a><a href="#story">Albion Story</a>
-<a href="#fixtures">Fixtures</a><button class="nav-action mobile-nav-action" id="mobileTourAction" type="button">Tour the site</button><button class="nav-action mobile-nav-action" id="mobileSettingsAction" type="button">Settings</button></div>
+<div class="nav-links" id="navLinks"><a href="#quiz">Play</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#story">Club</a><a href="#prototype">About</a></div>
 </nav>
 <div class="hero-grid">
 <section class="hero-copy">
 <p class="eyebrow">2026/27 season</p>
 <h1>Brighton &amp; Hove Albion</h1>
-<p class="lead">
-            Open the Match Centre, explore the squad, face Palace from the spot,
-            follow the fixtures and build your Albion XI.
-          </p>
-<div aria-hidden="true" class="flying-gulls">
-<span>⌁</span><span>⌁</span><span>⌁</span>
-</div>
-</section>
+<p class="lead">A supporter-built prototype bringing together match information, interactive games, squad tools and Albion heritage.</p>
+
+<div class="hero-actions"><a href="#quiz">Play the quiz</a><a href="#shootout">Take penalties</a><a href="#match-centre">Open Match Centre</a></div></section>
 <section class="match-card" id="next-match">
 <p class="eyebrow">Next competitive fixture</p>
 <h2 id="heroMatchTitle">Albion v Aston Villa</h2>
@@ -84,23 +75,16 @@
 <aside aria-label="Next Albion fixture" class="matchday-bar">
 <b id="stickyMatchTitle">Next: Albion v Aston Villa</b><span id="stickyMatchDetail">23 Aug · 14:00 · Amex</span><a href="#next-match">Countdown</a>
 </aside>
-<main id="main">
-<section aria-labelledby="globalSearchLabel" class="global-site-search">
-<form class="global-search-form" id="siteSearchForm" novalidate="" role="search">
-<label for="siteSearch" id="globalSearchLabel">Search the whole Albion Fan Hub</label>
-<div class="global-search-control">
-<span aria-hidden="true" class="global-search-icon">⌕</span>
-<input aria-autocomplete="list" aria-controls="siteSearchResults" aria-expanded="false" autocomplete="off" enterkeyhint="search" id="siteSearch" placeholder="Try Dunk, Palace, fixtures, chants or the Amex…" spellcheck="false" type="search"/>
-<button aria-label="Clear site search" class="global-search-clear" hidden="" id="clearSiteSearch" type="button">Clear</button>
-<button class="global-search-submit" type="submit">Search</button>
+<main id="main"><section aria-labelledby="prototypeTitle" class="card prototype-card" id="prototype">
+<div>
+<p class="eyebrow">Independent supporter prototype</p>
+<h2 id="prototypeTitle">A focused digital home for the Albion matchday experience</h2>
+<p>Albion Fan Hub explores how match information, interactive games, club heritage and practical supporter guidance could be brought together in one accessible experience.</p>
+<p class="prototype-disclaimer">This site is independently built by a supporter. It is not affiliated with, endorsed by or operated by Brighton &amp; Hove Albion FC.</p>
 </div>
-<p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
-<div aria-label="Popular searches" class="popular-searches" id="popularSearches">
-<span>Popular:</span><button data-search-term="pens" type="button">Pens</button><button data-search-term="Palace" type="button">Palace</button><button data-search-term="Amex" type="button">Amex</button><button data-search-term="Goldstone" type="button">Goldstone</button><button data-search-term="Sussex" type="button">Sussex</button>
-</div>
-</form>
-<div aria-live="polite" class="site-search-results global-search-results" id="siteSearchResults" role="listbox"></div>
+<div class="prototype-actions"><button class="ghost" id="startTour" type="button">Tour the site</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a></div>
 </section>
+
 <section aria-label="Albion at a glance" class="dashboard">
 <article><span>Home</span><b>Amex Stadium</b></article>
 <article><span>Founded</span><b>1901</b></article>
@@ -110,29 +94,6 @@
 </article>
 </section>
 
-
-
-<section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
-<div>
-<p class="eyebrow">Your Albion profile</p>
-<h2 id="supporterProfileTitle">Supporter progress</h2>
-<p>
-            Quiz knowledge, shoot-out record and season prediction, stored only
-            on this device.
-          </p>
-</div>
-<div class="supporter-profile-grid">
-<article>
-<span>Quiz level</span><b id="profileQuizLevel">Not rated yet</b><small id="profileQuizScore">Play the five-question quiz</small>
-</article>
-<article>
-<span>Shoot-outs</span><b id="profileShootouts">0 played</b><small id="profileShootoutDetail">No derby record yet</small>
-</article>
-<article>
-<span>League forecast</span><b id="profileLeague">Not saved</b><small>Choose Albion’s finishing position</small>
-</article>
-</div>
-</section>
 <section class="card quiz-card first-feature" id="quiz">
 <div class="section-head">
 <p class="eyebrow">First up: Albion quiz</p>
@@ -141,7 +102,7 @@
 <div class="quiz-banner">
 <img alt="" decoding="async" loading="lazy" src="albion-safe-graphic.svg"/>
 <div>
-<strong>Five random medium and hard questions</strong><span>Drawn from a carefully checked question bank. Play again for a fresh set.</span>
+<strong>Five random medium and hard questions</strong><span>Drawn from a curated question bank. Play again for a fresh set.</span>
 </div>
 </div>
 <div class="quiz-tools">
@@ -175,7 +136,7 @@
 <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
 <h2>Seagulls v Eagles</h2>
 <p class="shootout-lead">
-              <strong>Albion kick:</strong> drag and release. <strong>Palace kick:</strong> swipe towards the shot or stay central.
+<strong>Albion kick:</strong> drag and release. <strong>Palace kick:</strong> swipe towards the shot or stay central.
             </p>
 </div>
 <div aria-label="Penalty game sound" class="shootout-top-controls single-control">
@@ -185,7 +146,7 @@
 <div class="shootout-shell">
 <div aria-label="Shoot-out score" class="shootout-scoreboard">
 <div class="shootout-team albion">
-<span class="team-label" aria-label="Seagulls"><span class="team-full">SEAGULLS</span><span aria-hidden="true" class="team-short">BHA</span></span>
+<span aria-label="Seagulls" class="team-label"><span class="team-full">SEAGULLS</span><span aria-hidden="true" class="team-short">BHA</span></span>
 <b id="albionGoalCount">0</b>
 <div aria-label="Brighton penalties" class="penalty-markers" id="albionPenaltyMarkers"></div>
 </div>
@@ -194,7 +155,7 @@
 <b id="shotCount">1/5</b>
 </div>
 <div class="shootout-team palace">
-<span class="team-label" aria-label="Eagles"><span class="team-full">EAGLES</span><span aria-hidden="true" class="team-short">PAL</span></span>
+<span aria-label="Eagles" class="team-label"><span class="team-full">EAGLES</span><span aria-hidden="true" class="team-short">PAL</span></span>
 <b id="palaceGoalCount">0</b>
 <div aria-label="Palace penalties" class="penalty-markers" id="palacePenaltyMarkers"></div>
 </div>
@@ -461,7 +422,7 @@
 <div aria-hidden="true" class="aim-reticle" id="aimReticle"><i></i></div>
 <div aria-hidden="true" class="swipe-trail" hidden="" id="swipeTrail"><i></i><b></b></div>
 <div aria-hidden="true" class="save-impact" hidden="" id="saveImpact"></div>
-<div aria-live="assertive" class="reaction-cue" hidden="" id="reactionCue">REACT!</div>
+<div aria-live="assertive" class="reaction-cue" hidden="" id="reactionCue">React now</div>
 <div aria-live="assertive" class="kick-decision-v10" hidden="" id="kickDecision"></div>
 <div class="stage-instruction" id="stageInstruction">Drag to aim, release to shoot</div>
 </div>
@@ -490,7 +451,7 @@
 </div>
 </section>
 <section class="card match-centre-pro" id="match-centre">
-<p class="content-freshness" data-freshness="match-centre">Match and squad information: <b>last checked 28 July 2026</b></p>
+<p class="content-freshness" data-freshness="match-centre">Match and squad information: <b>last checked 29 July 2026</b></p>
 <div class="section-head match-centre-heading">
 <div>
 <p class="eyebrow">Albion Match Centre</p>
@@ -558,9 +519,9 @@
 </div>
 </section>
 <section class="card player-profiles" id="players">
-<p class="content-freshness">Current squad snapshot: <b>last checked 28 July 2026</b></p>
+<p class="content-freshness">Provisional first-team snapshot: <b>checked 29 July 2026</b></p>
 <div class="section-head player-profile-heading">
-<div><p class="eyebrow">First-team squad</p><h2>Albion player profiles</h2><p>Search the current squad, open a quick profile and place a player directly into your XI.</p></div>
+<div><p class="eyebrow">First-team squad</p><h2>Albion player profiles</h2><p>Explore a provisional first-team squad snapshot, open a quick profile and place a player into your XI.</p></div>
 <a class="button-link secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official squad</a>
 </div>
 <div class="player-profile-tools">
@@ -573,13 +534,47 @@
 <div aria-label="Player categories" class="player-category-tabs" id="playerCategoryTabs" role="tablist"></div>
 <p class="player-mobile-hint" id="playerMobileHint">Choose a category, then swipe sideways through the players.</p>
 <div aria-live="polite" class="player-profile-grid" id="playerProfileGrid"></div>
-<p class="verified-note">Squad names, positions, numbers and nationalities checked against the <a href="https://www.premierleague.com/en/clubs/36/brighton-and-hove-albion/squad" rel="noopener" target="_blank">Premier League squad page</a> and the <a href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">official Albion squad page</a>.</p>
+<p class="verified-note">Squad names and broad positions were checked against the <a href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">official Albion squad page</a> and official transfer announcements on 29 July 2026. The summer transfer window remains open and unconfirmed squad numbers are deliberately omitted.</p>
 <dialog aria-labelledby="playerDialogTitle" class="player-profile-dialog" id="playerProfileDialog">
 <button aria-label="Close player profile" class="dialog-close" id="closePlayerProfile" type="button">×</button>
 <div id="playerProfileDialogContent"></div>
 </dialog>
-</section>
-
+</section><details class="my-hub-panel"><summary>My Albion Hub: search and saved progress</summary><section aria-labelledby="globalSearchLabel" class="global-site-search">
+<form class="global-search-form" id="siteSearchForm" novalidate="" role="search">
+<label for="siteSearch" id="globalSearchLabel">Search the whole Albion Fan Hub</label>
+<div class="global-search-control">
+<span aria-hidden="true" class="global-search-icon">⌕</span>
+<input aria-autocomplete="list" aria-controls="siteSearchResults" aria-expanded="false" autocomplete="off" enterkeyhint="search" id="siteSearch" placeholder="Try Dunk, Palace, fixtures, chants or the Amex…" spellcheck="false" type="search"/>
+<button aria-label="Clear site search" class="global-search-clear" hidden="" id="clearSiteSearch" type="button">Clear</button>
+<button class="global-search-submit" type="submit">Search</button>
+</div>
+<p class="global-search-help">Find sections, players, fixtures, history, chants, matchday information and supporter guides.</p>
+<div aria-label="Popular searches" class="popular-searches" id="popularSearches">
+<span>Popular:</span><button data-search-term="pens" type="button">Pens</button><button data-search-term="Palace" type="button">Palace</button><button data-search-term="Amex" type="button">Amex</button><button data-search-term="Goldstone" type="button">Goldstone</button><button data-search-term="Sussex" type="button">Sussex</button>
+</div>
+</form>
+<div aria-live="polite" class="site-search-results global-search-results" id="siteSearchResults" role="listbox"></div>
+</section><section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
+<div>
+<p class="eyebrow">Your Albion profile</p>
+<h2 id="supporterProfileTitle">Supporter progress</h2>
+<p>
+            Quiz knowledge, shoot-out record and season prediction, stored only
+            on this device.
+          </p>
+</div>
+<div class="supporter-profile-grid">
+<article>
+<span>Quiz level</span><b id="profileQuizLevel">Not rated yet</b><small id="profileQuizScore">Play the five-question quiz</small>
+</article>
+<article>
+<span>Shoot-outs</span><b id="profileShootouts">0 played</b><small id="profileShootoutDetail">No derby record yet</small>
+</article>
+<article>
+<span>League forecast</span><b id="profileLeague">Not saved</b><small>Choose Albion’s finishing position</small>
+</article>
+</div>
+</section></details>
 <section class="card anthem-card" id="anthem">
 <img alt="" decoding="async" loading="lazy" src="albion-safe-graphic.svg"/>
 <div>
@@ -651,7 +646,6 @@
           and used with permission.
         </p>
 </section>
-
 <section class="card head-to-head" id="head-to-head">
 <div class="section-head">
 <p class="eyebrow">Next opponent</p>
@@ -681,7 +675,7 @@
 </p>
 </section>
 <section class="card" id="fixtures">
-<p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 26 July 2026</b></p>
+<p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 29 July 2026</b></p>
 <div class="section-head">
 <p class="eyebrow">Premier League</p>
 <h2>Albion fixtures 2026/27</h2>
@@ -735,7 +729,6 @@
           </div>
 </details>
 </section>
-
 <section class="card" id="xi">
 <div class="section-head">
 <p class="eyebrow">Team selector</p>
@@ -822,7 +815,7 @@
 <section class="card" id="story">
 <div class="section-head">
 <p class="eyebrow">History, landmarks, facts and supporter memories</p>
-<h2>Albion Story</h2>
+<h2>Albion Story</h2><p class="anniversary-note"><strong>1901–2026:</strong> celebrating 125 years of Brighton &amp; Hove Albion.</p>
 <p>
             The club’s journey, the grounds that shaped it, and facts and memories woven into one interactive timeline.
           </p>
@@ -855,7 +848,7 @@
 <b>1901</b><h3>Albion founded</h3><p>Brighton &amp; Hove Albion are formed.</p>
 </article>
 <article data-detail="As Southern League champions, Albion beat Football League champions Aston Villa 1–0 to claim the Charity Shield." data-era="early" data-year="1910">
-<b>1910</b><h3>Champions of England</h3><p>Southern League title and Charity Shield success.</p>
+<b>1910</b><h3>1910 Charity Shield winners</h3><p>Southern League champions who defeated Football League champions Aston Villa and were subsequently dubbed “Champions of England”.</p>
 </article>
 <article data-detail="Albion become founder members of the Football League Third Division and begin a new national chapter." data-era="early" data-year="1920">
 <b>1920</b><h3>Football League</h3><p>Albion enter the Football League.</p>
@@ -1249,10 +1242,7 @@
 <summary>North Stand</summary>
 <p>The home end behind the goal, known for leading the atmosphere.</p>
 </details>
-<details>
-<summary>M23 derby</summary>
-<p>A common modern label for Albion’s rivalry with Crystal Palace.</p>
-</details>
+
 </div>
 </section>
 <section class="card supporter-settings" id="supporter-settings">
@@ -1323,8 +1313,7 @@
 <section class="card links">
 <h2>Useful links</h2>
 <div class="cta-row">
-<a href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a><a class="secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Current squad</a><a class="secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official fixtures</a><button class="secondary" hidden="" id="installApp" type="button">
-            Install Albion Hub</button><a class="secondary" href="#supporter-settings">Accessibility and data</a>
+<a href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a><a class="secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Current squad</a><a class="secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official fixtures</a><a class="secondary" href="#supporter-settings">Accessibility and data</a>
 </div>
 <details class="source-links">
 <summary>Information sources</summary>
@@ -1351,9 +1340,7 @@
 <button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">
       ↑
     </button>
-<aside class="update-notice" hidden="" id="updateNotice" role="status">
-<span>The Albion Fan Hub has updated automatically.</span><button hidden="" id="reloadUpdate" type="button">Reload</button>
-</aside>
+
 <div aria-live="polite" class="site-toast" hidden="" id="siteToast" role="status"></div>
 <aside aria-live="polite" class="tour-coach" hidden="" id="tourCoach">
 <b id="tourTitle">Welcome</b>
@@ -1376,10 +1363,7 @@
 <div class="footer-grid">
 <section>
 <b>Albion Fan Hub</b>
-<p>
-            Unofficial Brighton &amp; Hove Albion supporter site. Built by
-            Richard Freedman.
-          </p>
+<p>Independent supporter-built prototype. Not affiliated with or endorsed by Brighton &amp; Hove Albion FC. Built by Richard Freedman.</p>
 </section>
 <section>
 <b>Official Albion</b>
@@ -1399,13 +1383,13 @@
 </div>
 <p class="footer-copy">© 2026 Albion Fan Hub</p>
 </footer>
-<script src="content-data.js?v=20260728-r56"></script>
-<script src="quiz-data.js?v=20260728-r56"></script>
-<script src="site-controls.js?v=20260728-r56"></script>
-<script src="app.js?v=20260728-r56"></script>
-<script src="match-player.js?v=20260728-r56"></script>
-<script src="shootout.js?v=20260728-r56"></script>
-<script src="r35-polish.js?v=20260728-r56"></script>
-<script src="r56-final.js?v=20260728-r56"></script>
-</body>
+
+
+
+
+
+
+
+
+<script defer="True" src="app-r57.js?v=20260729-r57"></script><script defer="True" src="shootout-r57.js?v=20260729-r57"></script></body>
 </html>
