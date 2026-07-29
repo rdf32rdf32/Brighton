@@ -1,0 +1,93 @@
+/* Albion Fan Hub r56 — final mobile visibility, compact browsing and desktop polish. */
+.mobile-section-toggle{display:none}
+
+/* Stronger visual separation between the four priority experiences. */
+#quiz,#shootout,#match-centre,#players{position:relative}
+#quiz::before,#shootout::before,#match-centre::before,#players::before{
+  content:"";position:absolute;left:24px;right:24px;top:0;height:4px;border-radius:0 0 999px 999px;
+  background:linear-gradient(90deg,#0057b8,#59b9f2,#ffcf33)
+}
+#match-centre{background:linear-gradient(180deg,#fff 0 80%,#f2f8fd)}
+#players{background:linear-gradient(180deg,#fff 0 82%,#eef7ff)}
+
+/* Desktop: a clearer dashboard balance and consistent four-card squad grid. */
+@media (min-width:1060px){
+  .match-centre-grid{grid-template-columns:minmax(0,1.28fr) minmax(320px,.72fr);gap:1.1rem}
+  .match-centre-panel{padding:1.15rem}
+  .player-profile-grid{grid-template-columns:repeat(4,minmax(0,1fr));align-items:stretch}
+  .player-profile-card{min-height:270px}
+  .player-card-copy{display:flex;flex-direction:column}
+  .player-card-copy small{margin-top:auto;padding-top:.45rem}
+}
+
+/* Mobile shoot-out focus: more game, less surrounding chrome. */
+@media (max-width:760px){
+  body.shootout-playing.shootout-in-view .matchday-bar,
+  body.shootout-playing.shootout-in-view .settings-toggle,
+  body.shootout-playing.shootout-in-view .sound-toggle,
+  body.shootout-playing.shootout-in-view .back-to-top,
+  body.shootout-playing.shootout-in-view #startTour,
+  body.shootout-playing.shootout-in-view .mobile-jump-nav{display:none!important}
+  body.shootout-playing.shootout-in-view main>.shootout-card{
+    width:100vw!important;max-width:none!important;margin-left:calc(50% - 50vw)!important;margin-right:0!important;
+    padding:10px 5px 12px!important;border-radius:0!important;border-left:0!important;border-right:0!important;box-shadow:none!important
+  }
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-intro{display:none!important}
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-shell{border-radius:0!important;padding:5px!important}
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-scoreboard{padding:5px 6px!important;gap:3px!important}
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-match-strip{padding:4px 6px!important;min-height:0!important}
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-status-v10{margin-top:4px!important;padding:6px 8px!important}
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-status-v10 b{font-size:.85rem}
+  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-status-v10 span{font-size:.72rem}
+
+  /* 50% larger visible target. Its centre and scoring coordinates are unchanged. */
+  .shootout-v17 .aim-reticle{
+    width:47px!important;height:47px!important;border-width:3px!important;
+    box-shadow:0 0 0 4px rgba(0,87,184,.78),0 0 0 10px rgba(255,255,255,.23),0 3px 14px rgba(0,0,0,.48)!important
+  }
+  .shootout-v17 .aim-reticle::before{top:-10px!important;width:3px!important;height:67px!important}
+  .shootout-v17 .aim-reticle::after{left:-10px!important;width:67px!important;height:3px!important}
+  .shootout-v17 .aim-reticle i{inset:15px!important;background:rgba(255,207,51,.88)!important;box-shadow:0 0 0 2px rgba(5,55,107,.46)}
+  .shootout-v17 .penalty-stage.is-drag-aiming .aim-reticle{
+    transform:translate(-50%,-50%) scale(1.08)!important;filter:drop-shadow(0 3px 5px rgba(0,0,0,.38)) brightness(1.12)
+  }
+
+  /* Clear, non-interactive guide for quick save taps. */
+  .save-zone-guide{position:absolute;left:6%;right:6%;bottom:6.5%;z-index:26;display:none;grid-template-columns:1fr 1fr 1fr;gap:5px;pointer-events:none}
+  .penalty-stage.is-save-window .save-zone-guide{display:grid}
+  .save-zone-guide span{padding:5px 3px;border:1px solid rgba(255,255,255,.58);border-radius:8px;background:rgba(2,31,57,.48);color:#fff;text-align:center;font-size:.61rem;font-weight:900;letter-spacing:.05em;text-transform:uppercase;text-shadow:0 1px 2px #001b33}
+  .save-zone-guide span:nth-child(2){background:rgba(255,207,51,.78);color:#082d53;text-shadow:none}
+
+  /* Result text stays central and readable without blocking the game. */
+  .shootout-v17 .kick-decision-v10{left:50%!important;top:48%!important;right:auto!important;transform:translate(-50%,-50%)!important;max-width:82%!important;text-align:center!important}
+
+  /* Compact sections below the four headline features. */
+  .mobile-section-toggle{display:flex;width:100%;min-height:44px;align-items:center;justify-content:space-between;gap:12px;margin:.55rem 0 0;padding:.68rem .85rem;border:1px solid #bfd5e7;border-radius:12px;background:#edf6fd!important;color:#05376b!important;font-weight:900;text-align:left}
+  .mobile-section-toggle::after{content:"−";display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff;font-size:1.05rem}
+  .mobile-collapsed>.mobile-section-toggle::after{content:"+"}
+  .mobile-collapsible.mobile-collapsed>:not(.section-head):not(.content-freshness):not(.mobile-section-toggle){display:none!important}
+  .mobile-collapsible.mobile-collapsed{padding-bottom:18px!important}
+
+  /* Match Centre remains open, but its dense data becomes easier to scan. */
+  .match-centre-pro{padding:20px 15px}
+  .match-centre-heading{gap:.6rem}
+  .match-centre-heading p:not(.eyebrow){display:none}
+  .match-centre-countdown{padding:.75rem .85rem;border-radius:14px}
+  .match-centre-countdown b{font-size:1.2rem}
+  .match-details-expanded{gap:.55rem}
+  .match-details-expanded article{padding:.7rem .75rem}
+  .match-centre-grid{gap:.7rem}
+  .match-centre-panel{padding:.85rem}
+
+  /* Keep mobile player controls compact and cards consistently visible. */
+  .player-profile-card{min-height:245px}
+  .player-profile-grid{padding-right:12px}
+}
+
+@media (max-width:390px){
+  .save-zone-guide{left:4%;right:4%;bottom:5.5%}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .shootout-v17 .penalty-stage.is-drag-aiming .aim-reticle{filter:none!important}
+}

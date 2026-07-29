@@ -16,3 +16,5 @@ Upload every file inside the site folder to the root of the GitHub repository.
 ## r55 layout update
 - Match Centre and Player Profiles now follow the quiz and penalty shoot-out.
 - Mobile player profiles use category tabs and a horizontal carousel to reduce page length.
+
+Release r56: larger mobile aim target, compact mobile sections, automatic update handling, shoot-out focus and desktop Match Centre/player polish.

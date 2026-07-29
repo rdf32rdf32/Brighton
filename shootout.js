@@ -2134,7 +2134,7 @@
     stage.classList.remove("is-locked", "crowd-hush");
     panenka.disabled = false;
     $("stageInstruction").textContent = "Drag to aim, release to shoot";
-    setStatus("Pick your spot", "Move or drag the target, then release to shoot.");
+    setStatus("Pick your spot", "Drag the target and release.");
   }
 
   function preparePalaceKick() {
@@ -2171,7 +2171,7 @@
     $("turnBadge").className = "turn-badge palace-turn";
     $("stageInstruction").textContent = "Press READY TO SAVE";
     stage.setAttribute("aria-label", "Palace penalty. Press Ready, read the run-up, then move the mouse, swipe, click or tap towards the shot.");
-    setStatus("YOU ARE VERBRUGGEN", "Press READY TO SAVE. Swipe towards the shot, or stay still for a central penalty.");
+    setStatus("YOU ARE VERBRUGGEN", "Press READY, then swipe or tap towards the shot. Stay central for the middle.");
     readyButton.textContent = "READY TO SAVE";
     readyButton.focus({ preventScroll: true });
     renderScore();
@@ -2718,7 +2718,7 @@
   }
 
   function aimPointForPointer(point, touchLike) {
-    return touchLike ? { x: point.x, y: clamp(point.y - .085, .025, .975) } : point;
+    return touchLike ? { x: point.x, y: clamp(point.y - .11, .025, .975) } : point;
   }
 
   stage.addEventListener("pointermove", (event) => {

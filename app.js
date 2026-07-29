@@ -2191,38 +2191,29 @@
   siteExperience();
   ui();
   initialiseQuiz();
-  // Install updates only after the user chooses the ready update.
+  // r56: activate new releases automatically and check again when the page returns to view.
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       let refreshing = false;
-      const notice = $("updateNotice");
-      const reload = $("reloadUpdate");
-      const showReadyUpdate = (registration) => {
-        if (!registration?.waiting || !notice || !reload) return;
-        notice.hidden = false;
-        reload.disabled = false;
-        reload.textContent = "Update site";
-        reload.onclick = () => {
-          reload.disabled = true;
-          reload.textContent = "Updating…";
-          registration.waiting?.postMessage({ type: "SKIP_WAITING" });
-        };
-      };
       navigator.serviceWorker.addEventListener("controllerchange", () => {
         if (refreshing) return;
         refreshing = true;
         window.location.reload();
       });
-      navigator.serviceWorker.register("./service-worker.js?v=20260728-r55", { updateViaCache: "none" })
+      navigator.serviceWorker.register("./service-worker.js?v=20260728-r56", { updateViaCache: "none" })
         .then((registration) => {
-          showReadyUpdate(registration);
+          const check = () => registration.update().catch(() => {});
+          check();
+          window.setInterval(check, 60 * 60 * 1000);
+          document.addEventListener("visibilitychange", () => { if (!document.hidden) check(); });
+          const waiting = registration.waiting;
+          if (waiting) waiting.postMessage({ type: "SKIP_WAITING" });
           registration.addEventListener("updatefound", () => {
             const worker = registration.installing;
             worker?.addEventListener("statechange", () => {
-              if (worker.state === "installed" && navigator.serviceWorker.controller) showReadyUpdate(registration);
+              if (worker.state === "installed" && navigator.serviceWorker.controller) worker.postMessage({ type: "SKIP_WAITING" });
             });
           });
-          registration.update().catch(() => {});
         })
         .catch(() => {});
     });
