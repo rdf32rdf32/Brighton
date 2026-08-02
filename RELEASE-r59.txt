@@ -1,0 +1,14 @@
+ALBION FAN HUB r59 — 2 August 2026
+
+Main changes
+- Danny Welbeck removed from the active squad, XI defaults and penalty game.
+- One shared squad/penalty data file.
+- Desktop squad now shows goalkeepers first and compact positional groups.
+- Eight Brighton takers and seven named Palace takers, shuffled without early repeats.
+- Fairer penalty outcomes, meaningful power, placed/driven/Panenka controls.
+- Shorter varied goalkeeper routines and clearer anticipation/reaction feedback.
+- Better mobile swipe thresholds, first-kick tutorial and compact game menu.
+- Fullscreen fallback, sharing failure feedback and one master sound setting.
+- Stronger diagnostics and a clean current service worker.
+
+Upload every file in this folder to the root of the GitHub repository, replacing the existing files. GitHub Pages can take a few minutes to refresh; a hard refresh may be needed once.
