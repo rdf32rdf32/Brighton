@@ -1,0 +1,3 @@
+Albion Fan Hub r60 — 3 August 2026
+
+Simplified penalties, My Matchday, updated squad, compact mobile header and unified floating controls.

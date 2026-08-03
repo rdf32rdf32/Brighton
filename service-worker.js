@@ -1,5 +1,5 @@
-const CACHE = "albion-fan-hub-r59";
-const CORE = ["./","./index.html","./site-r59.css","./albion-data-r59.js","./app-r59.js","./shootout-r59.js","./favicon.svg","./albion-safe-graphic.svg","./offline.html"];
+const CACHE = "albion-fan-hub-r60";
+const CORE = ["./","./index.html","./site-r60.css","./albion-data-r60.js","./app-r60.js","./shootout-r60.js","./favicon.svg","./albion-safe-graphic.svg","./offline.html"];
 self.addEventListener("install", event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())));
 self.addEventListener("activate", event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", event => {

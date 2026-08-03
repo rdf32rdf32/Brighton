@@ -1,1 +1,1 @@
-Upload the contents of this folder to the repository root. Replace index.html and all r59 files. Keep filenames and letter case exactly as supplied.
+Upload all files in this ZIP to the GitHub repository root, replacing the old files. The live HTML should report professional-r60-20260803.

@@ -32,24 +32,22 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r59-20260802" name="release"/>
+<meta content="professional-r60-20260803" name="release"/>
 
 
 
 
 
 
-<link href="site-r59.css?v=20260802-r59" rel="stylesheet"/></head>
+<link href="site-r60.css?v=20260803-r60" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
 <header class="hero" id="top">
 <nav aria-label="Main navigation" class="topbar">
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
-<button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">
-          Menu
-        </button>
-<div class="nav-links" id="navLinks"><a href="#quiz">Play</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#story">Club</a><a href="#prototype">About</a></div>
+<div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
+<div class="nav-links" id="navLinks"><a href="#quiz">Play</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#story">Club</a><a href="#prototype">About</a><button class="nav-tour-link" id="navTourButton" type="button">Tour</button></div>
 </nav>
 <div class="hero-utility-row"><button class="top-tour-button" id="startTour" type="button">Tour the site</button></div>
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -97,7 +95,7 @@
 <p class="eyebrow">Independent supporter prototype</p>
 <h2 id="prototypeTitle">A focused digital home for the Albion matchday experience</h2>
 <p>Albion Fan Hub explores how match information, interactive games, club heritage and practical supporter guidance could be brought together in one accessible experience.</p>
-<p class="prototype-disclaimer">This site is independently built by a supporter. It is not affiliated with, endorsed by or operated by Brighton &amp; Hove Albion FC.</p>
+<p class="prototype-disclaimer">Independent supporter project. Full site information is in the footer.</p>
 </div>
 <div class="prototype-actions"><a class="button-link secondary" href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a></div>
 </section>
@@ -444,7 +442,7 @@
 <div aria-live="polite" class="kick-decision-v10" hidden="" id="kickDecision"></div>
 <div class="stage-instruction" id="stageInstruction">Drag to aim, release to shoot</div>
 </div>
-<aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Drag the target inside the goal, choose a style and release to shoot.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
+<aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Drag inside the goal and release. The gesture and player determine the shot.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
 <div aria-atomic="true" aria-live="polite" class="shootout-status-v10" id="shootoutStatus">
 <b>Pick your spot</b>
 <span>Drag inside the goal and release.</span>
@@ -453,14 +451,9 @@
 <p>Swipe towards the shot, or stay central.</p>
 <button id="palaceReadyButton" type="button">READY TO SAVE</button>
 </div>
-<div class="shootout-option-row shot-style-controls" aria-label="Penalty style and power">
-<div class="shot-style-buttons" role="group" aria-label="Shot style">
-<button aria-pressed="true" class="shot-style-button active" data-shot-style="placed" id="shotStylePlaced" type="button">Placed</button>
-<button aria-pressed="false" class="shot-style-button" data-shot-style="driven" id="shotStyleDriven" type="button">Driven</button>
-<button aria-pressed="false" class="shot-style-button panenka-button" data-shot-style="panenka" id="panenkaChoice" type="button">Panenka</button>
-</div>
-<label class="shot-power-control" for="shotPower"><span>Power</span><input id="shotPower" max="100" min="45" step="1" type="range" value="78"/><output id="shotPowerValue" for="shotPower">78%</output></label>
-<span id="keyboardHint">Drag and release to shoot. When saving, swipe or tap left, centre or right. Keyboard: arrows and Enter.</span>
+<div class="shootout-option-row shot-style-controls panenka-only-control" aria-label="Optional special penalty">
+<button aria-pressed="false" class="shot-style-button panenka-button" data-shot-style="panenka" id="panenkaChoice" type="button"><span>Panenka</span><small>Special next kick</small></button>
+<span id="keyboardHint">Aim and release. When saving, swipe or tap left, centre or right. Keyboard: arrows, Enter and P for Panenka.</span>
 </div>
 <div class="shootout-summary-v10" hidden="" id="shootoutSummary"></div>
 <div class="button-row shootout-actions-v10">
@@ -505,22 +498,10 @@
 <div class="opponent-briefing-facts" id="opponentBriefingFacts"></div>
 <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official match information</a>
 </section>
-<section aria-labelledby="myMatchPlanTitle" class="match-centre-panel my-match-plan">
-<p class="eyebrow">Your match plan</p>
-<h3 id="myMatchPlanTitle">Prediction and team</h3>
-<div class="my-match-plan-grid">
-<article><span>Saved prediction</span><b id="matchCentrePrediction">Not saved yet</b><a href="#predictor">Make prediction</a></article>
-<article><span>Your starting XI</span><b id="matchCentreXIStatus">Not selected yet</b><a href="#xi">Build your XI</a></article>
-</div>
-</section>
-<section aria-labelledby="matchChecklistTitle" class="match-centre-panel matchday-checklist">
-<p class="eyebrow">Matchday checklist</p>
-<h3 id="matchChecklistTitle">Ready for the Amex</h3>
-<label><input data-match-check="ticket" type="checkbox"/> Ticket or pass ready</label>
-<label><input data-match-check="travel" type="checkbox"/> Travel checked</label>
-<label><input data-match-check="weather" type="checkbox"/> Weather checked</label>
-<label><input data-match-check="prediction" type="checkbox"/> Prediction saved</label>
-<button class="ghost" id="clearMatchChecklist" type="button">Clear checklist</button>
+<section aria-labelledby="myMatchdayTitle" class="match-centre-panel my-matchday-card" id="my-matchday">
+<div class="my-matchday-heading"><div><p class="eyebrow">My Matchday</p><h3 id="myMatchdayTitle">Your saved Albion plan</h3></div><button class="ghost" id="shareMatchday" type="button">Share plan</button></div>
+<div class="my-matchday-grid"><article><span>Score prediction</span><b id="matchCentrePrediction">Not saved yet</b><a href="#predictor">Make prediction</a></article><article><span>Starting XI</span><b id="matchCentreXIStatus">Not selected yet</b><a href="#xi">Build your XI</a></article><article><span>Captain</span><b id="matchCentreCaptain">Not chosen</b></article><article><span>Penalty taker</span><b id="matchCentrePenaltyTaker">Not chosen</b></article><article><span>Season finish</span><b id="matchCentreLeaguePosition">Not predicted</b><a href="#league-predictor">Set forecast</a></article><article><span>Travel view</span><b id="matchCentreTravel">Not checked</b><a href="#travel">Plan travel</a></article></div>
+<div class="matchday-checklist compact-checklist" aria-labelledby="matchChecklistTitle"><div><h4 id="matchChecklistTitle">Matchday checklist</h4><b id="matchCentreChecklist">0 of 4 ready</b></div><label><input data-match-check="ticket" type="checkbox"/> Ticket</label><label><input data-match-check="travel" type="checkbox"/> Travel</label><label><input data-match-check="weather" type="checkbox"/> Weather</label><label><input data-match-check="prediction" type="checkbox"/> Prediction</label><button class="ghost" id="clearMatchChecklist" type="button">Clear</button></div>
 </section>
 <section aria-labelledby="matchLinksTitle" class="match-centre-panel match-centre-links">
 <p class="eyebrow">Useful links</p>
@@ -540,7 +521,7 @@
 </div>
 </section>
 <section class="card player-profiles" id="players">
-<p class="content-freshness">Provisional first-team snapshot: <b>checked 2 August 2026</b></p>
+<p class="content-freshness">Provisional first-team snapshot: <b>checked 3 August 2026</b></p>
 <div class="section-head player-profile-heading">
 <div><p class="eyebrow">First-team squad</p><h2>Albion player profiles</h2><p>Goalkeepers are shown first, with defenders, midfielders and forwards kept in compact groups. Open a profile or add a player to your XI.</p></div>
 <a class="button-link secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official squad</a>
@@ -555,7 +536,7 @@
 <div aria-label="Player categories" class="player-category-tabs" id="playerCategoryTabs" role="tablist"></div>
 <p class="player-mobile-hint" id="playerMobileHint">Goalkeepers are shown first. Open a position group to see the other players.</p>
 <div aria-live="polite" class="player-profile-grid" id="playerProfileGrid"></div>
-<p class="verified-note">Squad names and broad positions were checked against the <a href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">official Albion squad page</a> and official transfer announcements on 2 August 2026. The summer transfer window remains open and unconfirmed squad numbers are deliberately omitted.</p>
+<p class="verified-note">Squad names and broad positions were checked against the <a href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">official Albion squad page</a> and official transfer announcements on 3 August 2026. Tommy Watson is excluded while on loan at Leicester City. The summer transfer window remains open and unconfirmed squad numbers are deliberately omitted.</p>
 <dialog aria-labelledby="playerDialogTitle" class="player-profile-dialog" id="playerProfileDialog">
 <button aria-label="Close player profile" class="dialog-close" id="closePlayerProfile" type="button">×</button>
 <div id="playerProfileDialogContent"></div>
@@ -1336,16 +1317,7 @@
 <nav aria-label="Quick section navigation" class="mobile-jump-nav">
 <a href="#quiz">Quiz</a><a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#players">Players</a><a href="#xi">XI</a>
 </nav>
-<button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">
-      ⚙ Settings
-    </button>
-<button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">
-      🔇 Site sound off
-    </button>
-<div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
-<button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">
-      ↑
-    </button>
+<details class="floating-tools" id="floatingTools"><summary aria-label="Open site controls">•••</summary><div><button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">⚙ Settings</button><button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">🔇 Sound off</button><button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">↑ Top</button></div></details><div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
 
 <div aria-live="polite" class="site-toast" hidden="" id="siteToast" role="status"></div>
 <aside aria-live="polite" class="tour-coach" hidden="" id="tourCoach">
@@ -1397,5 +1369,5 @@
 
 
 
-<script defer src="albion-data-r59.js?v=20260802-r59"></script><script defer src="app-r59.js?v=20260802-r59"></script><script defer src="shootout-r59.js?v=20260802-r59"></script></body>
+<script defer src="albion-data-r60.js?v=20260803-r60"></script><script defer src="app-r60.js?v=20260803-r60"></script><script defer src="shootout-r60.js?v=20260803-r60"></script></body>
 </html>
