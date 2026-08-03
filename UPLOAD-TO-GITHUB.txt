@@ -1,1 +1,11 @@
-Upload all files in this ZIP to the GitHub repository root, replacing the old files. The live HTML should report professional-r60-20260803.
+UPLOAD ALL FILES FROM THIS ZIP TO THE ROOT OF THE BRIGHTON GITHUB REPOSITORY.
+
+Replace the existing files, including index.html and service-worker.js.
+Delete obsolete r60 and r61 code files after r62 is live, especially:
+- site-r60.css / site-r61.css
+- polish-r61.css
+- app-r60.js / app-r61.js
+- shootout-r60.js / shootout-r61.js
+- albion-data-r60.js / albion-data-r61.js
+
+After GitHub Pages deploys, open the site once with a hard refresh. The site will then show a refresh notice whenever a newer cached release is available.

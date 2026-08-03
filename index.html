@@ -20,7 +20,7 @@
       })();
     </script>
 <title>Albion Fan Hub</title>
-<meta content="Independent supporter-built Brighton &amp; Hove Albion prototype with a match centre, player profiles, quiz, penalty shoot-out, fixtures and XI builder." name="description"/>
+<meta content="Independent supporter-built Brighton &amp; Hove Albion project with a match centre, player profiles, quiz, penalty shoot-out, fixtures and XI builder." name="description"/>
 <meta content="Albion Fan Hub" property="og:title"/>
 <meta content="Open the Albion Match Centre, explore player profiles, take penalties, follow fixtures and build your XI." property="og:description"/>
 <meta content="website" property="og:type"/>
@@ -28,18 +28,19 @@
 <meta content="https://rdf32rdf32.github.io/Brighton/social-preview.png" property="og:image"/>
 <meta content="summary_large_image" name="twitter:card"/>
 <link href="favicon.svg" rel="icon"/>
+<link href="https://rdf32rdf32.github.io/Brighton/" rel="canonical"/>
 
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r60-20260803" name="release"/>
+<meta content="professional-r62-20260803" name="release"/>
 
 
 
 
 
 
-<link href="site-r60.css?v=20260803-r60" rel="stylesheet"/></head>
+<link href="site-r62.css?v=20260803-r62" rel="stylesheet"/><link href="polish-r62.css?v=20260803-r62" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -47,7 +48,7 @@
 <nav aria-label="Main navigation" class="topbar">
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#quiz">Play</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#story">Club</a><a href="#prototype">About</a><button class="nav-tour-link" id="navTourButton" type="button">Tour</button></div>
+<div class="nav-links" id="navLinks"><a href="#quiz">Quiz</a><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#xi">Pick XI</a><a href="#story">Club</a><a href="#travel">Visit</a><button class="nav-tour-link" id="navTourButton" type="button">Tour</button></div>
 </nav>
 <div class="hero-utility-row"><button class="top-tour-button" id="startTour" type="button">Tour the site</button></div>
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -70,7 +71,7 @@
 <section class="hero-copy">
 <p class="eyebrow">2026/27 season</p>
 <h1>Brighton &amp; Hove Albion</h1>
-<p class="lead">A supporter-built prototype bringing together match information, interactive games, squad tools and Albion heritage.</p>
+<p class="lead">A supporter-built project bringing together match information, interactive games, squad tools and Albion heritage.</p>
 
 <div class="hero-actions"><a href="#quiz">Play the quiz</a><a href="#shootout">Take penalties</a><a href="#match-centre">Open Match Centre</a></div></section>
 <section class="match-card" id="next-match">
@@ -92,7 +93,7 @@
 </aside>
 <main id="main"><section aria-labelledby="prototypeTitle" class="card prototype-card" id="prototype">
 <div>
-<p class="eyebrow">Independent supporter prototype</p>
+<p class="eyebrow">Independent Albion supporter project</p>
 <h2 id="prototypeTitle">A focused digital home for the Albion matchday experience</h2>
 <p>Albion Fan Hub explores how match information, interactive games, club heritage and practical supporter guidance could be brought together in one accessible experience.</p>
 <p class="prototype-disclaimer">Independent supporter project. Full site information is in the footer.</p>
@@ -151,12 +152,12 @@
 <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
 <h2>Seagulls v Eagles</h2>
 <p class="shootout-lead">
-<strong>Albion kick:</strong> drag and release. <strong>Palace kick:</strong> swipe towards the shot or stay central.
+<strong>Albion kick:</strong> drag and release, including narrowly wide or high. <strong>Palace kick:</strong> swipe towards the shot or stay central.
             </p>
 </div>
 <div aria-label="Penalty game sound" class="shootout-top-controls single-control">
 <button aria-pressed="true" class="ghost compact-control" id="shootoutSound" type="button">Sound on</button>
-<details class="shootout-menu" id="shootoutMenu"><summary aria-label="Shoot-out menu">•••</summary><div><button class="ghost" data-shootout-menu-action="sound" type="button">Sound</button><button class="ghost" data-shootout-menu-action="restart" type="button">Restart</button><button class="ghost" data-shootout-menu-action="fullscreen" type="button">Full screen</button></div></details>
+<details class="shootout-menu" id="shootoutMenu"><summary aria-label="Open shoot-out menu" title="Shoot-out menu">•••</summary><div><button class="ghost" data-shootout-menu-action="sound" type="button">Sound</button><button class="ghost" data-shootout-menu-action="restart" type="button">Restart</button><button class="ghost" data-shootout-menu-action="fullscreen" type="button">Full screen</button></div></details>
 </div>
 </div>
 <div class="shootout-shell">
@@ -182,7 +183,7 @@
 <p id="shootoutSituation">Five kicks each</p>
 <p aria-live="polite" class="penalty-approach" id="penaltyApproach">Right foot · measured angle</p>
 </div>
-<div aria-describedby="stageInstruction" aria-label="Penalty shoot-out game" class="penalty-stage is-aiming" id="penaltyStage" role="group" tabindex="0">
+<div aria-describedby="stageInstruction shootoutStatus keyboardHint" aria-label="Penalty shoot-out game. Brighton penalties can be aimed up to five per cent beyond the posts or crossbar." class="penalty-stage is-aiming" id="penaltyStage" role="group" tabindex="0">
 <div aria-hidden="true" class="stadium-backdrop" id="crowdLayer">
 <span class="crowd-banner">SEAGULLS</span>
 <span class="crowd-banner derby">BRIGHTON v PALACE</span>
@@ -203,6 +204,8 @@
 <div aria-hidden="true" class="advertising-boards">
 <span>ALBION FAN HUB</span><span>SEAGULLS</span><span>BRIGHTON &amp; HOVE</span>
 </div>
+<div aria-hidden="true" class="aim-corridor" id="aimCorridor"></div>
+<div aria-live="polite" class="aim-risk-label" data-risk="inside" id="aimRiskLabel">ON TARGET</div>
 <div aria-hidden="true" class="goal-mouth" id="goalMouth">
 <div aria-hidden="true" class="goal-depth">
 <svg class="goal-net-svg" preserveaspectratio="none" viewbox="0 0 1000 520">
@@ -440,12 +443,14 @@
 <div aria-hidden="true" class="save-impact" hidden="" id="saveImpact"></div>
 <div aria-live="assertive" class="reaction-cue" hidden="" id="reactionCue">React now</div>
 <div aria-live="polite" class="kick-decision-v10" hidden="" id="kickDecision"></div>
-<div class="stage-instruction" id="stageInstruction">Drag to aim, release to shoot</div>
+<div aria-live="polite" class="stage-instruction" id="stageInstruction">Drag to aim, release to shoot</div>
+<div aria-hidden="true" class="keeper-choice-marker" hidden id="keeperChoiceMarker">Stay centre</div>
+<div aria-hidden="true" class="save-zone-guide nine-zone-guide"><span>High left</span><span>High centre</span><span>High right</span><span>Middle left</span><span>Stay centre</span><span>Middle right</span><span>Low left</span><span>Low centre</span><span>Low right</span></div>
 </div>
-<aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Drag inside the goal and release. The gesture and player determine the shot.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
+<aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Drag to aim and release. You may aim up to 5% outside the posts or crossbar, but it can miss.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
 <div aria-atomic="true" aria-live="polite" class="shootout-status-v10" id="shootoutStatus">
 <b>Pick your spot</b>
-<span>Drag inside the goal and release.</span>
+<span>Drag and release. The target can move narrowly outside the frame.</span>
 </div>
 <div class="palace-ready-panel" hidden="" id="palaceReadyPanel">
 <p>Swipe towards the shot, or stay central.</p>
@@ -453,7 +458,7 @@
 </div>
 <div class="shootout-option-row shot-style-controls panenka-only-control" aria-label="Optional special penalty">
 <button aria-pressed="false" class="shot-style-button panenka-button" data-shot-style="panenka" id="panenkaChoice" type="button"><span>Panenka</span><small>Special next kick</small></button>
-<span id="keyboardHint">Aim and release. When saving, swipe or tap left, centre or right. Keyboard: arrows, Enter and P for Panenka.</span>
+<span id="keyboardHint">Drag and release to shoot. When saving, swipe or choose one of nine zones. Keyboard: arrows, Enter, number pad 1–9 and P for Panenka.</span>
 </div>
 <div class="shootout-summary-v10" hidden="" id="shootoutSummary"></div>
 <div class="button-row shootout-actions-v10">
@@ -799,6 +804,7 @@
           Choose Albion’s finishing position.
         </div>
 </section>
+<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#fixtures">Fixtures</a><a href="#xi">Pick XI</a><a href="#players">Squad</a><a href="#story">Albion story</a><a href="#travel">Visit the Amex</a></nav>
 <section class="card" id="story">
 <div class="section-head">
 <p class="eyebrow">History, landmarks, facts and supporter memories</p>
@@ -1315,10 +1321,11 @@
 </section>
 </main>
 <nav aria-label="Quick section navigation" class="mobile-jump-nav">
-<a href="#quiz">Quiz</a><a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#players">Players</a><a href="#xi">XI</a>
+<a href="#quiz">Quiz</a><a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#xi">XI</a>
 </nav>
 <details class="floating-tools" id="floatingTools"><summary aria-label="Open site controls">•••</summary><div><button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">⚙ Settings</button><button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">🔇 Sound off</button><button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">↑ Top</button></div></details><div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
 
+<div aria-live="polite" class="site-update-banner" hidden id="siteUpdateBanner"><span>A newer version of Albion Fan Hub is available.</span><button id="refreshSiteUpdate" type="button">Refresh now</button></div>
 <div aria-live="polite" class="site-toast" hidden="" id="siteToast" role="status"></div>
 <aside aria-live="polite" class="tour-coach" hidden="" id="tourCoach">
 <b id="tourTitle">Welcome</b>
@@ -1341,7 +1348,7 @@
 <div class="footer-grid">
 <section>
 <b>Albion Fan Hub</b>
-<p>Independent supporter-built prototype. Not affiliated with or endorsed by Brighton &amp; Hove Albion FC. Built by Richard Freedman.</p>
+<p>Independent supporter-built project. Not affiliated with or endorsed by Brighton &amp; Hove Albion FC. Built by Richard Freedman.</p>
 </section>
 <section>
 <b>Official Albion</b>
@@ -1369,5 +1376,5 @@
 
 
 
-<script defer src="albion-data-r60.js?v=20260803-r60"></script><script defer src="app-r60.js?v=20260803-r60"></script><script defer src="shootout-r60.js?v=20260803-r60"></script></body>
+<script defer src="albion-data-r62.js?v=20260803-r62"></script><script defer src="app-r62.js?v=20260803-r62"></script><script defer src="shootout-r62.js?v=20260803-r62"></script><script defer src="r62-enhancements.js?v=20260803-r62"></script></body>
 </html>

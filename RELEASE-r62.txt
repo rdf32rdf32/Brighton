@@ -1,0 +1,10 @@
+Albion Fan Hub r62
+
+Major changes
+- Penalty target now visibly travels 5% beyond both posts and above the crossbar.
+- Clear on-target, frame and wide/over feedback.
+- Nine-zone goalkeeper saving controls with early-choice memory and central blocks.
+- Improved goal frame, side-net depth, save feedback and mobile landscape layout.
+- Automatic three-hour fixture rollover from the single fixture list, without an external API.
+- Cleaner navigation, active-section highlighting, grouped squad persistence and update notification.
+- Cache release upgraded to r62.

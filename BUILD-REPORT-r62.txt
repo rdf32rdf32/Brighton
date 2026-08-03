@@ -1,0 +1,4 @@
+Albion Fan Hub r62 build report
+
+Built from r61 as a controlled polish.
+Checks required before upload: JavaScript syntax, duplicate IDs, local asset references and ZIP root structure.
