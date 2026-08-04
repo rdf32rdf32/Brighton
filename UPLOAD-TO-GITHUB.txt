@@ -1,11 +1,16 @@
-UPLOAD ALL FILES FROM THIS ZIP TO THE ROOT OF THE BRIGHTON GITHUB REPOSITORY.
+UPLOAD ALBION FAN HUB r63
 
-Replace the existing files, including index.html and service-worker.js.
-Delete obsolete r60 and r61 code files after r62 is live, especially:
-- site-r60.css / site-r61.css
-- polish-r61.css
-- app-r60.js / app-r61.js
-- shootout-r60.js / shootout-r61.js
-- albion-data-r60.js / albion-data-r61.js
+1. Open the Brighton GitHub repository.
+2. Upload every file from this ZIP to the repository root.
+3. Choose replace/overwrite for files with the same name.
+4. Delete old unused r62-named files if they remain:
+   - site-r62.css
+   - polish-r62.css
+   - albion-data-r62.js
+   - app-r62.js
+   - shootout-r62.js
+   - r62-enhancements.js
+   - offline.html, if present
+5. Commit the changes.
 
-After GitHub Pages deploys, open the site once with a hard refresh. The site will then show a refresh notice whenever a newer cached release is available.
+The replacement service-worker.js is intentionally a self-removing cleanup worker. The site no longer registers a service worker or displays a special update prompt. Cleanup is scoped to the Brighton project and will not alter the user’s other GitHub Pages projects.

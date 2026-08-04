@@ -1,0 +1,69 @@
+ALBION FAN HUB r63 — BUILD AND AUDIT REPORT
+4 August 2026
+
+DELIVERY STATUS
+- Built from the exact Brighton Fan Hub r62 package.
+- Complete replacement package prepared for the repository root.
+- The live GitHub repository has not been modified automatically.
+
+FORCED-REFRESH REMOVAL
+PASS  No “A newer version is available” or “Refresh now” markup.
+PASS  No JavaScript serviceWorker.register() call.
+PASS  Existing Brighton service-worker registration is quietly retired.
+PASS  Cache cleanup is limited to Brighton/Albion cache names, so other rdf32rdf32.github.io projects are not affected.
+PASS  service-worker.js is a one-release self-removing cleanup worker.
+
+PENALTY SHOOT-OUT
+PASS  Desktop aim, drag/release, Palace ready step, React now window and goalkeeper response.
+PASS  Mobile portrait aim and save flow.
+PASS  Genuine touch drag and swipe test through Chromium touch events.
+PASS  Desktop canvas capped at 1,160 px rather than stretching indefinitely.
+PASS  Separate portrait and landscape geometry.
+PASS  Three simple save directions shown only in the live reaction window.
+PASS  Early input is not silently stored; the game tells the player to wait for React now.
+PASS  Central shots can be saved by staying central.
+PASS  Five per cent outside-frame aiming wording is consistent.
+PASS  Panenka control is hidden until the third Albion penalty.
+PASS  Unconfirmed Brighton shirt numbers are left blank and takers use the shared squad data.
+PASS  Danny Welbeck is absent from the active squad and penalty-taker data.
+
+WHOLE-SITE STRUCTURAL AUDIT
+PASS  262 IDs checked, with no duplicates.
+PASS  No broken internal anchors.
+PASS  No missing local CSS, JavaScript, image, audio or policy-page references.
+PASS  All JavaScript files passed Node syntax checks.
+PASS  All CSS files passed parser checks.
+PASS  No browser page or console errors in the tested flows.
+PASS  Fixture summary and principal card use the same data: next home Albion v Aston Villa; next away Chelsea v Albion.
+PASS  Squad browser contains four grouped positions, with only goalkeepers open by default.
+PASS  Mobile search remains available through the search button.
+PASS  Both mobile hero actions are visible: Play Albion games and Explore the site.
+
+RESPONSIVE LAYOUT AUDIT
+PASS  390 x 844 mobile portrait: no horizontal overflow.
+PASS  844 x 390 mobile landscape: no horizontal overflow.
+PASS  768 x 1024 tablet: no horizontal overflow.
+PASS  1440 x 900 desktop: no horizontal overflow.
+PASS  1920 x 1080 desktop: no horizontal overflow.
+
+KEY DIMENSIONS OBSERVED
+- 390 px mobile stage: 370 x 468 px; goal 266 x 178 px.
+- 1440 px desktop stage: 1,050 x 578 px; goal 483 x 205 px.
+- 1920 px desktop stage: 1,140 x 627 px; goal 524 x 223 px.
+
+IMPLEMENTED WHOLE-SITE POLISH
+- Simplified the hero to two primary actions.
+- Removed the duplicate Tour control; Site tour remains in navigation.
+- Reduced competing fixed controls while penalties are being played.
+- Corrected static fixture fallbacks.
+- Retained grouped squad browsing and XI duplicate-player prevention.
+- Retained reduced-motion, focus, keyboard and touch support.
+
+NON-BLOCKING NEXT-STAGE RECOMMENDATIONS
+1. In a later technical-only release, split the large historical site-r63.css and app-r63.js into smaller feature files. r63 uses a final authoritative shootout layer to avoid risky regressions while fixing the live experience.
+2. Add the completed desktop, mobile and touch flows as Playwright tests in GitHub Actions.
+3. Test on one physical iPhone/Safari and one Android/Chrome device after deployment.
+4. Optionally recompress the MP3 chants; they are already preload="none", so they do not block the initial page.
+
+UPLOAD
+Upload every file in the ZIP to the Brighton repository root and replace files with matching names. Delete any unused r62-named CSS and JavaScript files left in the repository after the upload.

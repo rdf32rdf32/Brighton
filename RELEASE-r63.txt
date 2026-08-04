@@ -1,0 +1,20 @@
+ALBION FAN HUB r63 — 4 AUGUST 2026
+
+Main changes
+- Removed the visible “newer version / refresh now” workflow on desktop and mobile.
+- Removed service-worker registration and added a one-release cleanup limited to the Brighton project.
+- Added one authoritative r63 penalty layout for desktop, mobile portrait and mobile landscape.
+- Simplified saving: wait for “React now”, then swipe or hold the centre. Early input receives clear feedback and is not silently stored.
+- Reduced repeated goalkeeper theatre after the first Palace penalty.
+- Made the 5% outside-frame aiming allowance consistent everywhere.
+- Kept Panenka hidden until the third Albion penalty rather than making it a primary control.
+- Made Brighton penalty shirt numbers derive from shared squad records; unconfirmed numbers remain blank.
+- Corrected the next-home and next-away fixture fallbacks.
+- Simplified the hero to two actions and removed the duplicate Tour button.
+- Kept both hero actions visible on mobile and retained the collapsible search button.
+- Reduced mobile screen competition while the penalty game is active.
+- Retained grouped squad browsing with goalkeepers open by default.
+
+See BUILD-REPORT-r63.txt for the completed desktop, mobile, touch, layout and structural audit.
+
+Upload all files in this ZIP to the root of the Brighton GitHub repository, replacing the existing files.
