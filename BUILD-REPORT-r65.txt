@@ -1,0 +1,67 @@
+ALBION FAN HUB r65 — BUILD AND AUDIT REPORT
+4 August 2026
+
+SOURCE
+Built from the complete Albion Fan Hub r64 package.
+
+PURPOSE OF THIS RELEASE
+R64 restored the mobile camera but left the taker only a short distance behind the ball. R65 makes the player normally begin the run-up outside the visible 18-yard line, while preserving the corrected goal size, ball position, Tour control and separate Quiz/Penalties tabs.
+
+R65 PENALTY CHANGES
+1. The front line of the penalty area is tied to the pitch artwork at y=570/650 of the rendered stage.
+2. Mobile starting positions are anchored by the player’s boots rather than the top of the SVG.
+3. The run-up profile is selected before ball placement and retained for the kick. The player therefore retreats visibly to the correct position instead of jumping when the run begins.
+4. Typical starting boot positions:
+   - angled: about 92.2% of stage depth;
+   - curved/reverse: about 91.7%;
+   - straight: about 90.7%;
+   - stuttered: about 88.9%;
+   - quick styles are shortened slightly but remain beyond the penalty-area line.
+5. Angled, straight, curved and stuttered approaches now have distinct lateral starting positions. Straight run-ups retain a slight natural offset so the stationary ball does not cover the player’s face.
+6. Mobile run-ups last longer and use four to six visible movement phases, progressive player scaling and a larger permitted contact movement range.
+7. The lower instruction pill disappears during the run-up so it cannot cover the player’s boots.
+8. The standing-foot/contact calculation now allows for the greater starting distance while keeping the body behind the ball until the final stride.
+9. Mobile ball rotation is smoother and less excessive; the ground shadow is lighter.
+10. The white worn-spot treatment that resembled a second football after contact has been replaced by a subdued patch of worn turf.
+11. Goalposts and crossbar are slightly slimmer; side, roof and rear netting are quieter without enlarging the goal.
+12. The duplicate Sound action has been removed from the penalty overflow menu. The main penalty sound switch remains.
+13. Game tabs and non-essential controls collapse during active mobile play, including phone landscape, and return when the shoot-out ends.
+
+PRESERVED
+- Mobile goal width remains approximately 60–62% in portrait.
+- Mobile goal height remains approximately 25.5% in portrait.
+- Desktop camera and goal geometry are unchanged.
+- The top-right desktop Tour control remains.
+- Mobile navigation retains Tour.
+- Quiz and Penalties remain separate direct tabs.
+- Albion/Palace scoring probabilities, goalkeeper timing and save assistance are unchanged.
+- Squad, fixtures, quiz bank, audio and supporter content are unchanged.
+- Confirmed fixture summary remains Albion v Aston Villa at home and Chelsea v Albion away.
+
+BROWSER GEOMETRY RESULTS
+Portrait mobile ready positions:
+- 320 px: boots approximately 18 px beyond the 18-yard line; goal 60.0% wide and 25.5% high.
+- 360 px: stuttered test start approximately 6.5 px beyond the line; goal 60.0% wide and 25.5% high.
+- 390 px: boots approximately 23.5 px beyond the line in the tested angled approach; goal approximately 61.0% wide and 25.5% high.
+- 430 px: boots approximately 24.2 px beyond the line; goal approximately 61.0% wide and 25.5% high.
+- 844 x 390 phone landscape: ready boots approximately 9.9 px beyond the line and fully inside the rendered stage.
+
+TESTING COMPLETED
+- Normal-motion browser interaction at 320, 390 and 430 px mobile widths and 1440 px desktop.
+- Mobile/touch viewport matrix at 320, 360, 390 and 430 px plus 844 x 390 landscape.
+- Albion aim, keyboard release, run-up start and shot progression tested.
+- Player start, 18-yard-line relationship, goal proportions and clipping measured from rendered browser geometry.
+- Run-up instruction clearing checked in portrait and landscape.
+- Desktop Tour and tabs visible; mobile in-play clutter suppressed as intended.
+- No browser console errors or page errors in the tested flows.
+- No horizontal overflow in any tested viewport.
+- JavaScript syntax passed for every JavaScript file.
+- CSS parsing passed for every stylesheet.
+- No duplicate HTML IDs.
+- No broken internal anchors.
+- No missing local assets.
+- No service-worker registration or update/refresh banner.
+- No duplicate penalty-menu sound action.
+
+FILES
+33 files, including this report.

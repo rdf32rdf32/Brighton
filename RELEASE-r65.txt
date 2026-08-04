@@ -1,0 +1,19 @@
+ALBION FAN HUB r65
+4 August 2026
+
+Focused mobile penalty refinement built from r64.
+
+Changes
+- Takers normally begin with their boots outside the visible 18-yard line.
+- Run-up style is chosen before ball placement and retained through the kick.
+- Angled, straight, curved and stuttered approaches now have distinct starting positions.
+- Longer four-to-six-stride mobile run-ups with depth scaling.
+- Standing-foot/contact calculation accepts the greater run-up distance.
+- Instruction pill hides during the run-up so the player’s boots remain visible.
+- Lighter ball shadow and smoother, less excessive mobile rotation.
+- Worn penalty spot no longer resembles a second ball after contact.
+- Straight run-ups use a small natural offset so the ball remains visually separate from the player.
+- Slimmer goal frame and quieter side/rear netting.
+- Duplicate Sound action removed from the penalty overflow menu.
+- Game tabs and non-essential controls collapse during active mobile play, then return afterwards.
+- Tour controls, separate Quiz/Penalties tabs, squad, fixtures, quiz and scoring balance retained.

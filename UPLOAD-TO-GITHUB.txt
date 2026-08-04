@@ -1,16 +1,16 @@
-UPLOAD ALBION FAN HUB r64
+ALBION FAN HUB r65 — UPLOAD INSTRUCTIONS
 
-1. Open the Brighton GitHub repository.
-2. Upload every file from this ZIP to the repository root.
-3. Choose replace/overwrite for files with the same name.
-4. Delete old unused r63-named files if they remain:
-   - site-r63.css
-   - polish-r63.css
-   - albion-data-r63.js
-   - app-r63.js
-   - shootout-r63.css
-   - shootout-r63.js
-   - r63-enhancements.js
-5. Commit the changes.
-
-The replacement service-worker.js is a self-removing cleanup worker. The site does not register a service worker and does not display a special update prompt. Cleanup is scoped to the Brighton project.
+1. Open the root of the Brighton GitHub repository.
+2. Upload every file from this ZIP and replace files with the same names.
+3. Delete the old r64 release files after the r65 files are present:
+   albion-data-r64.js
+   app-r64.js
+   polish-r64.css
+   r64-enhancements.js
+   shootout-r64.css
+   shootout-r64.js
+   site-r64.css
+   BUILD-REPORT-r64.txt
+   RELEASE-r64.txt
+4. Commit the changes.
+5. Open the live site in a normal tab. No special refresh prompt is used.
