@@ -33,14 +33,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r63-20260804" name="release"/>
+<meta content="professional-r64-20260804" name="release"/>
 
 
 
 
 
 
-<link href="site-r63.css?v=20260804-r63" rel="stylesheet"/><link href="polish-r63.css?v=20260804-r63" rel="stylesheet"/><link href="shootout-r63.css?v=20260804-r63" rel="stylesheet"/></head>
+<link href="site-r64.css?v=20260804-r64" rel="stylesheet"/><link href="polish-r64.css?v=20260804-r64" rel="stylesheet"/><link href="shootout-r64.css?v=20260804-r64" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -48,8 +48,9 @@
 <nav aria-label="Main navigation" class="topbar">
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#quiz">Quiz</a><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#xi">Pick XI</a><a href="#story">Club</a><a href="#travel">Visit</a><button class="nav-tour-link" id="startTour" type="button">Site tour</button></div>
+<div class="nav-links" id="navLinks"><a href="#quiz">Quiz</a><a href="#shootout">Penalties</a><button class="nav-tour-link" id="navTourButton" type="button">Tour</button><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#xi">Pick XI</a><a href="#story">Club</a><a href="#travel">Visit</a></div>
 </nav>
+<div class="hero-utility-row"><button class="top-tour-button" id="startTour" type="button">Tour the site</button></div>
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
 <form class="global-search-form" id="siteSearchForm" novalidate="" role="search">
 <label for="siteSearch" id="globalSearchLabel">Search the whole Albion Fan Hub</label>
@@ -72,7 +73,7 @@
 <h1>Brighton &amp; Hove Albion</h1>
 <p class="lead">A supporter-built project bringing together match information, interactive games, squad tools and Albion heritage.</p>
 
-<div class="hero-actions"><a href="#quiz">Play Albion games</a><a href="#match-centre">Explore the site</a></div></section>
+<nav aria-label="Albion games" class="game-tabs hero-game-tabs"><a class="game-tab quiz-game-tab" href="#quiz"><span>Quiz</span><small>Five Albion questions</small></a><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a></nav><div class="hero-actions hero-secondary-action"><a href="#match-centre">Explore the full site</a></div></section>
 <section class="match-card" id="next-match">
 <p class="eyebrow">Next competitive fixture</p>
 <h2 id="heroMatchTitle">Albion v Aston Villa</h2>
@@ -109,6 +110,7 @@
 </article>
 </section>
 
+<nav aria-label="Choose a game" class="game-tabs section-game-tabs"><a class="game-tab quiz-game-tab" href="#quiz"><span>Quiz</span><small>Test your knowledge</small></a><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalties</span><small>Take on Palace</small></a></nav>
 <section class="card quiz-card first-feature" id="quiz">
 <div class="section-head">
 <p class="eyebrow">First up: Albion quiz</p>
@@ -145,7 +147,7 @@
 </div>
 <div aria-live="polite" class="result" id="quizResult"></div>
 </section>
-<section class="card shootout-card shootout-v17 shootout-r63" id="shootout">
+<section class="card shootout-card shootout-v17 shootout-r64" id="shootout">
 <div class="section-head shootout-intro">
 <div>
 <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
@@ -1374,5 +1376,5 @@
 
 
 
-<script defer src="albion-data-r63.js?v=20260804-r63"></script><script defer src="app-r63.js?v=20260804-r63"></script><script defer src="shootout-r63.js?v=20260804-r63"></script><script defer src="r63-enhancements.js?v=20260804-r63"></script></body>
+<script defer src="albion-data-r64.js?v=20260804-r64"></script><script defer src="app-r64.js?v=20260804-r64"></script><script defer src="shootout-r64.js?v=20260804-r64"></script><script defer src="r64-enhancements.js?v=20260804-r64"></script></body>
 </html>

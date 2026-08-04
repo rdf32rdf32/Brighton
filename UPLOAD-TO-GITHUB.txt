@@ -1,16 +1,16 @@
-UPLOAD ALBION FAN HUB r63
+UPLOAD ALBION FAN HUB r64
 
 1. Open the Brighton GitHub repository.
 2. Upload every file from this ZIP to the repository root.
 3. Choose replace/overwrite for files with the same name.
-4. Delete old unused r62-named files if they remain:
-   - site-r62.css
-   - polish-r62.css
-   - albion-data-r62.js
-   - app-r62.js
-   - shootout-r62.js
-   - r62-enhancements.js
-   - offline.html, if present
+4. Delete old unused r63-named files if they remain:
+   - site-r63.css
+   - polish-r63.css
+   - albion-data-r63.js
+   - app-r63.js
+   - shootout-r63.css
+   - shootout-r63.js
+   - r63-enhancements.js
 5. Commit the changes.
 
-The replacement service-worker.js is intentionally a self-removing cleanup worker. The site no longer registers a service worker or displays a special update prompt. Cleanup is scoped to the Brighton project and will not alter the user’s other GitHub Pages projects.
+The replacement service-worker.js is a self-removing cleanup worker. The site does not register a service worker and does not display a special update prompt. Cleanup is scoped to the Brighton project.

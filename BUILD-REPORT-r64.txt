@@ -1,0 +1,44 @@
+ALBION FAN HUB r64 — BUILD AND AUDIT REPORT
+4 August 2026
+
+SOURCE
+Built from the complete Albion Fan Hub r63 package.
+
+WHY THE MOBILE DEPTH FAILED IN r63
+1. shootout-r63.css enlarged the phone goal to 68–72% of stage width and 37.5–38% of stage height, while moving it to 11.5% from the top. This made the goal appear much nearer than the penalty spot.
+2. The same stylesheet set both left:50%!important and top:49%!important on the taker. The penalty JavaScript tried to move the taker behind the ball using inline left/top values, but stylesheet !important declarations overrode those values.
+3. Stage, player, ball and goal dimensions were changed separately rather than as one camera system.
+
+R64 CORRECTIONS
+- Mobile goal: 60–62% width, 25.5% height and 18.5% top position.
+- Phone stage: approximately 410–495 px depending on viewport width.
+- Taker left/top are controlled by JavaScript again.
+- Player boot position is calculated from ball position and rendered player height.
+- Left-footed and right-footed takers begin slightly to the appropriate side of the ball.
+- Goal frame and net depth are slimmer and less visually dominant.
+- Ball has clearer panels, seams, highlight and a tighter ground shadow.
+- Desktop camera remains bounded and unchanged in scale.
+- Dedicated desktop Tour control restored.
+- Mobile Tour control restored near the top of the menu.
+- Separate Quiz and Penalties tabs added to the hero and games area.
+
+VALIDATION COMPLETED
+- JavaScript syntax: passed for every JavaScript file.
+- Duplicate HTML IDs: none.
+- Broken internal anchors: none.
+- Missing local assets: none.
+- Browser console/page errors in tested flows: none.
+- Horizontal overflow: none at 320, 390, 430 and 1440 px tests.
+- Mobile goal geometry checked at 320, 390 and 430 px.
+- At 390 px: goal width 61.0%, goal height 25.5%, goal top 18.5%.
+- Player boots measured below the ball centre in the settled ready position.
+- Mobile Tour and desktop Tour both open the existing guided tour.
+- Quiz and Penalties tabs visible on mobile and desktop.
+- Albion penalty aim/run-up/shot interaction completed on mobile and desktop.
+
+NOT CHANGED
+- Shoot-out scoring probabilities.
+- Player and goalkeeper data.
+- Fixture data.
+- Quiz content.
+- Audio files and supporter content.

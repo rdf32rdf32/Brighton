@@ -1,0 +1,23 @@
+ALBION FAN HUB r64
+
+Focused repair release based on r63.
+
+Penalty shoot-out
+- Restores the previous mobile camera depth.
+- Mobile goal width is now approximately 60–62% of the stage, rather than 68–72%.
+- Mobile goal height is approximately 25.5% of the stage and positioned farther away.
+- Removes the CSS !important rules that had locked the taker at 49% / 50% and prevented JavaScript from positioning him behind the ball.
+- Anchors the player by his boots, with a small left/right offset according to kicking foot.
+- Keeps the ball visible at ground level before the run-up.
+- Refines posts, crossbar, recessed netting, ball panels and ball shadow.
+- Preserves scoring probabilities, shoot-out sequence, React now timing and save controls.
+
+Navigation
+- Restores the dedicated “Tour the site” control at the top right on desktop.
+- Restores Tour inside the mobile menu and places it near the top.
+- Adds separate, prominent Quiz and Penalty shoot-out tabs.
+
+Updating
+- No forced refresh banner.
+- No service-worker registration.
+- Versioned r64 CSS and JavaScript references provide normal browser updating.
