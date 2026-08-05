@@ -1,0 +1,332 @@
+/* Albion Fan Hub r66: longer mobile run-ups, contact polish and cleaner in-play controls. */
+:root{--r66-safe-bottom:max(10px,env(safe-area-inset-bottom))}
+
+/* Prominent, separate game choices. These are normal anchors, not hidden panels. */
+.game-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.hero-game-tabs{margin-top:1.25rem;max-width:620px}
+.section-game-tabs{margin:0 auto 18px;width:min(100%,760px)}
+.game-tab{display:grid;gap:2px;min-height:62px;padding:11px 15px;border:1px solid rgba(255,255,255,.38);border-radius:13px;background:rgba(255,255,255,.12);color:#fff;text-decoration:none;box-shadow:0 7px 18px rgba(0,27,57,.12);transition:transform .16s ease,background-color .16s ease,box-shadow .16s ease}
+.game-tab span{font-weight:950;font-size:1rem}.game-tab small{font-size:.72rem;opacity:.82}
+.game-tab:hover,.game-tab:focus-visible{transform:translateY(-1px);background:#fff;color:#063b74;box-shadow:0 10px 22px rgba(0,27,57,.18)}
+.game-tab[aria-current="page"]{background:#ffcf33!important;color:#082d53!important;border-color:#ffcf33!important}
+.section-game-tabs .game-tab{background:#fff;color:#063b74;border-color:rgba(0,87,184,.18)}
+.section-game-tabs .penalties-game-tab{background:#052f58;color:#fff}
+.hero-secondary-action{margin-top:10px!important}.hero-secondary-action a{min-width:0!important;background:transparent!important;color:#fff!important;border-color:rgba(255,255,255,.58)!important}
+
+/* Restore the dedicated top-right tour control while retaining the menu trigger. */
+.hero-utility-row{display:flex;justify-content:flex-end;max-width:1240px;margin:8px auto 0;padding:0 28px}
+.top-tour-button{min-height:40px;padding:8px 14px;border:1px solid rgba(255,255,255,.68);border-radius:999px;background:rgba(3,39,74,.42);color:#fff;font-weight:900;box-shadow:0 6px 18px rgba(0,24,52,.14)}
+.top-tour-button:hover,.top-tour-button:focus-visible{background:#fff;color:#063b74}
+
+/* Desktop remains bounded and proportionate. */
+.shootout-r66{--pen-stage-max:1160px;overflow:visible}
+.shootout-r66 .shootout-shell{display:block!important;width:min(100%,var(--pen-stage-max));max-width:var(--pen-stage-max);margin-inline:auto;padding:10px!important;border-radius:18px}
+.shootout-r66 .penalty-stage{position:relative!important;width:100%!important;max-width:var(--pen-stage-max)!important;height:auto!important;min-height:0!important;aspect-ratio:16/8.8!important;margin-inline:auto!important;overflow:hidden!important;touch-action:pan-y;border-radius:16px!important;isolation:isolate}
+.shootout-r66 .goal-mouth{left:27%!important;top:11.5%!important;width:46%!important;height:35.5%!important}
+.shootout-r66 .keeper-figure{left:50%!important;width:8.9%!important;min-width:58px!important;max-width:104px!important;transform-origin:50% 92.4%!important}
+/* Do not make top important: JavaScript owns the ready, placement and run-up positions. */
+.shootout-r66 .taker-figure{left:50%;top:49%;width:12.3%!important;min-width:88px!important;max-width:142px!important}
+.shootout-r66 .referee-figure{left:86%!important;top:42.5%!important;width:5.1%!important;min-width:40px!important;max-width:60px!important}
+.shootout-r66 .penalty-ball{width:3.15%!important;min-width:22px!important;max-width:38px!important}
+.shootout-r66 .penalty-ball-shadow{width:3.15%!important}
+.shootout-r66 .shootout-scoreboard{position:relative!important;top:auto!important;z-index:30;grid-template-columns:minmax(0,1fr) 74px minmax(0,1fr)!important;margin-bottom:7px;padding:9px 12px!important}
+.shootout-r66 .shootout-match-strip{display:grid!important;grid-template-columns:auto minmax(0,1fr) auto!important;gap:6px 12px!important;align-items:center;padding:8px 10px!important}
+.shootout-r66 .shootout-match-strip #penaltyTakerName{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.shootout-r66 .shootout-status-v10{min-height:58px!important;margin-top:8px!important;padding:9px 12px!important}
+.shootout-r66 .shootout-actions-v10{justify-content:center}
+.shootout-r66 .shootout-option-row[hidden]{display:none!important}
+body.shootout-playing .shootout-r66 .shot-style-controls[hidden],body .shootout-r66 .shot-style-controls[hidden]{display:none!important}
+.shootout-r66 .shot-style-controls{justify-content:center!important}.shootout-r66 .panenka-button{max-width:250px}.shootout-r66 .taker-number:empty{display:none}
+
+/* Refined goal: slimmer frame, quieter side netting and a clearer recessed back net. */
+.shootout-r66 .goal-depth{inset:-4% -6% -8%!important;filter:drop-shadow(0 4px 4px rgba(0,0,0,.13))!important}
+.shootout-r66 .goal-post{width:1.48%!important;min-width:5px!important;background:linear-gradient(90deg,#aeb9c0 0,#eef3f6 18%,#fff 42%,#fff 68%,#c4ced4 84%,#98a7af 100%)!important;box-shadow:1px 4px 4px rgba(0,0,0,.24),inset -1px 0 1px rgba(29,49,60,.18)!important}
+.shootout-r66 .goal-crossbar{height:3.9%!important;min-height:6px!important;background:linear-gradient(#fff 0 43%,#f3f6f8 58%,#c5cfd5 100%)!important;box-shadow:0 4px 4px rgba(0,0,0,.22),inset 0 -1px 1px rgba(29,49,60,.18)!important}
+.shootout-r66 .goal-net-svg .goal-back-net{opacity:.48!important}
+.shootout-r66 .goal-net-svg .goal-roof-net{opacity:.5!important}
+.shootout-r66 .goal-net-svg .goal-side-net{opacity:.38!important}
+.shootout-r66 .goal-net-svg .goal-perspective-lines{opacity:.48!important;stroke-width:1.8!important}
+.shootout-r66 .goal-net-svg .rear-frame{opacity:.36!important;stroke-width:4!important}
+.shootout-r66 .goal-net{opacity:.035!important}
+
+/* Ball polish: crisp panels, restrained size and a tighter grounded shadow. */
+.shootout-r66 .penalty-ball{filter:drop-shadow(0 2px 1px rgba(0,0,0,.46)) drop-shadow(0 0 1px rgba(255,255,255,.72))!important;transform-origin:50% 50%!important}
+.shootout-r66 .penalty-ball circle{stroke:#64727c!important;stroke-width:1.35!important}
+.shootout-r66 .penalty-ball .ball-dark-panel{fill:#101820!important;stroke:#26333c!important;stroke-width:.5!important}
+.shootout-r66 .penalty-ball .ball-seam{stroke:#687782!important;stroke-width:1.12!important;opacity:.92!important}
+.shootout-r66 .penalty-ball .ball-highlight{fill:rgba(255,255,255,.94)!important;opacity:.86!important}
+.shootout-r66 .penalty-ball-shadow{height:.72%!important;background:radial-gradient(ellipse at center,rgba(0,18,7,.43) 0 36%,rgba(0,18,7,.16) 67%,transparent 100%)!important;filter:blur(.55px)!important}
+
+/* Ready action remains inside the scene. */
+.shootout-r66 .penalty-stage .palace-ready-panel{position:absolute!important;left:50%!important;top:55%!important;right:auto!important;bottom:auto!important;width:min(300px,72%)!important;margin:0!important;transform:translate(-50%,-50%)!important;z-index:50!important;display:grid!important;gap:7px!important;padding:12px!important;border:2px solid rgba(255,255,255,.9)!important;border-radius:14px!important;background:rgba(5,33,61,.94)!important;color:#fff!important;text-align:center!important;box-shadow:0 14px 36px rgba(0,0,0,.38)!important}
+.shootout-r66 .penalty-stage .palace-ready-panel[hidden]{display:none!important}.shootout-r66 .penalty-stage .palace-ready-panel p{margin:0!important;color:#fff!important;font-size:.82rem!important}.shootout-r66 .penalty-stage .palace-ready-panel button{width:100%!important;min-height:50px!important}
+
+/* Only three simple save directions are shown; swipe height still chooses high/mid/low. */
+.shootout-r66 .save-zone-guide{position:absolute!important;left:var(--goal-left,27%)!important;top:var(--goal-top,11.5%)!important;width:var(--goal-width,46%)!important;height:var(--goal-height,35.5%)!important;right:auto!important;bottom:auto!important;z-index:24!important;display:none;grid-template-columns:repeat(3,1fr)!important;grid-template-rows:1fr!important;gap:4px!important;pointer-events:none!important}
+.shootout-r66 .penalty-stage.is-save-window .save-zone-guide{display:grid!important}.shootout-r66 .save-zone-guide span{display:grid!important;place-items:end center!important;padding:6px 3px!important;border:1px dashed rgba(255,255,255,.38)!important;border-radius:8px!important;background:linear-gradient(180deg,rgba(0,51,94,.02),rgba(0,34,64,.28))!important;color:#fff!important;font-size:.64rem!important;font-weight:850!important;text-align:center!important;text-shadow:0 1px 3px rgba(0,0,0,.8)!important}
+.shootout-r66 .reaction-cue{z-index:70!important;font-size:clamp(1.25rem,3vw,2.25rem)!important;letter-spacing:.07em!important}.shootout-r66 .keeper-choice-marker{z-index:60!important}
+
+body.shootout-playing .matchday-bar,body.shootout-playing .mobile-jump-nav,body.shootout-playing .floating-tools,body.shootout-playing .cookie-notice{display:none!important}
+body.shootout-playing{overscroll-behavior-y:contain}body.penalty-gesture-active{overscroll-behavior:none}body.penalty-gesture-active .penalty-stage{touch-action:none!important}
+
+@media(max-width:760px){
+  .hero{padding-bottom:36px}.hero-grid{margin-top:18px}.hero-game-tabs{margin-top:1rem}.hero-secondary-action{display:none!important}
+  .hero-utility-row{display:none!important}.hero-site-search .global-search-help,.hero-site-search .popular-searches{display:none!important}
+  .game-tabs{gap:7px}.game-tab{min-height:56px;padding:9px 10px;border-radius:11px}.game-tab span{font-size:.88rem}.game-tab small{font-size:.64rem}
+  .section-game-tabs{position:sticky;top:4px;z-index:42;margin-bottom:10px;padding:5px;border-radius:13px;background:rgba(238,247,255,.94);backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(5,55,107,.12)}
+  .section-game-tabs .game-tab{min-height:48px;padding:7px 9px}
+
+  .shootout-r66{--mobile-goal-left:19%;--mobile-goal-width:62%;--mobile-goal-top:18.5%;--mobile-goal-height:25.5%;margin-inline:-8px!important;padding:14px 6px!important;border-radius:16px!important}
+  .shootout-r66 .shootout-intro{margin-bottom:8px!important}.shootout-r66 .shootout-intro .shootout-lead{font-size:.8rem!important}.shootout-r66 .shootout-top-controls{margin-top:8px!important}
+  .shootout-r66 .shootout-shell{padding:5px!important;border-radius:12px!important}
+  .shootout-r66 .shootout-scoreboard{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr)!important;padding:6px 7px!important;gap:4px!important;margin-bottom:4px!important}
+  .shootout-r66 .shootout-team>span{font-size:.58rem!important}.shootout-r66 .shootout-team>b{width:31px!important;height:31px!important;font-size:1rem!important}.shootout-r66 .penalty-markers{gap:3px!important}.shootout-r66 .penalty-markers i{width:8px!important;height:8px!important}
+  .shootout-r66 .shootout-match-strip{grid-template-columns:1fr auto!important;padding:5px 7px!important;gap:2px 7px!important}.shootout-r66 .shootout-match-strip #penaltyTakerName{grid-column:1/-1!important;grid-row:2!important;font-size:.78rem!important}.shootout-r66 .shootout-match-strip #shootoutSituation{grid-column:2!important;grid-row:1!important;font-size:.67rem!important}.shootout-r66 .penalty-approach{display:none!important}
+
+  /* Restored r62 camera: taller pitch, smaller/farther goal and coherent depth. */
+  .shootout-r66 .penalty-stage{height:clamp(420px,116vw,510px)!important;min-height:420px!important;max-height:510px!important;aspect-ratio:auto!important;border-radius:11px!important;perspective:900px!important}
+  .shootout-r66 .goal-mouth{left:var(--mobile-goal-left)!important;top:var(--mobile-goal-top)!important;width:var(--mobile-goal-width)!important;height:var(--mobile-goal-height)!important;perspective:760px!important}
+  .shootout-r66 .keeper-figure{width:12.2%!important;min-width:46px!important;max-width:67px!important}
+  .shootout-r66 .taker-figure{width:13.2%!important;min-width:50px!important;max-width:68px!important;transform-origin:50% 92%!important}
+  .shootout-r66 .referee-figure{left:91%!important;top:39.5%!important;width:7.2%!important;min-width:31px!important;max-width:42px!important}
+  .shootout-r66 .penalty-ball{width:clamp(18px,4.9vw,21px)!important;height:clamp(18px,4.9vw,21px)!important;min-width:18px!important;max-width:21px!important}
+  .shootout-r66 .penalty-ball-shadow{width:clamp(20px,5.6vw,24px)!important;height:6px!important}
+  .shootout-r66 .goal-depth{inset:-3% -5% -7%!important}
+  .shootout-r66 .goal-post{width:1.42%!important;min-width:4px!important}.shootout-r66 .goal-crossbar{height:3.8%!important;min-height:5px!important}
+  .shootout-r66 .goal-net-svg .goal-side-net{opacity:.3!important}.shootout-r66 .goal-net-svg .goal-back-net{opacity:.5!important}.shootout-r66 .goal-net-svg .goal-roof-net{opacity:.44!important}
+  .shootout-r66 .goal-net-svg .goal-perspective-lines{opacity:.5!important;stroke-width:1.65!important}
+  .shootout-r66 .goal-side-net{width:6%!important;opacity:.22!important}
+  .shootout-r66 .keeper-bottle{left:12.8%!important;top:41.2%!important;width:9px!important;height:24px!important;opacity:.78!important;transform:rotate(-7deg) scale(.72)!important}
+  .shootout-r66 .penalty-stage.bottle-reading .keeper-bottle{transform:rotate(-7deg) scale(.72)!important}
+  .shootout-r66 .pitch-stripes{opacity:.25!important;background:repeating-linear-gradient(90deg,rgba(255,255,255,.055) 0 9%,rgba(0,64,30,.075) 9% 18%),linear-gradient(180deg,rgba(255,255,255,.025) 0,rgba(0,50,22,.075) 48%,rgba(0,30,12,.16) 100%)!important;clip-path:polygon(41% 0,59% 0,100% 100%,0 100%)!important;transform-origin:50% 0!important}
+  .shootout-r66 .pitch-lines{opacity:.98!important}.shootout-r66 .pitch-markings-svg{filter:drop-shadow(0 1px 0 rgba(0,55,22,.22))!important}.shootout-r66 .pitch-line{stroke:rgba(248,255,249,.92)!important;stroke-width:3.7!important}.shootout-r66 .pitch-spot-mark{fill:rgba(248,255,249,.96)!important;stroke:rgba(0,75,32,.34)!important;stroke-width:2!important}
+  .shootout-r66 .spot-wear{width:21px!important;height:10px!important;background:radial-gradient(ellipse at center,rgba(154,132,79,.48),rgba(79,105,54,.22) 52%,transparent 74%)!important;filter:blur(.25px)!important}
+
+  .shootout-r66 .penalty-stage .palace-ready-panel{top:23.5%!important;width:min(55%,205px)!important;padding:7px 9px!important;transform:translateX(-50%)!important}.shootout-r66 .penalty-stage .palace-ready-panel p{display:none!important}.shootout-r66 .penalty-stage .palace-ready-panel button{min-height:48px!important;padding:8px 10px!important;font-size:.88rem!important}
+  .shootout-r66 .shootout-status-v10{min-height:0!important;margin-top:5px!important;padding:7px 8px!important;display:block!important}.shootout-r66 .shootout-status-v10 b,.shootout-r66 .shootout-status-v10 span{display:block!important}.shootout-r66 .shootout-status-v10 b{font-size:.83rem!important}.shootout-r66 .shootout-status-v10 span{font-size:.7rem!important}
+  .shootout-r66 .shootout-actions-v10{margin-top:7px!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:6px!important}.shootout-r66 .shootout-actions-v10 button{min-height:42px!important;padding:7px!important;font-size:.72rem!important}.shootout-r66 .shootout-records-v10{font-size:.67rem!important;text-align:center!important}.shootout-r66 .shootout-option-row{margin-top:7px!important}.shootout-r66 #keyboardHint{display:none!important}
+  .shootout-r66 .save-zone-guide{left:var(--goal-left,var(--mobile-goal-left))!important;top:var(--goal-top,var(--mobile-goal-top))!important;width:var(--goal-width,var(--mobile-goal-width))!important;height:var(--goal-height,var(--mobile-goal-height))!important}.shootout-r66 .save-zone-guide span{font-size:.57rem!important;padding:4px 2px!important}.shootout-r66 .stage-instruction{display:block!important;left:50%!important;bottom:2.3%!important;max-width:92%!important;font-size:.68rem!important;white-space:nowrap!important}
+  .mobile-jump-nav{padding-bottom:var(--r66-safe-bottom)}
+}
+
+@media(max-width:430px){
+  .shootout-r66{--mobile-goal-left:19.5%;--mobile-goal-width:61%}
+  .shootout-r66 .penalty-stage{height:clamp(430px,120vw,495px)!important;min-height:430px!important}
+  .shootout-r66 .taker-figure{width:13.2%!important;min-width:50px!important}.shootout-r66 .keeper-figure{width:12.2%!important;min-width:46px!important}.shootout-r66 .shootout-intro .shootout-lead{display:none!important}
+}
+@media(max-width:370px){.shootout-r66{--mobile-goal-left:20%;--mobile-goal-width:60%}.shootout-r66 .penalty-stage{min-height:410px!important;height:116vw!important}.shootout-r66 .taker-figure{width:13.6%!important;min-width:49px!important}}
+
+@media(orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  .shootout-r66{--mobile-goal-left:25%;--mobile-goal-width:50%;--mobile-goal-top:13%;--mobile-goal-height:34%}
+  .shootout-r66 .penalty-stage{height:calc(100dvh - 116px)!important;min-height:300px!important;max-height:430px!important;width:min(100%,900px)!important;aspect-ratio:auto!important}
+  .shootout-r66 .goal-mouth{left:var(--mobile-goal-left)!important;top:var(--mobile-goal-top)!important;width:var(--mobile-goal-width)!important;height:var(--mobile-goal-height)!important}
+  .shootout-r66 .keeper-figure{width:11.1%!important;min-width:45px!important;max-width:65px!important}.shootout-r66 .taker-figure{width:10.4%!important;min-width:47px!important;max-width:68px!important}.shootout-r66 .referee-figure{left:86%!important;width:5.5%!important;min-width:27px!important}.shootout-r66 .shootout-status-v10,.shootout-r66 .shootout-records-v10{display:none!important}
+}
+
+@media(prefers-reduced-motion:reduce){.shootout-r66 *{scroll-behavior:auto!important}.game-tab{transition:none!important}}
+
+
+/* r66 mobile run-up: the boots begin beyond the rendered 18-yard line. */
+@media(max-width:760px){
+  .shootout-r66 .penalty-stage[data-taker-ready="outside-box"] .taker-figure{will-change:top,left,transform}
+  .shootout-r66 .penalty-stage[data-runup] .stage-instruction{opacity:0!important;visibility:hidden!important;transform:translate(-50%,8px)!important}
+  .shootout-r66 .penalty-stage[data-runup] .taker-figure{filter:drop-shadow(0 6px 3px rgba(0,0,0,.32))!important}
+  body.shootout-playing.shootout-in-view .section-game-tabs{visibility:hidden!important;opacity:0!important;pointer-events:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;box-shadow:none!important}
+  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-top-controls{display:none!important}
+  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-status-v10 span{display:none!important}
+  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-status-v10{min-height:34px!important;padding:6px 8px!important}
+  .shootout-r66 .penalty-ball-shadow{background:radial-gradient(ellipse at center,rgba(0,18,7,.34) 0 34%,rgba(0,18,7,.11) 66%,transparent 100%)!important;filter:blur(.45px)!important}
+  .shootout-r66 .goal-post{width:1.28%!important;min-width:4px!important}
+  .shootout-r66 .goal-crossbar{height:3.35%!important;min-height:5px!important}
+  .shootout-r66 .goal-depth{inset:-2.5% -4.5% -6.5%!important}
+  .shootout-r66 .goal-net-svg .goal-side-net{opacity:.24!important}
+  .shootout-r66 .goal-net-svg .goal-roof-net{opacity:.39!important}
+  .shootout-r66 .goal-net-svg .goal-back-net{opacity:.46!important}
+  .shootout-r66 .goal-net-svg .goal-perspective-lines{opacity:.43!important;stroke-width:1.45!important}
+  .shootout-r66 .goal-net-svg .rear-frame{opacity:.3!important;stroke-width:3.5!important}
+  .shootout-r66 .keeper-bottle{left:12.2%!important;top:41.5%!important}
+}
+@media(max-width:430px){
+  .shootout-r66 .penalty-stage{height:clamp(438px,122vw,500px)!important;min-height:438px!important}
+}
+@media(max-width:370px){
+  .shootout-r66 .penalty-stage{min-height:418px!important;height:119vw!important}
+}
+@media(orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  .shootout-r66 .penalty-stage[data-runup] .stage-instruction{display:none!important}
+  .shootout-r66 .taker-figure{transform-origin:50% 94.8%!important}
+}
+
+/* The worn penalty spot must not resemble a second football after contact. */
+@media(max-width:760px){
+  .shootout-r66 .spot-wear{
+    width:22px!important;height:9px!important;border:0!important;box-shadow:none!important;opacity:.5!important;
+    background:radial-gradient(ellipse at center,rgba(64,86,46,.5) 0 30%,rgba(105,107,61,.28) 48%,transparent 74%)!important;
+    filter:blur(.45px)!important
+  }
+}
+
+@media(orientation:landscape) and (max-height:560px) and (pointer:coarse){
+  body.shootout-playing.shootout-in-view .section-game-tabs,
+  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-top-controls,
+  body.shootout-playing.shootout-in-view .hero-utility-row{display:none!important}
+}
+
+
+/* Albion Fan Hub r66: authoritative hand, glove, goal and top-left Tour finish. */
+.hero .topbar{
+  justify-content:flex-start!important;
+  gap:12px!important;
+}
+.hero .topbar .top-tour-button{
+  order:-2;
+  flex:0 0 auto;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:42px;
+  padding:9px 14px;
+  border:2px solid #fff2a8!important;
+  border-radius:12px!important;
+  background:#ffcf33!important;
+  color:#082d53!important;
+  font-weight:950!important;
+  box-shadow:0 7px 18px rgba(0,22,48,.24)!important;
+  backdrop-filter:none!important;
+}
+.hero .topbar .top-tour-button span{font-size:.62rem;line-height:1}
+.hero .topbar .top-tour-button:hover,
+.hero .topbar .top-tour-button:focus-visible{
+  background:#ffe16f!important;
+  color:#061f3c!important;
+  transform:translateY(-1px);
+  filter:none!important;
+  outline:3px solid rgba(255,255,255,.72);
+  outline-offset:2px;
+}
+.hero .topbar .brand{order:-1;margin-right:auto}
+.hero .topbar .topbar-actions{order:2}
+.hero .topbar .nav-links{order:1}
+.hero-utility-row{display:none!important}
+.nav-tour-link{display:none!important}
+
+/* Only the posts, crossbar and subtle recessed net define the goal. */
+.shootout-r66 .goal-mouth,
+.shootout-r66 .goal-depth{
+  border:0!important;
+  outline:0!important;
+  background-color:transparent!important;
+}
+.shootout-r66 .goal-mouth::before,
+.shootout-r66 .goal-mouth::after,
+.shootout-r66 .goal-depth::before,
+.shootout-r66 .goal-depth::after{display:none!important;content:none!important}
+.shootout-r66 .goal-depth{box-shadow:none!important}
+.shootout-r66 .goal-net-svg{overflow:visible}
+.shootout-r66 .goal-net-svg .rear-frame{stroke:#dce6ec!important;opacity:.25!important}
+.shootout-r66 .goal-net-svg .goal-side-net{opacity:.25!important}
+.shootout-r66 .goal-net-svg .goal-roof-net{opacity:.38!important}
+.shootout-r66 .goal-net-svg .goal-back-net{opacity:.44!important}
+
+/* Articulated taker hands remain attached to the forearms in every pose. */
+.shootout-r66 .taker-hand{
+  transform-box:view-box;
+  transform-origin:center;
+  pointer-events:none;
+  filter:drop-shadow(0 .7px .35px rgba(0,0,0,.2));
+}
+.shootout-r66 .taker-hand .hand-palm{stroke:rgba(76,43,28,.42);stroke-width:.8;paint-order:stroke fill}
+.shootout-r66 .taker-hand .hand-fingers,
+.shootout-r66 .taker-hand .hand-thumb{
+  fill:none;
+  stroke:rgba(73,40,25,.7);
+  stroke-width:1.05;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.shootout-r66 .taker-hand-left{transform-origin:38px 145px}
+.shootout-r66 .taker-hand-right{transform-origin:132px 145px}
+.shootout-r66 .penalty-stage.placing-ball .taker-hand{filter:brightness(1.04) drop-shadow(0 1px .5px rgba(0,0,0,.28))}
+.shootout-r66 .penalty-stage[data-runup] .taker-hand-left{animation:r66-run-hand-left .46s ease-in-out infinite alternate}
+.shootout-r66 .penalty-stage[data-runup] .taker-hand-right{animation:r66-run-hand-right .46s ease-in-out infinite alternate}
+@keyframes r66-run-hand-left{from{rotate:-3deg}to{rotate:4deg}}
+@keyframes r66-run-hand-right{from{rotate:3deg}to{rotate:-4deg}}
+
+/* Goalkeeper gloves: padded palms, clear thumbs/fingers and uninterrupted cuffs. */
+.shootout-r66 .keeper-wrist-bridge{
+  fill:#2b9c68!important;
+  stroke:#155d40!important;
+  stroke-width:1.1!important;
+  stroke-linejoin:round!important;
+}
+.shootout-r66 .opposition-keeper .keeper-wrist-bridge{fill:#a9273c!important;stroke:#671727!important}
+.shootout-r66 .keeper-glove{
+  transform-box:view-box!important;
+  filter:drop-shadow(0 1.1px .55px rgba(0,0,0,.32));
+}
+.shootout-r66 .keeper-glove .glove-palm{
+  fill:#f8de36!important;
+  stroke:#725c00!important;
+  stroke-width:1.25!important;
+  paint-order:stroke fill;
+}
+.shootout-r66 .keeper-glove .glove-cuff{
+  fill:#edc920!important;
+  stroke:#31435a!important;
+  stroke-width:1.2!important;
+}
+.shootout-r66 .keeper-glove .glove-pad{fill:#fff7a6;stroke:#887000;stroke-width:.75}
+.shootout-r66 .keeper-glove .glove-knuckle,
+.shootout-r66 .keeper-glove .glove-finger,
+.shootout-r66 .keeper-glove .glove-thumb,
+.shootout-r66 .keeper-glove .glove-detail{
+  fill:none!important;
+  stroke:#665300!important;
+  stroke-width:1.25!important;
+  stroke-linecap:round!important;
+  stroke-linejoin:round!important;
+}
+.shootout-r66 .opposition-keeper .keeper-glove .glove-palm{fill:#f5f8fc!important;stroke:#42566a!important}
+.shootout-r66 .opposition-keeper .keeper-glove .glove-cuff{fill:#dce6ef!important;stroke:#42566a!important}
+.shootout-r66 .opposition-keeper .keeper-glove .glove-pad{fill:#fff!important;stroke:#718191!important}
+.shootout-r66 .opposition-keeper .keeper-glove .glove-knuckle,
+.shootout-r66 .opposition-keeper .keeper-glove .glove-finger,
+.shootout-r66 .opposition-keeper .keeper-glove .glove-thumb,
+.shootout-r66 .opposition-keeper .keeper-glove .glove-detail{stroke:#536474!important}
+.shootout-r66 .keeper-back-number{display:none!important;opacity:0!important}
+
+/* More balanced ready stance and a clear two-glove central block. */
+.shootout-r66 .penalty-stage.is-waiting .keeper-lower-arm-left{transform:rotate(7deg)!important}
+.shootout-r66 .penalty-stage.is-waiting .keeper-lower-arm-right{transform:rotate(-7deg)!important}
+.shootout-r66 .penalty-stage.save-contact .keeper-glove,
+.shootout-r66 .penalty-stage.contact-armed .keeper-glove{filter:brightness(1.08) drop-shadow(0 0 2px rgba(255,255,255,.78)) drop-shadow(0 1px .6px rgba(0,0,0,.34))}
+
+/* Keep controls readable without covering the action. */
+.shootout-r66 .penalty-stage[data-runup] .aim-reticle,
+.shootout-r66 .penalty-stage[data-runup] .aim-risk-label,
+.shootout-r66 .penalty-stage[data-runup] .aim-corridor{opacity:0!important;visibility:hidden!important}
+.shootout-r66 .penalty-stage.is-locked .stage-instruction{opacity:0!important;visibility:hidden!important}
+.shootout-r66 .penalty-stage .palace-ready-panel{max-width:310px}
+
+@media(max-width:850px){
+  .hero .topbar{gap:8px!important}
+  .hero .topbar .top-tour-button{min-height:40px;padding:8px 10px;border-radius:10px!important;font-size:.78rem}
+  .hero .topbar .brand{gap:7px}
+  .hero .topbar .brand img{width:41px;height:41px}
+  .hero .topbar .nav-links{order:3}
+}
+@media(max-width:430px){
+  .hero .topbar .top-tour-button{padding:8px 9px;font-size:.75rem}
+  .hero .topbar .top-tour-button span{display:none}
+  .hero .topbar .brand span{font-size:.78rem;max-width:82px;line-height:1.05}
+  .hero .topbar .brand img{width:37px;height:37px}
+  .hero .topbar .topbar-actions{gap:5px}
+  .hero .topbar .mobile-search-toggle,.hero .topbar .menu-toggle{min-width:39px;min-height:39px;padding:7px}
+  .shootout-r66 .taker-hand .hand-fingers,.shootout-r66 .taker-hand .hand-thumb{stroke-width:1.3}
+  .shootout-r66 .keeper-glove .glove-knuckle,.shootout-r66 .keeper-glove .glove-finger,.shootout-r66 .keeper-glove .glove-thumb,.shootout-r66 .keeper-glove .glove-detail{stroke-width:1.45!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .shootout-r66 .penalty-stage[data-runup] .taker-hand{animation:none!important}
+  .hero .topbar .top-tour-button{transition:none!important}
+}

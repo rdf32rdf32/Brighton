@@ -1,16 +1,6 @@
-ALBION FAN HUB r65 — UPLOAD INSTRUCTIONS
+UPLOAD THE CONTENTS OF THIS FOLDER TO THE ROOT OF YOUR GITHUB PAGES REPOSITORY.
 
-1. Open the root of the Brighton GitHub repository.
-2. Upload every file from this ZIP and replace files with the same names.
-3. Delete the old r64 release files after the r65 files are present:
-   albion-data-r64.js
-   app-r64.js
-   polish-r64.css
-   r64-enhancements.js
-   shootout-r64.css
-   shootout-r64.js
-   site-r64.css
-   BUILD-REPORT-r64.txt
-   RELEASE-r64.txt
-4. Commit the changes.
-5. Open the live site in a normal tab. No special refresh prompt is used.
+1. Remove the previous site files from the repository root.
+2. Upload every file from this r66 folder, including .nojekyll.
+3. Commit the changes.
+4. GitHub Pages should serve index.html normally. No forced refresh banner is used.

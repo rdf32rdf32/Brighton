@@ -1,0 +1,14 @@
+Albion Fan Hub r66 build report
+
+Source: Brighton Fan Hub r65
+Build date: 5 August 2026
+
+Implementation focus
+1. Top-left yellow Tour control.
+2. Penalty taker hand anatomy and movement.
+3. Goalkeeper glove anatomy, connection and contact visibility.
+4. Removal of the unwanted outer goal frame.
+5. Desktop/mobile layout and interaction regression checks.
+6. Normal cache/update behaviour.
+
+See RELEASE-r66.txt for visitor-facing changes.

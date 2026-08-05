@@ -1,0 +1,14 @@
+ALBION FAN HUB r66
+Release date: 5 August 2026
+
+Main changes
+- Yellow guided Tour control moved to the top-left of the header on desktop and mobile.
+- Removed the coloured/outer frame around the penalty goal; only white posts, crossbar and restrained net depth remain.
+- Rebuilt penalty taker hands with palms, thumbs and visible fingers.
+- Improved goalkeeper gloves with padded palms, cuffs, knuckle panels, thumbs and finger articulation.
+- Kept goalkeeper wrists connected throughout ready, dive and contact poses.
+- Removed the goalkeeper back number.
+- Preserved r65 longer mobile run-ups, deliberate ball placement, bottle routine, central saves and reset-to-centre aiming.
+- Hid aiming overlays and secondary instructions during the active run-up.
+- Retained normal website updating with no forced refresh prompt and no persistent service worker.
+- Versioned all release-specific code and styles as r66.

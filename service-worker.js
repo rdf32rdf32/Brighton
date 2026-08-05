@@ -1,4 +1,4 @@
-// r65 retirement worker: remove Brighton/Albion offline behaviour, then unregister itself.
+// r66 retirement worker: remove Brighton/Albion offline behaviour, then unregister itself.
 const IS_BRIGHTON_CACHE = key => /brighton|albion|fan-hub/i.test(key);
 self.addEventListener("install", event => event.waitUntil(self.skipWaiting()));
 self.addEventListener("activate", event => {

@@ -1,0 +1,64 @@
+{
+  "duplicate_ids": [],
+  "broken_anchors": [],
+  "missing_local_assets": [],
+  "tour_button_first_topbar_child": true,
+  "tour_button_text": "\u25c6 Tour",
+  "taker_hands": 2,
+  "keeper_gloves": 2,
+  "glove_pads": 2,
+  "keeper_back_number_elements": 0,
+  "placed_driven_controls": 0,
+  "shootout_class_r66": true,
+  "forced_refresh_phrase": false,
+  "service_worker_registration_in_html": false,
+  "js_syntax": {
+    "app-r66.js": {
+      "ok": true,
+      "stderr": ""
+    },
+    "shootout-r66.js": {
+      "ok": true,
+      "stderr": ""
+    },
+    "r66-enhancements.js": {
+      "ok": true,
+      "stderr": ""
+    },
+    "albion-data-r66.js": {
+      "ok": true,
+      "stderr": ""
+    }
+  },
+  "css": {
+    "site-r66.css": {
+      "open_braces": 4836,
+      "close_braces": 4836,
+      "balanced": true
+    },
+    "polish-r66.css": {
+      "open_braces": 122,
+      "close_braces": 122,
+      "balanced": true
+    },
+    "shootout-r66.css": {
+      "open_braces": 246,
+      "close_braces": 246,
+      "balanced": true
+    }
+  },
+  "release_specific_files": [
+    "BUILD-AUDIT-r66.json",
+    "BUILD-REPORT-r66.txt",
+    "RELEASE-r66.txt",
+    "albion-data-r66.js",
+    "app-r66.js",
+    "polish-r66.css",
+    "r66-enhancements.js",
+    "shootout-r66.css",
+    "shootout-r66.js",
+    "site-r66.css"
+  ],
+  "file_count": 34,
+  "all_core_checks_pass": true
+}
