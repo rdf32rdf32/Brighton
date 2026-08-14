@@ -1,0 +1,42 @@
+ALBION FAN HUB r67 — BUILD AND AUDIT REPORT
+14 August 2026
+
+SOURCE
+Built directly from Brighton-Fan-Hub-r66-FULL.zip.
+
+PURPOSE
+A controlled refinement of the mobile penalty shoot-out. No broad redesign and no change to scoring probabilities.
+
+MOBILE PENALTY CAMERA
+1. Standard portrait goal width: 58% of the stage (previous r66/r65 camera: about 61–62% on common phones).
+2. Standard portrait goal height: 24.8%.
+3. Narrow phones (<=370 px): 57% goal width.
+4. Phone landscape: 48% goal width and 32.5% height.
+5. Goalkeeper portrait scale reduced slightly.
+6. Taker made fractionally larger in the foreground to increase near/far perspective.
+
+GOALKEEPER ON THE LINE
+1. Removed the historical mobile/desktop baseline nudge.
+2. Keeper boot anchor now uses:
+   top = measured goal-line Y - rendered keeper height x 0.924
+3. The visible white goal line is positioned on that same measured goal-mouth baseline.
+4. Every reset and pre-kick routine still calls the same line-positioning function.
+5. Lateral dives begin with a short planted/crouch phase before the keeper leaves the line.
+6. Dive recovery returns the keeper to the exact line anchor.
+
+FLOW POLISH
+- Normal-motion result hold increased slightly before the next penalty.
+- Existing bottle, crossbar, settle, save-window and central-save behaviour retained.
+- Albion/Palace scoring probabilities and save assistance unchanged.
+
+STRUCTURAL CHECKS
+PASS  JavaScript syntax for every JavaScript file.
+PASS  CSS parsing for every stylesheet.
+PASS  No duplicate HTML IDs.
+PASS  No broken internal anchors.
+PASS  No missing local HTML/CSS resource references.
+PASS  r67 cache-busting query applied to changed shootout CSS and JS.
+PASS  Existing squad, fixtures, quiz, audio and policy content retained.
+
+UPLOAD
+Upload every file in the ZIP to the Brighton repository root and replace matching files.

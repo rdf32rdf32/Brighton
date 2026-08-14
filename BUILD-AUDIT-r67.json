@@ -1,0 +1,25 @@
+{
+  "release": "r67",
+  "date": "2026-08-14",
+  "source": "Brighton-Fan-Hub-r66-FULL.zip",
+  "penalty_changes": {
+    "portrait_standard_goal_width_pct": 58.0,
+    "portrait_standard_goal_height_pct": 24.8,
+    "portrait_narrow_goal_width_pct": 57.0,
+    "landscape_goal_width_pct": 48.0,
+    "landscape_goal_height_pct": 32.5,
+    "keeper_baseline_nudge_px": 0,
+    "keeper_boot_ratio": 0.924,
+    "scoring_probabilities_changed": false
+  },
+  "checks": {
+    "javascript_syntax": "PASS",
+    "css_parse": "PASS",
+    "duplicate_html_ids": 0,
+    "broken_internal_anchors": 0,
+    "missing_local_html_css_assets": 0,
+    "release_meta": "professional-r67-20260814",
+    "shootout_css_cache_bust": "20260814-r67",
+    "shootout_js_cache_bust": "20260814-r67"
+  }
+}

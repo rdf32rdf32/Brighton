@@ -76,7 +76,7 @@ body.shootout-playing{overscroll-behavior-y:contain}body.penalty-gesture-active{
   .section-game-tabs{position:sticky;top:4px;z-index:42;margin-bottom:10px;padding:5px;border-radius:13px;background:rgba(238,247,255,.94);backdrop-filter:blur(8px);box-shadow:0 6px 18px rgba(5,55,107,.12)}
   .section-game-tabs .game-tab{min-height:48px;padding:7px 9px}
 
-  .shootout-r66{--mobile-goal-left:19%;--mobile-goal-width:62%;--mobile-goal-top:18.5%;--mobile-goal-height:25.5%;margin-inline:-8px!important;padding:14px 6px!important;border-radius:16px!important}
+  .shootout-r66{--mobile-goal-left:21%;--mobile-goal-width:58%;--mobile-goal-top:18.5%;--mobile-goal-height:24.8%;margin-inline:-8px!important;padding:14px 6px!important;border-radius:16px!important}
   .shootout-r66 .shootout-intro{margin-bottom:8px!important}.shootout-r66 .shootout-intro .shootout-lead{font-size:.8rem!important}.shootout-r66 .shootout-top-controls{margin-top:8px!important}
   .shootout-r66 .shootout-shell{padding:5px!important;border-radius:12px!important}
   .shootout-r66 .shootout-scoreboard{grid-template-columns:minmax(0,1fr) 48px minmax(0,1fr)!important;padding:6px 7px!important;gap:4px!important;margin-bottom:4px!important}
@@ -86,8 +86,8 @@ body.shootout-playing{overscroll-behavior-y:contain}body.penalty-gesture-active{
   /* Restored r62 camera: taller pitch, smaller/farther goal and coherent depth. */
   .shootout-r66 .penalty-stage{height:clamp(420px,116vw,510px)!important;min-height:420px!important;max-height:510px!important;aspect-ratio:auto!important;border-radius:11px!important;perspective:900px!important}
   .shootout-r66 .goal-mouth{left:var(--mobile-goal-left)!important;top:var(--mobile-goal-top)!important;width:var(--mobile-goal-width)!important;height:var(--mobile-goal-height)!important;perspective:760px!important}
-  .shootout-r66 .keeper-figure{width:12.2%!important;min-width:46px!important;max-width:67px!important}
-  .shootout-r66 .taker-figure{width:13.2%!important;min-width:50px!important;max-width:68px!important;transform-origin:50% 92%!important}
+  .shootout-r66 .keeper-figure{width:11.4%!important;min-width:43px!important;max-width:63px!important}
+  .shootout-r66 .taker-figure{width:13.6%!important;min-width:51px!important;max-width:70px!important;transform-origin:50% 92%!important}
   .shootout-r66 .referee-figure{left:91%!important;top:39.5%!important;width:7.2%!important;min-width:31px!important;max-width:42px!important}
   .shootout-r66 .penalty-ball{width:clamp(18px,4.9vw,21px)!important;height:clamp(18px,4.9vw,21px)!important;min-width:18px!important;max-width:21px!important}
   .shootout-r66 .penalty-ball-shadow{width:clamp(20px,5.6vw,24px)!important;height:6px!important}
@@ -110,14 +110,14 @@ body.shootout-playing{overscroll-behavior-y:contain}body.penalty-gesture-active{
 }
 
 @media(max-width:430px){
-  .shootout-r66{--mobile-goal-left:19.5%;--mobile-goal-width:61%}
+  .shootout-r66{--mobile-goal-left:21%;--mobile-goal-width:58%}
   .shootout-r66 .penalty-stage{height:clamp(430px,120vw,495px)!important;min-height:430px!important}
-  .shootout-r66 .taker-figure{width:13.2%!important;min-width:50px!important}.shootout-r66 .keeper-figure{width:12.2%!important;min-width:46px!important}.shootout-r66 .shootout-intro .shootout-lead{display:none!important}
+  .shootout-r66 .taker-figure{width:13.6%!important;min-width:51px!important}.shootout-r66 .keeper-figure{width:11.4%!important;min-width:43px!important}.shootout-r66 .shootout-intro .shootout-lead{display:none!important}
 }
-@media(max-width:370px){.shootout-r66{--mobile-goal-left:20%;--mobile-goal-width:60%}.shootout-r66 .penalty-stage{min-height:410px!important;height:116vw!important}.shootout-r66 .taker-figure{width:13.6%!important;min-width:49px!important}}
+@media(max-width:370px){.shootout-r66{--mobile-goal-left:21.5%;--mobile-goal-width:57%}.shootout-r66 .penalty-stage{min-height:410px!important;height:116vw!important}.shootout-r66 .taker-figure{width:13.6%!important;min-width:49px!important}}
 
 @media(orientation:landscape) and (max-height:560px) and (pointer:coarse){
-  .shootout-r66{--mobile-goal-left:25%;--mobile-goal-width:50%;--mobile-goal-top:13%;--mobile-goal-height:34%}
+  .shootout-r66{--mobile-goal-left:26%;--mobile-goal-width:48%;--mobile-goal-top:14%;--mobile-goal-height:32.5%}
   .shootout-r66 .penalty-stage{height:calc(100dvh - 116px)!important;min-height:300px!important;max-height:430px!important;width:min(100%,900px)!important;aspect-ratio:auto!important}
   .shootout-r66 .goal-mouth{left:var(--mobile-goal-left)!important;top:var(--mobile-goal-top)!important;width:var(--mobile-goal-width)!important;height:var(--mobile-goal-height)!important}
   .shootout-r66 .keeper-figure{width:11.1%!important;min-width:45px!important;max-width:65px!important}.shootout-r66 .taker-figure{width:10.4%!important;min-width:47px!important;max-width:68px!important}.shootout-r66 .referee-figure{left:86%!important;width:5.5%!important;min-width:27px!important}.shootout-r66 .shootout-status-v10,.shootout-r66 .shootout-records-v10{display:none!important}
@@ -329,4 +329,27 @@ body.shootout-playing{overscroll-behavior-y:contain}body.penalty-gesture-active{
 @media(prefers-reduced-motion:reduce){
   .shootout-r66 .penalty-stage[data-runup] .taker-hand{animation:none!important}
   .hero .topbar .top-tour-button{transition:none!important}
+}
+
+
+/* r67 mobile depth and goal-line finish.
+   The goal line now coincides with the measured bottom of the goal mouth,
+   which is also the goalkeeper's boot anchor in JavaScript. */
+.shootout-r66 .goal-line{
+  bottom:-1px!important;
+  left:-2%!important;
+  right:-2%!important;
+  height:3px!important;
+  opacity:1!important;
+  background:rgba(255,255,255,.98)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.22)!important;
+}
+@media(max-width:760px){
+  .shootout-r66 .goal-line{
+    height:3px!important;
+    box-shadow:0 1px 2px rgba(0,0,0,.18)!important;
+  }
+  .shootout-r66 .keeper-figure{
+    filter:drop-shadow(0 5px 3px rgba(0,0,0,.28));
+  }
 }

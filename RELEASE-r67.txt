@@ -1,0 +1,21 @@
+ALBION FAN HUB r67
+14 August 2026
+
+Built from: Brighton-Fan-Hub-r66-FULL.zip
+
+PENALTY SHOOT-OUT
+- Portrait mobile goal pulled back from 61–62% to 58% of stage width on standard phones.
+- Narrow phones use a 57% goal.
+- Mobile goal height reduced to 24.8% for a slightly deeper camera.
+- Mobile landscape goal reduced to 48% wide and 32.5% high.
+- Goalkeeper portrait scale reduced slightly.
+- Brighton taker made fractionally larger in the foreground to reinforce depth.
+- Goalkeeper baseline nudge removed: the calculated boot point is now anchored directly to the measured goal-mouth bottom.
+- Visible goal line moved to the same anchor so the keeper visually stands on it.
+- Lateral dives now include a short planted/crouch phase before push-off.
+- Result frames are held a little longer before the next kick.
+- Shoot-out scoring probabilities, save assistance, taker data and rules are unchanged.
+
+OTHER SITE CONTENT
+- No redesign or feature expansion.
+- Existing squad, fixtures, quiz, audio, supporter content and policy pages retained.

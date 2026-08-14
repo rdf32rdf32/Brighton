@@ -730,7 +730,7 @@
     syncGoalBox();
     const dimensions = keeperDimensions();
     const goalLineY = (goalBox.top + goalBox.height) * stage.clientHeight;
-    const baselineNudge = mobilePenaltyLayout() ? 4 : 7;
+    const baselineNudge = 0;
     const top = goalLineY - dimensions.height * keeperBootRatio - baselineNudge;
     keeper.style.left = "50%";
     keeper.style.top = `${top}px`;
@@ -1631,8 +1631,9 @@
     const diveSequence = state.sequence;
     const diveAnimation = animateElement(keeper, [
       { transform: "translateX(-50%) translate(0,0) rotate(0deg) scale(1)" },
-      { transform: `translateX(-50%) translate(${dx * .12}px,${dy * .08}px) rotate(${bodyRotation * .06}deg) scale(1)`, offset: .2 },
-      { transform: `translateX(-50%) translate(${dx * .44}px,${dy * .34}px) rotate(${bodyRotation * .3}deg) scale(1.01)`, offset: .46 },
+      { transform: `translateX(-50%) translate(${dx * .015}px,3px) rotate(0deg) scale(1,.975)`, offset: .12 },
+      { transform: `translateX(-50%) translate(${dx * .12}px,${dy * .08}px) rotate(${bodyRotation * .06}deg) scale(1)`, offset: .23 },
+      { transform: `translateX(-50%) translate(${dx * .44}px,${dy * .34}px) rotate(${bodyRotation * .3}deg) scale(1.01)`, offset: .47 },
       { transform: `translateX(-50%) translate(${dx * .8}px,${dy * .72}px) rotate(${bodyRotation * .72}deg) scale(1.015)`, offset: .72 },
       { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(1.018)`, offset: .88 },
       { transform: `translateX(-50%) translate(${dx * .98}px,${landingY}px) rotate(${bodyRotation * 1.02}deg) scale(1,.98)` },
@@ -2429,7 +2430,7 @@
     setShotStyle("normal");
     renderScore();
     const outcome = resultDecision();
-    await sleep(reducedMotion() ? 360 : 1550);
+    await sleep(reducedMotion() ? 360 : 1725);
     if (outcome.finished) finishShootout(outcome.albionWon);
     else preparePalaceKick();
   }
@@ -2615,7 +2616,7 @@
 
     renderScore();
     const outcome = resultDecision();
-    await sleep(reducedMotion() ? 370 : 1600);
+    await sleep(reducedMotion() ? 370 : 1775);
     if (outcome.finished) finishShootout(outcome.albionWon);
     else prepareAlbionKick();
   }
