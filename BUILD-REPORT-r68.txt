@@ -1,0 +1,44 @@
+ALBION FAN HUB r68 — BUILD AND AUDIT REPORT
+14 August 2026
+
+SOURCE
+Built directly from Brighton-Fan-Hub-r67-FULL.zip.
+
+GOAL-LINE / MOBILE DEPTH CORRECTION
+- Pitch artwork goal line: y=315 of a 650-high viewBox = 48.461538% stage depth.
+- Portrait goal: 58% wide, 24.8% high; top is calculated as 48.461538% - 24.8% = 23.661538%.
+- Narrow phones retain 57% goal width.
+- Landscape goal: 48% wide, 32.5% high; top = 15.961538%.
+- Desktop goal bottom is also aligned to the same 48.461538% pitch line.
+- Keeper boot anchor uses the same fixed pitch ratio, not the goal-mouth bottom.
+- Duplicate goal-mouth goal-line element removed; the SVG pitch line is the only visible goal line.
+
+CONTRAST
+- Stronger page/card separation and card borders.
+- Stronger main-section heading colour.
+- Distinct home/away fixture accents.
+- Slightly stronger penalty-pitch striping without neon colours.
+
+CURRENT FIXTURE DATA
+- Tromsø IL v Albion — 20 Aug 2026 — away — UEFA Conference League play-off first leg — time TBC.
+- Albion v Aston Villa — 23 Aug 2026 — 14:00.
+- Albion v Tromsø IL — 27 Aug 2026 — home — UEFA Conference League play-off second leg — time TBC.
+- Chelsea v Albion — 30 Aug 2026 — 14:00.
+- Coventry City v Albion — 13 Sep 2026 — 14:00.
+- TBC European kick-offs are displayed as TBC and do not generate a false live countdown/local kick-off time.
+
+VALIDATION
+PASS  JavaScript syntax for every JavaScript file.
+PASS  CSS parsing for every stylesheet.
+PASS  No duplicate HTML IDs (265 IDs checked).
+PASS  No broken internal anchors (32 anchors checked).
+PASS  No missing local HTML/CSS/JS/image/audio resource references.
+PASS  320 px portrait: no horizontal overflow; goal, line and keeper share the same depth anchor.
+PASS  390 px portrait: goal base 48.458%, pitch line 48.462%, keeper boot anchor 48.480%.
+PASS  430 px portrait: goal base 48.459%, pitch line 48.462%, keeper boot anchor 48.460%.
+PASS  844 x 390 coarse-pointer landscape: goal base 48.458%, pitch line 48.462%, keeper boot anchor 48.458%; no horizontal overflow.
+PASS  1440 px desktop: goal base and keeper remain aligned to the same painted goal line.
+PASS  TBC Tromsø kick-off renders as “Time TBC” with no invented local kick-off or countdown.
+
+UPLOAD
+Upload every file in the ZIP to the Brighton repository root and replace matching files.

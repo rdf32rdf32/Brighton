@@ -1,16 +1,5 @@
-ALBION FAN HUB r67 — UPLOAD TO GITHUB
+ALBION FAN HUB r68
 
-Repository:
-https://github.com/rdf32rdf32/Brighton
+Upload every file in this ZIP to the Brighton repository root and replace files with matching names.
 
-Upload every file in this ZIP to the repository root and replace files with matching names.
-The shootout CSS/JS filenames intentionally remain shootout-r66.css and shootout-r66.js; index.html uses a new r67 cache-busting query string.
-
-Main r67 changes:
-- mobile penalty camera pulled back
-- goalkeeper boots anchored exactly to the goal line
-- clearer visible goal line
-- slightly smaller keeper and slightly larger foreground taker on mobile
-- planted push-off phase added before lateral goalkeeper dives
-- slightly longer result hold before the next kick
-- scoring probabilities and shoot-out rules unchanged
+The changed application, penalty CSS/JS and polish stylesheet use r68 cache-busting query strings in index.html.

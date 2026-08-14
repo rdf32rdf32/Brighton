@@ -1,0 +1,24 @@
+ALBION FAN HUB r68
+14 August 2026
+
+Built from: Brighton-Fan-Hub-r67-FULL.zip
+
+PENALTY SHOOT-OUT
+- Corrected the mobile depth by moving the goal forward/down onto the actual painted goal line.
+- The pitch SVG goal line at y=315/650 (48.461538% of stage depth) is now the single geometry source of truth.
+- Goal-mouth bottom is aligned to that coordinate in portrait, landscape and desktop.
+- Goalkeeper boot position is anchored directly to the same pitch goal-line ratio, independent of goal/net styling.
+- Removed the duplicate goal-line element from the goal mouth; only the painted pitch line is visible.
+- Kept the r67 mobile goal width (58%; 57% on narrow phones) and existing scoring/save probabilities.
+
+VISUAL CONTRAST
+- Slightly stronger page/card separation, borders and section heading contrast.
+- Clearer home/away fixture accents.
+- Slightly stronger pitch striping and advertising-board separation during penalties.
+
+FIXTURES
+- Next competitive fixture is Tromsø IL away on Thursday 20 August 2026.
+- Kick-off is shown as TBC rather than inventing a time.
+- Added the home second leg on Thursday 27 August 2026.
+- Aston Villa, Chelsea and Coventry league dates retained.
+- Fixture freshness updated to 14 August 2026.

@@ -1,0 +1,59 @@
+{
+  "release": "r68",
+  "date": "2026-08-14",
+  "source": "Brighton-Fan-Hub-r67-FULL.zip",
+  "goal_line": {
+    "pitch_svg_y": 315,
+    "pitch_viewbox_height": 650,
+    "ratio_percent": 48.461538
+  },
+  "geometry_tests": {
+    "320_portrait": {
+      "goal_bottom_pct": 48.4562,
+      "line_pct": 48.4616,
+      "keeper_boot_pct": 48.4582,
+      "horizontal_overflow": false
+    },
+    "390_portrait": {
+      "goal_bottom_pct": 48.4582,
+      "line_pct": 48.4616,
+      "keeper_boot_pct": 48.4796,
+      "horizontal_overflow": false
+    },
+    "430_portrait": {
+      "goal_bottom_pct": 48.4594,
+      "line_pct": 48.4615,
+      "keeper_boot_pct": 48.4603,
+      "horizontal_overflow": false
+    },
+    "844x390_landscape_touch": {
+      "goal_bottom_pct": 48.4583,
+      "line_pct": 48.4615,
+      "keeper_boot_pct": 48.4581,
+      "horizontal_overflow": false
+    },
+    "1440_desktop": {
+      "goal_bottom_pct": 48.4584,
+      "line_pct": 48.4615,
+      "keeper_boot_pct": 48.4841,
+      "horizontal_overflow": false
+    }
+  },
+  "structural": {
+    "javascript_syntax": "pass",
+    "css_parse": "pass",
+    "duplicate_ids": 0,
+    "ids_checked": 265,
+    "broken_internal_anchors": 0,
+    "internal_anchors_checked": 32,
+    "missing_local_assets": 0
+  },
+  "fixture_update": {
+    "checked": "2026-08-14",
+    "next": "Tromsø IL v Brighton & Hove Albion",
+    "date": "2026-08-20",
+    "kickoff": "TBC",
+    "competition": "UEFA Conference League",
+    "return_leg": "2026-08-27"
+  }
+}

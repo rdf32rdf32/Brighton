@@ -87,6 +87,7 @@
   if (readyPanel && readyPanel.parentElement !== stage) stage.appendChild(readyPanel);
 
   const goalBox = { left: 0.26, top: 0.12, width: 0.48, height: 0.365 };
+  const PITCH_GOAL_LINE_RATIO = 315 / 650;
   const ballStart = { x: 0.5, y: 0.77 };
   // r66: Brighton can deliberately aim narrowly wide or high. The visible target is
   // limited to five per cent beyond the frame so misses remain intentional and fair.
@@ -729,9 +730,11 @@
     if (!stage.clientHeight) return;
     syncGoalBox();
     const dimensions = keeperDimensions();
-    const goalLineY = (goalBox.top + goalBox.height) * stage.clientHeight;
-    const baselineNudge = 0;
-    const top = goalLineY - dimensions.height * keeperBootRatio - baselineNudge;
+    // r68: the painted goal line (315/650 of the stage) is authoritative.
+    // The goal-mouth CSS is aligned to the same coordinate, but the keeper no
+    // longer depends on goal-box height, so later net/goal styling cannot move him.
+    const goalLineY = PITCH_GOAL_LINE_RATIO * stage.clientHeight;
+    const top = goalLineY - dimensions.height * keeperBootRatio;
     keeper.style.left = "50%";
     keeper.style.top = `${top}px`;
     keeper.style.transform = "translateX(-50%)";

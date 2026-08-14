@@ -1,7 +1,7 @@
-/* ===== Albion Fan Hub r66 application bundle ===== */
+/* ===== Albion Fan Hub r68 application bundle ===== */
 window.ALBION_CONTENT = {
-  featureVersion: "66",
-  lastUpdated: "5 August 2026",
+  featureVersion: "68",
+  lastUpdated: "14 August 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
@@ -20,7 +20,7 @@ window.ALBION_CONTENT = {
     },
   },
   freshness: {
-    fixtures: "5 August 2026",
+    fixtures: "14 August 2026",
     squad: "5 August 2026",
     travel: "5 August 2026",
     history: "5 August 2026",
@@ -29,11 +29,31 @@ window.ALBION_CONTENT = {
   playerProfiles: window.ALBION_DATA_R66.squad.map(({ name, position, role, number, nationality, initials, summary }) => ({ name, position, role, number, nationality, initials, summary })),
   fixtures: [
     {
+      date: "20 Aug 2026",
+      opponent: "Tromsø IL",
+      venue: "A",
+      time: null,
+      competition: "UEFA Conference League",
+      round: "Play-off first leg",
+      status: "Confirmed date · kick-off TBC",
+      note: "Away first leg on Thursday 20 August. Kick-off remains subject to final UEFA confirmation.",
+    },
+    {
       date: "23 Aug 2026",
       opponent: "Aston Villa",
       venue: "H",
       time: "14:00",
       broadcast: "Sky Sports",
+    },
+    {
+      date: "27 Aug 2026",
+      opponent: "Tromsø IL",
+      venue: "H",
+      time: null,
+      competition: "UEFA Conference League",
+      round: "Play-off second leg",
+      status: "Confirmed date · kick-off TBC",
+      note: "Home second leg at the Amex on Thursday 27 August. Kick-off time to be confirmed.",
     },
     {
       date: "30 Aug 2026",
@@ -1455,7 +1475,9 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     const [dayText, monthText, yearText] = fixture.date.split(/\s+/);
     const month = FIXTURE_MONTHS[monthText];
     if (month == null) return Number.NaN;
-    const [hourText = "15", minuteText = "00"] = String(fixture.time || "15:00").split(":");
+    // When kick-off is not confirmed, use end-of-day only for chronological sorting.
+    // User-facing UI continues to show Time TBC and no false countdown/local time.
+    const [hourText, minuteText] = String(fixture.time || "23:59").split(":");
     const year = Number(yearText), day = Number(dayText), hour = Number(hourText), minute = Number(minuteText);
     const localGuess = Date.UTC(year, month, day, hour, minute);
     const bstStart = Date.UTC(year, 2, lastSunday(year, 2), 1, 0);
@@ -1476,7 +1498,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       dateShort: shortDate,
       dateISO: kickoff.toISOString(),
       venueCode: fixture.venue,
-      venue: fixture.venue === "H" ? "Amex Stadium" : "Away",
+      venue: fixture.venueName || (fixture.venue === "H" ? "Amex Stadium" : "Away"),
+      hasConfirmedTime: Boolean(fixture.time),
       competition: fixture.competition || "Premier League",
       status: fixture.status || "Scheduled fixture",
       opponentShort: fixture.opponent?.replace(/^Aston /, "") || fixture.opponent,
@@ -1561,6 +1584,11 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   function countdown() {
     const el = $("countdown");
     if (!el) return;
+    if (!MATCH.hasConfirmedTime) {
+      el.innerHTML = `<b>${esc(MATCH.dateShort || "Fixture date confirmed")}</b> · kick-off time TBC`;
+      if ($("quickCountdown")) $("quickCountdown").textContent = "Kick-off time TBC";
+      return;
+    }
     const remaining = new Date(MATCH.dateISO) - new Date();
     if (remaining <= 0) {
       el.textContent = "Matchday";
@@ -1582,7 +1610,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     const shortOpponent = MATCH.opponent.replace(/^Aston /, "");
     $("heroMatchTitle").textContent = title;
     $("heroMatchDate").textContent = MATCH.dateLong;
-    $("heroMatchTime").textContent = MATCH.time;
+    $("heroMatchTime").textContent = MATCH.time || "Time TBC";
     $("heroMatchVenue").textContent = MATCH.venue;
     $("stickyMatchTitle").textContent = `Next: ${title}`;
     $("stickyMatchDetail").textContent = `${MATCH.dateShort} · ${MATCH.time || "TBC"} · ${home ? "Amex" : "Away"}`;
@@ -1592,22 +1620,26 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       /^[A-Za-z]+ /,
       "",
     );
-    $("centreMatchTime").textContent = MATCH.time;
+    $("centreMatchTime").textContent = MATCH.time || "Time TBC";
     $("centreMatchVenue").textContent = MATCH.venue;
     $("predictorMatchTitle").textContent = title;
     if ($("quickNextFixture")) $("quickNextFixture").textContent = title;
     $("awayScoreLabel").textContent = `${shortOpponent} goals`;
     document.querySelectorAll("[data-active-opponent]").forEach((node) => { node.textContent = MATCH.opponent; });
     try {
-      const local = new Intl.DateTimeFormat(undefined, {
-        weekday: "short",
-        day: "numeric",
-        month: "short",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZoneName: "short",
-      }).format(new Date(MATCH.dateISO));
-      $("localKickoff").textContent = `Your local kick-off: ${local}`;
+      if (!MATCH.hasConfirmedTime) {
+        $("localKickoff").textContent = "Kick-off time is still to be confirmed by UEFA.";
+      } else {
+        const local = new Intl.DateTimeFormat(undefined, {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZoneName: "short",
+        }).format(new Date(MATCH.dateISO));
+        $("localKickoff").textContent = `Your local kick-off: ${local}`;
+      }
     } catch {
       $("localKickoff").textContent = "";
     }
@@ -2866,7 +2898,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
         `DTSTART;VALUE=DATE:${compactDate(fixture.date)}`,
         `DTEND;VALUE=DATE:${nextDay(fixture.date)}`,
         `SUMMARY:${title}`,
-        `DESCRIPTION:Premier League fixture. Date and kick-off subject to change. Check the official Albion website.`,
+        `DESCRIPTION:${fixture.competition || "Premier League"} fixture. Date and kick-off subject to change. Check the official Albion website.`,
         `LOCATION:${fixture.venue === "H" ? "Amex Stadium, Falmer" : "Away fixture"}`,
         "END:VEVENT",
       ].join("\r\n");
@@ -4160,6 +4192,10 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   function matchCountdown() {
     const target = $("matchCentreCountdown");
     if (!target || !MATCH.dateISO) return;
+    if (!MATCH.hasConfirmedTime) {
+      target.innerHTML = `<b>${esc(MATCH.dateShort || "Date confirmed")}</b><span>Kick-off time TBC</span>`;
+      return;
+    }
     const remaining = new Date(MATCH.dateISO).getTime() - Date.now();
     if (remaining <= 0) { target.innerHTML = "<b>Matchday</b><span>Come on Albion</span>"; return; }
     const days = Math.floor(remaining / 86400000);
@@ -4169,12 +4205,17 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   }
 
   function updateMatchDetails() {
-    if ($("centreMatchCompetition")) $("centreMatchCompetition").textContent = MATCH.competition || "Premier League";
+    const competition = MATCH.competition || "Premier League";
+    const coverage = MATCH.broadcast || (MATCH.hasConfirmedTime ? "To be confirmed" : "Kick-off time TBC");
+    if ($("centreStatusPill")) $("centreStatusPill").textContent = MATCH.hasConfirmedTime ? "Confirmed fixture" : "Confirmed date";
+    if ($("centreCompetitionChip")) $("centreCompetitionChip").textContent = competition;
+    if ($("centreCoverageChip")) $("centreCoverageChip").textContent = coverage;
+    if ($("centreMatchCompetition")) $("centreMatchCompetition").textContent = competition;
     if ($("centreMatchBroadcast")) $("centreMatchBroadcast").textContent = MATCH.broadcast || "To be confirmed";
     if ($("centreMatchStatus")) $("centreMatchStatus").textContent = MATCH.status || "Fixture scheduled";
     if ($("centreMatchNote")) $("centreMatchNote").textContent = MATCH.note || "Check official listings before travelling.";
     if ($("opponentBriefingText")) $("opponentBriefingText").textContent = `${MATCH.venueCode === "A" ? "Albion travel to" : "Albion host"} ${MATCH.opponent || "their next opponents"}. This panel uses the fixture list and avoids unverified team news.`;
-    if ($("opponentBriefingFacts")) $("opponentBriefingFacts").innerHTML = `<article><span>Round</span><b>Opening weekend</b></article><article><span>Venue</span><b>${esc(MATCH.venue || "Amex Stadium")}</b></article><article><span>Kick-off</span><b>${esc(MATCH.time || "14:00")}</b></article><article><span>Coverage</span><b>${esc(MATCH.broadcast || "To be confirmed")}</b></article>`;
+    if ($("opponentBriefingFacts")) $("opponentBriefingFacts").innerHTML = `<article><span>Round</span><b>${esc(MATCH.round || "League fixture")}</b></article><article><span>Venue</span><b>${esc(MATCH.venue || "Amex Stadium")}</b></article><article><span>Kick-off</span><b>${esc(MATCH.time || "Time TBC")}</b></article><article><span>Coverage</span><b>${esc(MATCH.broadcast || "To be confirmed")}</b></article>`;
   }
 
   function updatePersonalMatchPlan() {
