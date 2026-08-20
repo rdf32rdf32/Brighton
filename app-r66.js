@@ -1,7 +1,7 @@
-/* ===== Albion Fan Hub r68 application bundle ===== */
+/* ===== Albion Fan Hub r69 application bundle ===== */
 window.ALBION_CONTENT = {
-  featureVersion: "68",
-  lastUpdated: "14 August 2026",
+  featureVersion: "69",
+  lastUpdated: "20 August 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
@@ -20,233 +20,16 @@ window.ALBION_CONTENT = {
     },
   },
   freshness: {
-    fixtures: "14 August 2026",
-    squad: "5 August 2026",
-    travel: "5 August 2026",
+    fixtures: "20 August 2026",
+    squad: "20 August 2026",
+    travel: "20 August 2026",
     history: "5 August 2026",
   },
-  squad: window.ALBION_DATA_R66.squad.map(({ name, position }) => ({ name, position })),
-  playerProfiles: window.ALBION_DATA_R66.squad.map(({ name, position, role, number, nationality, initials, summary }) => ({ name, position, role, number, nationality, initials, summary })),
-  fixtures: [
-    {
-      date: "20 Aug 2026",
-      opponent: "Tromsø IL",
-      venue: "A",
-      time: null,
-      competition: "UEFA Conference League",
-      round: "Play-off first leg",
-      status: "Confirmed date · kick-off TBC",
-      note: "Away first leg on Thursday 20 August. Kick-off remains subject to final UEFA confirmation.",
-    },
-    {
-      date: "23 Aug 2026",
-      opponent: "Aston Villa",
-      venue: "H",
-      time: "14:00",
-      broadcast: "Sky Sports",
-    },
-    {
-      date: "27 Aug 2026",
-      opponent: "Tromsø IL",
-      venue: "H",
-      time: null,
-      competition: "UEFA Conference League",
-      round: "Play-off second leg",
-      status: "Confirmed date · kick-off TBC",
-      note: "Home second leg at the Amex on Thursday 27 August. Kick-off time to be confirmed.",
-    },
-    {
-      date: "30 Aug 2026",
-      opponent: "Chelsea",
-      venue: "A",
-      time: "14:00",
-      broadcast: "Sky Sports",
-    },
-    {
-      date: "5 Sep 2026",
-      opponent: "Leeds United",
-      venue: "H",
-      time: "15:00",
-    },
-    {
-      date: "13 Sep 2026",
-      opponent: "Coventry City",
-      venue: "A",
-      time: "14:00",
-      broadcast: "Sky Sports",
-    },
-    {
-      date: "19 Sep 2026",
-      opponent: "Arsenal",
-      venue: "H",
-      time: "15:00",
-    },
-    {
-      date: "10 Oct 2026",
-      opponent: "Sunderland",
-      venue: "A",
-    },
-    {
-      date: "17 Oct 2026",
-      opponent: "Crystal Palace",
-      venue: "H",
-    },
-    {
-      date: "24 Oct 2026",
-      opponent: "Liverpool",
-      venue: "A",
-    },
-    {
-      date: "31 Oct 2026",
-      opponent: "Manchester City",
-      venue: "A",
-    },
-    {
-      date: "7 Nov 2026",
-      opponent: "Brentford",
-      venue: "H",
-    },
-    {
-      date: "21 Nov 2026",
-      opponent: "Hull City",
-      venue: "A",
-    },
-    {
-      date: "28 Nov 2026",
-      opponent: "Newcastle United",
-      venue: "H",
-    },
-    {
-      date: "2 Dec 2026",
-      opponent: "Bournemouth",
-      venue: "A",
-    },
-    {
-      date: "5 Dec 2026",
-      opponent: "Nottingham Forest",
-      venue: "A",
-    },
-    {
-      date: "12 Dec 2026",
-      opponent: "Everton",
-      venue: "H",
-    },
-    {
-      date: "19 Dec 2026",
-      opponent: "Ipswich Town",
-      venue: "H",
-    },
-    {
-      date: "26 Dec 2026",
-      opponent: "Fulham",
-      venue: "A",
-    },
-    {
-      date: "30 Dec 2026",
-      opponent: "Tottenham Hotspur",
-      venue: "A",
-    },
-    {
-      date: "2 Jan 2027",
-      opponent: "Manchester United",
-      venue: "H",
-    },
-    {
-      date: "6 Jan 2027",
-      opponent: "Bournemouth",
-      venue: "H",
-    },
-    {
-      date: "16 Jan 2027",
-      opponent: "Brentford",
-      venue: "A",
-    },
-    {
-      date: "23 Jan 2027",
-      opponent: "Manchester City",
-      venue: "H",
-    },
-    {
-      date: "30 Jan 2027",
-      opponent: "Newcastle United",
-      venue: "A",
-    },
-    {
-      date: "6 Feb 2027",
-      opponent: "Hull City",
-      venue: "H",
-    },
-    {
-      date: "10 Feb 2027",
-      opponent: "Manchester United",
-      venue: "A",
-    },
-    {
-      date: "20 Feb 2027",
-      opponent: "Tottenham Hotspur",
-      venue: "H",
-    },
-    {
-      date: "27 Feb 2027",
-      opponent: "Ipswich Town",
-      venue: "A",
-    },
-    {
-      date: "3 Mar 2027",
-      opponent: "Fulham",
-      venue: "H",
-    },
-    {
-      date: "13 Mar 2027",
-      opponent: "Leeds United",
-      venue: "A",
-    },
-    {
-      date: "20 Mar 2027",
-      opponent: "Coventry City",
-      venue: "H",
-    },
-    {
-      date: "10 Apr 2027",
-      opponent: "Aston Villa",
-      venue: "A",
-    },
-    {
-      date: "17 Apr 2027",
-      opponent: "Chelsea",
-      venue: "H",
-    },
-    {
-      date: "24 Apr 2027",
-      opponent: "Everton",
-      venue: "A",
-    },
-    {
-      date: "1 May 2027",
-      opponent: "Nottingham Forest",
-      venue: "H",
-    },
-    {
-      date: "8 May 2027",
-      opponent: "Sunderland",
-      venue: "H",
-    },
-    {
-      date: "15 May 2027",
-      opponent: "Crystal Palace",
-      venue: "A",
-    },
-    {
-      date: "23 May 2027",
-      opponent: "Liverpool",
-      venue: "H",
-    },
-    {
-      date: "30 May 2027",
-      opponent: "Arsenal",
-      venue: "A",
-    },
-  ],
+  squad: window.ALBION_DATA_R66.squad.filter((player) => player.active !== false && (player.squadStatus || "first-team") === "first-team").map(({ name, position }) => ({ name, position })),
+  playerProfiles: window.ALBION_DATA_R66.squad.filter((player) => player.active !== false && (player.squadStatus || "first-team") === "first-team").map(({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub }) => ({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub })),
+  loanProfiles: window.ALBION_DATA_R66.squad.filter((player) => player.squadStatus === "loan").map(({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub }) => ({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub })),
+  developmentProfiles: window.ALBION_DATA_R66.squad.filter((player) => player.squadStatus === "development").map(({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub }) => ({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub })),
+  fixtures: window.ALBION_DATA_R66.fixtures || [],
   facts: [
     "Brighton & Hove Albion were founded in 1901.",
     "Albion are known as the Seagulls.",
@@ -1505,6 +1288,16 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       opponentShort: fixture.opponent?.replace(/^Aston /, "") || fixture.opponent,
     };
   }
+  function tieAggregateFor(fixture) {
+    if (!fixture?.tieId) return "";
+    const legs = (C.fixtures || []).filter((item) => item.tieId === fixture.tieId);
+    const completedLegs = legs.filter((item) => Number.isFinite(item.albionGoals) && Number.isFinite(item.opponentGoals));
+    if (!completedLegs.length) return "";
+    const albion = completedLegs.reduce((total, item) => total + Number(item.albionGoals), 0);
+    const opponent = completedLegs.reduce((total, item) => total + Number(item.opponentGoals), 0);
+    return `Aggregate: Albion ${albion}–${opponent} ${fixture.opponent}`;
+  }
+
   function selectActiveMatch(now = Date.now()) {
     const matchWindow = 3 * 60 * 60 * 1000;
     return (C.fixtures || [])
@@ -1626,6 +1419,13 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     if ($("quickNextFixture")) $("quickNextFixture").textContent = title;
     $("awayScoreLabel").textContent = `${shortOpponent} goals`;
     document.querySelectorAll("[data-active-opponent]").forEach((node) => { node.textContent = MATCH.opponent; });
+    const aggregateText = tieAggregateFor(MATCH);
+    ["heroAggregate", "centreAggregate"].forEach((id) => {
+      const node = $(id);
+      if (!node) return;
+      node.textContent = aggregateText;
+      node.hidden = !aggregateText;
+    });
     try {
       if (!MATCH.hasConfirmedTime) {
         $("localKickoff").textContent = "Kick-off time is still to be confirmed by UEFA.";
@@ -1934,8 +1734,10 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
           const statusLabel = result ? `Result ${result}` : liveWindow ? "MATCHDAY" : completed ? "COMPLETED" : fixture === nextFixture ? "NEXT FIXTURE" : "SCHEDULED";
           const statusClass = result ? "fixture-result" : liveWindow ? "fixture-live" : completed ? "fixture-completed" : fixture === nextFixture ? "fixture-next" : "";
           const index = C.fixtures.indexOf(fixture);
+          const aggregate = tieAggregateFor(fixture);
+          const confirmation = fixture.status?.toLowerCase().includes("confirmed") ? "Confirmed by the club" : "Date provisional until confirmed by the club";
           return `<article class="fixture-item ${fixture.venue === "H" ? "fixture-home" : "fixture-away"} ${statusClass}"><div><span class="next-fixture-label fixture-state-label">${statusLabel}</span><b>${esc(fixture.date)}</b><span class="fixture-badge ${fixture.venue === "H" ? "home-badge" : "away-badge"}">${fixture.venue === "H" ? "HOME" : "AWAY"}</span><small>${esc(fixture.competition || "Premier League")}</small></div>
-          <div><strong>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === "H" ? "Amex Stadium" : "Away"}${fixture.time ? ` · ${esc(fixture.time)}` : " · Time TBC"} · Date provisional until confirmed by the club</small><div class="fixture-extra" id="fixture-extra-${index}" hidden><span><b>Competition</b>${esc(fixture.competition || "Premier League")}</span><span><b>Venue</b>${fixture.venue === "H" ? "American Express Stadium" : `${esc(fixture.opponent)} away`}</span><span><b>Status</b>${result ? `Final score ${esc(result)}` : completed ? "Completed — add a result in the fixture data" : "Check official listings before travelling"}</span></div></div><div class="fixture-actions"><button class="fixture-more ghost" type="button" data-fixture-expand="${index}" aria-expanded="false" aria-controls="fixture-extra-${index}">Details</button><button class="fixture-calendar ghost" type="button" data-calendar-index="${index}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></div></article>`;
+          <div><strong>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</strong><small>${fixture.venue === "H" ? "Amex Stadium" : "Away"}${fixture.time ? ` · ${esc(fixture.time)}` : " · Time TBC"} · ${esc(confirmation)}</small>${aggregate ? `<span class="fixture-aggregate">${esc(aggregate)}</span>` : ""}<div class="fixture-extra" id="fixture-extra-${index}" hidden><span><b>Competition</b>${esc(fixture.competition || "Premier League")}</span><span><b>Venue</b>${fixture.venue === "H" ? "American Express Stadium" : `${esc(fixture.opponent)} away`}</span><span><b>Status</b>${result ? `Final score ${esc(result)}` : completed ? "Completed — add a result in the fixture data" : esc(fixture.status || "Check official listings before travelling")}</span>${aggregate ? `<span><b>Tie</b>${esc(aggregate)}</span>` : ""}</div></div><div class="fixture-actions"><button class="fixture-more ghost" type="button" data-fixture-expand="${index}" aria-expanded="false" aria-controls="fixture-extra-${index}">Details</button><button class="fixture-calendar ghost" type="button" data-calendar-index="${index}" aria-label="Add ${esc(fixture.opponent)} fixture to calendar">+ Calendar</button></div></article>`;
         }).join("")
       : "<p>No fixtures match that search.</p>";
   }
@@ -4184,6 +3986,9 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     remove(key) { try { localStorage.removeItem(key); } catch {} },
   };
   const profileList = Array.isArray(C.playerProfiles) ? C.playerProfiles : [];
+  const loanProfileList = Array.isArray(C.loanProfiles) ? C.loanProfiles : [];
+  const developmentProfileList = Array.isArray(C.developmentProfiles) ? C.developmentProfiles : [];
+  const allProfileRecords = [...profileList, ...loanProfileList, ...developmentProfileList];
   const profileCategories = ["Goalkeeper", "Defender", "Midfielder", "Forward"];
   const profileMobileQuery = matchMedia("(max-width: 760px), (max-height: 520px) and (orientation: landscape)");
   let activeProfileCategory = safeStorage.get("albionPlayerCategory");
@@ -4315,12 +4120,33 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     if (mobile) grid.scrollTo({ left: 0, behavior: "auto" });
   }
 
+  function statusProfileMarkup(player) {
+    const statusLabel = player.squadStatus === "loan" ? `On loan · ${player.statusClub || "2026/27"}` : `Development · ${player.statusClub || "Albion U21"}`;
+    return `<article class="player-profile-card player-status-card" data-position="${esc(player.position)}" data-search="${esc(`${player.name} ${player.nationality} ${player.role} ${statusLabel}`.toLowerCase())}">
+      <div class="player-card-top"><span class="player-avatar" aria-hidden="true">${esc(player.initials || player.name.slice(0,2))}</span><span class="player-status-badge">${esc(statusLabel)}</span></div>
+      <div class="player-card-copy"><p>${esc(player.position)}</p><h3>${esc(player.name)}</h3><span>${esc(player.nationality)}</span><small>${esc(player.role)}</small></div>
+      <div class="player-card-actions"><button class="ghost" data-profile-name="${esc(player.name)}" type="button">View profile</button></div>
+    </article>`;
+  }
+
+  function renderStatusProfiles() {
+    const loanGrid = $("loanPlayerGrid");
+    const developmentGrid = $("developmentPlayerGrid");
+    if (loanGrid) loanGrid.innerHTML = loanProfileList.map(statusProfileMarkup).join("") || '<p class="empty-profile-state">No current loans listed.</p>';
+    if (developmentGrid) developmentGrid.innerHTML = developmentProfileList.map(statusProfileMarkup).join("") || '<p class="empty-profile-state">No development players listed.</p>';
+    if ($("loanPlayerCount")) $("loanPlayerCount").textContent = loanProfileList.length;
+    if ($("developmentPlayerCount")) $("developmentPlayerCount").textContent = developmentProfileList.length;
+  }
+
   function showProfile(name) {
-    const player = profileList.find((item) => item.name === name);
+    const player = allProfileRecords.find((item) => item.name === name);
     const dialog = $("playerProfileDialog");
     const content = $("playerProfileDialogContent");
     if (!player || !dialog || !content) return;
-    content.innerHTML = `<div class="dialog-player-head"><span class="player-avatar large" aria-hidden="true">${esc(player.initials)}</span><div><p>${esc(player.position)}</p><h2 id="playerDialogTitle">${esc(player.name)}</h2><span>${esc(player.nationality)} · Squad number not shown until confirmed</span></div></div><dl><div><dt>Primary role</dt><dd>${esc(player.role)}</dd></div><div><dt>Status</dt><dd>${esc(player.summary)}</dd></div></dl><div class="dialog-player-actions"><button data-add-player="${esc(player.name)}" type="button">Add to my XI</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official squad page</a></div>`;
+    const canAddToXI = profileList.some((item) => item.name === player.name);
+    const squadNumber = player.number ? `No. ${player.number}` : "Number omitted in this build — no guessing";
+    const statusLabel = player.squadStatus === "loan" ? `On loan at ${player.statusClub || "another club"}` : player.squadStatus === "development" ? (player.statusClub || "Development squad") : "First-team squad";
+    content.innerHTML = `<div class="dialog-player-head"><span class="player-avatar large" aria-hidden="true">${esc(player.initials)}</span><div><p>${esc(player.position)}</p><h2 id="playerDialogTitle">${esc(player.name)}</h2><span>${esc(player.nationality)} · ${esc(squadNumber)}</span></div></div><dl><div><dt>Primary role</dt><dd>${esc(player.role)}</dd></div><div><dt>Squad status</dt><dd>${esc(statusLabel)}</dd></div><div><dt>Update</dt><dd>${esc(player.summary)}</dd></div></dl><div class="dialog-player-actions">${canAddToXI ? `<button data-add-player="${esc(player.name)}" type="button">Add to my XI</button>` : ""}<a class="button-link secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official squad page</a></div>`;
     if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
   }
 
@@ -4373,6 +4199,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   }
 
   function playerProfiles() {
+    renderStatusProfiles();
     if (!$("playerProfileGrid")) return;
     renderProfiles();
     $("playerProfileSearch")?.addEventListener("input", renderProfiles);
@@ -4399,17 +4226,19 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       buttons[next]?.click();
     });
     profileMobileQuery.addEventListener?.("change", renderProfiles);
-    $("playerProfileGrid")?.addEventListener("click", (event) => {
-      const profileButton = event.target.closest("[data-profile-name]");
-      const addButton = event.target.closest("[data-add-player]");
-      const groupButton = event.target.closest("[data-player-group]");
-      if (groupButton && $("playerPositionFilter")) {
-        $("playerPositionFilter").value = groupButton.dataset.playerGroup;
-        renderProfiles();
-        $("playerProfileGrid")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
-      }
-      if (profileButton) showProfile(profileButton.dataset.profileName);
-      if (addButton) addPlayerToXI(addButton.dataset.addPlayer, addButton);
+    ["playerProfileGrid", "loanPlayerGrid", "developmentPlayerGrid"].forEach((gridId) => {
+      $(gridId)?.addEventListener("click", (event) => {
+        const profileButton = event.target.closest("[data-profile-name]");
+        const addButton = event.target.closest("[data-add-player]");
+        const groupButton = event.target.closest("[data-player-group]");
+        if (groupButton && $("playerPositionFilter")) {
+          $("playerPositionFilter").value = groupButton.dataset.playerGroup;
+          renderProfiles();
+          $("playerProfileGrid")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
+        }
+        if (profileButton) showProfile(profileButton.dataset.profileName);
+        if (addButton) addPlayerToXI(addButton.dataset.addPlayer, addButton);
+      });
     });
     $("playerProfileDialog")?.addEventListener("click", (event) => {
       const addButton = event.target.closest("[data-add-player]");
@@ -4506,7 +4335,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   document.querySelectorAll('select').forEach(select => { if (!select.getAttribute('aria-label') && !select.labels?.length) select.setAttribute('aria-label',select.id || 'Selection'); });
 
   const release = document.querySelector('.site-smooth-status');
-  if (release) release.textContent='Release 62';
+  if (release) release.textContent='Release 69';
 
 })();
 

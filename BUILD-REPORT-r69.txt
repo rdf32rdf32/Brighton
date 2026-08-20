@@ -1,0 +1,71 @@
+ALBION FAN HUB r69 — BUILD AND AUDIT REPORT
+20 August 2026
+
+SOURCE
+Built directly from Brighton-Fan-Hub-r68-FULL.zip.
+All agreed audit changes were implemented except recommendation 7 (difficulty modes).
+
+FIXTURES / MATCH CENTRE
+- Tromsø IL v Albion: Thursday 20 August 2026, 18:00 UK / 19:00 Tromsø local time.
+- Albion v Tromsø IL: Thursday 27 August 2026, 19:30 UK.
+- Chelsea v Albion remains Sunday 30 August 2026, 14:00.
+- Albion v Crystal Palace updated to Sunday 18 October 2026, 14:00, Sky Sports.
+- Fixture freshness labels now show 20 August 2026.
+- Fixture data has been centralised in albion-data-r66.js. Hero, sticky bar, Match Centre, fixtures and countdown read the same fixture list.
+- European tie fields are supported. Once the first-leg score is entered as albionGoals/opponentGoals in the shared fixture object, the aggregate is calculated and displayed automatically. No live score is invented.
+
+SQUAD
+- Carl Rushworth removed after permanent transfer to Coventry City.
+- Facundo Buonanotte moved to Out on loan (Elche CF).
+- Promise David added to the active first-team forwards after joining on loan from Royale Union Saint-Gilloise.
+- Mark O'Mahony moved to the Development group after under-21 involvement.
+- Active first-team players remain grouped as Goalkeepers / Defenders / Midfielders / Forwards.
+- Out on loan and Development are separate expandable groups and their players cannot be added to Pick XI.
+- Squad freshness now shows 20 August 2026.
+- The club announced 2026/27 squad numbers on 20 August. This build does not guess numbers that have not yet been individually reconciled with that newly published list.
+
+PENALTY SHOOT-OUT
+- Existing goal, goal-line, keeper depth and camera geometry preserved.
+- Existing GAME difficulty/scoring configuration preserved byte-for-byte from r68.
+- No Casual / Standard / Expert difficulty modes were added (recommendation 7 excluded).
+- Central Palace penalties no longer trigger an automatic stand-still save.
+- A central save now requires a deliberate press-and-hold action.
+- Short ambiguous swipes are ignored instead of being converted into a central save.
+- Clearer instruction appears when a swipe is too short or centre has not been deliberately held.
+- Palace penalties now show immediate feedback such as reaction time, correct/wrong side, height and save type.
+- Reaction metadata is retained with the Palace shot record for the end-of-shootout summary path.
+
+NAVIGATION / HOME HIERARCHY
+- Desktop top navigation is now Quiz / Penalties / Match / Fixtures / Squad / Club / Visit.
+- Pick XI remains available lower on the page but is no longer a primary navigation item.
+- Mobile quick navigation is Penalties / Match / Fixtures / Squad / Quiz.
+- Home page priority is now Penalties -> Match Centre -> Fixtures -> Squad -> Quiz -> Pick XI.
+- Hero and shortcut cards prioritise Penalties, Match Centre, Fixtures and Squad.
+- Quiz remains fully available but no longer competes with the main matchday tools at the top of the page.
+
+DATA SOURCES CHECKED
+- Brighton & Hove Albion official latest news / fixture and transfer announcements, 20 August 2026.
+- Official confirmation of Crystal Palace home fixture move, published 17 August 2026.
+- Official Carl Rushworth transfer announcement, 31 July 2026.
+- Official Facundo Buonanotte Elche loan announcement, 7 August 2026.
+- Official Promise David loan announcement, 18 August 2026.
+
+VALIDATION
+PASS  JavaScript syntax for every JavaScript file.
+PASS  CSS parsing for every stylesheet.
+PASS  No duplicate HTML IDs (272 IDs checked).
+PASS  No broken internal anchors.
+PASS  No missing local HTML/CSS/JS/image/audio references.
+PASS  Shared fixture source used by app-r66.js.
+PASS  Tromsø first leg 18:00 and second leg 19:30 present in shared data.
+PASS  Crystal Palace home fixture 18 October 14:00 / Sky Sports present in shared data.
+PASS  Rushworth absent; Buonanotte loan; Promise David active; O'Mahony development.
+PASS  Automatic stand-still central save removed.
+PASS  Deliberate centre-hold and short-swipe dead zone present.
+PASS  Reaction feedback present.
+PASS  Penalty GAME/scoring configuration hash is unchanged from r68:
+      8306e45959cae35c1a663598ab977d61473db4af4fbc820bb7c92341da8bb35e
+
+UPLOAD
+Upload every file in Brighton-Fan-Hub-r69-FULL.zip to the Brighton repository root and replace matching files.
+Legacy runtime filenames such as app-r66.js are intentionally retained so the existing GitHub Pages structure is replaced cleanly rather than creating duplicate bundles.

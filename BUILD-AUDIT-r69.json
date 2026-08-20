@@ -1,0 +1,27 @@
+{
+  "release": "r69",
+  "date": "2026-08-20",
+  "source": "Brighton-Fan-Hub-r68-FULL.zip",
+  "excluded_recommendation": 7,
+  "checks": {
+    "javascript_syntax": "pass",
+    "css_parse": "pass",
+    "duplicate_html_ids": "pass (272 checked)",
+    "internal_anchors": "pass",
+    "local_resources": "pass",
+    "fixture_single_source": "pass",
+    "tromso_first_leg": "20 Aug 2026 18:00 UK",
+    "tromso_second_leg": "27 Aug 2026 19:30 UK",
+    "crystal_palace_home": "18 Oct 2026 14:00 Sky Sports",
+    "rushworth_removed": true,
+    "buonanotte_loan_group": true,
+    "promise_david_active": true,
+    "omahony_development_group": true,
+    "automatic_central_save_removed": true,
+    "deliberate_centre_hold": true,
+    "short_swipe_dead_zone": true,
+    "reaction_feedback": true,
+    "penalty_game_config_unchanged": true,
+    "penalty_game_config_sha256": "8306e45959cae35c1a663598ab977d61473db4af4fbc820bb7c92341da8bb35e"
+  }
+}

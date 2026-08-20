@@ -222,3 +222,91 @@ main .section-head .eyebrow,main .content-freshness b{color:#004f9f}
 @media(max-width:760px){
   main .card{border-color:#b8cde1}
 }
+
+/* ===== r69: fixture, squad and penalty feedback polish ===== */
+.tie-aggregate,
+.fixture-aggregate {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-top: .55rem;
+  padding: .36rem .62rem;
+  border: 1px solid rgba(18, 74, 136, .18);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .72);
+  font-size: .84rem;
+  font-weight: 750;
+}
+.tie-aggregate[hidden],
+.save-reaction-feedback[hidden] { display: none !important; }
+
+.save-reaction-feedback {
+  width: fit-content;
+  max-width: min(100%, 560px);
+  margin: .55rem auto .15rem;
+  padding: .42rem .72rem;
+  border: 1px solid rgba(0, 0, 0, .14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.94);
+  font-size: .82rem;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+.save-reaction-feedback[data-outcome="save"] { border-color: rgba(20, 114, 69, .35); }
+.save-reaction-feedback[data-outcome="goal"] { border-color: rgba(161, 47, 47, .34); }
+.save-reaction-feedback[data-outcome="miss"] { border-color: rgba(24, 80, 139, .3); }
+
+.squad-secondary-groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: .8rem;
+  margin-top: 1rem;
+}
+.squad-status-group {
+  border: 1px solid var(--line, rgba(0,0,0,.12));
+  border-radius: 14px;
+  background: rgba(255,255,255,.5);
+  overflow: clip;
+}
+.squad-status-group > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .8rem 1rem;
+  cursor: pointer;
+  font-weight: 850;
+}
+.squad-status-group > summary b {
+  min-width: 1.75rem;
+  padding: .12rem .42rem;
+  border-radius: 999px;
+  text-align: center;
+  background: rgba(20,72,126,.1);
+}
+.secondary-player-grid {
+  padding: 0 .75rem .75rem;
+}
+.player-status-card .player-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .5rem;
+}
+.player-status-badge {
+  max-width: 65%;
+  padding: .28rem .48rem;
+  border-radius: 999px;
+  background: rgba(20,72,126,.1);
+  font-size: .72rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-align: right;
+}
+
+@media (max-width: 760px) {
+  .squad-secondary-groups { grid-template-columns: 1fr; }
+  .save-reaction-feedback { border-radius: 12px; }
+  .hero-game-tabs { grid-template-columns: 1fr; }
+}

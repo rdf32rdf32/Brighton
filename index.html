@@ -33,14 +33,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r68-20260814" name="release"/>
+<meta content="professional-r69-20260820" name="release"/>
 
 
 
 
 
 
-<link href="site-r66.css?v=20260805-r66" rel="stylesheet"/><link href="polish-r66.css?v=20260814-r68" rel="stylesheet"/><link href="shootout-r66.css?v=20260814-r68" rel="stylesheet"/></head>
+<link href="site-r66.css?v=20260805-r66" rel="stylesheet"/><link href="polish-r66.css?v=20260820-r69" rel="stylesheet"/><link href="shootout-r66.css?v=20260820-r69" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -49,7 +49,7 @@
 <button aria-label="Start a guided tour of the site" class="top-tour-button" id="startTour" type="button"><span aria-hidden="true">◆</span> Tour</button>
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#quiz">Quiz</a><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#xi">Pick XI</a><a href="#story">Club</a><a href="#travel">Visit</a></div>
+<div class="nav-links" id="navLinks"><a href="#quiz">Quiz</a><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#story">Club</a><a href="#travel">Visit</a></div>
 </nav>
 
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -74,23 +74,24 @@
 <h1>Brighton &amp; Hove Albion</h1>
 <p class="lead">A supporter-built project bringing together match information, interactive games, squad tools and Albion heritage.</p>
 
-<nav aria-label="Albion games" class="game-tabs hero-game-tabs"><a class="game-tab quiz-game-tab" href="#quiz"><span>Quiz</span><small>Five Albion questions</small></a><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a></nav><div class="hero-actions hero-secondary-action"><a href="#match-centre">Explore the full site</a></div></section>
+<nav aria-label="Albion matchday highlights" class="game-tabs hero-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match centre</span><small>Next Albion fixture</small></a><a class="game-tab fixtures-game-tab" href="#fixtures"><span>Fixtures</span><small>2026/27 schedule</small></a></nav><div class="hero-actions hero-secondary-action"><a href="#players">Explore the squad</a></div></section>
 <section class="match-card" id="next-match">
 <p class="eyebrow">Next competitive fixture</p>
 <h2 id="heroMatchTitle">Tromsø IL v Albion</h2>
 <div class="fixture-detail" id="heroMatchDetail">
 <span id="heroMatchDate">Thursday 20 August 2026</span>
-<span id="heroMatchTime">Time TBC</span>
+<span id="heroMatchTime">18:00</span>
 <span id="heroMatchVenue">Away</span>
 </div>
 <p class="local-kickoff" id="localKickoff"></p>
+<p class="tie-aggregate" hidden id="heroAggregate"></p>
 <div aria-live="polite" class="countdown" id="countdown"></div>
 <p class="small">Fixture details remain subject to official confirmation.</p>
 </section>
 </div>
 </header>
 <aside aria-label="Next Albion fixture" class="matchday-bar">
-<b id="stickyMatchTitle">Next: Tromsø IL v Albion</b><span id="stickyMatchDetail">20 Aug · Time TBC · Away</span><a href="#next-match">Countdown</a>
+<b id="stickyMatchTitle">Next: Tromsø IL v Albion</b><span id="stickyMatchDetail">20 Aug · 18:00 · Away</span><a href="#next-match">Countdown</a>
 </aside>
 <main id="main"><section aria-labelledby="prototypeTitle" class="card prototype-card" id="prototype">
 <div>
@@ -111,50 +112,14 @@
 </article>
 </section>
 
-<nav aria-label="Choose a game" class="game-tabs section-game-tabs"><a class="game-tab quiz-game-tab" href="#quiz"><span>Quiz</span><small>Test your knowledge</small></a><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalties</span><small>Take on Palace</small></a></nav>
-<section class="card quiz-card first-feature" id="quiz">
-<div class="section-head">
-<p class="eyebrow">First up: Albion quiz</p>
-<h2>Test your Albion knowledge</h2>
-</div>
-<div class="quiz-banner">
-<img alt="" decoding="async" loading="lazy" src="albion-safe-graphic.svg"/>
-<div>
-<strong>Five random medium and hard questions</strong><span>Drawn from a curated question bank. Play again for a fresh set.</span>
-</div>
-</div>
-<div class="quiz-tools">
-<label>Question category<select id="quizCategory">
-<option value="mixed">Mixed</option>
-<option value="history">History</option>
-<option value="people">Players</option>
-<option value="grounds">Amex &amp; grounds</option>
-<option value="records">Records</option>
-<option value="modern">Modern Albion</option>
-</select></label><span class="score-chip" id="bestScore"></span>
-</div>
-<div id="quizContainer"></div>
-<div class="button-row">
-<button hidden="" id="checkQuiz" type="button">Check answer</button><button class="ghost" id="newQuiz" type="button">Start quiz</button><button class="ghost" hidden="" id="replayMistakes" type="button">
-            Replay missed questions
-          </button><button class="ghost" hidden="" id="replayWeakCategory" type="button">
-            Practise weakest area
-          </button><button class="ghost" hidden="" id="shareQuiz" type="button">
-            Share quiz result
-          </button>
-</div>
-<div class="quiz-auto-next" hidden="" id="quizAdvanceCountdown">
-<span>Next question in a moment…</span><i></i>
-</div>
-<div aria-live="polite" class="result" id="quizResult"></div>
-</section>
-<section class="card shootout-card shootout-v17 shootout-r66" id="shootout">
+<nav aria-label="Matchday shortcuts" class="game-tabs section-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalties</span><small>Take on Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match</span><small>Next fixture</small></a><a class="game-tab fixtures-game-tab" href="#fixtures"><span>Fixtures</span><small>Full schedule</small></a><a class="game-tab squad-game-tab" href="#players"><span>Squad</span><small>Player groups</small></a></nav>
+<section class="card shootout-card shootout-v17 shootout-r66 first-feature" id="shootout">
 <div class="section-head shootout-intro">
 <div>
 <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
 <h2>Seagulls v Eagles</h2>
 <p class="shootout-lead">
-<strong>Albion kick:</strong> drag towards your target and release. <strong>Palace kick:</strong> wait for “React now”, then swipe towards the shot or hold the centre.
+<strong>Albion kick:</strong> drag towards your target and release. <strong>Palace kick:</strong> wait for “React now”, then swipe towards the shot or press and hold the centre.
             </p>
 </div>
 <div aria-label="Penalty game sound" class="shootout-top-controls single-control">
@@ -453,20 +418,21 @@
 <div aria-live="polite" class="kick-decision-v10" hidden="" id="kickDecision"></div>
 <div aria-live="polite" class="stage-instruction" id="stageInstruction">Drag towards your target and release</div>
 <div aria-hidden="true" class="keeper-choice-marker" hidden id="keeperChoiceMarker">Stay centre</div>
-<div aria-hidden="true" class="save-zone-guide three-zone-guide"><span>Swipe left</span><span>Stay centre</span><span>Swipe right</span></div>
+<div aria-hidden="true" class="save-zone-guide three-zone-guide"><span>Swipe left</span><span>Hold centre</span><span>Swipe right</span></div>
 </div>
 <aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Drag towards your target and release. The target may move up to 5% outside the frame, where a miss is possible.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
 <div aria-atomic="true" aria-live="polite" class="shootout-status-v10" id="shootoutStatus">
 <b>Pick your spot</b>
 <span>Drag and release. The target can move narrowly outside the frame.</span>
 </div>
+<p aria-live="polite" class="save-reaction-feedback" hidden id="saveReactionFeedback"></p>
 <div class="palace-ready-panel" hidden="" id="palaceReadyPanel">
-<p>Watch the strike, then swipe towards the shot or hold the centre.</p>
+<p>Watch the strike, then swipe towards the shot or press and hold the centre.</p>
 <button id="palaceReadyButton" type="button">READY TO SAVE</button>
 </div>
 <div class="shootout-option-row shot-style-controls panenka-only-control" aria-label="Optional special penalty">
 <button aria-pressed="false" class="shot-style-button panenka-button" data-shot-style="panenka" id="panenkaChoice" type="button"><span>Panenka</span><small>Special next kick</small></button>
-<span id="keyboardHint">Drag and release to shoot. When saving, wait for “React now”, then swipe or hold the centre. Keyboard: arrows, Enter and number keys 1–9.</span>
+<span id="keyboardHint">Drag and release to shoot. When saving, wait for “React now”, then swipe or press and hold the centre. Keyboard: arrows, Enter and number keys 1–9.</span>
 </div>
 <div class="shootout-summary-v10" hidden="" id="shootoutSummary"></div>
 <div class="button-row shootout-actions-v10">
@@ -478,7 +444,7 @@
 </div>
 </section>
 <section class="card match-centre-pro" id="match-centre">
-<p class="content-freshness" data-freshness="match-centre">Match and squad information: <b>last checked 14 August 2026</b></p>
+<p class="content-freshness" data-freshness="match-centre">Match and squad information: <b>last checked 20 August 2026</b></p>
 <div class="section-head match-centre-heading">
 <div>
 <p class="eyebrow">Albion Match Centre</p>
@@ -488,19 +454,20 @@
 <div aria-live="polite" class="match-centre-countdown" id="matchCentreCountdown">Calculating countdown…</div>
 </div>
 <div class="match-centre-status" role="status">
-<span class="status-pill confirmed" id="centreStatusPill">Confirmed date</span>
+<span class="status-pill confirmed" id="centreStatusPill">Confirmed fixture</span>
 <span id="centreCompetitionChip">UEFA Conference League</span>
-<span id="centreCoverageChip">Kick-off time TBC</span>
+<span id="centreCoverageChip">SolidSport</span>
 </div>
 <div class="match-details match-details-expanded">
 <article><span>Date</span><b id="centreMatchDate">20 August 2026</b></article>
-<article><span>Kick-off</span><b id="centreMatchTime">Time TBC</b></article>
+<article><span>Kick-off</span><b id="centreMatchTime">18:00</b></article>
 <article><span>Venue</span><b id="centreMatchVenue">Away</b></article>
 <article><span>Competition</span><b id="centreMatchCompetition">UEFA Conference League</b></article>
-<article><span>Broadcast</span><b id="centreMatchBroadcast">To be confirmed</b></article>
-<article><span>Fixture status</span><b id="centreMatchStatus">Play-off first leg · kick-off TBC</b></article>
+<article><span>Broadcast</span><b id="centreMatchBroadcast">SolidSport</b></article>
+<article><span>Fixture status</span><b id="centreMatchStatus">Confirmed fixture · 18:00 UK kick-off</b></article>
 </div>
-<p class="match-centre-note" id="centreMatchNote">Away first leg on Thursday 20 August. Kick-off remains subject to final UEFA confirmation.</p>
+<p class="match-centre-note" id="centreMatchNote">Away first leg in Tromsø on Thursday 20 August. Kick-off is 18:00 UK time, 19:00 local time.</p>
+<p class="tie-aggregate" hidden id="centreAggregate"></p>
 <div class="match-centre-grid">
 <section aria-labelledby="opponentBriefingTitle" class="opponent-briefing match-centre-panel">
 <div>
@@ -525,7 +492,7 @@
 <a href="#players">Explore the squad</a>
 </section>
 </div>
-<p class="verified-note match-centre-source">Next fixture checked against the <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">official Albion fixture information</a>. Kick-off time remains TBC.</p>
+<p class="verified-note match-centre-source">Next fixture checked against official Albion information on 20 August 2026. The Tromsø first leg kicks off at 18:00 UK time; the return at the Amex on 27 August kicks off at 19:30 UK time.</p>
 <div class="weather-note" id="weatherPanel"><b>Falmer weather</b><p>A detailed forecast will appear within the reliable forecast window.</p></div>
 <div class="next-three-card embedded-next">
 <p class="eyebrow">Coming up</p><h3>Next three fixtures</h3>
@@ -533,10 +500,65 @@
 <div class="carousel-controls"><button aria-label="Previous fixture" class="ghost" id="previousFixture" type="button">←</button><span id="fixtureCarouselPosition">1 of 3</span><button aria-label="Next fixture" class="ghost" id="nextFixtureButton" type="button">→</button></div>
 </div>
 </section>
+<section class="card" id="fixtures">
+<p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 20 August 2026</b></p>
+<div class="section-head">
+<p class="eyebrow">All competitions</p>
+<h2>Albion fixtures 2026/27</h2>
+<p>Search by opponent, venue or month.</p>
+</div>
+<div class="season-centre-head">
+<label for="seasonSelector">Season
+            <select id="seasonSelector">
+<option value="2026/27">2026/27</option>
+</select>
+</label>
+<div aria-label="Season statistics" class="season-stat-grid">
+<article><span>Played</span><b id="seasonPlayed">0</b></article>
+<article><span>Points</span><b id="seasonPoints">0</b></article>
+<article><span>Record</span><b id="seasonRecord">0-0-0</b></article>
+<article><span>Goals</span><b id="seasonGoals">0-0</b></article>
+</div>
+</div>
+<div aria-label="Next home and away fixtures" class="next-home-away">
+<article class="next-home">
+<span>Next home</span><b id="nextHomeFixture">Albion v Aston Villa</b><small id="nextHomeDate">23 Aug 2026 · 14:00 · Amex Stadium</small>
+</article>
+<article class="next-away">
+<span>Next away</span><b id="nextAwayFixture">Tromsø IL v Albion</b><small id="nextAwayDate">20 Aug 2026 · 18:00 · Away</small>
+</article>
+</div>
+<div aria-label="Fixture colour key" class="fixture-key">
+<span class="home-key">Home</span><span class="away-key">Away</span>
+</div>
+<div class="fixture-actions">
+<button class="button-link" id="downloadCalendar" type="button">Add season to calendar</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Check official fixtures</a>
+</div>
+<div class="fixture-tools">
+<label>Find opponent<input id="fixtureSearch" placeholder="e.g. Arsenal" type="search"/></label><label>Venue<select id="venueFilter">
+<option value="all">Home and away</option>
+<option value="H">Home only</option>
+<option value="A">Away only</option>
+</select></label><label class="month-select">Month<select id="monthFilter">
+<option value="all">All months</option>
+</select></label>
+</div>
+<div aria-label="Filter fixtures by month" class="month-buttons" id="monthButtons"></div>
+<button aria-expanded="true" class="ghost fixture-toggle" id="toggleFixtures" type="button">
+          Hide fixtures
+        </button>
+<div class="fixtures-list" id="fixtureList"></div>
+<details class="prediction-history-panel">
+<summary>Your season prediction record</summary>
+<div aria-live="polite" id="predictionHistory">
+            Save a match prediction to begin your record.
+          </div>
+</details>
+</section>
 <section class="card player-profiles" id="players">
-<p class="content-freshness">Provisional first-team snapshot: <b>checked 3 August 2026</b></p>
+<p class="content-freshness">First-team squad snapshot: <b>checked 20 August 2026</b></p>
 <div class="section-head player-profile-heading">
-<div><p class="eyebrow">First-team squad</p><h2>Albion player profiles</h2><p>Goalkeepers are shown first, with defenders, midfielders and forwards kept in compact groups. Open a profile or add a player to your XI.</p></div>
+<div><p class="eyebrow">First-team squad</p><h2>Albion player profiles</h2><p>Goalkeepers are shown first, with defenders, midfielders and forwards kept in compact groups. Loans and development players are separated below so the active XI list stays clean.</p></div>
 <a class="button-link secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official squad</a>
 </div>
 <div class="player-profile-tools">
@@ -549,12 +571,52 @@
 <div aria-label="Player categories" class="player-category-tabs" id="playerCategoryTabs" role="tablist"></div>
 <p class="player-mobile-hint" id="playerMobileHint">Goalkeepers are shown first. Open a position group to see the other players.</p>
 <div aria-live="polite" class="player-profile-grid" id="playerProfileGrid"></div>
-<p class="verified-note">Squad names and broad positions were checked against the <a href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">official Albion squad page</a> and official transfer announcements on 3 August 2026. Tommy Watson is excluded while on loan at Leicester City. The summer transfer window remains open and unconfirmed squad numbers are deliberately omitted.</p>
+<div class="squad-secondary-groups" aria-label="Loan and development players">
+<details class="squad-status-group"><summary><span>Out on loan</span><b id="loanPlayerCount">0</b></summary><div class="player-profile-grid secondary-player-grid" id="loanPlayerGrid"></div></details>
+<details class="squad-status-group"><summary><span>Development</span><b id="developmentPlayerCount">0</b></summary><div class="player-profile-grid secondary-player-grid" id="developmentPlayerGrid"></div></details>
+</div>
+<p class="verified-note">Squad status was refreshed on 20 August 2026 against official Albion squad and transfer information. Carl Rushworth is removed after his permanent move to Coventry City; Facundo Buonanotte is listed under loans at Elche CF; Promise David is included after joining on loan from Union Saint-Gilloise; Mark O'Mahony is shown in the development group after his under-21 involvement. The club announced its 2026/27 squad numbers on 20 August; this build deliberately avoids guessing any number that has not been individually reconciled with that new list.</p>
 <dialog aria-labelledby="playerDialogTitle" class="player-profile-dialog" id="playerProfileDialog">
 <button aria-label="Close player profile" class="dialog-close" id="closePlayerProfile" type="button">×</button>
 <div id="playerProfileDialogContent"></div>
 </dialog>
-</section><details class="my-hub-panel"><summary>My Albion Hub: saved progress</summary><section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
+</section><section class="card quiz-card" id="quiz">
+<div class="section-head">
+<p class="eyebrow">Albion quiz</p>
+<h2>Test your Albion knowledge</h2>
+</div>
+<div class="quiz-banner">
+<img alt="" decoding="async" loading="lazy" src="albion-safe-graphic.svg"/>
+<div>
+<strong>Five random medium and hard questions</strong><span>Drawn from a curated question bank. Play again for a fresh set.</span>
+</div>
+</div>
+<div class="quiz-tools">
+<label>Question category<select id="quizCategory">
+<option value="mixed">Mixed</option>
+<option value="history">History</option>
+<option value="people">Players</option>
+<option value="grounds">Amex &amp; grounds</option>
+<option value="records">Records</option>
+<option value="modern">Modern Albion</option>
+</select></label><span class="score-chip" id="bestScore"></span>
+</div>
+<div id="quizContainer"></div>
+<div class="button-row">
+<button hidden="" id="checkQuiz" type="button">Check answer</button><button class="ghost" id="newQuiz" type="button">Start quiz</button><button class="ghost" hidden="" id="replayMistakes" type="button">
+            Replay missed questions
+          </button><button class="ghost" hidden="" id="replayWeakCategory" type="button">
+            Practise weakest area
+          </button><button class="ghost" hidden="" id="shareQuiz" type="button">
+            Share quiz result
+          </button>
+</div>
+<div class="quiz-auto-next" hidden="" id="quizAdvanceCountdown">
+<span>Next question in a moment…</span><i></i>
+</div>
+<div aria-live="polite" class="result" id="quizResult"></div>
+</section>
+<details class="my-hub-panel"><summary>My Albion Hub: saved progress</summary><section aria-labelledby="supporterProfileTitle" class="supporter-profile" id="supporter-profile">
 <div>
 <p class="eyebrow">Your Albion profile</p>
 <h2 id="supporterProfileTitle">Supporter progress</h2>
@@ -674,61 +736,6 @@
           <a href="https://www.brightonandhovealbion.com/match-centre?gameId=2562145" rel="noopener" target="_blank">Latest meeting</a>
 </p>
 </section>
-<section class="card" id="fixtures">
-<p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 14 August 2026</b></p>
-<div class="section-head">
-<p class="eyebrow">All competitions</p>
-<h2>Albion fixtures 2026/27</h2>
-<p>Search by opponent, venue or month.</p>
-</div>
-<div class="season-centre-head">
-<label for="seasonSelector">Season
-            <select id="seasonSelector">
-<option value="2026/27">2026/27</option>
-</select>
-</label>
-<div aria-label="Season statistics" class="season-stat-grid">
-<article><span>Played</span><b id="seasonPlayed">0</b></article>
-<article><span>Points</span><b id="seasonPoints">0</b></article>
-<article><span>Record</span><b id="seasonRecord">0-0-0</b></article>
-<article><span>Goals</span><b id="seasonGoals">0-0</b></article>
-</div>
-</div>
-<div aria-label="Next home and away fixtures" class="next-home-away">
-<article class="next-home">
-<span>Next home</span><b id="nextHomeFixture">Albion v Aston Villa</b><small id="nextHomeDate">23 Aug 2026 · 14:00 · Amex Stadium</small>
-</article>
-<article class="next-away">
-<span>Next away</span><b id="nextAwayFixture">Tromsø IL v Albion</b><small id="nextAwayDate">20 Aug 2026 · Time TBC · Away</small>
-</article>
-</div>
-<div aria-label="Fixture colour key" class="fixture-key">
-<span class="home-key">Home</span><span class="away-key">Away</span>
-</div>
-<div class="fixture-actions">
-<button class="button-link" id="downloadCalendar" type="button">Add season to calendar</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Check official fixtures</a>
-</div>
-<div class="fixture-tools">
-<label>Find opponent<input id="fixtureSearch" placeholder="e.g. Arsenal" type="search"/></label><label>Venue<select id="venueFilter">
-<option value="all">Home and away</option>
-<option value="H">Home only</option>
-<option value="A">Away only</option>
-</select></label><label class="month-select">Month<select id="monthFilter">
-<option value="all">All months</option>
-</select></label>
-</div>
-<div aria-label="Filter fixtures by month" class="month-buttons" id="monthButtons"></div>
-<button aria-expanded="true" class="ghost fixture-toggle" id="toggleFixtures" type="button">
-          Hide fixtures
-        </button>
-<div class="fixtures-list" id="fixtureList"></div>
-<details class="prediction-history-panel">
-<summary>Your season prediction record</summary>
-<div aria-live="polite" id="predictionHistory">
-            Save a match prediction to begin your record.
-          </div>
-</details>
-</section>
 <section class="card" id="xi">
 <div class="section-head">
 <p class="eyebrow">Team selector</p>
@@ -812,7 +819,7 @@
           Choose Albion’s finishing position.
         </div>
 </section>
-<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#fixtures">Fixtures</a><a href="#xi">Pick XI</a><a href="#players">Squad</a><a href="#story">Albion story</a><a href="#travel">Visit the Amex</a></nav>
+<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#story">Albion story</a><a href="#travel">Visit the Amex</a><a href="#xi">Pick XI</a></nav>
 <section class="card" id="story">
 <div class="section-head">
 <p class="eyebrow">History, landmarks, facts and supporter memories</p>
@@ -1329,7 +1336,7 @@
 </section>
 </main>
 <nav aria-label="Quick section navigation" class="mobile-jump-nav">
-<a href="#quiz">Quiz</a><a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#players">Squad</a><a href="#xi">XI</a>
+<a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#quiz">Quiz</a>
 </nav>
 <details class="floating-tools" id="floatingTools"><summary aria-label="Open site controls">•••</summary><div><button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">⚙ Settings</button><button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">🔇 Sound off</button><button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">↑ Top</button></div></details><div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
 
@@ -1383,5 +1390,5 @@
 
 
 
-<script defer src="albion-data-r66.js?v=20260805-r66"></script><script defer src="app-r66.js?v=20260814-r68"></script><script defer src="shootout-r66.js?v=20260814-r68"></script><script defer src="r66-enhancements.js?v=20260805-r66"></script></body>
+<script defer src="albion-data-r66.js?v=20260820-r69"></script><script defer src="app-r66.js?v=20260820-r69"></script><script defer src="shootout-r66.js?v=20260820-r69"></script><script defer src="r66-enhancements.js?v=20260805-r66"></script></body>
 </html>

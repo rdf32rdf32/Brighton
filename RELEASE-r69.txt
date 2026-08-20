@@ -1,0 +1,16 @@
+Albion Fan Hub r69
+20 August 2026
+
+Priority update from r68:
+- current Tromsø and Crystal Palace fixture data
+- one shared fixture data source
+- refreshed squad statuses and Promise David
+- separate loan/development groups
+- deliberate centre-hold save mechanic
+- short-swipe dead zone
+- immediate Palace penalty reaction feedback
+- fixtures promoted in navigation
+- clearer home-page hierarchy
+
+Recommendation 7 (difficulty modes) was deliberately NOT implemented.
+Penalty scoring/difficulty configuration remains unchanged from r68.

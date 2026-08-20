@@ -263,7 +263,8 @@
     aimPointerActive: false,
     takerPose: "relaxed",
     aimDragMoved: false,
-    standingSaveTimer: 0,
+    centreHoldTimer: 0,
+    centreHoldPoint: null,
     collisionFrame: 0,
     saveResolutionLocked: false,
     shotStyle: "normal",
@@ -537,12 +538,42 @@
 
   function reactionLabel(dive) {
     if (!dive) return "No movement";
-    if (dive.source === "stand-still") return "Held the centre";
+    if (dive.source === "centre-hold") return "Held the centre";
     if (dive.timing < -420) return "Committed early";
     if (dive.timing < -70) return "Good anticipation";
     if (dive.timing <= 180) return "Perfect reaction";
     if (dive.timing <= 520) return "Late reaction";
     return "Very late";
+  }
+
+  function clearSaveFeedback() {
+    const feedback = $("saveReactionFeedback");
+    if (!feedback) return;
+    feedback.hidden = true;
+    feedback.textContent = "";
+    delete feedback.dataset.outcome;
+  }
+
+  function saveFeedbackText(saved, saveType = "") {
+    if (!state.userDive) return "No save input registered";
+    const ms = Math.max(0, Math.round(state.userDive.timing));
+    const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
+    const diveSide = state.userDive.rawX < .4 ? -1 : state.userDive.rawX > .6 ? 1 : 0;
+    const targetHeight = state.palaceTarget.y < .34 ? -1 : state.palaceTarget.y > .66 ? 1 : 0;
+    const diveHeight = state.userDive.rawY < .34 ? -1 : state.userDive.rawY > .66 ? 1 : 0;
+    const sideText = targetSide === diveSide ? "correct side" : "wrong side";
+    const heightText = targetHeight === diveHeight ? "right height" : "wrong height";
+    return saved
+      ? `${ms} ms · ${sideText} · ${String(saveType || "save").toLowerCase()}`
+      : `${ms} ms · ${sideText} · ${heightText}`;
+  }
+
+  function showSaveFeedback(text, outcome = "neutral") {
+    const feedback = $("saveReactionFeedback");
+    if (!feedback) return;
+    feedback.textContent = text;
+    feedback.dataset.outcome = outcome;
+    feedback.hidden = false;
   }
 
   function nudgeShotDifficulty(target) {
@@ -777,8 +808,9 @@
     referee.style.top = "42.8%";
     referee.style.transform = "translate(-50%,0)";
     keeper.style.opacity = "1";
-    window.clearTimeout(state.standingSaveTimer);
-    state.standingSaveTimer = 0;
+    window.clearTimeout(state.centreHoldTimer);
+    state.centreHoldTimer = 0;
+    state.centreHoldPoint = null;
     keeper.querySelectorAll(".keeper-arm,.keeper-lower-arm,.keeper-leg,.keeper-lower-leg,.keeper-body-group,.keeper-head-group").forEach((part) => { part.style.transform = ""; });
     taker.querySelectorAll(".taker-arm,.taker-lower-arm,.taker-leg,.taker-lower-leg,.taker-root").forEach((part) => { part.style.transform = ""; });
     referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root,.referee-head-group").forEach((part) => { part.style.transform = ""; });
@@ -1410,8 +1442,9 @@
     const replayToken = ++state.sequence;
     if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
     state.collisionFrame = 0;
-    window.clearTimeout(state.standingSaveTimer);
-    state.standingSaveTimer = 0;
+    window.clearTimeout(state.centreHoldTimer);
+    state.centreHoldTimer = 0;
+    state.centreHoldPoint = null;
 
     [ball, ballShadow, keeper].forEach((element) => {
       element?.getAnimations().forEach((animation) => {
@@ -2514,13 +2547,10 @@
     $("stageInstruction").textContent = matchMedia(MOBILE_PENALTY_QUERY).matches ? "React now — swipe or hold centre" : "React now — move or swipe towards the shot";
     setStatus("React now", "Commit to the side and height. Hold the centre for a central penalty.");
     window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 420);
-    window.clearTimeout(state.standingSaveTimer);
-    const straightAtKeeper = !state.palaceMiss && Math.abs(state.palaceTarget.x - .5) < .13 && state.palaceTarget.y > .34;
-    if (straightAtKeeper) {
-      state.standingSaveTimer = window.setTimeout(() => {
-        if (state.phase === "save" && state.reactionOpen && !state.userDive) takeUserDive({ x: .5, y: state.palaceTarget.y }, "stand-still");
-      }, reducedMotion() ? 35 : 190);
-    }
+    window.clearTimeout(state.centreHoldTimer);
+    state.centreHoldTimer = 0;
+    state.centreHoldPoint = null;
+    clearSaveFeedback();
     window.clearTimeout(state.reactionTimer);
     state.reactionTimer = window.setTimeout(() => {
       state.reactionOpen = false;
@@ -2533,6 +2563,7 @@
     await approach.animation?.finished.catch(() => {});
     state.saveResolutionLocked = true;
     state.reactionOpen = false;
+    cancelCentreHold();
     stage.classList.remove("is-save-window");
     window.clearTimeout(state.reactionTimer);
 
@@ -2559,7 +2590,7 @@
       const distance = Math.hypot(state.palaceTarget.x - state.userDive.x, (state.palaceTarget.y - state.userDive.y) * .82);
       const gloveEdge = sameSide && distance <= radius * 1.22 && Math.abs(timing) < settings.postContactWindow * .94;
       const bodyBlock = targetCentre && diveCentre && Math.abs(state.palaceTarget.y - state.userDive.y) < .4;
-      const stayedCentral = state.userDive.source === "stand-still" && targetCentre && state.palaceTarget.y > .34;
+      const stayedCentral = state.userDive.source === "centre-hold" && targetCentre && state.palaceTarget.y > .34;
       saved = distance <= radius || gloveEdge || bodyBlock || stayedCentral;
       if (saved) {
         if (stayedCentral) saveType = state.palaceTarget.y > .67 ? "LEG SAVE" : "BLOCKED";
@@ -2587,7 +2618,7 @@
     }
     const palaceOutcome = state.palaceMiss ? "miss" : saved ? "saved" : "goal";
     state.palaceResults.push({ scored, result: palaceOutcome });
-    state.palaceShots.push({ x: state.palaceTarget.x, y: state.palaceTarget.y, result: palaceOutcome, name: player.name, saveType, dive: state.userDive ? { x: state.userDive.x, y: state.userDive.y } : null });
+    state.palaceShots.push({ x: state.palaceTarget.x, y: state.palaceTarget.y, result: palaceOutcome, name: player.name, saveType, reactionMs: state.userDive ? Math.max(0, Math.round(state.userDive.timing)) : null, dive: state.userDive ? { x: state.userDive.x, y: state.userDive.y } : null });
     refereeSignal(scored);
 
     if (saved) {
@@ -2596,6 +2627,7 @@
       const timingText = reactionLabel(state.userDive);
       $("stageInstruction").textContent = "Saved by Verbruggen";
       setStatus("Verbruggen saves", `${timingText} · ${state.userDive?.zone || "committed save"} · ${saveType.toLowerCase()}.`);
+      showSaveFeedback(saveFeedbackText(true, saveType), "save");
       window.setTimeout(() => sound("albionCheer"), 90);
       await exceptionalSaveReplay(state.palaceTarget, saveType, state.userDive);
       keeperCelebration();
@@ -2606,6 +2638,7 @@
       showDecision("PALACE MISS!", "miss");
       $("stageInstruction").textContent = "Palace miss";
       setStatus("It stays out", "The Palace taker fails to find the target.");
+      showSaveFeedback(state.userDive ? `Palace miss · ${saveFeedbackText(false)}` : "Palace miss · no save needed", "miss");
       sound("post"); sound("albionCheer");
     } else {
       netReaction(state.palaceTarget);
@@ -2614,6 +2647,7 @@
       showDecision("PALACE SCORE", "goal");
       $("stageInstruction").textContent = "Palace score";
       setStatus("Palace score", state.userDive ? "Verbruggen stretches but cannot quite reach it." : "No dive was made in the available window.");
+      showSaveFeedback(state.userDive ? saveFeedbackText(false) : "No save input registered", "goal");
       sound("goal"); window.setTimeout(() => sound("palaceCheer"), 170);
     }
 
@@ -2815,7 +2849,8 @@
       aimPointerActive: false,
     takerPose: "relaxed",
       aimDragMoved: false,
-      standingSaveTimer: 0,
+      centreHoldTimer: 0,
+    centreHoldPoint: null,
     collisionFrame: 0,
       saveResolutionLocked: false,
       shotStyle: "normal",
@@ -2847,6 +2882,7 @@
   }
 
   function clearPointerTracking(trailDelay = 0) {
+    cancelCentreHold();
     state.pointerStart = null;
     state.pointerLast = null;
     state.activePointerId = null;
@@ -2854,6 +2890,30 @@
     state.aimDragMoved = false;
     stage.classList.remove("is-drag-aiming");
     hideSwipeTrail(trailDelay);
+  }
+
+  function isCentreSavePoint(point) {
+    return Boolean(point) && Math.abs(point.x - .5) <= .18;
+  }
+
+  function cancelCentreHold() {
+    window.clearTimeout(state.centreHoldTimer);
+    state.centreHoldTimer = 0;
+    state.centreHoldPoint = null;
+  }
+
+  function beginCentreHold(point) {
+    cancelCentreHold();
+    if (state.phase !== "save" || !state.reactionOpen || state.userDive || !isCentreSavePoint(point)) return;
+    state.centreHoldPoint = { x: .5, y: clamp(point.y, .08, .92) };
+    state.centreHoldTimer = window.setTimeout(() => {
+      if (state.phase !== "save" || !state.reactionOpen || state.userDive || !state.centreHoldPoint) return;
+      const holdPoint = { ...state.centreHoldPoint };
+      state.centreHoldTimer = 0;
+      state.centreHoldPoint = null;
+      takeUserDive(holdPoint, "centre-hold");
+      haptic(12);
+    }, reducedMotion() ? 90 : 170);
   }
 
   function swipeGoalPoint(start, current, fallbackPoint) {
@@ -2907,6 +2967,7 @@
     if (!state.pointerStart) return;
     const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
     const distance = pointerDistance(state.pointerStart, nowPoint);
+    if (distance > Math.max(10, stage.clientWidth * .018)) cancelCentreHold();
     const mappedPoint = touchLike ? swipeGoalPoint(state.pointerStart, nowPoint, mobileTapGoalPoint(event)) : mobileTapGoalPoint(event);
     state.pointerLast = nowPoint;
     if (touchLike) showSwipeTrail(state.pointerStart, nowPoint);
@@ -2958,6 +3019,7 @@
     } else {
       const tapPoint = mobileTapGoalPoint(event);
       previewKeeper(tapPoint);
+      if (state.reactionOpen && isCentreSavePoint(tapPoint)) beginCentreHold(tapPoint);
     }
   }, { passive: false });
 
@@ -2967,8 +3029,9 @@
     const point = eventGoalPoint(event, AIM_MARGIN);
     const distance = pointerDistance(state.pointerStart, event);
     const fallbackPoint = mobileTapGoalPoint(event);
-    const swipePoint = touchLike
-      ? distance <= 8 ? fallbackPoint : distance < Math.max(18, stage.clientWidth * .035) ? { x: .5, y: .58 } : swipeGoalPoint(state.pointerStart, event, fallbackPoint)
+    const saveThreshold = touchLike ? Math.max(18, stage.clientWidth * .035) : Math.max(10, stage.clientWidth * .018);
+    const swipePoint = touchLike && distance >= saveThreshold
+      ? swipeGoalPoint(state.pointerStart, event, fallbackPoint)
       : fallbackPoint;
 
     if (state.phase === "albion-aim" && state.aimPointerActive) {
@@ -2994,8 +3057,22 @@
       setStatus("Hold your position", "The save window opens at ball contact.");
     } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       event.preventDefault();
-      takeUserDive(swipePoint, distance > 18 ? (touchLike ? "swipe" : "mouse-flick") : (touchLike ? "tap" : "click"));
-      if (touchLike) haptic(12);
+      cancelCentreHold();
+      if (touchLike && distance >= saveThreshold) {
+        takeUserDive(swipePoint, "swipe");
+        haptic(12);
+      } else if (!touchLike && distance >= saveThreshold) {
+        takeUserDive(swipePoint, "mouse-flick");
+      } else if (!isCentreSavePoint(fallbackPoint) && distance < Math.max(8, saveThreshold * .45)) {
+        takeUserDive(fallbackPoint, touchLike ? "tap" : "click");
+        if (touchLike) haptic(12);
+      } else if (distance > 0 && distance < saveThreshold) {
+        $("stageInstruction").textContent = "Swipe further or press and hold centre";
+        setStatus("No save committed", "A short uncertain swipe is ignored so it cannot become an accidental central save.");
+      } else if (isCentreSavePoint(fallbackPoint)) {
+        $("stageInstruction").textContent = "Press and hold centre";
+        setStatus("Hold centre", "A central save now needs a deliberate press and hold.");
+      }
     }
     const cancelledAim = state.phase === "albion-aim" && state.aimPointerActive;
     if (hadTracking) clearPointerTracking(touchLike && !cancelledAim ? 180 : 0);
@@ -3023,6 +3100,10 @@
     if (state.phase === "albion-aim" && !point.inside) return;
     fallbackTouchStart = { clientX: touch.clientX, clientY: touch.clientY, time: performance.now() };
     if (state.phase === "albion-aim") setReticle(point.x, point.y);
+    else {
+      const tapPoint = mobileTapGoalPoint(touch);
+      if (state.reactionOpen && isCentreSavePoint(tapPoint)) beginCentreHold(tapPoint);
+    }
     event.preventDefault();
   }, { passive: false });
 
@@ -3035,7 +3116,8 @@
     if (state.phase === "albion-aim") setReticle(point.x, point.y);
     else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
-      const mapped = distance > 18 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
+      if (distance > 10) cancelCentreHold();
+      const mapped = distance >= 18 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
       previewKeeper(mapped);
       if (distance >= 18) takeUserDive(mapped, "swipe");
     }
@@ -3059,9 +3141,16 @@
           setStatus("Aim selected", "Make a short deliberate drag to take the penalty.");
         }
       } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
-        takeUserDive(mapped, distance > 18 ? "swipe" : "tap");
+        cancelCentreHold();
+        if (distance >= 18) takeUserDive(mapped, "swipe");
+        else if (!isCentreSavePoint(mapped) && distance < 8) takeUserDive(mapped, "tap");
+        else {
+          $("stageInstruction").textContent = isCentreSavePoint(mapped) ? "Press and hold centre" : "Swipe further to commit";
+          setStatus("No save committed", "Short uncertain movement is ignored.");
+        }
       }
     }
+    cancelCentreHold();
     fallbackTouchStart = null;
     hideSwipeTrail();
   }, { passive: false });

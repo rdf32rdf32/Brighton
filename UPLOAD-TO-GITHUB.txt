@@ -1,5 +1,11 @@
-ALBION FAN HUB r68
+ALBION FAN HUB r69 — GITHUB PAGES UPLOAD
 
-Upload every file in this ZIP to the Brighton repository root and replace files with matching names.
+1. Open the Brighton repository.
+2. Upload every file contained in Brighton-Fan-Hub-r69-FULL.zip to the repository root.
+3. Replace files with the same names.
+4. Commit the changes.
+5. Do not keep a second copy of index.html or the JS/CSS bundles under new filenames.
 
-The changed application, penalty CSS/JS and polish stylesheet use r68 cache-busting query strings in index.html.
+The runtime bundle names deliberately remain app-r66.js, albion-data-r66.js,
+shootout-r66.js and the existing CSS filenames. Their cache-busting query strings
+in index.html are updated to r69.
