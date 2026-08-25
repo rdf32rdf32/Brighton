@@ -1,0 +1,26 @@
+ALBION FAN HUB r72
+25 August 2026
+
+NEXT-OPPONENT CONSISTENCY FIX
+- Removed the hard-coded Aston Villa next-opponent head-to-head block.
+- The opponent snapshot now reads the same active next fixture as the hero and Match Centre.
+- It shows completed 2026/27 meetings with the current opponent when available.
+- If there is no completed current-season meeting, it says so rather than inventing or retaining another club's history.
+- The snapshot changes automatically whenever nextFixture rolls forward.
+
+RESULTS SUMMARY FIX
+- All-competition Results totals are calculated from completed fixture scores.
+- Static HTML fallbacks now also show the correct current totals: P2, W1, D1, L0, Goals 4–0.
+- This avoids a flash of 0 / 0 / 0 / 0 / 0–0 if enhancement JavaScript is delayed or cached.
+
+PREDICTOR FIX
+- The static current-match predictor title is corrected to Albion v Tromsø IL.
+- Runtime predictor title continues to derive from the same active fixture object and respects home/away venue.
+- A next-match event now refreshes dependent Match Centre code immediately when the selected fixture changes.
+
+FIXTURE CONSISTENCY
+- Fixture highlights now ignore completed, postponed, cancelled and abandoned fixtures.
+- Fixture NEXT status uses the same central active-match selector rather than a duplicate selector.
+
+CACHE
+- Changed script query strings to r72 so GitHub Pages/browser caches request the corrected files.

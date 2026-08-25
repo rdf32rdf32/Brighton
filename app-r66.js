@@ -1,6 +1,6 @@
-/* ===== Albion Fan Hub r71 application bundle ===== */
+/* ===== Albion Fan Hub r72 application bundle ===== */
 window.ALBION_CONTENT = {
-  featureVersion: "70",
+  featureVersion: "72",
   lastUpdated: "25 August 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
@@ -1418,6 +1418,52 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
         `${days}d ${hours}h ${minutes}m to kick-off`;
   }
 
+  function resultScoreFor(fixture) {
+    if (!fixtureIsComplete(fixture)) return "";
+    const a = Number(fixture.albionGoals);
+    const o = Number(fixture.opponentGoals);
+    if (!Number.isFinite(a) || !Number.isFinite(o)) return String(fixture.result || "");
+    return fixture.venue === "H" ? `Albion ${a}–${o} ${fixture.opponent}` : `${fixture.opponent} ${o}–${a} Albion`;
+  }
+
+  function updateNextOpponentSnapshot() {
+    const title = $("nextOpponentMeetingsTitle");
+    const intro = $("nextOpponentMeetingsIntro");
+    const grid = $("nextOpponentMeetingsGrid");
+    const note = $("nextOpponentMeetingsNote");
+    if (!title || !grid || !MATCH?.opponent) return;
+    title.textContent = `${MATCH.opponent} · current-season meetings`;
+    const meetings = (C.fixtures || [])
+      .filter((fixture) => fixture.opponent === MATCH.opponent && fixtureIsComplete(fixture))
+      .slice()
+      .sort((a, b) => fixtureTimestamp(b) - fixtureTimestamp(a))
+      .slice(0, 3);
+    if (intro) intro.textContent = `Completed 2026/27 meetings with ${MATCH.opponent}, taken from the same fixture data as Match Centre.`;
+    if (!meetings.length) {
+      grid.innerHTML = `<article class="head-to-head-empty"><b>No completed 2026/27 meeting yet</b><span>The panel will populate automatically when a result against ${esc(MATCH.opponent)} is recorded.</span></article>`;
+    } else {
+      grid.innerHTML = meetings.map((fixture) => {
+        const kickoff = fixtureTimestamp(fixture);
+        const iso = Number.isFinite(kickoff) ? new Date(kickoff).toISOString().slice(0, 10) : "";
+        const venue = fixture.venueName || (fixture.venue === "H" ? "Amex Stadium" : "Away");
+        return `<article>${iso ? `<time datetime="${iso}">${esc(fixture.date)}</time>` : `<time>${esc(fixture.date)}</time>`}<b>${esc(resultScoreFor(fixture))}</b><span>${esc(fixture.competition || "Premier League")} · ${esc(venue)}</span></article>`;
+      }).join("");
+    }
+    if (note) note.textContent = "This panel changes automatically with the next opponent and never carries over a previous opponent's hard-coded history.";
+  }
+
+  function updateResultsSummaryFromFixtures() {
+    const completed = (C.fixtures || []).filter((fixture) => fixtureIsComplete(fixture) && Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals));
+    const summary = completed.reduce((state, fixture) => {
+      const gf = Number(fixture.albionGoals), ga = Number(fixture.opponentGoals);
+      state.played += 1; state.gf += gf; state.ga += ga;
+      if (gf > ga) state.won += 1; else if (gf < ga) state.lost += 1; else state.drawn += 1;
+      return state;
+    }, { played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0 });
+    const values = { allCompPlayed: summary.played, allCompWon: summary.won, allCompDrawn: summary.drawn, allCompLost: summary.lost, allCompGoals: `${summary.gf}–${summary.ga}` };
+    Object.entries(values).forEach(([id, value]) => { if ($(id)) $(id).textContent = value; });
+  }
+
   function matchConfiguration() {
     const home = MATCH.venueCode !== "A";
     const title = home ? `Albion v ${MATCH.opponent}` : `${MATCH.opponent} v Albion`;
@@ -1440,6 +1486,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     if ($("quickNextFixture")) $("quickNextFixture").textContent = title;
     $("awayScoreLabel").textContent = `${shortOpponent} goals`;
     document.querySelectorAll("[data-active-opponent]").forEach((node) => { node.textContent = MATCH.opponent; });
+    updateNextOpponentSnapshot();
+    updateResultsSummaryFromFixtures();
     const aggregateText = tieAggregateFor(MATCH);
     ["heroAggregate", "centreAggregate"].forEach((id) => {
       const node = $(id);
@@ -1492,6 +1540,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     if (changed || force) {
       MATCH = selected;
       C.nextMatch = selected;
+      document.dispatchEvent(new CustomEvent("albion:nextmatch", { detail: selected }));
     }
     if (changed && $("fixtureList") && $("monthFilter")?.options?.length) {
       renderFixtures();
@@ -1735,11 +1784,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     const month = $("monthFilter").value;
     const now = Date.now();
     const matchWindow = 3 * 60 * 60 * 1000;
-    const nextFixture = (C.fixtures || [])
-      .map(fixture => ({ fixture, time: fixtureTimestamp(fixture) }))
-      .filter(item => Number.isFinite(item.time))
-      .sort((a,b) => a.time-b.time)
-      .find(item => item.time + matchWindow > now)?.fixture || null;
+    const activeMatch = selectActiveMatch(now);
+    const nextFixture = activeMatch ? (C.fixtures || []).find((fixture) => fixture.opponent === activeMatch.opponent && fixture.date === activeMatch.date && fixture.venue === activeMatch.venueCode) || null : null;
     const fixtures = (C.fixtures || []).filter(
       (fixture) =>
         (venue === "all" || fixture.venue === venue) &&
@@ -1768,7 +1814,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     const matchWindow = 3 * 60 * 60 * 1000;
     const upcoming = (C.fixtures || [])
       .map(fixture => ({ fixture, time: fixtureTimestamp(fixture) }))
-      .filter(item => Number.isFinite(item.time) && item.time + matchWindow > now)
+      .filter(item => Number.isFinite(item.time) && !fixtureIsComplete(item.fixture) && !fixtureIsUnavailable(item.fixture) && item.time + matchWindow > now)
       .sort((a,b) => a.time-b.time);
     const home = upcoming.find((item) => item.fixture.venue === "H")?.fixture;
     const away = upcoming.find((item) => item.fixture.venue === "A")?.fixture;
@@ -4274,6 +4320,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     matchCountdown();
   }
   refreshMatchCentre();
+  document.addEventListener("albion:nextmatch", refreshMatchCentre);
   setInterval(refreshMatchCentre, 60000);
   updatePersonalMatchPlan();
   matchChecklist();

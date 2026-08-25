@@ -1,0 +1,28 @@
+{
+  "release": "r72",
+  "date": "2026-08-25",
+  "fixes": {
+    "next_opponent_snapshot_dynamic": true,
+    "hardcoded_villa_next_opponent_removed": true,
+    "results_summary_dynamic": true,
+    "results_html_fallback": "P2 W1 D1 L0 GF4 GA0",
+    "predictor_static_home_away_corrected": true,
+    "dependent_match_centre_refresh_event": true,
+    "fixture_next_status_uses_central_selector": true
+  },
+  "validation": {
+    "javascript_syntax_all_pass": true,
+    "javascript_files": {
+      "albion-data-r66.js": true,
+      "app-r66.js": true,
+      "r66-enhancements.js": true,
+      "r70-enhancements.js": true,
+      "service-worker.js": true,
+      "shootout-r66.js": true
+    },
+    "unique_html_ids": 287,
+    "duplicate_ids": [],
+    "broken_internal_anchors": [],
+    "missing_local_assets": []
+  }
+}

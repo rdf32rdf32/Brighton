@@ -1,11 +1,11 @@
-ALBION FAN HUB r71 — GITHUB PAGES UPLOAD
+ALBION FAN HUB r72 — GITHUB PAGES UPLOAD
 
 1. Open the Brighton GitHub repository.
-2. Upload every file contained in Brighton-Fan-Hub-r71-FULL.zip to the repository root.
+2. Upload every file contained in Brighton-Fan-Hub-r72-FULL.zip to the repository root.
 3. Replace matching files when GitHub asks.
 4. Commit the changes.
-5. GitHub Pages should continue to publish from the same root.
+5. GitHub Pages continues to publish from the same repository root.
 
-Important: runtime filenames such as app-r66.js, albion-data-r66.js and shootout-r66.js are intentionally retained so the existing deployed files are replaced cleanly. Cache-busting query strings in index.html are updated to r71.
+Important: runtime filenames such as app-r66.js, albion-data-r66.js and shootout-r66.js are intentionally retained so the existing deployed files are replaced cleanly. index.html now uses r72 cache-busting query strings.
 
-R71: next fixture/opponent now rolls forward automatically from the shared fixture list every minute. Completed/final fixtures are skipped immediately; otherwise an in-progress fixture expires three hours after kick-off.
+R72 fixes the stale Aston Villa next-opponent panel, Results totals and predictor home/away title while keeping the r71 automatic fixture rollover.
