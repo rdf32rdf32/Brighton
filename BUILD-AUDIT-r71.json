@@ -1,0 +1,31 @@
+{
+  "release": "r71",
+  "date": "2026-08-25",
+  "automatic_next_fixture": {
+    "completed_result_skipped_immediately": true,
+    "unavailable_fixture_skipped": true,
+    "in_progress_window_hours": 3,
+    "refresh_interval_seconds": 60,
+    "refresh_on_tab_visibility": true,
+    "simulated_rollover": {
+      "2026-08-25": "Tromsø IL",
+      "after_Tromso_match_window": "Chelsea",
+      "after_Chelsea_match_window": "Leeds United"
+    }
+  },
+  "validation": {
+    "javascript_syntax_all_pass": true,
+    "javascript_files": {
+      "albion-data-r66.js": true,
+      "app-r66.js": true,
+      "r66-enhancements.js": true,
+      "r70-enhancements.js": true,
+      "service-worker.js": true,
+      "shootout-r66.js": true
+    },
+    "html_unique_ids": 283,
+    "duplicate_ids": [],
+    "broken_internal_anchors": [],
+    "missing_local_assets": []
+  }
+}

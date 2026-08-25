@@ -1,4 +1,4 @@
-/* ===== Albion Fan Hub r70 application bundle ===== */
+/* ===== Albion Fan Hub r71 application bundle ===== */
 window.ALBION_CONTENT = {
   featureVersion: "70",
   lastUpdated: "25 August 2026",
@@ -1298,13 +1298,34 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     return `Aggregate: Albion ${albion}–${opponent} ${fixture.opponent}`;
   }
 
+  function fixtureIsComplete(fixture) {
+    if (!fixture) return false;
+    if (Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)) return true;
+    return /(?:full[- ]?time|completed|final\b)/i.test(String(fixture.status || ""));
+  }
+
+  function fixtureIsUnavailable(fixture) {
+    return /(?:postponed|cancelled|canceled|abandoned)/i.test(String(fixture?.status || ""));
+  }
+
   function selectActiveMatch(now = Date.now()) {
     const matchWindow = 3 * 60 * 60 * 1000;
-    return (C.fixtures || [])
+    const fixtures = (C.fixtures || [])
       .map(fixtureToMatch)
       .filter(Boolean)
-      .sort((a,b) => new Date(a.dateISO) - new Date(b.dateISO))
-      .find(fixture => new Date(fixture.dateISO).getTime() + matchWindow > now) || null;
+      .filter(fixture => !fixtureIsComplete(fixture) && !fixtureIsUnavailable(fixture))
+      .sort((a, b) => new Date(a.dateISO) - new Date(b.dateISO));
+
+    // Keep an uncompleted match on screen while it is actually in progress.
+    // As soon as a final score/status exists it is skipped immediately.
+    const inProgress = fixtures.find(fixture => {
+      const kickoff = new Date(fixture.dateISO).getTime();
+      return kickoff <= now && kickoff + matchWindow > now;
+    });
+    if (inProgress) return inProgress;
+
+    // Otherwise always advance to the first genuinely future, unplayed fixture.
+    return fixtures.find(fixture => new Date(fixture.dateISO).getTime() > now) || null;
   }
   let MATCH = selectActiveMatch() || C.nextMatch || {
     opponent: "To be confirmed",

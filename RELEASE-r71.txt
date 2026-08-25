@@ -1,0 +1,15 @@
+ALBION FAN HUB r71
+25 August 2026
+
+AUTOMATIC NEXT-FIXTURE ROLLOVER
+
+- The hero, sticky match bar, dashboard opponent, Match Centre and predictor all derive their opponent from the shared fixture list.
+- Completed fixtures are skipped immediately when a final score is present or the status says Full-time / Completed / Final.
+- Postponed, cancelled and abandoned fixtures are not selected as the next match.
+- An uncompleted match remains the active fixture during its match window.
+- If no result has been entered, the site automatically advances three hours after kick-off.
+- The selection is recalculated every 60 seconds and whenever the browser tab becomes active again.
+- No manual change to the hero opponent is required as the season progresses through fixtures already in the shared fixture list.
+- Cache-busting release strings were advanced to r71 so browsers fetch the corrected JavaScript.
+
+Runtime filenames are intentionally retained for clean replacement of the existing GitHub Pages repository.

@@ -1,0 +1,31 @@
+ALBION FAN HUB r71 — BUILD AND AUDIT REPORT
+25 August 2026
+
+PURPOSE
+Fix next-opponent rollover so the site advances automatically through the shared fixture list.
+
+CHANGE
+- Added explicit completed-fixture detection based on recorded scores and Full-time / Completed / Final status.
+- Added exclusion of postponed, cancelled and abandoned fixtures.
+- During a match, the current opponent remains active for up to three hours after kick-off if no result has been entered.
+- Once a final result exists, the next fixture is selected immediately.
+- If no final result is entered, the fixture expires automatically after the three-hour match window.
+- Selection refreshes every 60 seconds and whenever the page becomes visible again.
+- Hero, sticky bar, dashboard, Match Centre and predictor are all refreshed from the same selected fixture.
+- Updated browser cache-busting strings to r71.
+
+ROLLOVER TESTS
+PASS  25 Aug 2026 -> Tromsø IL
+PASS  During Tromsø match -> Tromsø IL
+PASS  After Tromsø match window -> Chelsea
+PASS  After Chelsea match window -> Leeds United
+
+VALIDATION
+PASS  JavaScript syntax: 6/6
+PASS  Unique HTML IDs: 283
+PASS  Duplicate HTML IDs: 0
+PASS  Broken internal anchors: 0
+PASS  Missing local assets: 0
+
+NOTE
+This automatic rollover works for fixtures already present in albion-data-r66.js. Newly announced cup draws or fixture changes still need to be added to the shared fixture data; the page cannot discover brand-new fixtures from the internet by itself.
