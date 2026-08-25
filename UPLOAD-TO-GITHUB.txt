@@ -1,11 +1,9 @@
-ALBION FAN HUB r69 — GITHUB PAGES UPLOAD
+ALBION FAN HUB r70 — GITHUB PAGES UPLOAD
 
-1. Open the Brighton repository.
-2. Upload every file contained in Brighton-Fan-Hub-r69-FULL.zip to the repository root.
-3. Replace files with the same names.
+1. Open the Brighton GitHub repository.
+2. Upload every file contained in Brighton-Fan-Hub-r70-FULL.zip to the repository root.
+3. Replace matching files when GitHub asks.
 4. Commit the changes.
-5. Do not keep a second copy of index.html or the JS/CSS bundles under new filenames.
+5. GitHub Pages should continue to publish from the same root.
 
-The runtime bundle names deliberately remain app-r66.js, albion-data-r66.js,
-shootout-r66.js and the existing CSS filenames. Their cache-busting query strings
-in index.html are updated to r69.
+Important: runtime filenames such as app-r66.js, albion-data-r66.js and shootout-r66.js are intentionally retained so the existing deployed files are replaced cleanly. Cache-busting query strings in index.html are updated to r70.

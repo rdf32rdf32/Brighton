@@ -1,0 +1,40 @@
+ALBION FAN HUB r70 — BUILD AND AUDIT REPORT
+25 August 2026
+
+SOURCE
+Built directly from Brighton-Fan-Hub-r69-FULL.zip.
+
+RESULTS
+- Added a dedicated Results section before Fixtures.
+- Added competition filters, W/D/L badges, form strip and all-competition summary.
+- Tromsø 0–0 Albion (20 Aug) recorded as the Conference League first-leg result.
+- Albion 4–0 Aston Villa (23 Aug) recorded as the Premier League opening result.
+- Latest result now appears in the hero and Match Centre.
+- Completed fixtures and Results use the same shared fixture data.
+
+PREMIER LEAGUE SEASON STATS
+- Played 1, Won 1, Drawn 0, Lost 0, Points 3, Goals 4–0.
+- Stats are recalculated from completed Premier League fixtures rather than left as static zero placeholders.
+
+SQUAD NUMBERS / SQUAD STATUS
+- Official 2026/27 first-team shirt numbers from Albion's 20 August announcement added to player data.
+- Numbers display on player cards, player search, compact squad browser, Pick XI option labels, predictor lists and penalty taker labels.
+- Carlos Baleba removed from the active Albion squad and Albion penalty pool after his Manchester United move on 25 August. No.17 is left vacant in the active Brighton display.
+- Preferred XI no longer selects Baleba.
+
+NAVIGATION / POLISH
+- Desktop navigation: Penalties / Match / Results / Fixtures / Squad / Quiz / Club / Visit.
+- Mobile quick navigation: Pens / Match / Results / Fixtures / Squad.
+- Results added to hero and section shortcuts and global site search.
+- Independent-project introduction reduced to a compact strip.
+- Result cards, stats, squad numbers and latest-result panels receive dedicated responsive styling.
+- Existing penalty geometry/scoring configuration intentionally preserved.
+
+CURRENT SOURCES CHECKED
+- Brighton & Hove Albion official 2026/27 squad numbers, published 20 Aug 2026.
+- Brighton official Tromsø 0–0 Albion report, 20 Aug 2026.
+- Brighton official Albion 4–0 Aston Villa report, 23 Aug 2026.
+- Manchester United official Carlos Baleba player/transfer information, 25 Aug 2026.
+
+UPLOAD
+Upload every file in Brighton-Fan-Hub-r70-FULL.zip to the Brighton repository root and replace matching files.

@@ -2271,7 +2271,7 @@
     state.pendingRunStyle = player.style || "direct";
     state.pendingRunProfile = chooseRunUpProfile(player.foot, state.pendingRunStyle);
     setTakerReadyPosition(state.pendingRunProfile, state.pendingRunStyle);
-    $("penaltyTakerName").textContent = `${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
+    $("penaltyTakerName").textContent = `${player.number ? `#${player.number} · ` : ""}${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
     $("penaltyShirt").textContent = player.number ? String(player.number) : "";
     $("turnBadge").textContent = "ALBION PENALTY";
     $("turnBadge").className = "turn-badge albion-turn";
@@ -2316,7 +2316,7 @@
     state.pendingRunStyle = player.style || "direct";
     state.pendingRunProfile = chooseRunUpProfile(player.foot, state.pendingRunStyle);
     setTakerReadyPosition(state.pendingRunProfile, state.pendingRunStyle);
-    $("penaltyTakerName").textContent = `${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
+    $("penaltyTakerName").textContent = `${player.number ? `#${player.number} · ` : ""}${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
     $("penaltyShirt").textContent = String(player.number || "PAL");
     $("turnBadge").textContent = "PALACE PENALTY · YOU ARE VERBRUGGEN";
     $("turnBadge").className = "turn-badge palace-turn";

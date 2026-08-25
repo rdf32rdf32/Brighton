@@ -1,0 +1,20 @@
+{
+  "release": "r70",
+  "date": "25 August 2026",
+  "source": "Brighton-Fan-Hub-r69-FULL.zip",
+  "validation": {
+    "javascript_syntax": "PASS",
+    "css_parse": "PASS",
+    "duplicate_html_ids": "PASS (283 unique IDs)",
+    "broken_internal_anchors": "PASS",
+    "missing_local_assets": "PASS",
+    "results_section": "PASS",
+    "shared_results_fixture_data": "PASS",
+    "premier_league_stats": "PASS (P1 W1 D0 L0 GF4 GA0 Pts3)",
+    "active_squad_numbers": "PASS (30/30 numbered)",
+    "baleba_removed_from_active_squad": "PASS",
+    "baleba_removed_from_penalty_pool": "PASS",
+    "next_fixture_fallback": "PASS (Albion v Troms\u00f8 IL, 27 Aug 2026 19:30)",
+    "penalty_game_geometry": "PRESERVED from r69"
+  }
+}

@@ -1,31 +1,31 @@
-/* ===== Albion Fan Hub r69 application bundle ===== */
+/* ===== Albion Fan Hub r70 application bundle ===== */
 window.ALBION_CONTENT = {
-  featureVersion: "69",
-  lastUpdated: "20 August 2026",
+  featureVersion: "70",
+  lastUpdated: "25 August 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
       label: "2026/27",
-      status: "Season not started",
+      status: "Season underway",
       competition: "Premier League",
-      played: 0,
-      won: 0,
+      played: 1,
+      won: 1,
       drawn: 0,
       lost: 0,
-      goalsFor: 0,
+      goalsFor: 4,
       goalsAgainst: 0,
-      points: 0,
-      position: null,
-      results: [],
+      points: 3,
+      position: 1,
+      results: [{ opponent: "Aston Villa", venue: "H", score: "4–0", outcome: "W", date: "23 Aug 2026" }],
     },
   },
   freshness: {
-    fixtures: "20 August 2026",
-    squad: "20 August 2026",
+    fixtures: "25 August 2026",
+    squad: "25 August 2026",
     travel: "20 August 2026",
     history: "5 August 2026",
   },
-  squad: window.ALBION_DATA_R66.squad.filter((player) => player.active !== false && (player.squadStatus || "first-team") === "first-team").map(({ name, position }) => ({ name, position })),
+  squad: window.ALBION_DATA_R66.squad.filter((player) => player.active !== false && (player.squadStatus || "first-team") === "first-team").map(({ name, position, number }) => ({ name, position, number })),
   playerProfiles: window.ALBION_DATA_R66.squad.filter((player) => player.active !== false && (player.squadStatus || "first-team") === "first-team").map(({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub }) => ({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub })),
   loanProfiles: window.ALBION_DATA_R66.squad.filter((player) => player.squadStatus === "loan").map(({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub }) => ({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub })),
   developmentProfiles: window.ALBION_DATA_R66.squad.filter((player) => player.squadStatus === "development").map(({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub }) => ({ name, position, role, number, nationality, initials, summary, squadStatus, statusClub })),
@@ -1490,7 +1490,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       const open = group === "Goalkeeper" ? " open" : "";
       return `<details class="position-group squad-position-group"${open}>
         <summary><span>${labels[group]}</span><small>${players.length} player${players.length === 1 ? "" : "s"}</small></summary>
-        <ul>${players.map((player) => `<li>${esc(player.name)}</li>`).join("")}</ul>
+        <ul>${players.map((player) => `<li><span class="squad-list-number">${player.number ? esc(player.number) : "–"}</span>${esc(player.name)}</li>`).join("")}</ul>
       </details>`;
     }).join("");
   }
@@ -1530,8 +1530,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     RB: "Jack Hinshelwood",
     CB: "Lewis Dunk",
     LB: "Maxim De Cuyper",
-    DM: "Carlos Baleba",
-    CM: "Mats Wieffer",
+    DM: "Mats Wieffer",
+    CM: "Pascal Groß",
     RWB: "Ferdi Kadioglu",
     LWB: "Kaoru Mitoma",
     RW: "Yankuba Minteh",
@@ -1565,7 +1565,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       cell.innerHTML = `<span>${role}</span><select aria-label="${role} position"><option value="">Select player</option>${optionsForRole(
         role,
       )
-        .map((player) => `<option>${esc(player.name)}</option>`)
+        .map((player) => `<option value="${esc(player.name)}">${player.number ? `${esc(player.number)} · ` : ""}${esc(player.name)}</option>`)
         .join("")}</select>`;
       pitch.appendChild(cell);
       cell.querySelector("select").value = values[index] || "";
@@ -1579,7 +1579,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     bench.innerHTML = Array.from(
       { length: 7 },
       (_, index) =>
-        `<label><span>Sub ${index + 1}</span><select aria-label="Substitute ${index + 1}"><option value="">Select player</option>${squad.map((player) => `<option>${esc(player.name)}</option>`).join("")}</select></label>`,
+        `<label><span>Sub ${index + 1}</span><select aria-label="Substitute ${index + 1}"><option value="">Select player</option>${squad.map((player) => `<option value="${esc(player.name)}">${player.number ? `${esc(player.number)} · ` : ""}${esc(player.name)}</option>`).join("")}</select></label>`,
     ).join("");
     bench.querySelectorAll("select").forEach((select, index) => {
       select.value = values[index] || "";
@@ -2162,14 +2162,12 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   }
 
   function predictor() {
-    const scorers = squad
-      .filter((player) => player.position !== "Goalkeeper")
-      .map((player) => player.name);
+    const scorers = squad.filter((player) => player.position !== "Goalkeeper");
     $("firstScorer").innerHTML =
       "<option>No scorer</option>" +
-      scorers.map((name) => `<option>${esc(name)}</option>`).join("");
+      scorers.map((player) => `<option value="${esc(player.name)}">${player.number ? `${esc(player.number)} · ` : ""}${esc(player.name)}</option>`).join("");
     $("motm").innerHTML = squad
-      .map((player) => `<option>${esc(player.name)}</option>`)
+      .map((player) => `<option value="${esc(player.name)}">${player.number ? `${esc(player.number)} · ` : ""}${esc(player.name)}</option>`)
       .join("");
     $("savePrediction").addEventListener("click", () => {
       const scoreText = MATCH.venueCode === "A"
@@ -3066,7 +3064,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       ["chants", "Albion chants", "Audio", "songs terrace Seagulls Brighton Aces Great Escape"],
       ["anthem", "Sussex by the Sea", "Audio", "anthem music song"],
       ["match-centre", "Matchday centre", "Matchday", "next match opponent weather referee television"],
-      ["fixtures", "2026/27 fixtures", "Fixtures", "opponents home away month results"],
+      ["results", "Albion results", "Results", "scores wins draws losses latest result Premier League Europe"],
+      ["fixtures", "2026/27 fixtures", "Fixtures", "opponents home away month schedule"],
       ["players", "Albion player profiles", "Players", "squad goalkeeper defender midfielder forward nationality role"],
       ["xi", "Pick your Albion XI", "Team", "formation players captain substitutes tactics"],
       ["predictor", "Match predictor", "Prediction", "score first scorer player of the match"],
@@ -4055,8 +4054,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   }
 
   function profileMarkup(player) {
-    return `<article class="player-profile-card" data-position="${esc(player.position)}" data-search="${esc(`${player.name} ${player.nationality} ${player.role} ${player.position}`.toLowerCase())}">
-      <div class="player-card-top"><span class="player-avatar" aria-hidden="true">${esc(player.initials || player.name.slice(0,2))}</span></div>
+    return `<article class="player-profile-card" data-position="${esc(player.position)}" data-search="${esc(`${player.number || ""} ${player.name} ${player.nationality} ${player.role} ${player.position}`.toLowerCase())}">
+      <div class="player-card-top"><span class="player-avatar" aria-hidden="true">${esc(player.initials || player.name.slice(0,2))}</span><span class="player-number" aria-label="Squad number ${esc(player.number || "not assigned")}">${player.number ? esc(player.number) : "–"}</span></div>
       <div class="player-card-copy"><p>${esc(player.position)}</p><h3>${esc(player.name)}</h3><span>${esc(player.nationality)}</span><small>${esc(player.role)}</small></div>
       <div class="player-card-actions"><button class="ghost" data-profile-name="${esc(player.name)}" type="button">View profile</button><button data-add-player="${esc(player.name)}" type="button">Add to XI</button></div>
     </article>`;
@@ -4093,7 +4092,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     const query = ($("playerProfileSearch")?.value || "").trim().toLowerCase();
     const desktopPosition = $("playerPositionFilter")?.value || "all";
     const mobile = profileMobileQuery.matches;
-    const matchesQuery = (player) => `${player.name} ${player.nationality} ${player.role} ${player.position}`.toLowerCase().includes(query);
+    const matchesQuery = (player) => `${player.number || ""} ${player.name} ${player.nationality} ${player.role} ${player.position}`.toLowerCase().includes(query);
     let visible = profileList.filter((player) => {
       if (query) return matchesQuery(player);
       if (mobile) return player.position === activeProfileCategory;
@@ -4144,7 +4143,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     const content = $("playerProfileDialogContent");
     if (!player || !dialog || !content) return;
     const canAddToXI = profileList.some((item) => item.name === player.name);
-    const squadNumber = player.number ? `No. ${player.number}` : "Number omitted in this build — no guessing";
+    const squadNumber = player.number ? `No. ${player.number}` : "No current first-team number";
     const statusLabel = player.squadStatus === "loan" ? `On loan at ${player.statusClub || "another club"}` : player.squadStatus === "development" ? (player.statusClub || "Development squad") : "First-team squad";
     content.innerHTML = `<div class="dialog-player-head"><span class="player-avatar large" aria-hidden="true">${esc(player.initials)}</span><div><p>${esc(player.position)}</p><h2 id="playerDialogTitle">${esc(player.name)}</h2><span>${esc(player.nationality)} · ${esc(squadNumber)}</span></div></div><dl><div><dt>Primary role</dt><dd>${esc(player.role)}</dd></div><div><dt>Squad status</dt><dd>${esc(statusLabel)}</dd></div><div><dt>Update</dt><dd>${esc(player.summary)}</dd></div></dl><div class="dialog-player-actions">${canAddToXI ? `<button data-add-player="${esc(player.name)}" type="button">Add to my XI</button>` : ""}<a class="button-link secondary" href="https://www.brightonandhovealbion.com/first-team-men-squad" rel="noopener" target="_blank">Official squad page</a></div>`;
     if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
