@@ -1,0 +1,44 @@
+ALBION FAN HUB r73 — BUILD AND AUDIT REPORT
+2 September 2026
+
+SOURCE
+Built from Brighton-Fan-Hub-r72-FULL.zip.
+
+RESULTS
+PASS  Results is a dedicated site section and a main/mobile navigation destination.
+PASS  Four completed competitive matches render from shared fixture data.
+PASS  All-competition totals: P4, W2, D1, L1, goals 11–4.
+PASS  Premier League totals: P2, W1, D0, L1, goals 7–4, 3 points.
+PASS  Latest result is Chelsea 4–3 Albion on 30 August 2026.
+PASS  Filters cover all results, Premier League, Europe and cups.
+PASS  Official match-report links are available for completed matches.
+
+FIXTURES AND MATCH CENTRE
+PASS  Next fixture is Leeds United at the Amex on 5 September 2026 at 15:00.
+PASS  Six confirmed Conference League phase fixtures were added.
+PASS  Hero, sticky bar, Match Centre, predictor and next-opponent fallbacks agree.
+PASS  Coventry City is the next away fixture.
+
+SQUAD
+PASS  Squad snapshot refreshed to 2 September 2026.
+PASS  Igor Julio is removed from the active squad after his permanent Burnley transfer.
+PASS  Eiran Cashin is listed in the loan group after joining Derby County.
+
+PENALTY SHOOT-OUT
+PASS  The incoming taker's foot and run-up label refreshes before the whistle.
+PASS  Restart clears save-reaction feedback.
+PASS  The current shoot-out component owns the desktop layout, keeping its sound control visible.
+PASS  Referee visibility is improved on desktop and mobile.
+PASS  Scoring logic and goal geometry are unchanged.
+
+NAVIGATION AND RELEASE
+PASS  Mobile navigation includes separate Pens and Quiz destinations alongside Results.
+PASS  Release metadata, footer label and cache keys are consolidated as r73.
+PASS  Legacy runtime filenames are intentionally retained for clean replacement on GitHub Pages.
+
+VALIDATION
+PASS  JavaScript syntax: 6/6.
+PASS  Duplicate HTML IDs: 0.
+PASS  Broken internal anchors: 0.
+PASS  Missing local assets: 0.
+PASS  CSS brace errors: 0.

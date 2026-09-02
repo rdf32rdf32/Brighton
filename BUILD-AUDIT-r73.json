@@ -1,0 +1,38 @@
+{
+  "release": "r73",
+  "date": "2026-09-02",
+  "source": "Brighton-Fan-Hub-r72-FULL.zip",
+  "results": {
+    "section_present": true,
+    "completed_matches": 4,
+    "all_competitions": "P4 W2 D1 L1 GF11 GA4",
+    "premier_league": "P2 W1 D0 L1 GF7 GA4 Pts3",
+    "latest_result": "Chelsea 4-3 Albion, 30 August 2026",
+    "filters": ["All", "Premier League", "Europe", "Cups"]
+  },
+  "fixtures": {
+    "next": "Albion v Leeds United, 5 September 2026, 15:00",
+    "conference_league_phase_fixtures": 6
+  },
+  "squad": {
+    "checked": "2 September 2026",
+    "igor_julio": "permanent transfer to Burnley",
+    "eiran_cashin": "loan to Derby County"
+  },
+  "shootout": {
+    "incoming_taker_foot_label_refreshed": true,
+    "restart_clears_save_feedback": true,
+    "desktop_component_owns_layout": true,
+    "referee_visibility_improved": true,
+    "scoring_changed": false,
+    "goal_geometry_changed": false
+  },
+  "validation": {
+    "javascript_syntax_all_pass": true,
+    "javascript_files": 6,
+    "duplicate_html_ids": [],
+    "broken_internal_anchors": [],
+    "missing_local_assets": [],
+    "css_brace_errors": []
+  }
+}

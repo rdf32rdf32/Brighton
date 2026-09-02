@@ -789,6 +789,7 @@
 
   function resetVisuals() {
     cancelAnimations();
+    clearSaveFeedback();
     if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
     state.collisionFrame = 0;
     ball.style.left = `${ballStart.x * 100}%`;
@@ -2270,6 +2271,7 @@
     applyTakerPose(player, state.albionKicks);
     state.pendingRunStyle = player.style || "direct";
     state.pendingRunProfile = chooseRunUpProfile(player.foot, state.pendingRunStyle);
+    setApproachLabel(player.foot, state.pendingRunProfile);
     setTakerReadyPosition(state.pendingRunProfile, state.pendingRunStyle);
     $("penaltyTakerName").textContent = `${player.number ? `#${player.number} · ` : ""}${player.name} · ${player.foot === "left" ? "left-footed" : "right-footed"}`;
     $("penaltyShirt").textContent = player.number ? String(player.number) : "";

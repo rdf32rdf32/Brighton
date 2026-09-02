@@ -1,7 +1,7 @@
-// Shared active squad, fixture and shoot-out data for Albion Fan Hub r71.
+// Shared active squad, fixture and shoot-out data for Albion Fan Hub r73.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r71",
-  "checked": "25 August 2026",
+  "version": "r73",
+  "checked": "2 September 2026",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -94,10 +94,11 @@ window.ALBION_DATA_R66 = Object.freeze({
       "number": 3,
       "nationality": "Brazil",
       "initials": "IJ",
-      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
-      "active": true,
+      "summary": "Completed a permanent transfer to Burnley on 1 September 2026.",
+      "active": false,
       "penaltyEligible": false,
-      "squadStatus": "first-team"
+      "squadStatus": "transferred",
+      "statusClub": "Burnley"
     },
     {
       "name": "Lewis Dunk",
@@ -118,10 +119,11 @@ window.ALBION_DATA_R66 = Object.freeze({
       "number": 16,
       "nationality": "Ireland",
       "initials": "EC",
-      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
-      "active": true,
+      "summary": "Joined Derby County on loan for the 2026/27 season on 1 September 2026.",
+      "active": false,
       "penaltyEligible": false,
-      "squadStatus": "first-team"
+      "squadStatus": "loan",
+      "statusClub": "Derby County"
     },
     {
       "name": "Olivier Boscagli",
@@ -598,33 +600,59 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "19:30",
       "competition": "UEFA Conference League",
       "round": "Play-off second leg",
-      "status": "Confirmed fixture · 19:30 UK kick-off",
-      "note": "Home second leg at the Amex on Thursday 27 August. Kick-off is 19:30 UK time.",
-      "broadcast": "To be confirmed",
+      "status": "Full-time · Albion 4–0 Tromsø IL",
+      "note": "Albion won the second leg 4–0 and progressed to the Conference League phase 4–0 on aggregate.",
+      "broadcast": "SolidSport",
       "tieId": "uecl-tromso-2026",
       "leg": 2,
-      "albionGoals": null,
-      "opponentGoals": null
+      "albionGoals": 4,
+      "opponentGoals": 0,
+      "venueName": "Amex Stadium",
+      "result": "4–0",
+      "resultOutcome": "W",
+      "summary": "Kostoulas, De Cuyper, Wieffer and Boscagli scored as Albion secured a comfortable 4–0 aggregate victory.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-matchreport-conference-league-albion-4-tromso-if-0"
     },
     {
       "date": "30 Aug 2026",
       "opponent": "Chelsea",
       "venue": "A",
       "time": "14:00",
-      "broadcast": "Sky Sports"
+      "broadcast": "Sky Sports",
+      "competition": "Premier League",
+      "round": "Matchweek 2",
+      "status": "Full-time · Chelsea 4–3 Albion",
+      "note": "Albion fought back after trailing 3–0 but were beaten 4–3 at Stamford Bridge.",
+      "venueName": "Stamford Bridge",
+      "albionGoals": 3,
+      "opponentGoals": 4,
+      "result": "4–3",
+      "resultOutcome": "L",
+      "summary": "Albion showed resilience in a seven-goal match, but Chelsea held on for victory at Stamford Bridge.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-chebha-pl--report"
     },
     {
       "date": "5 Sep 2026",
       "opponent": "Leeds United",
       "venue": "H",
-      "time": "15:00"
+      "time": "15:00",
+      "competition": "Premier League",
+      "round": "Matchweek 3",
+      "status": "Confirmed fixture · 15:00 UK kick-off",
+      "note": "Albion host Leeds United at the Amex.",
+      "venueName": "Amex Stadium"
     },
     {
       "date": "13 Sep 2026",
       "opponent": "Coventry City",
       "venue": "A",
       "time": "14:00",
-      "broadcast": "Sky Sports"
+      "broadcast": "Sky Sports",
+      "competition": "Premier League",
+      "round": "Matchweek 4",
+      "status": "Confirmed fixture · 14:00 UK kick-off",
+      "note": "Albion travel to Coventry City for a Sunday Premier League fixture.",
+      "venueName": "Coventry Building Society Arena"
     },
     {
       "date": "19 Sep 2026",
@@ -638,6 +666,17 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venue": "A"
     },
     {
+      "date": "15 Oct 2026",
+      "opponent": "FK Kauno Žalgiris",
+      "venue": "H",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 1",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Albion open the Conference League phase at home to FK Kauno Žalgiris.",
+      "venueName": "Amex Stadium"
+    },
+    {
       "date": "18 Oct 2026",
       "opponent": "Crystal Palace",
       "venue": "H",
@@ -645,6 +684,17 @@ window.ALBION_DATA_R66 = Object.freeze({
       "broadcast": "Sky Sports",
       "status": "Confirmed fixture · moved to Sunday 18 October",
       "note": "Home fixture moved to Sunday 18 October, kick-off 14:00, live on Sky Sports."
+    },
+    {
+      "date": "22 Oct 2026",
+      "opponent": "FK Jablonec",
+      "venue": "A",
+      "time": "17:45",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 2",
+      "status": "Confirmed fixture · 17:45 UK kick-off",
+      "note": "Conference League away fixture in the Czech Republic.",
+      "venueName": "Stadion Střelnice"
     },
     {
       "date": "24 Oct 2026",
@@ -657,6 +707,17 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venue": "A"
     },
     {
+      "date": "5 Nov 2026",
+      "opponent": "Getafe",
+      "venue": "A",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 3",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Conference League away fixture in Spain.",
+      "venueName": "Coliseum"
+    },
+    {
       "date": "7 Nov 2026",
       "opponent": "Brentford",
       "venue": "H"
@@ -665,6 +726,17 @@ window.ALBION_DATA_R66 = Object.freeze({
       "date": "21 Nov 2026",
       "opponent": "Hull City",
       "venue": "A"
+    },
+    {
+      "date": "26 Nov 2026",
+      "opponent": "Universitatea Craiova",
+      "venue": "H",
+      "time": "17:45",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 4",
+      "status": "Confirmed fixture · 17:45 UK kick-off",
+      "note": "Conference League home fixture against Universitatea Craiova.",
+      "venueName": "Amex Stadium"
     },
     {
       "date": "28 Nov 2026",
@@ -682,9 +754,31 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venue": "A"
     },
     {
+      "date": "10 Dec 2026",
+      "opponent": "AS Monaco",
+      "venue": "H",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 5",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "AS Monaco visit the Amex in the Conference League.",
+      "venueName": "Amex Stadium"
+    },
+    {
       "date": "12 Dec 2026",
       "opponent": "Everton",
       "venue": "H"
+    },
+    {
+      "date": "17 Dec 2026",
+      "opponent": "Panathinaikos",
+      "venue": "A",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 6",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Albion complete the Conference League phase away to Panathinaikos in Athens.",
+      "venueName": "Athens"
     },
     {
       "date": "19 Dec 2026",

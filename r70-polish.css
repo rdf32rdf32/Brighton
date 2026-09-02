@@ -28,6 +28,18 @@ html{scroll-padding-top:84px}
 .content-freshness{font-size:.76rem}
 @media(min-width:761px){.hero-game-tabs{grid-template-columns:repeat(2,minmax(0,1fr))!important}.section-game-tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}}
 @media(max-width:900px){.results-summary-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.results-heading{align-items:flex-start;flex-direction:column}.form-strip{justify-content:flex-start}}
-@media(max-width:760px){.compact-prototype{align-items:flex-start;flex-direction:column;padding:14px 16px}.compact-prototype .button-link{width:100%;text-align:center}.hero-latest-result{margin-top:12px}.results-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.results-toolbar{align-items:stretch;flex-direction:column}.result-filter-buttons{width:100%}.result-card{grid-template-columns:40px minmax(0,1fr);gap:10px 12px}.result-outcome{width:38px;height:38px}.result-actions{grid-column:2;grid-template-columns:auto 1fr;justify-items:start;align-items:center}.result-actions a{justify-self:end}.result-score{font-size:1.15rem}.result-main p{font-size:.82rem}.mobile-jump-nav{grid-template-columns:repeat(5,1fr)}.player-number{min-width:40px;height:40px;font-size:1.2rem!important}}
+@media(max-width:760px){.compact-prototype{align-items:flex-start;flex-direction:column;padding:14px 16px}.compact-prototype .button-link{width:100%;text-align:center}.hero-latest-result{margin-top:12px}.results-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.results-toolbar{align-items:stretch;flex-direction:column}.result-filter-buttons{width:100%}.result-card{grid-template-columns:40px minmax(0,1fr);gap:10px 12px}.result-outcome{width:38px;height:38px}.result-actions{grid-column:2;grid-template-columns:auto 1fr;justify-items:start;align-items:center}.result-actions a{justify-self:end}.result-score{font-size:1.15rem}.result-main p{font-size:.82rem}.mobile-jump-nav{grid-template-columns:repeat(6,minmax(0,1fr))}.mobile-jump-nav a{font-size:.64rem}.player-number{min-width:40px;height:40px;font-size:1.2rem!important}}
 @media(max-width:420px){.results-summary-grid{grid-template-columns:repeat(2,1fr)}.results-summary-grid article:last-child{grid-column:1/-1}.result-main h3{font-size:.96rem}.result-actions{grid-template-columns:1fr}.result-actions a{justify-self:start}.nav-links a[href="#results"]::after{display:none}}
 .night-theme .compact-prototype,.night-theme .results-card,.night-theme .result-card,.night-theme .results-summary-grid article,.night-theme .hero-latest-result,.night-theme .match-centre-latest{background:#0d2c46;color:var(--ink);border-color:#31506c}.night-theme .player-number,.night-theme .squad-list-number{background:#173d5d;color:#e9f4ff!important}
+
+/* r73: let the current shoot-out component own its desktop layout and keep controls visible. */
+@media(min-width:1000px) and (min-height:720px){
+  .shootout-card.shootout-r66{display:block!important}
+  .shootout-r66 .shootout-intro{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:18px!important;min-width:0!important;margin-bottom:10px!important}
+  .shootout-r66 .shootout-intro>div:first-child{min-width:0!important}
+  .shootout-r66 .shootout-top-controls{display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:8px!important;max-width:100%!important}
+  .shootout-r66 .referee-figure{width:6.3%!important;min-width:48px!important;max-width:76px!important}
+}
+@media(max-width:760px){
+  .shootout-r66 .referee-figure{width:8.2%!important;min-width:35px!important;max-width:46px!important}
+}

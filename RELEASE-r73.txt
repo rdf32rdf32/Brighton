@@ -1,0 +1,27 @@
+ALBION FAN HUB r73
+2 September 2026
+
+RESULTS UPDATE
+- Added the latest completed matches to the Results section.
+- Current all-competition record: P4, W2, D1, L1, goals 11–4.
+- Current Premier League record: P2, W1, D0, L1, goals 7–4, 3 points.
+- Competition filters, form indicators and official report links use shared fixture data.
+
+FIXTURE UPDATE
+- The next-match experience now shows Albion v Leeds United on 5 September at 15:00.
+- Added all six confirmed Conference League phase fixtures.
+- Corrected the next away fixture to Coventry City.
+
+SQUAD UPDATE
+- Igor Julio is removed from the active squad after joining Burnley permanently.
+- Eiran Cashin is moved to the loan group after joining Derby County.
+
+SHOOT-OUT AND MOBILE POLISH
+- The incoming taker's foot and run-up description now refreshes before each Albion kick.
+- Restart now clears old save-reaction messages.
+- Desktop controls remain visible and the referee is easier to see.
+- Mobile navigation now includes a separate Quiz destination.
+- Penalty scoring and goal geometry are unchanged.
+
+CACHE
+- Release metadata and browser cache keys are updated to r73.

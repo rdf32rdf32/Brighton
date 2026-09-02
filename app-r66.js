@@ -1,27 +1,30 @@
-/* ===== Albion Fan Hub r72 application bundle ===== */
+/* ===== Albion Fan Hub r73 application bundle ===== */
 window.ALBION_CONTENT = {
-  featureVersion: "72",
-  lastUpdated: "25 August 2026",
+  featureVersion: "73",
+  lastUpdated: "2 September 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
       label: "2026/27",
       status: "Season underway",
       competition: "Premier League",
-      played: 1,
+      played: 2,
       won: 1,
       drawn: 0,
-      lost: 0,
-      goalsFor: 4,
-      goalsAgainst: 0,
+      lost: 1,
+      goalsFor: 7,
+      goalsAgainst: 4,
       points: 3,
-      position: 1,
-      results: [{ opponent: "Aston Villa", venue: "H", score: "4–0", outcome: "W", date: "23 Aug 2026" }],
+      position: null,
+      results: [
+        { opponent: "Aston Villa", venue: "H", score: "4–0", outcome: "W", date: "23 Aug 2026" },
+        { opponent: "Chelsea", venue: "A", score: "4–3", outcome: "L", date: "30 Aug 2026" },
+      ],
     },
   },
   freshness: {
-    fixtures: "25 August 2026",
-    squad: "25 August 2026",
+    fixtures: "2 September 2026",
+    squad: "2 September 2026",
     travel: "20 August 2026",
     history: "5 August 2026",
   },
@@ -4402,7 +4405,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
   document.querySelectorAll('select').forEach(select => { if (!select.getAttribute('aria-label') && !select.labels?.length) select.setAttribute('aria-label',select.id || 'Selection'); });
 
   const release = document.querySelector('.site-smooth-status');
-  if (release) release.textContent='Release 69';
+  if (release) release.textContent='Release 73';
 
 })();
 
