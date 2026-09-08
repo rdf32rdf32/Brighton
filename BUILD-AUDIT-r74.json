@@ -1,0 +1,18 @@
+{
+  "release": "r74",
+  "date": "8 September 2026",
+  "html_ids": 287,
+  "duplicate_html_ids": [],
+  "broken_internal_anchors": [],
+  "missing_local_assets": [],
+  "javascript_files_checked": 7,
+  "javascript_syntax_failures": [],
+  "css_files_checked": 5,
+  "css_parse_failures": [],
+  "data_validator": "PASS: 47 fixtures, 30 active first-team players, 47 unique fixtures",
+  "quiz": {
+    "count": 500,
+    "duplicateQuestions": 0,
+    "duplicateOptionQuestions": 0
+  }
+}

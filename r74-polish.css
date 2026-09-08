@@ -1,0 +1,17 @@
+/* Albion Fan Hub r74: targeted mobile and touch polish. */
+@media (max-width:760px){
+  .player-profile-tools{grid-template-columns:1fr!important;gap:.4rem;margin:.75rem 0 .7rem}
+  .player-profile-tools label[for="playerProfileSearch"],
+  .player-profile-tools #playerProfileSearch,
+  .player-profile-tools #playerProfileCount{grid-column:1!important;width:100%}
+  .player-profile-tools #playerProfileCount{justify-self:start!important;margin-top:.05rem;font-size:.8rem}
+  .player-category-tab{min-height:44px;padding:.7rem .9rem}
+  .player-card-actions button,.result-actions a,.match-centre-links a,.button-link,.mobile-jump-nav a{min-height:44px}
+  .result-actions a,.match-centre-links a,.mobile-jump-nav a{display:flex;align-items:center}
+  .mobile-jump-nav a{justify-content:center}
+  .result-filter-buttons button{min-height:44px}
+}
+@media (max-width:430px){
+  .player-profile-card{flex-basis:min(86vw,320px);width:min(86vw,320px)}
+  .result-actions{gap:.3rem}
+}

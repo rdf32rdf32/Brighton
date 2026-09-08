@@ -1,30 +1,31 @@
-/* ===== Albion Fan Hub r73 application bundle ===== */
+/* ===== Albion Fan Hub r74 application bundle ===== */
 window.ALBION_CONTENT = {
-  featureVersion: "73",
-  lastUpdated: "2 September 2026",
+  featureVersion: "74",
+  lastUpdated: "8 September 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
       label: "2026/27",
       status: "Season underway",
       competition: "Premier League",
-      played: 2,
+      played: 3,
       won: 1,
-      drawn: 0,
+      drawn: 1,
       lost: 1,
-      goalsFor: 7,
-      goalsAgainst: 4,
-      points: 3,
+      goalsFor: 8,
+      goalsAgainst: 5,
+      points: 4,
       position: null,
       results: [
         { opponent: "Aston Villa", venue: "H", score: "4–0", outcome: "W", date: "23 Aug 2026" },
         { opponent: "Chelsea", venue: "A", score: "4–3", outcome: "L", date: "30 Aug 2026" },
+        { opponent: "Leeds United", venue: "H", score: "1–1", outcome: "D", date: "5 Sep 2026" },
       ],
     },
   },
   freshness: {
-    fixtures: "2 September 2026",
-    squad: "2 September 2026",
+    fixtures: "8 September 2026",
+    squad: "8 September 2026",
     travel: "20 August 2026",
     history: "5 August 2026",
   },
@@ -919,22 +920,41 @@ window.ALBION_QUIZ = [
 // The playable bank contains medium and hard questions only. Historical season
 // statistics add depth without relying on changing current-season information.
 window.ALBION_QUIZ = window.ALBION_QUIZ.filter(item => item.difficulty === 'Medium' || item.difficulty === 'Hard');
-const ALBION_SEASONS = [
-  ['1994/95',16,56,14,17,54],['1995/96',23,40,10,10,46],['1996/97',23,47,13,10,53],
-  ['1997/98',23,35,6,17,38],['1998/99',17,55,16,7,49],['1999/00',11,67,17,16,64],
-  ['2000/01',1,92,28,8,73],['2001/02',1,90,25,15,66],['2002/03',23,45,11,12,49],
-  ['2003/04',4,77,22,11,64],['2004/05',20,51,13,12,40],['2005/06',24,38,7,17,39],
-  ['2006/07',18,53,14,11,49],['2007/08',7,69,19,12,58],['2008/09',16,52,13,13,55],
-  ['2009/10',13,59,15,14,56],['2010/11',1,95,28,11,85],['2011/12',10,66,17,15,52],
-  ['2012/13',4,75,19,18,69],['2013/14',6,72,19,15,55],['2014/15',20,47,10,17,44],
-  ['2015/16',3,89,24,17,72],['2016/17',2,93,28,9,74],['2017/18',15,40,9,13,34],
-  ['2018/19',17,36,9,9,35],['2019/20',15,41,9,14,39],['2020/21',16,41,9,14,40],
-  ['2021/22',9,51,12,15,42],['2022/23',6,62,18,8,72],['2023/24',11,48,12,12,55]
+const ALBION_SEASONS = [  ['1994/95',16,56,14,17,54,46],
+  ['1995/96',23,40,10,10,46,46],
+  ['1996/97',23,47,13,10,53,46],
+  ['1997/98',23,35,6,17,38,46],
+  ['1998/99',17,55,16,7,49,46],
+  ['1999/00',11,67,17,16,64,46],
+  ['2000/01',1,92,28,8,73,46],
+  ['2001/02',1,90,25,15,66,46],
+  ['2002/03',23,45,11,12,49,46],
+  ['2003/04',4,77,22,11,64,46],
+  ['2004/05',20,51,13,12,40,46],
+  ['2005/06',24,38,7,17,39,46],
+  ['2006/07',18,53,14,11,49,46],
+  ['2007/08',7,69,19,12,58,46],
+  ['2008/09',16,52,13,13,55,46],
+  ['2009/10',13,59,15,14,56,46],
+  ['2010/11',1,95,28,11,85,46],
+  ['2011/12',10,66,17,15,52,46],
+  ['2012/13',4,75,19,18,69,46],
+  ['2013/14',6,72,19,15,55,46],
+  ['2014/15',20,47,10,17,44,46],
+  ['2015/16',3,89,24,17,72,46],
+  ['2016/17',2,93,28,9,74,46],
+  ['2017/18',15,40,9,13,34,38],
+  ['2018/19',17,36,9,9,35,38],
+  ['2019/20',15,41,9,14,39,38],
+  ['2020/21',16,41,9,14,40,38],
+  ['2021/22',9,51,12,15,42,38],
+  ['2022/23',6,62,18,8,72,38],
+  ['2023/24',11,48,12,12,55,38]
 ];
 const statOptions = (answer, offsets) => [answer, ...offsets.map(offset => Math.max(0, answer + offset))].map(String);
 const ordinal = value => `${value}${value % 100 >= 11 && value % 100 <= 13 ? 'th' : value % 10 === 1 ? 'st' : value % 10 === 2 ? 'nd' : value % 10 === 3 ? 'rd' : 'th'}`;
 const positionOptions = position => [position, ((position + 2) % 24) + 1, ((position + 7) % 24) + 1, ((position + 12) % 24) + 1].map(ordinal);
-ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
+ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) => {
   window.ALBION_QUIZ.push(
     {question:`Where did Albion finish in the league in ${season}?`,options:positionOptions(position),answer:0,difficulty:'Medium',explanation:`Albion finished ${ordinal(position)} in ${season}.`},
     {question:`How many league points did Albion collect in ${season}?`,options:statOptions(points,[3,-4,7]),answer:0,difficulty:'Medium',explanation:`Albion collected ${points} league points in ${season}.`},
@@ -955,10 +975,10 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
     return { options: values, answer: 0 };
   };
   const extra = [];
-  seasons.forEach(([season, position, points, wins, draws, goals], index) => {
+  seasons.forEach(([season, position, points, wins, draws, goals, played], index) => {
     const next = seasons[(index + 1) % seasons.length];
     const previous = seasons[(index + seasons.length - 1) % seasons.length];
-    const lossEstimate = Math.max(0, 38 - wins - draws);
+    const losses = Math.max(0, played - wins - draws);
     const facts = [
       {q:`Which figure correctly matches Albion's ${season} league season?`, c:`${points} points`, a:[`${points+5} points`,`${Math.max(0,points-6)} points`,`${points+11} points`], e:`Albion collected ${points} league points in ${season}.`},
       {q:`Which league position did Albion occupy at the end of ${season}?`, c:ordinal(position), a:[ordinal(((position+3)%24)+1),ordinal(((position+7)%24)+1),ordinal(((position+11)%24)+1)], e:`Albion finished ${ordinal(position)} in ${season}.`},
@@ -969,7 +989,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals]) => {
       {q:`Albion recorded ${wins} league wins in which season?`, c:season, a:[previous[0],next[0],seasons[(index+5)%seasons.length][0]], e:`The ${wins}-win league season was ${season}.`},
       {q:`Albion scored ${goals} league goals in which season?`, c:season, a:[previous[0],next[0],seasons[(index+8)%seasons.length][0]], e:`Albion scored ${goals} league goals in ${season}.`},
       {q:`Albion collected ${points} league points in which season?`, c:season, a:[previous[0],next[0],seasons[(index+11)%seasons.length][0]], e:`Albion collected ${points} league points in ${season}.`},
-      {q:`Using the season record, approximately how many league defeats did Albion have in ${season}?`, c:String(lossEstimate), a:[String(Math.max(0,lossEstimate-3)),String(lossEstimate+2),String(lossEstimate+5)], e:`From 38 matches, ${wins} wins and ${draws} draws leave ${lossEstimate} defeats.`},
+      {q:`Using the season record, how many league defeats did Albion have in ${season}?`, c:String(losses), a:[String(Math.max(0,losses-3)),String(losses+2),String(losses+5)], e:`From ${played} matches, ${wins} wins and ${draws} draws leave ${losses} defeats.`},
       {q:`Which pair correctly describes Albion's ${season} campaign?`, c:`${wins} wins and ${draws} draws`, a:[`${wins+3} wins and ${draws} draws`,`${wins} wins and ${draws+4} draws`,`${Math.max(0,wins-2)} wins and ${Math.max(0,draws-3)} draws`], e:`Albion recorded ${wins} wins and ${draws} draws in ${season}.`},
       {q:`Which pair correctly describes Albion's ${season} output?`, c:`${points} points and ${goals} goals`, a:[`${points+8} points and ${goals} goals`,`${points} points and ${goals+10} goals`,`${Math.max(0,points-7)} points and ${Math.max(0,goals-8)} goals`], e:`Albion collected ${points} points and scored ${goals} league goals in ${season}.`}
     ];

@@ -1,4 +1,4 @@
-/* Albion Fan Hub r73: current results, league stats and numbered squad polish */
+/* Albion Fan Hub r74: current results, league stats and numbered squad polish */
 (() => {
   'use strict';
   const data = window.ALBION_DATA_R66 || {};

@@ -1,0 +1,73 @@
+ALBION FAN HUB r74 — BUILD AND AUDIT REPORT
+8 September 2026
+
+SOURCE
+Built from Brighton-Fan-Hub-r73-FULL.zip (2 September 2026).
+
+RESULTS / CURRENT SEASON
+PASS  Added Albion 1–1 Leeds United (5 September) as a completed Premier League result.
+PASS  Latest result now renders as Albion 1–1 Leeds United.
+PASS  All-competition totals recalculate to P5 / W2 / D2 / L1 / goals 12–5.
+PASS  Premier League totals recalculate to P3 / W1 / D1 / L1 / 4 points / goals 8–5.
+PASS  Leeds match report link points to the official Albion report.
+
+FIXTURES / MATCH CENTRE
+PASS  Coventry City away, Sunday 13 September at 14:00, is the next competitive fixture.
+PASS  Manchester United away, Wednesday 16 September at 20:00, added as Carabao Cup third round.
+PASS  Arsenal at home on 19 September follows the cup tie.
+PASS  Hero, sticky bar, Match Centre, predictor and next-opponent fallbacks now use Coventry.
+PASS  Automatic next-match selection continues to use the shared fixture list.
+
+SQUAD
+PASS  Jaouen Hadjam added to the active first-team group (no. 3).
+PASS  Chema Andrés added to the active first-team group (no. 14).
+PASS  Femi Azeez added to the active first-team group (no. 39 in current squad listings).
+PASS  Amario Cozier-Duberry moved from the active squad to the Middlesbrough loan group.
+PASS  Eiran Cashin remains in the Derby County loan group.
+PASS  Carlos Baleba and Igor Julio remain outside the active squad after permanent transfers.
+PASS  Active first-team squad-number uniqueness check passes.
+
+QUIZ
+PASS  Historical season rows now carry matches-played explicitly.
+PASS  1994/95 through 2016/17 use 46 league matches.
+PASS  2017/18 onward use 38 Premier League matches.
+PASS  Defeats are calculated as played - wins - draws rather than assuming 38 matches.
+PASS  Playable bank remains exactly 500 questions.
+PASS  Duplicate question texts: 0.
+PASS  Questions containing duplicate answer options: 0.
+
+MOBILE / ACCESSIBILITY POLISH
+PASS  Player search now occupies a full-width row on mobile.
+PASS  Player count sits below the search instead of competing for width.
+PASS  Squad category chips use at least 44px touch height.
+PASS  Result links, filters, Match Centre links, key buttons and mobile quick navigation receive larger touch targets.
+PASS  Existing penalty shoot-out scoring, keeper logic and goal geometry are unchanged.
+
+AUTOMATIC VALIDATION
+PASS  Added tools/validate-data.js with no external dependencies.
+PASS  Validator checks duplicate fixtures, chronological fixture order, past fixtures without results, completed-result outcomes, active/loan status conflicts, active shirt-number duplication, historical season match totals, 500-question quiz integrity, duplicate quiz questions/options and missing local assets.
+PASS  Added .github/workflows/validate.yml to run JavaScript syntax and data validation on pushes and pull requests.
+
+STRUCTURAL VALIDATION
+PASS  HTML IDs checked: 287.
+PASS  Duplicate HTML IDs: 0.
+PASS  Broken internal anchors: 0.
+PASS  Missing local assets: 0.
+PASS  JavaScript syntax failures: 0.
+PASS  CSS parse failures: 0.
+PASS  Shared-data validation: 47 fixtures / 30 active first-team players / 47 unique fixtures.
+
+OFFICIAL SOURCES CHECKED
+- Albion v Leeds match report: https://www.brightonandhovealbion.com/media-article/mft-pl-bhalee-match-report-2026
+- Albion fixtures: https://www.brightonandhovealbion.com/fixtures-first-team-men
+- Manchester United Carabao Cup date: https://www.brightonandhovealbion.com/media-article/date-confirmed-for-carabao-cup-tie-against-manchester-united
+- Jaouen Hadjam signing: https://www.brightonandhovealbion.com/media-article/albion-sign-jaouen-hadjam-from-young-boys
+- Chema Andrés signing: https://www.brightonandhovealbion.com/media-article/mft-transfer-news-chema-andres-stuttgart-september-2026
+- Femi Azeez signing: https://www.brightonandhovealbion.com/media-article/mft-transfer-news-femi-azeez-millwall-september-2026
+- Amario Cozier-Duberry loan: https://www.brightonandhovealbion.com/media-article/mft-transfer-news-amario-cozier-duberry-millwall-september-2026
+- Albion v Leeds line-ups (Hadjam 3, Chema 14): https://www.brightonandhovealbion.com/match-centre-lineups?gameId=2645217
+
+INTENTIONALLY DEFERRED
+- No major homepage redesign.
+- No refactor of the large legacy CSS/app bundles in this accuracy release.
+- No change to the settled penalty-game probabilities or animation geometry.

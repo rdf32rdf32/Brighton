@@ -1,0 +1,14 @@
+ALBION FAN HUB r74
+8 September 2026
+
+Accuracy and polish release.
+
+- Adds Albion 1–1 Leeds United to Results and updates league/all-competition totals.
+- Next match is Coventry City away on 13 September.
+- Adds Manchester United away in the Carabao Cup on 16 September.
+- Adds Jaouen Hadjam, Chema Andrés and Femi Azeez to the active squad.
+- Moves Amario Cozier-Duberry to the loan group at Middlesbrough.
+- Fixes historical quiz defeat calculations by using 46-match Football League seasons and 38-match Premier League seasons.
+- Improves mobile squad search layout and touch target sizing.
+- Adds a dependency-free data validator and GitHub Actions validation workflow.
+- Penalty shoot-out scoring, keeper logic and goal geometry are intentionally unchanged.

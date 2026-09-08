@@ -1,11 +1,11 @@
-ALBION FAN HUB r73 — GITHUB PAGES UPLOAD
+ALBION FAN HUB r74 — GITHUB PAGES UPLOAD
 
-1. Open the Brighton GitHub repository.
-2. Upload every file contained in Brighton-Fan-Hub-r73-FULL.zip to the repository root.
-3. Replace matching files when GitHub asks.
-4. Commit the changes.
-5. GitHub Pages continues to publish from the same repository root.
+1. Open the Brighton repository on GitHub.
+2. Upload every file and folder contained in Brighton-Fan-Hub-r74-FULL.zip to the repository root.
+3. Replace files when GitHub asks.
+4. Keep the .github/workflows and tools folders: they provide automatic validation.
+5. Commit the changes and allow GitHub Pages to redeploy.
 
-Important: runtime filenames such as app-r66.js, albion-data-r66.js and shootout-r66.js are intentionally retained so the existing deployed files are replaced cleanly. index.html now uses r73 cache-busting query strings.
+Runtime filenames such as app-r66.js, albion-data-r66.js and shootout-r66.js are intentionally retained so the current deployed files are replaced cleanly. index.html uses r74 cache-busting query strings.
 
-R73 updates Results, league statistics, Leeds match details, Conference League fixtures and squad statuses. It also fixes shoot-out labels and restart feedback, improves the desktop shoot-out layout and adds Quiz to mobile navigation.
+If old release-note files are already in the repository, you may delete RELEASE-r73.txt, BUILD-REPORT-r73.txt and BUILD-AUDIT-r73.json; they are not used by the site.

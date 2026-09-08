@@ -1,7 +1,7 @@
-// Shared active squad, fixture and shoot-out data for Albion Fan Hub r73.
+// Shared active squad, fixture and shoot-out data for Albion Fan Hub r74.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r73",
-  "checked": "2 September 2026",
+  "version": "r74",
+  "checked": "8 September 2026",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -163,16 +163,30 @@ window.ALBION_DATA_R66 = Object.freeze({
       "squadStatus": "first-team"
     },
     {
+      "name": "Jaouen Hadjam",
+      "position": "Defender",
+      "role": "Left-back",
+      "number": 3,
+      "nationality": "Algeria",
+      "initials": "JH",
+      "summary": "Joined Albion from Young Boys on 25 August 2026 on a contract to June 2031. Shirt number 3 was used in the Leeds matchday squad.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
+    },
+    {
       "name": "Amario Cozier-Duberry",
       "position": "Midfielder",
       "role": "Wide midfielder",
       "number": 22,
       "nationality": "England",
       "initials": "AC",
-      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
-      "active": true,
+      "summary": "Signed a new Albion contract and joined Middlesbrough on loan for the 2026/27 season on 1 September 2026.",
+      "active": false,
       "penaltyEligible": false,
-      "squadStatus": "first-team"
+      "squadStatus": "loan",
+      "statusClub": "Middlesbrough"
     },
     {
       "name": "Jack Hinshelwood",
@@ -302,6 +316,19 @@ window.ALBION_DATA_R66 = Object.freeze({
       "statusClub": "Elche CF"
     },
     {
+      "name": "Chema Andrés",
+      "position": "Midfielder",
+      "role": "Defensive / central midfielder",
+      "number": 14,
+      "nationality": "Spain",
+      "initials": "CA",
+      "summary": "Joined Albion from VfB Stuttgart on a five-year deal on 1 September 2026. Shirt number 14 was used in the Leeds matchday squad.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
       "name": "Ibrahim Osman",
       "position": "Forward",
       "role": "Winger",
@@ -414,6 +441,19 @@ window.ALBION_DATA_R66 = Object.freeze({
       "penaltyEligible": false,
       "squadStatus": "first-team",
       "statusClub": "Brighton & Hove Albion"
+    },
+    {
+      "name": "Femi Azeez",
+      "position": "Forward",
+      "role": "Right winger / forward",
+      "number": 39,
+      "nationality": "Nigeria",
+      "initials": "FA",
+      "summary": "Joined Albion from Millwall on a four-year deal on 2 September 2026. Current squad listings show shirt number 39.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
     }
   ],
   "penaltyTakers": [
@@ -638,9 +678,15 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "15:00",
       "competition": "Premier League",
       "round": "Matchweek 3",
-      "status": "Confirmed fixture · 15:00 UK kick-off",
-      "note": "Albion host Leeds United at the Amex.",
-      "venueName": "Amex Stadium"
+      "status": "Full-time · Albion 1–1 Leeds United",
+      "note": "Luka Vušković headed Albion level in the second half as the points were shared at the Amex.",
+      "venueName": "Amex Stadium",
+      "albionGoals": 1,
+      "opponentGoals": 1,
+      "result": "1–1",
+      "resultOutcome": "D",
+      "summary": "Albion recovered from a first-half deficit, with Luka Vušković scoring his first goal for the club in a 1–1 draw.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-pl-bhalee-match-report-2026"
     },
     {
       "date": "13 Sep 2026",
@@ -653,6 +699,18 @@ window.ALBION_DATA_R66 = Object.freeze({
       "status": "Confirmed fixture · 14:00 UK kick-off",
       "note": "Albion travel to Coventry City for a Sunday Premier League fixture.",
       "venueName": "Coventry Building Society Arena"
+    },
+    {
+      "date": "16 Sep 2026",
+      "opponent": "Manchester United",
+      "venue": "A",
+      "time": "20:00",
+      "broadcast": "Sky Sports",
+      "competition": "Carabao Cup",
+      "round": "Third round",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Albion travel to Old Trafford to face Manchester United in the Carabao Cup third round.",
+      "venueName": "Old Trafford"
     },
     {
       "date": "19 Sep 2026",

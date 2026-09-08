@@ -32,7 +32,7 @@ html{scroll-padding-top:84px}
 @media(max-width:420px){.results-summary-grid{grid-template-columns:repeat(2,1fr)}.results-summary-grid article:last-child{grid-column:1/-1}.result-main h3{font-size:.96rem}.result-actions{grid-template-columns:1fr}.result-actions a{justify-self:start}.nav-links a[href="#results"]::after{display:none}}
 .night-theme .compact-prototype,.night-theme .results-card,.night-theme .result-card,.night-theme .results-summary-grid article,.night-theme .hero-latest-result,.night-theme .match-centre-latest{background:#0d2c46;color:var(--ink);border-color:#31506c}.night-theme .player-number,.night-theme .squad-list-number{background:#173d5d;color:#e9f4ff!important}
 
-/* r73: let the current shoot-out component own its desktop layout and keep controls visible. */
+/* r74: let the current shoot-out component own its desktop layout and keep controls visible. */
 @media(min-width:1000px) and (min-height:720px){
   .shootout-card.shootout-r66{display:block!important}
   .shootout-r66 .shootout-intro{display:flex!important;align-items:flex-end!important;justify-content:space-between!important;gap:18px!important;min-width:0!important;margin-bottom:10px!important}
