@@ -33,14 +33,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r74-20260908" name="release"/>
+<meta content="professional-r75-20260908" name="release"/>
 
 
 
 
 
 
-<link href="site-r66.css?v=20260908-r74" rel="stylesheet"/><link href="polish-r66.css?v=20260908-r74" rel="stylesheet"/><link href="shootout-r66.css?v=20260908-r74" rel="stylesheet"/><link href="r70-polish.css?v=20260908-r74" rel="stylesheet"/><link href="r74-polish.css?v=20260908-r74" rel="stylesheet"/></head>
+<link href="site-r66.css?v=20260908-r75" rel="stylesheet"/><link href="polish-r66.css?v=20260908-r75" rel="stylesheet"/><link href="shootout-r66.css?v=20260908-r75" rel="stylesheet"/><link href="r70-polish.css?v=20260908-r75" rel="stylesheet"/><link href="r74-polish.css?v=20260908-r75" rel="stylesheet"/><link href="r75-polish.css?v=20260908-r75" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -49,7 +49,7 @@
 <button aria-label="Start a guided tour of the site" class="top-tour-button" id="startTour" type="button"><span aria-hidden="true">◆</span> Tour</button>
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#results">Results</a><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#travel">Visit</a></div>
+<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Season</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#travel">Visit</a></div>
 </nav>
 
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -74,7 +74,7 @@
 <h1>Brighton &amp; Hove Albion</h1>
 <p class="lead">A supporter-built project bringing together match information, interactive games, squad tools and Albion heritage.</p>
 
-<nav aria-label="Albion matchday highlights" class="game-tabs hero-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match centre</span><small>Next Albion fixture</small></a><a class="game-tab results-game-tab" href="#results"><span>Results</span><small>Latest scores</small></a><a class="game-tab fixtures-game-tab" href="#fixtures"><span>Fixtures</span><small>2026/27 schedule</small></a></nav><div class="hero-actions hero-secondary-action"><a href="#players">Explore the squad</a></div></section>
+<nav aria-label="Albion matchday highlights" class="game-tabs hero-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match centre</span><small>Next Albion fixture</small></a><a class="game-tab results-game-tab season-game-tab" href="#matches"><span>Fixtures &amp; results</span><small>2026/27 season</small></a></nav><div class="hero-actions hero-secondary-action"><a href="#players">Explore the squad</a></div></section>
 <section class="match-card" id="next-match">
 <p class="eyebrow">Next competitive fixture</p>
 <h2 id="heroMatchTitle">Coventry City v Albion</h2>
@@ -104,7 +104,7 @@
 </article>
 </section>
 
-<nav aria-label="Matchday shortcuts" class="game-tabs section-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalties</span><small>Take on Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match</span><small>Next fixture</small></a><a class="game-tab results-game-tab" href="#results"><span>Results</span><small>Scores &amp; form</small></a><a class="game-tab fixtures-game-tab" href="#fixtures"><span>Fixtures</span><small>Full schedule</small></a><a class="game-tab squad-game-tab" href="#players"><span>Squad</span><small>Shirt numbers</small></a></nav>
+<nav aria-label="Matchday shortcuts" class="game-tabs section-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalties</span><small>Take on Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match</span><small>Next fixture</small></a><a class="game-tab results-game-tab season-game-tab" href="#matches"><span>Season</span><small>Fixtures &amp; results</small></a><a class="game-tab squad-game-tab" href="#players"><span>Squad</span><small>Shirt numbers</small></a></nav>
 <section class="card shootout-card shootout-v17 shootout-r66 first-feature" id="shootout">
 <div class="section-head shootout-intro">
 <div>
@@ -494,20 +494,24 @@
 </div>
 </section>
 
-<section class="card results-card" id="results">
-<p class="content-freshness">Results: <b>updated 8 September 2026</b></p>
-<div class="section-head results-heading"><div><p class="eyebrow">2026/27 · All competitions</p><h2>Albion results</h2><p>Completed competitive matches, with league form calculated from the same fixture data used across the site.</p></div><div class="form-strip" id="resultsFormStrip" aria-label="Recent form"></div></div>
+<section class="card season-hub-card" id="matches">
+<p class="content-freshness" data-freshness="fixtures">Season data: <b>updated 8 September 2026</b></p>
+<div class="section-head season-hub-heading"><div><p class="eyebrow">2026/27 season</p><h2>Fixtures &amp; results</h2><p>Recent scores, form, league record and the full upcoming schedule, all driven by the same fixture data.</p></div><a class="button-link secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official fixtures &amp; results</a></div>
+<nav class="season-hub-jumps" aria-label="Fixtures and results shortcuts"><a href="#results">Recent results</a><a href="#fixtures">Upcoming fixtures</a></nav>
+<div class="season-subsection results-subsection" id="results">
+
+<div class="section-head results-heading"><div><p class="eyebrow">2026/27 · All competitions</p><h3>Recent results</h3><p>Completed competitive matches, with league form calculated from the same fixture data used across the site.</p></div><div class="form-strip" id="resultsFormStrip" aria-label="Recent form"></div></div>
 <div class="results-summary-grid" aria-label="All-competition results summary">
 <article><span>Played</span><b id="allCompPlayed">5</b></article><article><span>Won</span><b id="allCompWon">2</b></article><article><span>Drawn</span><b id="allCompDrawn">2</b></article><article><span>Lost</span><b id="allCompLost">1</b></article><article><span>Goals</span><b id="allCompGoals">12–5</b></article>
 </div>
-<div class="results-toolbar"><div class="result-filter-buttons" id="resultFilterButtons" aria-label="Filter results by competition"></div><a class="button-link secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Official results</a></div>
+<div class="results-toolbar"><div class="result-filter-buttons" id="resultFilterButtons" aria-label="Filter results by competition"></div></div>
 <div class="results-list" id="resultsList" aria-live="polite"></div>
-</section>
-<section class="card" id="fixtures">
-<p class="content-freshness" data-freshness="fixtures">Fixture list: <b>last checked 8 September 2026</b></p>
+</div>
+<div class="season-subsection fixtures-subsection" id="fixtures">
+
 <div class="section-head">
 <p class="eyebrow">All competitions</p>
-<h2>Albion fixtures 2026/27</h2>
+<h3>Upcoming fixtures and full schedule</h3>
 <p>Search by opponent, venue or month.</p>
 </div>
 <div class="season-centre-head">
@@ -535,7 +539,7 @@
 <span class="home-key">Home</span><span class="away-key">Away</span>
 </div>
 <div class="fixture-actions">
-<button class="button-link" id="downloadCalendar" type="button">Add season to calendar</button><a class="button-link secondary" href="https://www.brightonandhovealbion.com/fixtures-first-team-men" rel="noopener" target="_blank">Check official fixtures</a>
+<button class="button-link" id="downloadCalendar" type="button">Add season to calendar</button>
 </div>
 <div class="fixture-tools">
 <label>Find opponent<input id="fixtureSearch" placeholder="e.g. Arsenal" type="search"/></label><label>Venue<select id="venueFilter">
@@ -557,6 +561,7 @@
             Save a match prediction to begin your record.
           </div>
 </details>
+</div>
 </section>
 <section class="card player-profiles" id="players">
 <p class="content-freshness">First-team squad snapshot: <b>updated 8 September 2026</b></p>
@@ -803,7 +808,7 @@
           Choose Albion’s finishing position.
         </div>
 </section>
-<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#story">Albion story</a><a href="#travel">Visit the Amex</a><a href="#xi">Pick XI</a></nav>
+<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#matches">Fixtures &amp; results</a><a href="#players">Squad</a><a href="#story">Albion story</a><a href="#travel">Visit the Amex</a><a href="#xi">Pick XI</a></nav>
 <section class="card" id="story">
 <div class="section-head">
 <p class="eyebrow">History, landmarks, facts and supporter memories</p>
@@ -1321,7 +1326,7 @@
 </section>
 </main>
 <nav aria-label="Quick section navigation" class="mobile-jump-nav">
-<a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#results">Results</a><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#quiz">Quiz</a>
+<a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#matches">Season</a><a href="#players">Squad</a><a href="#quiz">Quiz</a>
 </nav>
 <details class="floating-tools" id="floatingTools"><summary aria-label="Open site controls">•••</summary><div><button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">⚙ Settings</button><button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">🔇 Sound off</button><button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">↑ Top</button></div></details><div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
 
@@ -1375,5 +1380,5 @@
 
 
 
-<script defer src="albion-data-r66.js?v=20260908-r74"></script><script defer src="app-r66.js?v=20260908-r74"></script><script defer src="shootout-r66.js?v=20260908-r74"></script><script defer src="r66-enhancements.js?v=20260908-r74"></script><script defer src="r70-enhancements.js?v=20260908-r74"></script></body>
+<script defer src="albion-data-r66.js?v=20260908-r75"></script><script defer src="app-r66.js?v=20260908-r75"></script><script defer src="shootout-r66.js?v=20260908-r75"></script><script defer src="r66-enhancements.js?v=20260908-r75"></script><script defer src="r70-enhancements.js?v=20260908-r75"></script></body>
 </html>

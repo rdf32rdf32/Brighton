@@ -1,0 +1,40 @@
+ALBION FAN HUB r75 — BUILD AND AUDIT REPORT
+8 September 2026
+
+SOURCE
+Built from Brighton-Fan-Hub-r74-FULL.zip (8 September 2026).
+
+SQUAD GROUP FREEZE / LOOP
+PASS  Removed the player-grid MutationObserver that could retrigger itself while rewriting squad-number DOM content.
+PASS  Position-group switching now relies on the primary profile renderer, which already outputs squad numbers.
+PASS  Desktop group-card selection also updates the stored active category consistently.
+PASS  Removed the extra smooth-scroll animation after desktop group switching to avoid compounded repaint work.
+PASS  Goalkeeper / Defender / Midfielder / Forward rendering logic is otherwise unchanged.
+
+FIXTURES + RESULTS MERGE
+PASS  Results and Fixtures are now one "Fixtures & results" season hub.
+PASS  Recent results remain first, followed by upcoming fixtures and the full schedule.
+PASS  Existing #results and #fixtures anchors are retained inside the merged hub for old links/bookmarks.
+PASS  Main desktop and mobile navigation now use one Season destination instead of separate Results and Fixtures destinations.
+PASS  Hero and matchday shortcut navigation now use one Fixtures & results destination.
+PASS  Duplicate official-results/fixtures buttons inside the merged subsections were removed; one official source link remains in the season header.
+PASS  Search still exposes both recent results and upcoming fixtures, plus the merged season hub.
+
+OTHER POLISH
+PASS  Added r75 season-hub responsive styling and 44px shortcut targets.
+PASS  Updated stale internal release status labels to Release 75.
+PASS  Cache-busting query strings updated to r75.
+PASS  Shared data release metadata updated to r75; match/squad facts are unchanged from r74.
+PASS  Penalty shoot-out scoring, keeper logic and goal geometry are unchanged.
+
+VALIDATION
+PASS  JavaScript syntax: 7/7.
+PASS  HTML IDs: 288 unique; duplicate IDs: 0.
+PASS  Broken internal anchors: 0.
+PASS  Missing local assets: 0.
+PASS  CSS brace checks: 6/6.
+PASS  Squad observer regression check: removed.
+PASS  r75 data validation: 47 fixtures, 30 active first-team players, 47 unique fixtures.
+
+NOTE
+A headless Chromium interaction run was attempted in the build environment, but browser navigation is blocked by administrator policy there. Static/runtime syntax, DOM-structure, asset and data validation all pass.

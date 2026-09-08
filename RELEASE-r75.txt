@@ -1,0 +1,13 @@
+ALBION FAN HUB r75
+8 September 2026
+
+Season hub and stability release.
+
+- Fixes the squad-position switching freeze by removing a self-retriggering player-grid observer.
+- Merges Results and Fixtures into one Fixtures & results season hub.
+- Keeps #results and #fixtures deep links working.
+- Simplifies desktop and mobile navigation to one Season destination.
+- Removes duplicated official fixture/result actions inside the merged area.
+- Persists desktop squad group choice consistently and removes unnecessary smooth-scroll work.
+- Updates release labels and cache-busting to r75.
+- Match data, squad data and penalty-game behaviour remain otherwise unchanged from r74.

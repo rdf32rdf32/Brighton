@@ -1,4 +1,4 @@
-/* Albion Fan Hub r74: current results, league stats and numbered squad polish */
+/* Albion Fan Hub r75: current results, league stats and numbered squad polish */
 (() => {
   'use strict';
   const data = window.ALBION_DATA_R66 || {};
@@ -89,7 +89,9 @@
   renderResultFilters();
   renderResults();
   updateLatestResult();
+  // The primary profile renderer already includes number badges on every render.
+  // A previous MutationObserver rewrote text inside the grid while observing the same
+  // subtree, which could retrigger itself continuously after a position switch.
+  // Run the legacy reinforcement once only; later renders remain correct without it.
   reinforceNumbers();
-  const squadGrid = $('playerProfileGrid');
-  if (squadGrid && 'MutationObserver' in window) new MutationObserver(reinforceNumbers).observe(squadGrid, {childList:true,subtree:true});
 })();

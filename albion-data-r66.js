@@ -1,6 +1,6 @@
-// Shared active squad, fixture and shoot-out data for Albion Fan Hub r74.
+// Shared active squad, fixture and shoot-out data for Albion Fan Hub r75.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r74",
+  "version": "r75",
   "checked": "8 September 2026",
   "squad": [
     {

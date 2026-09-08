@@ -1,4 +1,4 @@
-/* ===== Albion Fan Hub r74 application bundle ===== */
+/* ===== Albion Fan Hub r75 application bundle ===== */
 window.ALBION_CONTENT = {
   featureVersion: "74",
   lastUpdated: "8 September 2026",
@@ -3154,8 +3154,9 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       ["chants", "Albion chants", "Audio", "songs terrace Seagulls Brighton Aces Great Escape"],
       ["anthem", "Sussex by the Sea", "Audio", "anthem music song"],
       ["match-centre", "Matchday centre", "Matchday", "next match opponent weather referee television"],
-      ["results", "Albion results", "Results", "scores wins draws losses latest result Premier League Europe"],
-      ["fixtures", "2026/27 fixtures", "Fixtures", "opponents home away month schedule"],
+      ["matches", "Fixtures & results", "Season", "2026 27 scores form fixtures results opponents schedule Premier League Europe cups"],
+      ["results", "Recent Albion results", "Season", "scores wins draws losses latest result Premier League Europe"],
+      ["fixtures", "Upcoming Albion fixtures", "Season", "opponents home away month schedule"],
       ["players", "Albion player profiles", "Players", "squad goalkeeper defender midfielder forward nationality role"],
       ["xi", "Pick your Albion XI", "Team", "formation players captain substitutes tactics"],
       ["predictor", "Match predictor", "Prediction", "score first scorer player of the match"],
@@ -4033,7 +4034,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
-    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 54</span>');
+    footer.insertAdjacentHTML("beforeend", ' · <span class="site-smooth-status">Release 75</span>');
   }
 
   completeControlSemantics();
@@ -4321,9 +4322,14 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         const addButton = event.target.closest("[data-add-player]");
         const groupButton = event.target.closest("[data-player-group]");
         if (groupButton && $("playerPositionFilter")) {
-          $("playerPositionFilter").value = groupButton.dataset.playerGroup;
+          const group = groupButton.dataset.playerGroup;
+          $("playerPositionFilter").value = group;
+          activeProfileCategory = group;
+          safeStorage.set("albionPlayerCategory", group);
           renderProfiles();
-          $("playerProfileGrid")?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
+          // The group button is already adjacent to the refreshed grid. Avoid a
+          // second smooth-scroll animation here; on some browsers it compounded
+          // the heavy repaint caused by the old observer and looked like a freeze.
         }
         if (profileButton) showProfile(profileButton.dataset.profileName);
         if (addButton) addPlayerToXI(addButton.dataset.addPlayer, addButton);
@@ -4425,7 +4431,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   document.querySelectorAll('select').forEach(select => { if (!select.getAttribute('aria-label') && !select.labels?.length) select.setAttribute('aria-label',select.id || 'Selection'); });
 
   const release = document.querySelector('.site-smooth-status');
-  if (release) release.textContent='Release 73';
+  if (release) release.textContent='Release 75';
 
 })();
 

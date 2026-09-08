@@ -1,0 +1,19 @@
+{
+  "release": "r75",
+  "date": "8 September 2026",
+  "html_ids": 288,
+  "duplicate_html_ids": [],
+  "broken_internal_anchors": [],
+  "missing_local_assets": [],
+  "javascript_files_checked": 7,
+  "javascript_syntax_failures": [],
+  "css_files_checked": 6,
+  "css_brace_failures": [],
+  "squad_observer_loop_removed": true,
+  "season_hub": {
+    "matches_id": true,
+    "results_inside_matches": true,
+    "fixtures_inside_matches": true
+  },
+  "data_validator": "PASS r75 data validation: 47 fixtures, 30 active first-team players, 47 unique fixtures."
+}

@@ -1,0 +1,63 @@
+/* Albion Fan Hub r75: merged season hub + squad switching stability polish */
+.season-hub-card {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.season-hub-heading {
+  align-items: end;
+  margin-bottom: 0;
+}
+
+.season-hub-jumps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+  padding: .85rem;
+  border: 1px solid var(--border, rgba(5, 55, 107, .14));
+  border-radius: 1rem;
+  background: var(--surface-soft, rgba(255,255,255,.7));
+}
+
+.season-hub-jumps a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  padding: .65rem .9rem;
+  border-radius: .8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.season-subsection {
+  min-width: 0;
+  scroll-margin-top: 7rem;
+}
+
+.season-subsection + .season-subsection {
+  border-top: 1px solid var(--border, rgba(5, 55, 107, .14));
+  padding-top: 1.75rem;
+}
+
+.season-subsection .section-head h3 {
+  margin: 0;
+  font-size: clamp(1.45rem, 2.5vw, 2rem);
+}
+
+.season-game-tab {
+  min-width: min(100%, 13rem);
+}
+
+/* The main profile renderer already outputs squad-number badges.  Keep
+   repaint work cheap when switching position groups. */
+#playerProfileGrid {
+  contain: layout style;
+}
+
+@media (max-width: 720px) {
+  .season-hub-card { gap: 1.15rem; }
+  .season-hub-jumps { display: grid; grid-template-columns: 1fr 1fr; }
+  .season-hub-jumps a { width: 100%; }
+  .season-subsection + .season-subsection { padding-top: 1.35rem; }
+}
