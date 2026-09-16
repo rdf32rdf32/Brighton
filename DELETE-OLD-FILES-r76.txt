@@ -1,0 +1,23 @@
+OPTIONAL CLEAN-UP AFTER r76 IS DEPLOYED
+
+These legacy files are no longer loaded by the r76 pages and can be deleted from the repository if you want a cleaner root:
+
+app-r66.js
+shootout-r66.js
+r66-enhancements.js
+r70-enhancements.js
+r75-enhancements.js
+site-r66.css
+polish-r66.css
+shootout-r66.css
+r70-polish.css
+r74-polish.css
+r75-polish.css
+RELEASE-r74.txt
+RELEASE-r75.txt
+BUILD-REPORT-r74.txt
+BUILD-REPORT-r75.txt
+BUILD-AUDIT-r74.json
+BUILD-AUDIT-r75.json
+
+Deleting them is optional. index.html and the supporting pages no longer reference them.

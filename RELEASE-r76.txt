@@ -1,0 +1,17 @@
+ALBION FAN HUB r76
+16 September 2026
+
+Penalty-priority, game-feel, freshness and consolidation release.
+
+- Penalty shoot-out moved to the first main feature on desktop and mobile.
+- Mobile ordering no longer places the Quiz ahead of Penalties.
+- Coventry City 0–5 Albion added as the latest result.
+- Manchester United away, 16 September at 20:00 UK time, is the next fixture fallback.
+- Penalty save decision window now matches the advertised reaction window: 900 ms desktop, 1080 ms mobile.
+- Staying still can save genuine central Palace penalties; no centre hold is required.
+- Deliberate early dives are allowed as a risk/reward gamble.
+- Repeated ball-placement, goalkeeper and referee routines are shortened after the opening pair.
+- Desktop/mobile save instructions simplified and aligned with the controls.
+- Dynamic freshness badges warn when football data is ageing or a past fixture lacks a result.
+- Runtime consolidated to site-r76.css, app-r76.js and shootout-r76.js (plus shared albion-data-r66.js).
+- Away fixtures no longer show a misleading Falmer weather forecast.

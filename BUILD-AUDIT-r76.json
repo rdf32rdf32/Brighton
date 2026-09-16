@@ -1,0 +1,34 @@
+{
+  "release": "r76",
+  "date": "2026-09-16",
+  "status": "pass",
+  "changes": {
+    "penalties_first_desktop": true,
+    "penalties_first_mobile": true,
+    "coventry_result_added": true,
+    "next_fixture_manchester_united": true,
+    "desktop_save_window_ms": 900,
+    "mobile_save_window_ms": 1080,
+    "passive_central_saves": true,
+    "early_gamble": true,
+    "accelerated_repeat_ceremonies": true,
+    "dynamic_freshness_guard": true,
+    "away_weather_guard": true,
+    "runtime_consolidated": true
+  },
+  "checks": {
+    "javascript_syntax": "pass",
+    "data_validation": "pass",
+    "fixture_count": 47,
+    "active_first_team_players": 30,
+    "unique_fixtures": 47,
+    "duplicate_ids": 0,
+    "missing_hash_targets": 0,
+    "missing_local_assets": 0,
+    "html_id_count": 290,
+    "css_braces": "pass",
+    "penalty_static_regressions": "pass",
+    "priority_order": "pass",
+    "headless_chromium": "attempted; environment timeout before DOM dump"
+  }
+}

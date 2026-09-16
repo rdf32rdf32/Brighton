@@ -1,7 +1,8 @@
-// Shared active squad, fixture and shoot-out data for Albion Fan Hub r75.
+// Shared active squad, fixture and shoot-out data for Albion Fan Hub r76.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r75",
-  "checked": "8 September 2026",
+  "version": "r76",
+  "checked": "16 September 2026",
+  "checkedISO": "2026-09-16",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -696,9 +697,15 @@ window.ALBION_DATA_R66 = Object.freeze({
       "broadcast": "Sky Sports",
       "competition": "Premier League",
       "round": "Matchweek 4",
-      "status": "Confirmed fixture · 14:00 UK kick-off",
-      "note": "Albion travel to Coventry City for a Sunday Premier League fixture.",
-      "venueName": "Coventry Building Society Arena"
+      "status": "Full-time · Coventry City 0–5 Albion",
+      "note": "Albion produced a clinical away performance and scored five without reply at the Coventry Building Society Arena.",
+      "venueName": "Coventry Building Society Arena",
+      "albionGoals": 5,
+      "opponentGoals": 0,
+      "result": "0–5",
+      "resultOutcome": "W",
+      "summary": "Kostoulas, Yalcouyé, Groß, Dunk and Ayari scored as Albion won 5–0 at Coventry City.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-pl-covbha-match-report-coventry-city-x-albion-x"
     },
     {
       "date": "16 Sep 2026",

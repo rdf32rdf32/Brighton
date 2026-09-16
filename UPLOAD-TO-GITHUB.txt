@@ -1,13 +1,9 @@
-ALBION FAN HUB r75 — GITHUB PAGES UPLOAD
+ALBION FAN HUB r76 — GITHUB PAGES UPLOAD
 
-1. Open the Brighton repository on GitHub.
-2. Upload every file and folder contained in Brighton-Fan-Hub-r75-FULL.zip to the repository root.
-3. Replace files when GitHub asks.
-4. Keep the .github/workflows and tools folders: they provide automatic validation.
-5. Commit the changes and allow GitHub Pages to redeploy.
+1. Upload every file and folder from Brighton-Fan-Hub-r76-FULL.zip to the repository root, replacing matching files.
+2. index.html now loads site-r76.css, app-r76.js and shootout-r76.js.
+3. Legacy r66/r70/r74/r75 CSS/JS patch files are no longer loaded by index.html. They may remain in the repository without affecting the site, or you may delete them later.
+4. Keep the MP3, PNG, SVG, HTML policy/contact files and tools folder in place.
+5. After GitHub Pages deploys, hard-refresh once if an old page is still open in the browser.
 
-Runtime filenames such as app-r66.js, albion-data-r66.js and shootout-r66.js are intentionally retained so the current deployed files are replaced cleanly. index.html uses r75 cache-busting query strings.
-
-The smaller Brighton-Fan-Hub-r75-CHANGED.zip contains only files changed from r74. The FULL zip is the safest upload.
-
-If old release-note files are already in the repository, they can remain or be deleted; they are not used by the live site.
+Priority check after upload: Penalties should be the first large section below the hero on both desktop and mobile.

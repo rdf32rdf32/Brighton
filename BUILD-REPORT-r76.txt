@@ -1,0 +1,57 @@
+ALBION FAN HUB r76 — BUILD AND AUDIT REPORT
+16 September 2026
+
+SOURCE
+Built from Brighton-Fan-Hub-r75-FULL.zip (8 September 2026).
+
+PRIORITY / LAYOUT
+PASS  Penalty shoot-out is physically the first main feature below the hero on desktop.
+PASS  Mobile CSS gives #shootout the highest main-section priority; the older Quiz-before-Penalties ordering is overridden.
+PASS  Penalties remain the first desktop navigation item, first hero game tab and first mobile quick-navigation item.
+PASS  PWA shortcuts now place Penalties first.
+
+CURRENT FOOTBALL DATA
+PASS  Coventry City 0–5 Albion (13 September 2026) added as a completed Premier League result.
+PASS  Premier League fallback totals updated to P4 W2 D1 L1, 13–5, 7 points; fallback position 5th.
+PASS  All-competition fallback totals updated to P6 W3 D2 L1, 17–5.
+PASS  Manchester United away, 16 September 2026 at 20:00 UK time, is the next-fixture fallback.
+PASS  Arsenal at home, 19 September 2026 at 15:00 UK time, retained as the following league fixture.
+PASS  Match/result freshness date updated to 16 September 2026.
+PASS  Dynamic freshness guard warns if checked data ages or a past fixture is left without a terminal result.
+PASS  Away fixtures no longer show a misleading Falmer weather forecast.
+
+PENALTY SHOOT-OUT
+PASS  Real save decision time increased from 620 ms to 900 ms on desktop.
+PASS  Mobile real save decision time is 1080 ms; advertised and actual reaction windows now match.
+PASS  Staying still can produce a central body/leg save on genuine central Palace shots; a centre hold is no longer required.
+PASS  Deliberate early click/flick/swipe/keyboard saves are accepted as a risk/reward gamble.
+PASS  Early commitment is visually identified and is evaluated with an early-timing penalty.
+PASS  Repeated placement, keeper, referee and post-outcome pauses accelerate after the opening pair while the first pair stays cinematic.
+PASS  Desktop and mobile instructions now say click/flick/swipe or stay central and explain the optional early gamble.
+PASS  Existing best-of-five, early finish, sudden death, penalty maps, chants, reaction feedback and celebrations are retained.
+
+CONSOLIDATION
+PASS  index.html now loads one consolidated stylesheet: site-r76.css.
+PASS  Main application/patch logic consolidated into app-r76.js.
+PASS  Penalty engine isolated as shootout-r76.js.
+PASS  Shared football/squad data remains in albion-data-r66.js for compatibility.
+PASS  Supporting privacy/cookies/contact/copyright pages now use site-r76.css.
+PASS  Legacy r66/r70/r74/r75 runtime files are not referenced by the r76 pages.
+
+VALIDATION
+PASS  JavaScript syntax: albion-data-r66.js, app-r76.js, shootout-r76.js.
+PASS  Data validation: 47 fixtures, 30 active first-team players, 47 unique fixtures.
+PASS  HTML IDs: 290 unique; duplicate IDs: 0.
+PASS  Broken internal hash targets: 0.
+PASS  Missing local assets: 0.
+PASS  Consolidated CSS brace check.
+PASS  Penalty timing/central-save/early-gamble static regression assertions.
+PASS  Penalty-first desktop/mobile ordering assertions.
+
+BROWSER NOTE
+A headless Chromium DOM run was attempted in the build environment. Chromium did not complete navigation within the environment timeout, so no claim is made that every animation was visually exercised here. Static syntax, data, DOM, asset, ordering and targeted penalty regression checks all pass.
+
+OFFICIAL DATA CHECKS
+- Brighton & Hove Albion: Coventry City 0–5 Albion match report, 13 September 2026.
+- Brighton & Hove Albion: Manchester United Carabao Cup date confirmation / match preview, 16 September 2026 at 20:00.
+- Brighton & Hove Albion: first-team fixtures list showing Arsenal at the Amex, 19 September 2026 at 15:00.
