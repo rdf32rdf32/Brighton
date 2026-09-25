@@ -1,4 +1,4 @@
-// Albion Fan Hub r66 penalty game
+// Albion Fan Hub r78 penalty game — realistic goalkeeper save experience
 (() => {
   "use strict";
 
@@ -186,16 +186,17 @@
     keeperNoise: 0.39,
     keeperReach: 0.109,
     palaceMiss: 0.18,
-    saveRadius: 0.39,
-    preContactWindow: 320,
-    postContactWindow: 900,
-    flight: 880,
+    saveRadius: 0.235,
+    fingertipMargin: 0.075,
+    preContactWindow: 300,
+    postContactWindow: 520,
+    flight: 790,
     runUpScale: 1.04,
-    cueStrength: 0.78,
-    diveAssist: 0.54,
-    sameSideBonus: 0.14,
+    cueStrength: 0.68,
+    diveAssist: 0.08,
+    sameSideBonus: 0.025,
     scoringDifficultyIncrease: 0.035,
-    contactDecisionDelay: 900,
+    contactDecisionDelay: 610,
     edgeAccuracyPenalty: 0.0055,
   });
 
@@ -255,6 +256,10 @@
     panenkaGoals: 0,
     contactAt: 0,
     reactionOpen: false,
+    currentReactionWindow: GAME.postContactWindow,
+    currentShotPower: .84,
+    currentShotFlight: GAME.flight,
+    currentShotCornerLoad: 0,
     palaceTarget: null,
     palaceMiss: false,
     userDive: null,
@@ -310,12 +315,13 @@
     if (!isMobilePenalty()) return GAME;
     return {
       ...GAME,
-      saveRadius: GAME.saveRadius * 1.18,
-      diveAssist: Math.min(.96, GAME.diveAssist + .07),
-      sameSideBonus: GAME.sameSideBonus + .055,
-      postContactWindow: GAME.postContactWindow + 180,
-      contactDecisionDelay: GAME.contactDecisionDelay + 180,
-      preContactWindow: GAME.preContactWindow + 70,
+      saveRadius: GAME.saveRadius + .018,
+      fingertipMargin: GAME.fingertipMargin + .012,
+      diveAssist: GAME.diveAssist + .035,
+      sameSideBonus: GAME.sameSideBonus + .01,
+      postContactWindow: GAME.postContactWindow + 45,
+      contactDecisionDelay: GAME.contactDecisionDelay + 45,
+      preContactWindow: GAME.preContactWindow + 35,
     };
   }
 
@@ -543,14 +549,11 @@
   function shotMechanics(target,player){const g=state.aimGesture||{distance:0,duration:0,speed:.42},w=Math.max(320,stage.clientWidth||640),df=clamp(g.distance/(w*.32),0,1),sf=clamp((g.speed-.08)/1.05,0,1),pp=player?.power??.78,edge=Math.max(Math.abs(target.x-.5),Math.abs(target.y-.5)),userPower=clamp(pp*.58+sf*.27+df*.15+edge*.04,.5,1),shotType=userPower>.83||sf>.72?"driven":"placed",spreadMultiplier=userPower>.91?1.18:userPower<.64?1.08:shotType==="placed"?.93:1.05;return{userPower,shotType,spreadMultiplier}}
   function captureAimGesture(start,end){if(!start||!end)return{distance:0,duration:0,speed:.42};const distance=Math.hypot(Number(end.clientX||0)-Number(start.clientX||0),Number(end.clientY||0)-Number(start.clientY||0)),duration=Math.max(16,Number(end.time||performance.now())-Number(start.time||performance.now()));return{distance,duration,speed:distance/duration}}
 
-  function reactionLabel(dive) {
-    if (!dive) return "No movement";
-    if (dive.source === "centre-hold" || dive.source === "stay-centre") return "Held the centre";
-    if (dive.timing < -420) return "Committed early";
-    if (dive.timing < -70) return "Good anticipation";
-    if (dive.timing <= 180) return "Perfect reaction";
-    if (dive.timing <= 520) return "Late reaction";
-    return "Very late";
+  function reactionLabel(dive){
+    if(!dive)return"No movement";if(dive.source==="centre-hold"||dive.source==="stay-centre")return"Held the centre";
+    if(dive.timing<-600)return"Very early gamble";if(dive.timing<-260)return"Committed early";if(dive.timing<-60)return"Good anticipation";
+    if(dive.timing<=210)return"Sharp reaction";if(dive.timing<=350)return"Good reaction";
+    if(dive.timing<=(state.currentReactionWindow||520))return"Late reaction";return"Too late";
   }
 
   function clearSaveFeedback() {
@@ -561,18 +564,11 @@
     delete feedback.dataset.outcome;
   }
 
-  function saveFeedbackText(saved, saveType = "") {
-    if (!state.userDive) return "No save input registered";
-    const ms = Math.max(0, Math.round(state.userDive.timing));
-    const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
-    const diveSide = state.userDive.rawX < .4 ? -1 : state.userDive.rawX > .6 ? 1 : 0;
-    const targetHeight = state.palaceTarget.y < .34 ? -1 : state.palaceTarget.y > .66 ? 1 : 0;
-    const diveHeight = state.userDive.rawY < .34 ? -1 : state.userDive.rawY > .66 ? 1 : 0;
-    const sideText = targetSide === diveSide ? "correct side" : "wrong side";
-    const heightText = targetHeight === diveHeight ? "right height" : "wrong height";
-    return saved
-      ? `${ms} ms · ${sideText} · ${String(saveType || "save").toLowerCase()}`
-      : `${ms} ms · ${sideText} · ${heightText}`;
+  function saveFeedbackText(saved,saveType=""){
+    if(!state.userDive)return"No save input registered";
+    const ms=Math.max(0,Math.round(state.userDive.timing)),distance=Number(state.userDive.distance),reach=Number(state.userDive.reach);
+    const precision=Number.isFinite(distance)&&Number.isFinite(reach)?distance<=reach*.5?"well positioned":distance<=reach?"full stretch":"just beyond reach":state.userDive.zone;
+    return saved?ms+" ms · "+precision+" · "+String(saveType||"save").toLowerCase():ms+" ms · "+precision;
   }
 
   function showSaveFeedback(text, outcome = "neutral") {
@@ -905,7 +901,81 @@
     const label = $("penaltyApproach");
     if (label) label.textContent = runUpLabel(foot, profile);
   }
-  function runUpClue(target,foot,profile){if(!target)return"Watch the final stride";const side=target.x<.42?"left":target.x>.58?"right":"centre",height=target.y<.42?"Higher body shape":target.y>.67?"Lower final stride":"Balanced final stride",d=profile==="stutter"?"The stutter makes the clue less reliable":profile==="reverse"?"The curved approach may disguise the corner":"The standing foot offers a subtle clue";return`${height}; the approach slightly favours ${side}. ${d}.`}
+  function shotPowerFor(player,target){
+    const fallback=player?.style==="quick"?.87:player?.style==="measured"?.80:.84;
+    const base=clamp(Number(player?.power??fallback),.72,.94);
+    const cornerLoad=Math.min(1,Math.abs((target?.x??.5)-.5)*1.55+Math.max(0,.45-(target?.y??.55))*.65);
+    return clamp(base+cornerLoad*.025,.72,.95);
+  }
+
+  function reactionWindowFor(player,target){
+    const power=shotPowerFor(player,target);
+    const cornerLoad=Math.min(1,Math.abs((target?.x??.5)-.5)*1.5+Math.max(0,.42-(target?.y??.55))*.7);
+    return Math.round(clamp(585-(power-.72)*620-cornerLoad*72+(isMobilePenalty()?45:0),390,565));
+  }
+
+  function shotFlightFor(player,target){
+    const power=shotPowerFor(player,target);
+    const cornerLoad=Math.min(1,Math.abs((target?.x??.5)-.5)*1.45+Math.max(0,.44-(target?.y??.55))*.55);
+    return Math.round(clamp(905-power*185-cornerLoad*35,690,790));
+  }
+
+  function runUpClue(target,player,foot,profile){
+    if(!target)return "Watch the planting foot and hips";
+    const disguise=clamp(Number(player?.disguise??.58),.2,.9);
+    const trueSide=target.x<.42?"left":target.x>.58?"right":"centre";
+    const falseSide=trueSide==="left"?"right":trueSide==="right"?"left":Math.random()<.5?"left":"right";
+    const neutral=Math.random()<(.18+disguise*.16);
+    const truthful=Math.random()<clamp(.84-disguise*.43-(profile==="stutter"?.11:profile==="reverse"?.07:0),.38,.72);
+    const shownSide=neutral?"unclear":truthful?trueSide:falseSide;
+    const body=target.y<.40?"The chest stays tall":target.y>.67?"The final stride drops slightly":"The hips stay fairly level";
+    const plant=shownSide==="unclear"?"the planting foot gives little away":"the planting foot hints "+shownSide;
+    const warning=profile==="stutter"?"The stutter can disguise the finish":profile==="reverse"?"The curved approach can sell the wrong corner":disguise>.7?"This taker disguises direction well":"The cue is useful, not certain";
+    return body+"; "+plant+". "+warning+".";
+  }
+
+  function animateKeeperSetStep(target,player,profile){
+    if(reducedMotion()||!keeper)return;
+    const disguise=clamp(Number(player?.disguise??.58),.2,.9);
+    const actual=target.x<.43?-1:target.x>.57?1:0;
+    const truthful=Math.random()>disguise*.42;
+    const read=truthful?actual:(actual===0?(Math.random()<.5?-1:1):-actual);
+    const shift=read*(2.5+Math.random()*2.4);
+    const body=keeper.querySelector(".keeper-body-group");
+    animateElement(keeper,[{transform:"translateX(-50%) translateY(0)"},{transform:"translateX(-50%) translate("+shift+"px,1px)",offset:.28},{transform:"translateX(-50%) translate("+(shift*.35)+"px,3px)",offset:.56},{transform:"translateX(-50%) translateY(0)"}],{duration:profile==="stutter"?720:620,easing:"cubic-bezier(.22,.55,.25,1)"});
+    if(body)animateElement(body,[{transform:"translate(0,0) scaleY(1)"},{transform:"translate("+(shift*.18)+"px,2px) scaleY(.97)",offset:.45},{transform:"translate(0,0) scaleY(1)"}],{duration:profile==="stutter"?720:620});
+  }
+
+  function resolveKeeperSave(target,dive,shot){
+    if(!dive)return{saved:false,saveType:"",distance:Infinity,reach:0,edge:false};
+    const settings=config(), timing=dive.timing, reactionWindow=shot.reactionWindow;
+    const targetCentre=Math.abs(target.x-.5)<.135, diveCentre=Math.abs(dive.x-.5)<.16;
+    const stayedCentral=["centre-hold","stay-centre"].includes(dive.source);
+    const distance=Math.hypot(target.x-dive.x,(target.y-dive.y)*.9);
+    let timingFactor=1;
+    if(timing<-650)timingFactor=.62; else if(timing<-380)timingFactor=.76; else if(timing<-80)timingFactor=.91;
+    else if(timing<=190)timingFactor=1.08; else if(timing<=330)timingFactor=.98; else if(timing<=reactionWindow)timingFactor=.78; else timingFactor=.54;
+    const powerFactor=clamp(1-(shot.power-.75)*.52,.89,1.02);
+    const heightFactor=target.y<.27?.91:target.y>.73?.97:1;
+    const sideFactor=Math.abs(target.x-.5)>.39?.90:1;
+    const cleanReach=settings.saveRadius*timingFactor*powerFactor*heightFactor*sideFactor;
+    const fingertipReach=cleanReach+settings.fingertipMargin*clamp(timingFactor,.72,1.06);
+    const bodyBlock=targetCentre&&diveCentre&&Math.abs(target.y-dive.y)<.29&&timing<reactionWindow;
+    const centralHold=stayedCentral&&targetCentre&&target.y>.30&&target.y<.88&&shot.power<.93;
+    const saved=centralHold||bodyBlock||distance<=fingertipReach;
+    if(!saved)return{saved:false,saveType:"",distance,reach:fingertipReach,edge:false};
+    const edge=!centralHold&&!bodyBlock&&distance>cleanReach;
+    let saveType="";
+    if(centralHold)saveType=target.y>.67?"LEG SAVE":target.y<.38&&shot.power<.84?"CATCH":"BLOCKED";
+    else if(edge)saveType="FINGERTIP SAVE";
+    else if(target.y>.69)saveType="LEG SAVE";
+    else if(target.y<.31)saveType="PALMED OVER";
+    else if(Math.abs(target.x-.5)>.27)saveType="PARRIED WIDE";
+    else if(distance<cleanReach*.42&&timing>=-120&&timing<270&&shot.power<.86)saveType="CATCH";
+    else if(bodyBlock)saveType="BLOCKED";
+    else saveType="PARRIED";
+    return{saved:true,saveType,distance,reach:edge?fingertipReach:cleanReach,edge};
+  }
 
   function animateRunUp(isPalace, foot = "right", target = null, style = "direct", profile = chooseRunUpProfile(foot, style)) {
     clearTakerPose();
@@ -1699,24 +1769,12 @@
     }, reducedMotion() ? 140 : saved ? 1120 : 1280);
   }
 
-  function assistedDivePoint(point) {
-    const target = state.palaceTarget;
-    if (!target) return { ...point };
-    const settings = config();
-    const pointSide = point.x < .4 ? -1 : point.x > .6 ? 1 : 0;
-    const targetSide = target.x < .4 ? -1 : target.x > .6 ? 1 : 0;
-    const compatible = pointSide === targetSide || (pointSide === 0 && targetSide === 0);
-    if (!compatible) return { ...point };
-    const pointHeight = point.y < .34 ? -1 : point.y > .66 ? 1 : 0;
-    const targetHeight = target.y < .34 ? -1 : target.y > .66 ? 1 : 0;
-    const sameHeight = pointHeight === targetHeight;
-    const adjacentHeight = Math.abs(pointHeight - targetHeight) === 1;
-    const horizontalAssist = settings.diveAssist;
-    const verticalAssist = sameHeight ? settings.diveAssist : adjacentHeight ? settings.diveAssist * .18 : 0;
-    return {
-      x: clamp(point.x + (target.x - point.x) * horizontalAssist, .015, .985),
-      y: clamp(point.y + (target.y - point.y) * verticalAssist, .02, .98),
-    };
+  function assistedDivePoint(point){
+    const target=state.palaceTarget;if(!target)return{...point};
+    const settings=config(),pointSide=point.x<.4?-1:point.x>.6?1:0,targetSide=target.x<.4?-1:target.x>.6?1:0;
+    if(pointSide!==targetSide)return{...point};
+    const a=settings.diveAssist;
+    return{x:clamp(point.x+(target.x-point.x)*a,.015,.985),y:clamp(point.y+(target.y-point.y)*a*.45,.02,.98)};
   }
 
   function netReaction(target, strength = 1) {
@@ -2731,38 +2789,18 @@
     haptic(10);
   }
 
-  function takeUserDive(point, source = "direct", timingOverride = null, animateDive = true) {
-    const override = Number.isFinite(timingOverride);
-    if ((!override && (state.phase !== "save" || !state.reactionOpen)) || state.userDive) return;
-    const timing = override ? timingOverride : performance.now() - state.contactAt;
-    let assisted = assistedDivePoint(point);
-    if (state.palaceTarget) {
-      const chosenSide = point.x < .4 ? -1 : point.x > .6 ? 1 : 0;
-      const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
-      if (chosenSide === targetSide) {
-        const chosenHeight = point.y < .34 ? -1 : point.y > .66 ? 1 : 0;
-        const targetHeight = state.palaceTarget.y < .34 ? -1 : state.palaceTarget.y > .66 ? 1 : 0;
-        assisted = {
-          x: clamp(assisted.x + (state.palaceTarget.x - assisted.x) * .18, .015, .985),
-          y: clamp(assisted.y + (state.palaceTarget.y - assisted.y) * (chosenHeight === targetHeight ? .12 : 0), .02, .98),
-        };
-      }
-    }
-    state.userDive = { x: assisted.x, y: assisted.y, rawX: point.x, rawY: point.y, timing, source, zone: saveZoneName(point) };
-    showKeeperChoice(point, source);
-    if (timing >= 0) state.reactionTimes.push(Math.max(0, timing));
-    state.userDive.label = reactionLabel(state.userDive);
-    state.reactionOpen = false;
-    stage.classList.remove("is-save-window");
-    if (animateDive) {
-      const duration = Math.max(610, config().flight * .94 + Math.max(0, -timing) * .28);
-      const launch = () => {
-        if (state.saveResolutionLocked) return;
-        const centralAction = Math.abs(assisted.x - .5) < .19 && state.palaceTarget && Math.abs(state.palaceTarget.x - .5) < .17;
-        if (centralAction) animateKeeperBlock(assisted, duration);
-        else animateKeeperDive(assisted, duration, true);
-      };
-      launch();
+  function takeUserDive(point,source="direct",timingOverride=null,animateDive=true){
+    const override=Number.isFinite(timingOverride);
+    if((!override&&(state.phase!=="save"||!state.reactionOpen))||state.userDive)return;
+    const timing=override?timingOverride:performance.now()-state.contactAt,assisted=assistedDivePoint(point);
+    state.userDive={x:assisted.x,y:assisted.y,rawX:point.x,rawY:point.y,timing,source,zone:saveZoneName(point)};
+    showKeeperChoice(point,source);if(timing>=0)state.reactionTimes.push(Math.max(0,timing));
+    state.userDive.label=reactionLabel(state.userDive);state.reactionOpen=false;stage.classList.remove("is-save-window");
+    if(animateDive&&!state.saveResolutionLocked){
+      const windowMs=Math.max(380,state.currentReactionWindow||config().postContactWindow),lateness=clamp(Math.max(0,timing)/windowMs,0,1);
+      const duration=Math.round(clamp(config().flight*.88+lateness*150+Math.max(0,-timing)*.12,610,930));
+      const centralAction=Math.abs(assisted.x-.5)<.16&&state.palaceTarget&&Math.abs(state.palaceTarget.x-.5)<.14;
+      if(centralAction)animateKeeperBlock(assisted,duration);else animateKeeperDive(assisted,duration,true);
     }
   }
 
@@ -2962,18 +3000,13 @@
     }, reducedMotion() ? 90 : 170);
   }
 
-  function swipeGoalPoint(start, current, fallbackPoint) {
-    if (!start || !current) return fallbackPoint;
-    const dx = (current.clientX - start.clientX) / Math.max(1, stage.clientWidth);
-    const dy = (current.clientY - start.clientY) / Math.max(1, stage.clientHeight);
-    const magnitude = Math.hypot(dx, dy);
-    if (magnitude < .018) return fallbackPoint;
-    const directionalX = clamp(dx / Math.max(.025, Math.abs(dx) + Math.abs(dy) * .22), -1, 1);
-    const directionalY = clamp(dy / Math.max(.025, Math.abs(dy) + Math.abs(dx) * .34), -1, 1);
-    return {
-      x: clamp(.5 + directionalX * .46, .025, .975),
-      y: clamp(.57 + directionalY * .39, .04, .96),
-    };
+  function swipeGoalPoint(start,current,fallbackPoint){
+    if(!start||!current)return fallbackPoint;
+    const dx=(current.clientX-start.clientX)/Math.max(1,stage.clientWidth);
+    const dy=(current.clientY-start.clientY)/Math.max(1,stage.clientHeight);
+    if(Math.hypot(dx,dy)<.018)return fallbackPoint;
+    const gainX=isMobilePenalty()?3.15:2.85,gainY=isMobilePenalty()?2.75:2.5;
+    return{x:clamp(.5+dx*gainX,.025,.975),y:clamp(.56+dy*gainY,.04,.96)};
   }
 
   function aimPointForPointer(point, touchLike) {
