@@ -1,0 +1,40 @@
+{
+  "release": "r78",
+  "date": "2026-09-25",
+  "branch": "gk-save-r78",
+  "status": "validated",
+  "goalkeeperSaving": {
+    "truePostContactReaction": true,
+    "imperfectBodyLanguageCues": true,
+    "continuousDiveTargeting": true,
+    "diveTimingIndependentOfDirection": true,
+    "physicalReachAndFingertipZones": true,
+    "outcomes": [
+      "CATCH",
+      "PARRIED",
+      "PARRIED WIDE",
+      "FINGERTIP SAVE",
+      "PALMED OVER",
+      "LEG SAVE",
+      "BLOCKED"
+    ],
+    "keeperAdjustmentSteps": true,
+    "shotPowerAndPlacementAffectDifficulty": true,
+    "visibleBallImpactAndBodyPartRecoil": true
+  },
+  "tuning": {
+    "reactionWindowMs": "390–565",
+    "mobileReactionAllowanceMs": 45,
+    "cleanReachBase": 0.235,
+    "fingertipMargin": 0.075,
+    "hiddenDiveAssist": 0.08
+  },
+  "validation": {
+    "javascriptSyntax": "pass",
+    "bracesBalanced": true,
+    "parenthesesBalanced": true,
+    "indexLoadsR78Data": true,
+    "indexLoadsR78Shootout": true,
+    "basePenaltyStructurePreserved": true
+  }
+}
