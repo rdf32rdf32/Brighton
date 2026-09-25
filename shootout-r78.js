@@ -1288,7 +1288,7 @@
         targetStage,
       };
     }
-    if (saveType === 'FINGERTIP SAVE' || saveType === 'PARRIED') {
+    if (['FINGERTIP SAVE','PARRIED','PARRIED WIDE','PALMED OVER'].includes(saveType)) {
       const point = closestPoint(glovePoints, targetStage);
       return { point, element: point === leftPalm ? leftGlove : rightGlove, kind: 'glove', targetStage };
     }
@@ -1466,18 +1466,24 @@
   }
 
   async function animateSavedShot(target, duration, saveType, divePoint = null, shotType = 'driven', { silentKick = false, from = null, hapticEnabled = true } = {}) {
-    if (!silentKick) sound('kick');
-    const collision = await animateBallToLiveContact(target, Math.max(300, duration * .72), saveType, divePoint, from || ballStart);
-    const contact = collision.point;
-    showSaveImpact(contact, saveType);
-    recoilSavePart(collision.descriptor, saveType, target);
-    sound(saveType === 'CATCH' ? 'catch' : saveType === 'LEG SAVE' ? 'save' : 'gloves');
-    if (hapticEnabled) haptic(saveType === 'BLOCKED' || saveType === 'LEG SAVE' ? [24, 24, 30] : [16, 26, 22]);
-    await sleep(reducedMotion() ? 55 : 110);
-    if (saveType === 'CATCH') await secureCatch(target, collision.descriptor);
-    else await animateDeflection(contact, saveType)?.finished.catch(() => {});
+    if(!silentKick)sound('kick');
+    const collision=await animateBallToLiveContact(target,Math.max(280,duration*.70),saveType,divePoint,from||ballStart);
+    const contact=collision.point;
+    showSaveImpact(contact,saveType);
+    recoilSavePart(collision.descriptor,saveType,target);
+    const impactScale=ballScaleAt(contact,{saved:true});
+    animateElement(ball,[
+      {transform:ballTransform(impactScale)},
+      {transform:ballTransform(impactScale*1.08,impactScale*.82),offset:.48},
+      {transform:ballTransform(impactScale*.98)}
+    ],{duration:reducedMotion()?55:105,easing:"cubic-bezier(.2,.72,.3,1)"});
+    sound(saveType==='CATCH'?'catch':saveType==='LEG SAVE'?'save':'gloves');
+    if(hapticEnabled)haptic(saveType==='BLOCKED'||saveType==='LEG SAVE'?[24,24,30]:[16,26,22]);
+    await sleep(reducedMotion()?50:105);
+    if(saveType==='CATCH')await secureCatch(target,collision.descriptor);
+    else await animateDeflection(contact,saveType)?.finished.catch(()=>{});
     stage.classList.remove('contact-armed');
-    keeper.querySelectorAll('.active-save-part').forEach((part) => part.classList.remove('active-save-part'));
+    keeper.querySelectorAll('.active-save-part').forEach(part=>part.classList.remove('active-save-part'));
     return contact;
   }
 
@@ -1496,10 +1502,13 @@
         { left: `${point.x * 100}%`, top: `${point.y * 100}%`, opacity: .94, transform: ballTransform(contactScale * .9) },
       ], { duration: 380, easing: "ease-out" });
     }
-    const strong = saveType === "PARRIED" || saveType === "BLOCKED";
+    const strong = ["PARRIED","PARRIED WIDE","PALMED OVER","BLOCKED"].includes(saveType);
     const backward = saveType === "BLOCKED" || saveType === "LEG SAVE";
-    const endX = clamp(point.x + direction * (saveType === "FINGERTIP SAVE" ? .15 : strong ? .11 : .08), .012, .988);
-    const endY = clamp(point.y + (saveType === "FINGERTIP SAVE" && target.y < .45 ? -.11 : backward ? .18 : target.y < .42 ? -.07 : .105), .012, .97);
+    const fingertip = saveType === "FINGERTIP SAVE";
+    const wideParry = saveType === "PARRIED WIDE";
+    const over = saveType === "PALMED OVER";
+    const endX = clamp(point.x + direction * (fingertip ? .13 : wideParry ? .19 : strong ? .12 : .08), .012, .988);
+    const endY = clamp(point.y + (over ? -.17 : fingertip && target.y < .45 ? -.10 : backward ? .18 : target.y < .42 ? -.075 : .105), .012, .97);
     const endScale = ballScaleAt({ x: endX, y: endY }, { saved: false });
     if (ballShadow) animateElement(ballShadow, [
       { left: `${point.x * 100}%`, top: `${(point.y + .025) * 100}%`, opacity: .16, transform: ballTransform(contactScale * .5) },
@@ -2583,6 +2592,10 @@
     const plan = randomPalaceTarget();
     state.palaceTarget = plan.target;
     state.palaceMiss = plan.miss;
+    state.currentShotPower=shotPowerFor(player,state.palaceTarget);
+    state.currentReactionWindow=reactionWindowFor(player,state.palaceTarget);
+    state.currentShotFlight=shotFlightFor(player,state.palaceTarget);
+    state.currentShotCornerLoad=Math.min(1,Math.abs(state.palaceTarget.x-.5)*1.5+Math.max(0,.42-state.palaceTarget.y)*.7);
     if (!(await preKickCeremony("palace", token))) return;
     sound("whistle");
     await sleep(reducedMotion() ? 70 : 180);
@@ -2593,7 +2606,8 @@
     state.phase = "palace-run";
     const runProfile = state.pendingRunProfile || chooseRunUpProfile(player.foot, player.style || "direct");
     setApproachLabel(player.foot, runProfile);
-    setStatus("Palace begin the run-up",`${runUpLabel(player.foot,runProfile)}. ${runUpClue(state.palaceTarget,player.foot,runProfile)}`);
+    setStatus("Palace begin the run-up",`${runUpLabel(player.foot,runProfile)}. ${runUpClue(state.palaceTarget,player,player.foot,runProfile)}`);
+    animateKeeperSetStep(state.palaceTarget,player,runProfile);
     const run = animateRunUp(true, player.foot, state.palaceTarget, player.style || "direct", runProfile);
     const actualRun = Math.max(runDuration, run.duration);
     const waitBeforeWindow = Math.max(80, actualRun - settings.preContactWindow);
@@ -2631,16 +2645,16 @@
       stage.classList.add("is-save-window");
       cue.hidden = false;
       $("stageInstruction").textContent = matchMedia(MOBILE_PENALTY_QUERY).matches ? "React now — swipe, or stay centre" : "React now — click/flick, or stay centre";
-      setStatus("React now", "Commit to the side and height, or make no move to hold the centre.");
+      setStatus("React now","Ball struck · "+state.currentReactionWindow+" ms reaction window. Swipe/click the exact reach point, or hold centre.");
       window.setTimeout(() => { cue.hidden = true; }, reducedMotion() ? 150 : 420);
       state.reactionTimer = window.setTimeout(() => {
         state.reactionOpen = false;
         stage.classList.remove("is-save-window");
-      }, settings.postContactWindow);
+      }, state.currentReactionWindow);
     }
 
     // Start the ball immediately, then lock the outcome while it is still in front of the goal.
-    const approachDuration = reducedMotion() ? 80 : settings.contactDecisionDelay;
+    const approachDuration = reducedMotion() ? 80 : Math.min(settings.contactDecisionDelay,state.currentReactionWindow+90);
     const approach = animateBallApproach(state.palaceTarget, approachDuration, "driven");
     await approach.animation?.finished.catch(() => {});
     state.saveResolutionLocked = true;
@@ -2649,48 +2663,30 @@
     stage.classList.remove("is-save-window");
     window.clearTimeout(state.reactionTimer);
 
-    let saved = false;
-    let saveType = "";
-    const passiveCentre = !state.userDive && !state.palaceMiss && Math.abs(state.palaceTarget.x - .5) < .135 && state.palaceTarget.y > .30;
-    if (passiveCentre) {
-      state.userDive = { x: .5, y: .56, rawX: .5, rawY: .56, timing: approachDuration, source: "stay-centre", zone: "Stay centre", label: "Held the centre" };
-      showKeeperChoice({ x: .5, y: .56 }, "stay-centre");
-      animateKeeperBlock({ x: .5, y: .56 }, Math.max(520, settings.flight * .72));
+    let saved=false;
+    let saveType="";
+    const passiveCentre=!state.userDive&&!state.palaceMiss&&Math.abs(state.palaceTarget.x-.5)<.12&&state.palaceTarget.y>.30;
+    if(passiveCentre){
+      state.userDive={x:.5,y:.56,rawX:.5,rawY:.56,timing:Math.min(160,state.currentReactionWindow*.34),source:"stay-centre",zone:"Stay centre",label:"Held the centre"};
+      showKeeperChoice({x:.5,y:.56},"stay-centre");
+      animateKeeperBlock({x:.5,y:.56},Math.max(500,state.currentShotFlight*.72));
     }
-    if (!state.palaceMiss && state.userDive) {
-      const timing = state.userDive.timing;
-      const latePenalty = Math.max(0, timing) / settings.postContactWindow;
-      const earlyAmount = Math.max(0, -timing) / settings.preContactWindow;
-      const timingFactor = clamp(1.08 - latePenalty * .42 - Math.max(0, earlyAmount - .78) * .28, .64, 1.1);
-      let radius = settings.saveRadius * timingFactor;
-      const targetCentre = Math.abs(state.palaceTarget.x - .5) < .17;
-      const diveCentre = Math.abs(state.userDive.x - .5) < .2;
-      const targetSide = state.palaceTarget.x < .4 ? -1 : state.palaceTarget.x > .6 ? 1 : 0;
-      const diveSide = state.userDive.x < .4 ? -1 : state.userDive.x > .6 ? 1 : 0;
-      const sameSide = targetSide === diveSide;
-      const targetHeight = state.palaceTarget.y < .34 ? -1 : state.palaceTarget.y > .66 ? 1 : 0;
-      const diveHeight = state.userDive.rawY < .34 ? -1 : state.userDive.rawY > .66 ? 1 : 0;
-      const sameHeight = targetHeight === diveHeight;
-      if (sameSide) radius += settings.sameSideBonus;
-      if (sameSide && sameHeight) radius += .105;
-      else if (sameSide && Math.abs(targetHeight - diveHeight) >= 2) radius -= .16;
-      if (targetCentre && diveCentre) radius += .075;
-      const distance = Math.hypot(state.palaceTarget.x - state.userDive.x, (state.palaceTarget.y - state.userDive.y) * .82);
-      const gloveEdge = sameSide && distance <= radius * 1.22 && Math.abs(timing) < settings.postContactWindow * .94;
-      const bodyBlock = targetCentre && diveCentre && Math.abs(state.palaceTarget.y - state.userDive.y) < .4;
-      const stayedCentral = ["centre-hold", "stay-centre"].includes(state.userDive.source) && targetCentre && state.palaceTarget.y > .30;
-      saved = distance <= radius || gloveEdge || bodyBlock || stayedCentral;
-      if (saved) {
-        if (stayedCentral) saveType = state.palaceTarget.y > .67 ? "LEG SAVE" : "BLOCKED";
-        else if ((distance < radius * .4 || bodyBlock) && timing < 250) saveType = targetCentre ? "BLOCKED" : "CATCH";
-        else if (distance > radius * .86 || gloveEdge) saveType = "FINGERTIP SAVE";
-        else if (state.palaceTarget.y > .66) saveType = "LEG SAVE";
-        else saveType = "PARRIED";
-      }
+    if(!state.palaceMiss&&state.userDive){
+      const resolution=resolveKeeperSave(state.palaceTarget,state.userDive,{
+        power:state.currentShotPower,
+        reactionWindow:state.currentReactionWindow,
+        flight:state.currentShotFlight,
+        cornerLoad:state.currentShotCornerLoad
+      });
+      saved=resolution.saved;
+      saveType=resolution.saveType;
+      state.userDive.reach=resolution.reach;
+      state.userDive.distance=resolution.distance;
+      state.userDive.edge=resolution.edge;
     }
 
     const scored = !state.palaceMiss && !saved;
-    const remainingFlight = Math.max(380, settings.flight - approachDuration);
+    const remainingFlight = Math.max(285,state.currentShotFlight-approachDuration);
     if (saved) await animateSavedShot(state.palaceTarget, remainingFlight, saveType, state.userDive, "driven", { silentKick: true, from: approach.point });
     else {
       const ballAnimation = animateBall(state.palaceTarget, remainingFlight, false, state.palaceMiss, "driven", { silentKick: true, from: approach.point });
@@ -2706,7 +2702,7 @@
     }
     const palaceOutcome = state.palaceMiss ? "miss" : saved ? "saved" : "goal";
     state.palaceResults.push({ scored, result: palaceOutcome });
-    state.palaceShots.push({ x: state.palaceTarget.x, y: state.palaceTarget.y, result: palaceOutcome, name: player.name, saveType, reactionMs: state.userDive ? Math.max(0, Math.round(state.userDive.timing)) : null, dive: state.userDive ? { x: state.userDive.x, y: state.userDive.y } : null });
+    state.palaceShots.push({ x: state.palaceTarget.x, y: state.palaceTarget.y, result: palaceOutcome, name: player.name, saveType, power: state.currentShotPower, reactionWindow: state.currentReactionWindow, reactionMs: state.userDive ? Math.max(0, Math.round(state.userDive.timing)) : null, dive: state.userDive ? { x: state.userDive.x, y: state.userDive.y } : null });
     refereeSignal(scored);
 
     if (saved) {
