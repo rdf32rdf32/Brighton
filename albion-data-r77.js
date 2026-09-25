@@ -1,0 +1,1043 @@
+// Shared active squad, fixture and shoot-out data for Albion Fan Hub r77.
+window.ALBION_DATA_R66 = Object.freeze({
+  "version": "r77",
+  "checked": "25 September 2026",
+  "checkedISO": "2026-09-25",
+  "squad": [
+    {
+      "name": "Bart Verbruggen",
+      "position": "Goalkeeper",
+      "role": "Goalkeeper",
+      "number": 1,
+      "nationality": "Netherlands",
+      "initials": "BV",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Jason Steele",
+      "position": "Goalkeeper",
+      "role": "Goalkeeper",
+      "number": 23,
+      "nationality": "England",
+      "initials": "JS",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Tom McGill",
+      "position": "Goalkeeper",
+      "role": "Goalkeeper",
+      "number": 38,
+      "nationality": "Canada",
+      "initials": "TM",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Pascal Struijk",
+      "position": "Defender",
+      "role": "Centre-back",
+      "number": 4,
+      "nationality": "Netherlands",
+      "initials": "PS",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Costinha",
+      "position": "Defender",
+      "role": "Right-back",
+      "number": 20,
+      "nationality": "Portugal",
+      "initials": "CO",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Michael Svoboda",
+      "position": "Defender",
+      "role": "Centre-back",
+      "number": 30,
+      "nationality": "Austria",
+      "initials": "MS",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Luka Vušković",
+      "position": "Defender",
+      "role": "Centre-back",
+      "number": 44,
+      "nationality": "Croatia",
+      "initials": "LV",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Igor Julio",
+      "position": "Defender",
+      "role": "Centre-back",
+      "number": 3,
+      "nationality": "Brazil",
+      "initials": "IJ",
+      "summary": "Completed a permanent transfer to Burnley on 1 September 2026.",
+      "active": false,
+      "penaltyEligible": false,
+      "squadStatus": "transferred",
+      "statusClub": "Burnley"
+    },
+    {
+      "name": "Lewis Dunk",
+      "position": "Defender",
+      "role": "Centre-back",
+      "number": 5,
+      "nationality": "England",
+      "initials": "LD",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Eiran Cashin",
+      "position": "Defender",
+      "role": "Centre-back",
+      "number": 16,
+      "nationality": "Ireland",
+      "initials": "EC",
+      "summary": "Joined Derby County on loan for the 2026/27 season on 1 September 2026.",
+      "active": false,
+      "penaltyEligible": false,
+      "squadStatus": "loan",
+      "statusClub": "Derby County"
+    },
+    {
+      "name": "Olivier Boscagli",
+      "position": "Defender",
+      "role": "Centre-back / left-back",
+      "number": 21,
+      "nationality": "France",
+      "initials": "OB",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Ferdi Kadioglu",
+      "position": "Defender",
+      "role": "Full-back / wing-back",
+      "number": 24,
+      "nationality": "Turkey",
+      "initials": "FK",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Maxim De Cuyper",
+      "position": "Defender",
+      "role": "Left-back / wing-back",
+      "number": 29,
+      "nationality": "Belgium",
+      "initials": "MD",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Jaouen Hadjam",
+      "position": "Defender",
+      "role": "Left-back",
+      "number": 3,
+      "nationality": "Algeria",
+      "initials": "JH",
+      "summary": "Joined Albion from Young Boys on 25 August 2026 on a contract to June 2031. Shirt number 3 was used in the Leeds matchday squad.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Amario Cozier-Duberry",
+      "position": "Midfielder",
+      "role": "Wide midfielder",
+      "number": 22,
+      "nationality": "England",
+      "initials": "AC",
+      "summary": "Signed a new Albion contract and joined Middlesbrough on loan for the 2026/27 season on 1 September 2026.",
+      "active": false,
+      "penaltyEligible": false,
+      "squadStatus": "loan",
+      "statusClub": "Middlesbrough"
+    },
+    {
+      "name": "Jack Hinshelwood",
+      "position": "Midfielder",
+      "role": "Central midfielder / full-back",
+      "number": 8,
+      "nationality": "England",
+      "initials": "JH",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Carlos Baleba",
+      "position": "Midfielder",
+      "role": "Central midfielder",
+      "number": 17,
+      "nationality": "Cameroon",
+      "initials": "CB",
+      "summary": "Joined Manchester United on 25 August 2026. No longer in the active Albion first-team squad.",
+      "active": false,
+      "penaltyEligible": false,
+      "preferredFoot": "left",
+      "squadStatus": "transferred",
+      "statusClub": "Manchester United"
+    },
+    {
+      "name": "Kaoru Mitoma",
+      "position": "Midfielder",
+      "role": "Left winger",
+      "number": 7,
+      "nationality": "Japan",
+      "initials": "KM",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Diego Gómez",
+      "position": "Midfielder",
+      "role": "Central midfielder",
+      "number": 25,
+      "nationality": "Paraguay",
+      "initials": "DG",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Yasin Ayari",
+      "position": "Midfielder",
+      "role": "Central midfielder",
+      "number": 26,
+      "nationality": "Sweden",
+      "initials": "YA",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Mats Wieffer",
+      "position": "Midfielder",
+      "role": "Defensive midfielder",
+      "number": 27,
+      "nationality": "Netherlands",
+      "initials": "MW",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Pascal Groß",
+      "position": "Midfielder",
+      "role": "Central midfielder",
+      "number": 13,
+      "nationality": "Germany",
+      "initials": "PG",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Matt O'Riley",
+      "position": "Midfielder",
+      "role": "Attacking midfielder",
+      "number": 33,
+      "nationality": "Denmark",
+      "initials": "MO",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Malick Yalcouyé",
+      "position": "Midfielder",
+      "role": "Central midfielder",
+      "number": 35,
+      "nationality": "Côte d’Ivoire",
+      "initials": "MY",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Facundo Buonanotte",
+      "position": "Midfielder",
+      "role": "Attacking midfielder",
+      "number": null,
+      "nationality": "Argentina",
+      "initials": "FB",
+      "summary": "On a season-long loan at Elche CF for 2026/27.",
+      "active": false,
+      "penaltyEligible": false,
+      "preferredFoot": "left",
+      "squadStatus": "loan",
+      "statusClub": "Elche CF"
+    },
+    {
+      "name": "Chema Andrés",
+      "position": "Midfielder",
+      "role": "Defensive / central midfielder",
+      "number": 14,
+      "nationality": "Spain",
+      "initials": "CA",
+      "summary": "Joined Albion from VfB Stuttgart on a five-year deal on 1 September 2026. Shirt number 14 was used in the Leeds matchday squad.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Ibrahim Osman",
+      "position": "Forward",
+      "role": "Winger",
+      "number": 15,
+      "nationality": "Ghana",
+      "initials": "IO",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Zadok Yohanna",
+      "position": "Forward",
+      "role": "Forward",
+      "number": 36,
+      "nationality": "Nigeria",
+      "initials": "ZY",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Stefanos Tzimas",
+      "position": "Forward",
+      "role": "Centre-forward",
+      "number": 9,
+      "nationality": "Greece",
+      "initials": "ST",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Georginio Rutter",
+      "position": "Forward",
+      "role": "Forward / attacking midfielder",
+      "number": 10,
+      "nationality": "France",
+      "initials": "GR",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Yankuba Minteh",
+      "position": "Forward",
+      "role": "Right winger",
+      "number": 11,
+      "nationality": "Gambia",
+      "initials": "YM",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": true,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Charalampos Kostoulas",
+      "position": "Forward",
+      "role": "Forward",
+      "number": 19,
+      "nationality": "Greece",
+      "initials": "CK",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "right",
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Evan Ferguson",
+      "position": "Forward",
+      "role": "Centre-forward",
+      "number": 28,
+      "nationality": "Ireland",
+      "initials": "EF",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team"
+    },
+    {
+      "name": "Mark O'Mahony",
+      "position": "Forward",
+      "role": "Centre-forward",
+      "number": null,
+      "nationality": "Ireland",
+      "initials": "MM",
+      "summary": "Listed in the development group after featuring and scoring for Albion under-21s in August 2026.",
+      "active": false,
+      "penaltyEligible": false,
+      "squadStatus": "development",
+      "statusClub": "Albion U21"
+    },
+    {
+      "name": "Promise David",
+      "position": "Forward",
+      "role": "Centre-forward",
+      "number": 12,
+      "nationality": "Canada",
+      "initials": "PD",
+      "summary": "First-team squad status and 2026/27 shirt number checked against official club information, updated 25 August 2026.",
+      "active": true,
+      "penaltyEligible": false,
+      "squadStatus": "first-team",
+      "statusClub": "Brighton & Hove Albion"
+    },
+    {
+      "name": "Femi Azeez",
+      "position": "Forward",
+      "role": "Right winger / forward",
+      "number": 39,
+      "nationality": "Nigeria",
+      "initials": "FA",
+      "summary": "Joined Albion from Millwall on a four-year deal on 2 September 2026. Current squad listings show shirt number 39.",
+      "active": true,
+      "penaltyEligible": false,
+      "preferredFoot": "left",
+      "squadStatus": "first-team"
+    }
+  ],
+  "penaltyTakers": [
+    {
+      "name": "Georginio Rutter",
+      "number": 10,
+      "foot": "right",
+      "style": "stutter",
+      "pose": "sleeve",
+      "accuracy": 0.79,
+      "power": 0.74,
+      "disguise": 0.9,
+      "composure": 0.82
+    },
+    {
+      "name": "Yankuba Minteh",
+      "number": 11,
+      "foot": "left",
+      "style": "quick",
+      "pose": "hips",
+      "accuracy": 0.72,
+      "power": 0.92,
+      "disguise": 0.58,
+      "composure": 0.72
+    },
+    {
+      "name": "Kaoru Mitoma",
+      "number": 7,
+      "foot": "right",
+      "style": "measured",
+      "pose": "relaxed",
+      "accuracy": 0.84,
+      "power": 0.76,
+      "disguise": 0.82,
+      "composure": 0.86
+    },
+    {
+      "name": "Diego Gómez",
+      "number": 25,
+      "foot": "right",
+      "style": "direct",
+      "pose": "shoulder",
+      "accuracy": 0.76,
+      "power": 0.9,
+      "disguise": 0.54,
+      "composure": 0.74
+    },
+    {
+      "name": "Maxim De Cuyper",
+      "number": 29,
+      "foot": "left",
+      "style": "measured",
+      "pose": "behind",
+      "accuracy": 0.82,
+      "power": 0.81,
+      "disguise": 0.72,
+      "composure": 0.8
+    },
+    {
+      "name": "Matt O'Riley",
+      "number": 33,
+      "foot": "left",
+      "style": "measured",
+      "pose": "relaxed",
+      "accuracy": 0.85,
+      "power": 0.78,
+      "disguise": 0.78,
+      "composure": 0.87
+    },
+    {
+      "name": "Stefanos Tzimas",
+      "number": 9,
+      "foot": "right",
+      "style": "quick",
+      "pose": "hands-low",
+      "accuracy": 0.75,
+      "power": 0.86,
+      "disguise": 0.62,
+      "composure": 0.73
+    }
+  ],
+  "palaceTakers": [
+    {
+      "name": "Jean-Philippe Mateta",
+      "number": 14,
+      "foot": "right",
+      "delay": 920,
+      "style": "measured",
+      "pose": "relaxed"
+    },
+    {
+      "name": "Ismaïla Sarr",
+      "number": 7,
+      "foot": "right",
+      "delay": 840,
+      "style": "quick",
+      "pose": "hips"
+    },
+    {
+      "name": "Eddie Nketiah",
+      "number": 9,
+      "foot": "right",
+      "delay": 890,
+      "style": "direct",
+      "pose": "shoulder"
+    },
+    {
+      "name": "Adam Wharton",
+      "number": 20,
+      "foot": "left",
+      "delay": 980,
+      "style": "measured",
+      "pose": "behind"
+    },
+    {
+      "name": "Daniel Muñoz",
+      "number": 2,
+      "foot": "right",
+      "delay": 860,
+      "style": "direct",
+      "pose": "sleeve"
+    },
+    {
+      "name": "Jørgen Strand Larsen",
+      "number": 22,
+      "foot": "right",
+      "delay": 930,
+      "style": "measured",
+      "pose": "focus"
+    },
+    {
+      "name": "Yéremy Pino",
+      "number": 10,
+      "foot": "right",
+      "delay": 875,
+      "style": "stutter",
+      "pose": "hands-low"
+    }
+  ],
+  "fixtures": [
+    {
+      "date": "20 Aug 2026",
+      "opponent": "Tromsø IL",
+      "venue": "A",
+      "time": "18:00",
+      "competition": "UEFA Conference League",
+      "round": "Play-off first leg",
+      "status": "Full-time · 0–0",
+      "note": "Albion drew 0–0 in Tromsø in the UEFA Conference League play-off first leg.",
+      "broadcast": "SolidSport",
+      "tieId": "uecl-tromso-2026",
+      "leg": 1,
+      "albionGoals": 0,
+      "opponentGoals": 0,
+      "venueName": "Romssa Arena",
+      "result": "0–0",
+      "resultOutcome": "D",
+      "summary": "A goalless first leg in northern Norway leaves the tie level for the return at the Amex.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/report-albion-have-to-settle-for-a-draw-on-return-to-europe"
+    },
+    {
+      "date": "23 Aug 2026",
+      "opponent": "Aston Villa",
+      "venue": "H",
+      "time": "14:00",
+      "broadcast": "Sky Sports",
+      "competition": "Premier League",
+      "round": "Matchweek 1",
+      "status": "Full-time · Albion 4–0 Aston Villa",
+      "note": "Albion opened the Premier League season with a 4–0 victory at the Amex.",
+      "venueName": "Amex Stadium",
+      "albionGoals": 4,
+      "opponentGoals": 0,
+      "result": "4–0",
+      "resultOutcome": "W",
+      "attendance": 31746,
+      "summary": "Four first-half goals delivered a superb opening-day win and a clean sheet at the Amex.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-pl-bhaavl-match-report"
+    },
+    {
+      "date": "27 Aug 2026",
+      "opponent": "Tromsø IL",
+      "venue": "H",
+      "time": "19:30",
+      "competition": "UEFA Conference League",
+      "round": "Play-off second leg",
+      "status": "Full-time · Albion 4–0 Tromsø IL",
+      "note": "Albion won the second leg 4–0 and progressed to the Conference League phase 4–0 on aggregate.",
+      "broadcast": "SolidSport",
+      "tieId": "uecl-tromso-2026",
+      "leg": 2,
+      "albionGoals": 4,
+      "opponentGoals": 0,
+      "venueName": "Amex Stadium",
+      "result": "4–0",
+      "resultOutcome": "W",
+      "summary": "Kostoulas, De Cuyper, Wieffer and Boscagli scored as Albion secured a comfortable 4–0 aggregate victory.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-matchreport-conference-league-albion-4-tromso-if-0"
+    },
+    {
+      "date": "30 Aug 2026",
+      "opponent": "Chelsea",
+      "venue": "A",
+      "time": "14:00",
+      "broadcast": "Sky Sports",
+      "competition": "Premier League",
+      "round": "Matchweek 2",
+      "status": "Full-time · Chelsea 4–3 Albion",
+      "note": "Albion fought back after trailing 3–0 but were beaten 4–3 at Stamford Bridge.",
+      "venueName": "Stamford Bridge",
+      "albionGoals": 3,
+      "opponentGoals": 4,
+      "result": "4–3",
+      "resultOutcome": "L",
+      "summary": "Albion showed resilience in a seven-goal match, but Chelsea held on for victory at Stamford Bridge.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-chebha-pl--report"
+    },
+    {
+      "date": "5 Sep 2026",
+      "opponent": "Leeds United",
+      "venue": "H",
+      "time": "15:00",
+      "competition": "Premier League",
+      "round": "Matchweek 3",
+      "status": "Full-time · Albion 1–1 Leeds United",
+      "note": "Luka Vušković headed Albion level in the second half as the points were shared at the Amex.",
+      "venueName": "Amex Stadium",
+      "albionGoals": 1,
+      "opponentGoals": 1,
+      "result": "1–1",
+      "resultOutcome": "D",
+      "summary": "Albion recovered from a first-half deficit, with Luka Vušković scoring his first goal for the club in a 1–1 draw.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-pl-bhalee-match-report-2026"
+    },
+    {
+      "date": "13 Sep 2026",
+      "opponent": "Coventry City",
+      "venue": "A",
+      "time": "14:00",
+      "broadcast": "Sky Sports",
+      "competition": "Premier League",
+      "round": "Matchweek 4",
+      "status": "Full-time · Coventry City 0–5 Albion",
+      "note": "Albion produced a clinical away performance and scored five without reply at the Coventry Building Society Arena.",
+      "venueName": "Coventry Building Society Arena",
+      "albionGoals": 5,
+      "opponentGoals": 0,
+      "result": "0–5",
+      "resultOutcome": "W",
+      "summary": "Kostoulas, Yalcouyé, Groß, Dunk and Ayari scored as Albion won 5–0 at Coventry City.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-pl-covbha-match-report-coventry-city-x-albion-x"
+    },
+    {
+      "date": "16 Sep 2026",
+      "opponent": "Manchester United",
+      "venue": "A",
+      "time": "20:00",
+      "broadcast": "Sky Sports",
+      "competition": "Carabao Cup",
+      "round": "Third round",
+      "status": "Full-time · Manchester United 2–3 Albion",
+      "note": "Albion came from 2–0 down to win 3–2 at Old Trafford and reach the Carabao Cup fourth round.",
+      "venueName": "Old Trafford",
+      "albionGoals": 3,
+      "opponentGoals": 2,
+      "result": "2–3",
+      "resultOutcome": "W",
+      "summary": "Kostoulas, Groß and De Cuyper scored as Albion overturned a two-goal deficit to win 3–2 at Old Trafford.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/pl-mft-match-report-manchester-united-bha-september-2026"
+    },
+    {
+      "date": "19 Sep 2026",
+      "opponent": "Arsenal",
+      "venue": "H",
+      "time": "15:00",
+      "competition": "Premier League",
+      "round": "Matchweek 5",
+      "status": "Full-time · Albion 3–0 Arsenal",
+      "note": "Albion marked the club's 125th anniversary celebrations with a 3–0 Premier League win over Arsenal at the Amex.",
+      "venueName": "Amex Stadium",
+      "albionGoals": 3,
+      "opponentGoals": 0,
+      "result": "3–0",
+      "resultOutcome": "W",
+      "summary": "Albion beat champions Arsenal 3–0 on the club's 125th-anniversary matchday."
+    },
+    {
+      "date": "10 Oct 2026",
+      "opponent": "Sunderland",
+      "venue": "A",
+      "time": "15:00",
+      "competition": "Premier League",
+      "round": "Matchweek 6",
+      "status": "Confirmed fixture · 15:00 UK kick-off",
+      "note": "Albion travel to the Stadium of Light to face Sunderland in the Premier League.",
+      "venueName": "Stadium of Light"
+    },
+    {
+      "date": "15 Oct 2026",
+      "opponent": "FK Kauno Žalgiris",
+      "venue": "H",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 1",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Albion open the Conference League phase at home to FK Kauno Žalgiris.",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "18 Oct 2026",
+      "opponent": "Crystal Palace",
+      "venue": "H",
+      "time": "14:00",
+      "broadcast": "Sky Sports",
+      "status": "Confirmed fixture · 14:00 UK kick-off",
+      "note": "Home fixture moved to Sunday 18 October, kick-off 14:00, live on Sky Sports.",
+      "competition": "Premier League",
+      "round": "Matchweek 7",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "22 Oct 2026",
+      "opponent": "FK Jablonec",
+      "venue": "A",
+      "time": "17:45",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 2",
+      "status": "Confirmed fixture · 17:45 UK kick-off",
+      "note": "Conference League away fixture in the Czech Republic.",
+      "venueName": "Stadion Střelnice"
+    },
+    {
+      "date": "25 Oct 2026",
+      "opponent": "Liverpool",
+      "venue": "A",
+      "time": "14:00",
+      "competition": "Premier League",
+      "round": "Matchweek 8",
+      "status": "Confirmed fixture · 14:00 UK kick-off",
+      "venueName": "Anfield"
+    },
+    {
+      "date": "28 Oct 2026",
+      "opponent": "Manchester City",
+      "venue": "A",
+      "time": "19:30",
+      "competition": "Carabao Cup",
+      "round": "Fourth round",
+      "status": "Confirmed fixture · 19:30 UK kick-off",
+      "note": "Albion travel to the Etihad Stadium to face Manchester City in the Carabao Cup fourth round.",
+      "venueName": "Etihad Stadium"
+    },
+    {
+      "date": "31 Oct 2026",
+      "opponent": "Manchester City",
+      "venue": "A",
+      "time": "15:00",
+      "competition": "Premier League",
+      "round": "Matchweek 9",
+      "status": "Confirmed fixture · 15:00 UK kick-off",
+      "venueName": "Etihad Stadium"
+    },
+    {
+      "date": "5 Nov 2026",
+      "opponent": "Getafe",
+      "venue": "A",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 3",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Conference League away fixture in Spain.",
+      "venueName": "Estadio Coliseum"
+    },
+    {
+      "date": "7 Nov 2026",
+      "opponent": "Brentford",
+      "venue": "H",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "21 Nov 2026",
+      "opponent": "Hull City",
+      "venue": "A",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "MKM Stadium"
+    },
+    {
+      "date": "26 Nov 2026",
+      "opponent": "Universitatea Craiova",
+      "venue": "H",
+      "time": "17:45",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 4",
+      "status": "Confirmed fixture · 17:45 UK kick-off",
+      "note": "Conference League home fixture against Universitatea Craiova.",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "28 Nov 2026",
+      "opponent": "Newcastle United",
+      "venue": "H",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "2 Dec 2026",
+      "opponent": "Bournemouth",
+      "venue": "A",
+      "time": "20:00",
+      "competition": "Premier League",
+      "venueName": "Vitality Stadium"
+    },
+    {
+      "date": "5 Dec 2026",
+      "opponent": "Nottingham Forest",
+      "venue": "A",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "The City Ground"
+    },
+    {
+      "date": "10 Dec 2026",
+      "opponent": "AS Monaco",
+      "venue": "H",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 5",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "AS Monaco visit the Amex in the Conference League.",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "12 Dec 2026",
+      "opponent": "Everton",
+      "venue": "H",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "17 Dec 2026",
+      "opponent": "Panathinaikos",
+      "venue": "A",
+      "time": "20:00",
+      "competition": "UEFA Conference League",
+      "round": "League phase matchday 6",
+      "status": "Confirmed fixture · 20:00 UK kick-off",
+      "note": "Albion complete the Conference League phase away to Panathinaikos in Athens.",
+      "venueName": "Athens Olympic Stadium"
+    },
+    {
+      "date": "19 Dec 2026",
+      "opponent": "Ipswich Town",
+      "venue": "H",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "26 Dec 2026",
+      "opponent": "Fulham",
+      "venue": "A",
+      "time": "15:00",
+      "competition": "Premier League",
+      "venueName": "Craven Cottage"
+    },
+    {
+      "date": "29 Dec 2026",
+      "opponent": "Tottenham Hotspur",
+      "venue": "A",
+      "time": "19:30",
+      "competition": "Premier League",
+      "venueName": "Tottenham Hotspur Stadium"
+    },
+    {
+      "date": "2 Jan 2027",
+      "opponent": "Manchester United",
+      "venue": "H",
+      "time": "12:30",
+      "competition": "Premier League",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "5 Jan 2027",
+      "opponent": "Bournemouth",
+      "venue": "H",
+      "time": "19:30",
+      "competition": "Premier League",
+      "venueName": "Amex Stadium"
+    },
+    {
+      "date": "16 Jan 2027",
+      "opponent": "Brentford",
+      "venue": "A"
+    },
+    {
+      "date": "23 Jan 2027",
+      "opponent": "Manchester City",
+      "venue": "H"
+    },
+    {
+      "date": "30 Jan 2027",
+      "opponent": "Newcastle United",
+      "venue": "A"
+    },
+    {
+      "date": "6 Feb 2027",
+      "opponent": "Hull City",
+      "venue": "H"
+    },
+    {
+      "date": "10 Feb 2027",
+      "opponent": "Manchester United",
+      "venue": "A"
+    },
+    {
+      "date": "20 Feb 2027",
+      "opponent": "Tottenham Hotspur",
+      "venue": "H"
+    },
+    {
+      "date": "27 Feb 2027",
+      "opponent": "Ipswich Town",
+      "venue": "A"
+    },
+    {
+      "date": "3 Mar 2027",
+      "opponent": "Fulham",
+      "venue": "H"
+    },
+    {
+      "date": "13 Mar 2027",
+      "opponent": "Leeds United",
+      "venue": "A"
+    },
+    {
+      "date": "20 Mar 2027",
+      "opponent": "Coventry City",
+      "venue": "H"
+    },
+    {
+      "date": "10 Apr 2027",
+      "opponent": "Aston Villa",
+      "venue": "A"
+    },
+    {
+      "date": "17 Apr 2027",
+      "opponent": "Chelsea",
+      "venue": "H"
+    },
+    {
+      "date": "24 Apr 2027",
+      "opponent": "Everton",
+      "venue": "A"
+    },
+    {
+      "date": "1 May 2027",
+      "opponent": "Nottingham Forest",
+      "venue": "H"
+    },
+    {
+      "date": "8 May 2027",
+      "opponent": "Sunderland",
+      "venue": "H"
+    },
+    {
+      "date": "15 May 2027",
+      "opponent": "Crystal Palace",
+      "venue": "A"
+    },
+    {
+      "date": "23 May 2027",
+      "opponent": "Liverpool",
+      "venue": "H"
+    },
+    {
+      "date": "30 May 2027",
+      "opponent": "Arsenal",
+      "venue": "A"
+    }
+  ]
+});
