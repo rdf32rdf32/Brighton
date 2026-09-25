@@ -1,0 +1,34 @@
+{
+  "release": "r77",
+  "date": "2026-09-25",
+  "branch": "r77-delivery",
+  "status": "pass",
+  "sourceChecks": {
+    "latestResult": "Albion 3–0 Arsenal · 19 September 2026",
+    "previousCupResult": "Manchester United 2–3 Albion · 16 September 2026",
+    "nextFixture": "Sunderland v Albion · 10 October 2026 · 15:00",
+    "leaguePosition": "3rd · 5 played · 10 points · +11 GD"
+  },
+  "changes": {
+    "prominent125Banner": true,
+    "official125HubLink": true,
+    "manUnitedResultAdded": true,
+    "arsenalResultAdded": true,
+    "nextFixtureSunderland": true,
+    "manCityCarabaoCupAdded": true,
+    "currentFixtureTimesRefreshed": true,
+    "staleFallbacksRemoved": true,
+    "singleFixtureSourceRetained": true,
+    "penaltyEngineChanged": false
+  },
+  "checks": {
+    "fixtureCount": 48,
+    "completedFixtures": 8,
+    "duplicateDateOpponentCompetitionKeys": 0,
+    "indexReferencesR77Data": true,
+    "indexReferencesR77App": true,
+    "indexReferencesR77Css": true,
+    "anniversaryBanner": true,
+    "staleHeroManUnited": false
+  }
+}
