@@ -1,0 +1,170 @@
+/* Albion Fan Hub r83 — desktop goal, keeper and net integration correction.
+   Desktop only: preserve r82 gameplay and mobile camera. */
+
+@media (min-width:901px){
+  .shootout-v17{
+    --r83-goal-left:25%;
+    --r83-goal-width:50%;
+    --r83-goal-height:31.20%;
+    --r83-goal-top:17.26%;
+  }
+
+  /* Keep the painted goal line fixed at 48.46% while enlarging the frame.
+     On the 16/8.55 desktop stage this renders close to the real 7.32m:2.44m ratio. */
+  .shootout-v17 .goal-mouth{
+    left:var(--r83-goal-left)!important;
+    top:var(--r83-goal-top)!important;
+    width:var(--r83-goal-width)!important;
+    height:var(--r83-goal-height)!important;
+    perspective:1100px!important;
+    transform:none!important;
+    transform-origin:50% 100%!important;
+    overflow:visible!important;
+  }
+
+  /* The keeper remains the same absolute size as r82. Enlarging the frame
+     brings him to roughly 77% of the crossbar height rather than ~83%. */
+  .shootout-v17 .keeper-figure{
+    width:9.2%!important;
+    min-width:58px!important;
+    max-width:112px!important;
+  }
+
+  /* Make one net footprint line up with the front frame.
+     The SVG front vertices are inset inside its viewBox, so a small controlled
+     expansion aligns them with the posts and crossbar without creating a gap. */
+  .shootout-v17 .goal-depth{
+    inset:-5% -3.6% -8%!important;
+    transform:none!important;
+    transform-style:preserve-3d!important;
+    overflow:visible!important;
+    filter:drop-shadow(0 4px 3px rgba(0,0,0,.14))!important;
+    z-index:3!important;
+  }
+
+  .shootout-v17 .goal-net-svg{
+    width:100%!important;
+    height:100%!important;
+    overflow:visible!important;
+    transform:none!important;
+    filter:none!important;
+  }
+
+  /* Net panels now read as one continuous construction rather than four
+     separate translucent shapes floating behind the frame. */
+  .shootout-v17 .goal-net-svg .goal-back-net{
+    opacity:.40!important;
+    transform-origin:50% 100%!important;
+  }
+  .shootout-v17 .goal-net-svg .goal-side-net{
+    opacity:.48!important;
+  }
+  .shootout-v17 .goal-net-svg .goal-roof-net{
+    opacity:.50!important;
+    transform-origin:50% 100%!important;
+  }
+  .shootout-v17 .goal-net-svg .goal-perspective-lines{
+    opacity:.36!important;
+    stroke-width:1.45!important;
+  }
+  .shootout-v17 .goal-net-svg .rear-frame{
+    opacity:.34!important;
+    stroke-width:4!important;
+  }
+  .shootout-v17 .goal-net{
+    opacity:.018!important;
+  }
+
+  /* Side-net front edges meet the posts; roof edge sits immediately under
+     the crossbar. The front frame remains above the net to hide SVG seams. */
+  .shootout-v17 .goal-side-left{
+    transform-origin:right center!important;
+  }
+  .shootout-v17 .goal-side-right{
+    transform-origin:left center!important;
+  }
+
+  .shootout-v17 .goal-post{
+    z-index:7!important;
+    top:-1.4%!important;
+    height:104.2%!important;
+    width:1.62%!important;
+    min-width:5px!important;
+    border-radius:999px!important;
+  }
+  .shootout-v17 .left-post{left:-.82%!important}
+  .shootout-v17 .right-post{right:-.82%!important}
+  .shootout-v17 .goal-crossbar{
+    z-index:8!important;
+    left:-.95%!important;
+    right:-.95%!important;
+    top:-1.55%!important;
+    height:4.7%!important;
+    min-height:6px!important;
+    border-radius:999px!important;
+  }
+
+  /* Softer frame shading prevents the front frame from looking detached from
+     the lighter net behind it. */
+  .shootout-v17 .goal-post,
+  .shootout-v17 .goal-crossbar{
+    background:linear-gradient(90deg,#b8c3c9 0,#f6f9fa 20%,#fff 46%,#fbfcfd 68%,#bdc8ce 100%)!important;
+    box-shadow:0 3px 3px rgba(0,0,0,.20),inset -1px 0 1px rgba(55,75,88,.14)!important;
+  }
+  .shootout-v17 .goal-crossbar{
+    background:linear-gradient(180deg,#fff 0 42%,#f7f9fa 58%,#c6d0d5 100%)!important;
+  }
+
+  /* Correct directional deformation: left impact moves left, right moves right. */
+  .shootout-v17 .goal-mouth.net-hit-left .goal-side-left{
+    animation:r83-net-left .58s cubic-bezier(.2,.55,.26,1)!important;
+  }
+  .shootout-v17 .goal-mouth.net-hit-right .goal-side-right{
+    animation:r83-net-right .58s cubic-bezier(.2,.55,.26,1)!important;
+  }
+  .shootout-v17 .goal-mouth.net-hit-high .goal-roof-net{
+    animation:r83-net-roof .58s cubic-bezier(.2,.55,.26,1)!important;
+  }
+  .shootout-v17 .goal-mouth.net-hit .goal-back-net{
+    animation:r83-net-back .58s cubic-bezier(.2,.55,.26,1)!important;
+  }
+
+  /* Slightly shallower rear frame makes the net feel attached to the posts
+     instead of like a second goal sitting behind the first. */
+  .shootout-v17 .goal-net-svg .rear-frame{
+    transform:translateY(-2px) scale(.985,.96)!important;
+    transform-origin:50% 100%!important;
+  }
+
+  /* Keep the aiming corridor aligned with the corrected goal box. JS will
+     re-sync these variables from getBoundingClientRect during play. */
+  .shootout-v17 .aim-corridor{
+    border-radius:9px 9px 0 0!important;
+  }
+}
+
+@keyframes r83-net-left{
+  0%,100%{transform:translateX(0) skewY(0)}
+  45%{transform:translateX(-8px) skewY(-3deg)}
+}
+@keyframes r83-net-right{
+  0%,100%{transform:translateX(0) skewY(0)}
+  45%{transform:translateX(8px) skewY(3deg)}
+}
+@keyframes r83-net-roof{
+  0%,100%{transform:translateY(0) scaleY(1)}
+  45%{transform:translateY(-6px) scaleY(1.045)}
+}
+@keyframes r83-net-back{
+  0%,100%{transform:translateY(0) scale(1)}
+  45%{transform:translateY(5px) scale(1.012,1.04)}
+}
+
+@media (min-width:901px) and (prefers-reduced-motion:reduce){
+  .shootout-v17 .goal-mouth.net-hit-left .goal-side-left,
+  .shootout-v17 .goal-mouth.net-hit-right .goal-side-right,
+  .shootout-v17 .goal-mouth.net-hit-high .goal-roof-net,
+  .shootout-v17 .goal-mouth.net-hit .goal-back-net{
+    animation:none!important;
+  }
+}
