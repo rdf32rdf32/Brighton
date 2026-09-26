@@ -1,0 +1,234 @@
+/* Albion Fan Hub r82 — full penalty-scene realism pass.
+   One authoritative layer for camera, pitch, goal, scale and referee. */
+
+.shootout-v17{
+  --r82-goal-line-y:48.46%;
+  --r82-goal-left:27%;
+  --r82-goal-width:46%;
+  --r82-goal-height:28.7%;
+  --r82-goal-top:19.76%;
+  --r82-keeper-width:9.2%;
+  --r82-taker-width:12.6%;
+  --r82-ref-width:4.7%;
+}
+
+/* CAMERA: lower, centred, with a stronger pitch foreground and less empty sky. */
+.shootout-v17 .penalty-stage{
+  perspective:1180px!important;
+  background:
+    linear-gradient(180deg,#7899b7 0 5.8%,#173953 5.8% 17.2%,#2d8148 17.2% 100%)!important;
+  transform-origin:50% 64%;
+}
+.shootout-v17 .stadium-backdrop{inset:0 0 72%!important;transform-origin:50% 100%;transition:transform .28s ease,filter .28s ease}
+.shootout-v17 .advertising-boards{top:17.4%!important}
+.shootout-v17 .pitch-stripes{
+  inset:17.2% 0 0!important;
+  opacity:.22!important;
+  clip-path:polygon(37% 0,63% 0,100% 100%,0 100%)!important;
+  background:
+    repeating-linear-gradient(90deg,rgba(255,255,255,.075) 0 6.25%,rgba(0,54,23,.075) 6.25% 12.5%),
+    linear-gradient(180deg,rgba(255,255,255,.025),rgba(0,35,15,.11))!important;
+  transform:perspective(900px) rotateX(4.8deg)!important;
+  transform-origin:50% 0!important;
+}
+.shootout-v17 .penalty-stage.camera-runup .stadium-backdrop{transform:scale(1.015) translateY(-1px)}
+.shootout-v17 .penalty-stage.camera-runup .pitch-stripes{filter:saturate(1.05) brightness(1.015)}
+.shootout-v17 .penalty-stage.camera-contact{animation:r82-camera-contact .28s ease-out}
+.shootout-v17 .penalty-stage.camera-replay{animation:r82-replay-camera 1.15s cubic-bezier(.18,.58,.2,1)}
+@keyframes r82-camera-contact{50%{filter:brightness(1.025);transform:scale(1.002)}}
+@keyframes r82-replay-camera{0%{filter:saturate(.9) brightness(.94)}45%{filter:saturate(1.08) brightness(1.04)}100%{filter:none}}
+
+/* PITCH: perspective-correct markings, finer paint and believable wear. */
+.shootout-v17 .pitch-lines{z-index:2!important}
+.shootout-v17 .pitch-markings-svg .pitch-line{
+  fill:none!important;
+  stroke:rgba(255,255,255,.88)!important;
+  stroke-width:2.15!important;
+  vector-effect:non-scaling-stroke;
+  filter:drop-shadow(0 1px .5px rgba(0,45,18,.22));
+}
+.shootout-v17 .pitch-markings-svg .goal-line-mark{stroke-width:2.5!important}
+.shootout-v17 .pitch-spot-mark{
+  fill:#f7f7f1!important;
+  stroke:rgba(25,70,42,.52)!important;
+  stroke-width:1.5!important;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.32));
+}
+.shootout-v17 .spot-wear{
+  left:50%!important;top:74.9%!important;width:5.1%!important;height:1.65%!important;
+  background:radial-gradient(ellipse,rgba(197,185,137,.33),rgba(78,93,49,.18) 44%,transparent 72%)!important;
+  filter:blur(.65px)!important;
+}
+.shootout-v17 .goal-line-wear{
+  left:28%!important;right:28%!important;top:47.9%!important;height:1.15%!important;
+  background:linear-gradient(90deg,transparent,rgba(140,137,101,.18) 20% 80%,transparent)!important;
+  filter:blur(1.4px)!important;
+}
+.shootout-v17 .pitch-boot-marks{opacity:.42!important}
+.shootout-v17 .pitch-boot-marks i{background:rgba(37,70,42,.22)!important;filter:blur(.4px)}
+
+/* GOAL: 7.32m x 2.44m visual ratio, deeper frame and softer net. */
+.shootout-v17 .goal-mouth{
+  left:var(--r82-goal-left)!important;
+  top:var(--r82-goal-top)!important;
+  width:var(--r82-goal-width)!important;
+  height:var(--r82-goal-height)!important;
+  perspective:1150px!important;
+  transform-origin:50% 100%;
+}
+.shootout-v17 .goal-depth{
+  inset:-10% -12% -14%!important;
+  transform:perspective(920px) rotateX(-1.5deg)!important;
+  filter:drop-shadow(0 5px 4px rgba(0,0,0,.16))!important;
+}
+.shootout-v17 .goal-net-svg{overflow:visible!important}
+.shootout-v17 .goal-net-svg .goal-back-net{opacity:.32!important}
+.shootout-v17 .goal-net-svg .goal-side-net{opacity:.4!important}
+.shootout-v17 .goal-net-svg .goal-roof-net{opacity:.44!important}
+.shootout-v17 .goal-net-svg .goal-perspective-lines{opacity:.3!important;stroke-width:1.5!important}
+.shootout-v17 .goal-net-svg .rear-frame{opacity:.28!important;stroke-width:4!important}
+.shootout-v17 .goal-net{opacity:.025!important}
+.shootout-v17 .goal-post{
+  width:1.75%!important;min-width:5px!important;border-radius:999px!important;
+  background:linear-gradient(90deg,#aebbc3 0,#f8fbfc 20%,#fff 45%,#fff 68%,#b8c4cb 100%)!important;
+  box-shadow:0 3px 4px rgba(0,0,0,.24),inset -1px 0 1px rgba(0,0,0,.18)!important;
+}
+.shootout-v17 .goal-crossbar{
+  height:5.4%!important;min-height:6px!important;border-radius:999px!important;
+  background:linear-gradient(#fff 0 46%,#e4e9ec 68%,#b9c5cc 100%)!important;
+  box-shadow:0 3px 4px rgba(0,0,0,.24),inset 0 -1px 1px rgba(0,0,0,.15)!important;
+}
+.shootout-v17 .goal-mouth.net-hit .goal-back-net{animation:r82-net-depth .58s cubic-bezier(.2,.55,.26,1)}
+.shootout-v17 .goal-mouth.net-hit-left .goal-side-left,
+.shootout-v17 .goal-mouth.net-hit-right .goal-side-right{animation:r82-net-side .58s cubic-bezier(.2,.55,.26,1)}
+.shootout-v17 .goal-mouth.net-hit-high .goal-roof-net{animation:r82-net-roof .58s cubic-bezier(.2,.55,.26,1)}
+@keyframes r82-net-depth{45%{transform:translateY(7px) scale(1.015,1.055)}}
+@keyframes r82-net-side{45%{transform:translateX(var(--r82-net-side-shift,8px)) skewY(3deg)}}
+@keyframes r82-net-roof{45%{transform:translateY(-7px) scaleY(1.06)}}
+.shootout-v17 .crossbar-contact .goal-crossbar,
+.shootout-v17 .frame-impact .goal-crossbar{animation:r82-bar-wobble .35s ease-out!important}
+.shootout-v17 .frame-impact .left-post,.shootout-v17 .frame-impact .right-post{animation:r82-post-wobble .34s ease-out}
+@keyframes r82-bar-wobble{25%{transform:translateY(-2px)}55%{transform:translateY(1px)}}
+@keyframes r82-post-wobble{25%{transform:translateX(2px)}55%{transform:translateX(-1px)}}
+
+/* SIZES: one coherent perspective system. Keeper is ~1.9m against the 2.44m frame. */
+.shootout-v17 .keeper-figure{
+  left:50%!important;width:var(--r82-keeper-width)!important;min-width:58px!important;max-width:112px!important;
+  transform-origin:50% 92.4%!important;
+}
+.shootout-v17 .taker-figure{
+  width:var(--r82-taker-width)!important;min-width:86px!important;max-width:150px!important;
+  transform-origin:50% 92%!important;
+}
+.shootout-v17 .referee-figure{
+  left:88.8%!important;top:40.8%!important;width:var(--r82-ref-width)!important;min-width:36px!important;max-width:54px!important;
+  transform-origin:52% 93%!important;opacity:.94!important;
+}
+.shootout-v17 .referee-root{transform:rotateY(-18deg) skewY(-1deg);transform-origin:55% 90%}
+.shootout-v17 .penalty-ball{width:2.18%!important;min-width:14px!important;max-width:24px!important}
+.shootout-v17 .keeper-glove{filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+.shootout-v17 .keeper-boot,.shootout-v17 .taker-boot{filter:drop-shadow(0 1px .5px rgba(0,0,0,.22))}
+
+/* REFEREE: side-on, away from the save line, but actively follows the kick. */
+.shootout-v17 .referee-head-group{transform-origin:55px 54px!important}
+.shootout-v17 .referee-checking .referee-whistle{filter:drop-shadow(0 0 2px rgba(255,223,92,.6))}
+.shootout-v17 .referee-observing .referee-figure{filter:drop-shadow(0 4px 2px rgba(0,0,0,.14))}
+.shootout-v17 .penalty-stage[data-runup] .referee-figure{transition:left .25s ease,top .25s ease}
+
+/* GOALKEEPER: athletic stance, less mannequin-like idle pose. */
+.shootout-v17 .penalty-stage.is-waiting .keeper-body-group{animation:r82-keeper-ready 1.55s ease-in-out infinite!important}
+.shootout-v17 .penalty-stage.is-waiting .keeper-arm-left{animation:r82-arm-left 1.55s ease-in-out infinite!important}
+.shootout-v17 .penalty-stage.is-waiting .keeper-arm-right{animation:r82-arm-right 1.55s ease-in-out infinite!important}
+@keyframes r82-keeper-ready{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(3px) scale(1.01,.975)}}
+@keyframes r82-arm-left{0%,100%{transform:rotate(2deg)}50%{transform:rotate(-6deg)}}
+@keyframes r82-arm-right{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(6deg)}}
+
+/* SECOND BALL + CROWD: brief uncertainty after a block/parry. */
+.shootout-v17 .penalty-stage.second-ball-live::after{
+  content:"SECOND BALL";position:absolute;z-index:58;left:50%;bottom:10%;transform:translateX(-50%);
+  padding:5px 10px;border-radius:999px;background:rgba(255,206,49,.94);color:#082d53;
+  font-size:.65rem;font-weight:950;letter-spacing:.09em;box-shadow:0 5px 14px rgba(0,0,0,.22);
+}
+.shootout-v17 .penalty-stage.crowd-gasp .crowd-foreground{animation:r82-crowd-gasp .4s ease-out}
+.shootout-v17 .penalty-stage.crowd-albion-cheer .crowd-foreground{animation:r82-crowd-roar .52s ease 3 alternate}
+.shootout-v17 .penalty-stage.crowd-palace-cheer .crowd-foreground{animation:r82-crowd-roar .58s ease 2 alternate}
+@keyframes r82-crowd-gasp{50%{transform:translateY(-3px) scaleY(1.025)}}
+@keyframes r82-crowd-roar{to{transform:translateY(-6px) scaleY(1.04)}}
+
+/* Replay presentation */
+.shootout-v17 .penalty-stage.camera-replay .kick-decision-v10{
+  font-size:clamp(.75rem,1.5vw,1rem)!important;letter-spacing:.07em!important;
+  background:rgba(0,68,125,.94)!important;
+}
+
+/* MOBILE CAMERA: closer to the goal, but physically consistent rather than simply cropped. */
+@media(max-width:760px){
+  .shootout-v17{
+    --r82-goal-left:12%;
+    --r82-goal-width:76%;
+    --r82-goal-height:21.2%;
+    --r82-goal-top:27.26%;
+    --r82-keeper-width:14.5%;
+    --r82-taker-width:16.9%;
+    --r82-ref-width:6.1%;
+  }
+  .shootout-v17 .penalty-stage{
+    height:clamp(430px,118vw,510px)!important;min-height:430px!important;max-height:510px!important;
+    background:linear-gradient(180deg,#7899b7 0 5%,#173953 5% 16%,#2d8148 16% 100%)!important;
+  }
+  .shootout-v17 .stadium-backdrop{inset:0 0 74%!important}
+  .shootout-v17 .advertising-boards{top:16.1%!important}
+  .shootout-v17 .goal-mouth{
+    left:var(--r82-goal-left)!important;top:var(--r82-goal-top)!important;
+    width:var(--r82-goal-width)!important;height:var(--r82-goal-height)!important;
+  }
+  .shootout-v17 .keeper-figure{
+    width:var(--r82-keeper-width)!important;min-width:57px!important;max-width:78px!important;
+  }
+  .shootout-v17 .taker-figure{
+    width:var(--r82-taker-width)!important;min-width:68px!important;max-width:94px!important;
+  }
+  .shootout-v17 .referee-figure{
+    left:92.5%!important;top:41.4%!important;width:var(--r82-ref-width)!important;min-width:27px!important;max-width:38px!important;
+  }
+  .shootout-v17 .penalty-ball{width:clamp(16px,4.1vw,20px)!important;height:clamp(16px,4.1vw,20px)!important}
+  .shootout-v17 .pitch-stripes{clip-path:polygon(42% 0,58% 0,100% 100%,0 100%)!important}
+  .shootout-v17 .goal-post{min-width:4px!important}
+  .shootout-v17 .goal-crossbar{min-height:5px!important}
+}
+@media(max-width:430px){
+  .shootout-v17{
+    --r82-goal-left:10.5%;
+    --r82-goal-width:79%;
+    --r82-goal-height:20.4%;
+    --r82-goal-top:28.06%;
+    --r82-keeper-width:14.8%;
+    --r82-taker-width:17.4%;
+  }
+  .shootout-v17 .keeper-figure{min-width:56px!important;max-width:72px!important}
+  .shootout-v17 .referee-figure{left:93%!important;min-width:25px!important}
+}
+@media(max-height:520px) and (orientation:landscape) and (pointer:coarse){
+  .shootout-v17{
+    --r82-goal-left:22%;
+    --r82-goal-width:56%;
+    --r82-goal-height:29%;
+    --r82-goal-top:19.46%;
+    --r82-keeper-width:11.8%;
+    --r82-taker-width:12.7%;
+    --r82-ref-width:4.8%;
+  }
+  .shootout-v17 .keeper-figure{min-width:50px!important;max-width:72px!important}
+  .shootout-v17 .referee-figure{left:89.5%!important;top:40%!important;min-width:27px!important}
+}
+
+/* Accessibility and reduced-motion: preserve geometry, remove cinematic movement. */
+@media(prefers-reduced-motion:reduce){
+  .shootout-v17 .penalty-stage.camera-contact,
+  .shootout-v17 .penalty-stage.camera-replay,
+  .shootout-v17 .penalty-stage.camera-runup .stadium-backdrop,
+  .shootout-v17 .goal-mouth.net-hit .goal-back-net,
+  .shootout-v17 .goal-mouth.net-hit-left .goal-side-left,
+  .shootout-v17 .goal-mouth.net-hit-right .goal-side-right,
+  .shootout-v17 .goal-mouth.net-hit-high .goal-roof-net{animation:none!important;transform:none!important}
+}
