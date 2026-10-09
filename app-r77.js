@@ -979,6 +979,9 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
     return { options: values, answer: 0 };
   };
   const extra = [];
+  // A season-statistic question must never contain two historically correct choices.
+  const distinctSeasonOptions = (index, statIndex, actual) => Array.from({length:seasons.length - 1}, (_, offset) => seasons[(index + offset + 1) % seasons.length])
+    .filter(row => row[statIndex] !== actual).slice(0, 3).map(row => row[0]);
   seasons.forEach(([season, position, points, wins, draws, goals, played], index) => {
     const next = seasons[(index + 1) % seasons.length];
     const previous = seasons[(index + seasons.length - 1) % seasons.length];
@@ -990,9 +993,9 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       {q:`Which total belongs to Albion's league draws in ${season}?`, c:String(draws), a:[String(Math.max(0,draws-2)),String(draws+3),String(draws+5)], e:`Albion drew ${draws} league matches in ${season}.`},
       {q:`Which total belongs to Albion's league goals in ${season}?`, c:String(goals), a:[String(Math.max(0,goals-7)),String(goals+4),String(goals+9)], e:`Albion scored ${goals} league goals in ${season}.`},
       {q:`Which statement about Albion in ${season} is correct?`, c:`They finished ${ordinal(position)}`, a:[`They finished ${ordinal(((position+4)%24)+1)}`,`They scored ${goals+12} league goals`,`They collected ${points+14} points`], e:`Albion's recorded league finish in ${season} was ${ordinal(position)}.`},
-      {q:`Albion recorded ${wins} league wins in which season?`, c:season, a:[previous[0],next[0],seasons[(index+5)%seasons.length][0]], e:`The ${wins}-win league season was ${season}.`},
-      {q:`Albion scored ${goals} league goals in which season?`, c:season, a:[previous[0],next[0],seasons[(index+8)%seasons.length][0]], e:`Albion scored ${goals} league goals in ${season}.`},
-      {q:`Albion collected ${points} league points in which season?`, c:season, a:[previous[0],next[0],seasons[(index+11)%seasons.length][0]], e:`Albion collected ${points} league points in ${season}.`},
+      {q:`Albion recorded ${wins} league wins in which season?`, c:season, a:distinctSeasonOptions(index, 3, wins), e:`The ${wins}-win league season was ${season}.`},
+      {q:`Albion scored ${goals} league goals in which season?`, c:season, a:distinctSeasonOptions(index, 5, goals), e:`Albion scored ${goals} league goals in ${season}.`},
+      {q:`Albion collected ${points} league points in which season?`, c:season, a:distinctSeasonOptions(index, 2, points), e:`Albion collected ${points} league points in ${season}.`},
       {q:`Using the season record, how many league defeats did Albion have in ${season}?`, c:String(losses), a:[String(Math.max(0,losses-3)),String(losses+2),String(losses+5)], e:`From ${played} matches, ${wins} wins and ${draws} draws leave ${losses} defeats.`},
       {q:`Which pair correctly describes Albion's ${season} campaign?`, c:`${wins} wins and ${draws} draws`, a:[`${wins+3} wins and ${draws} draws`,`${wins} wins and ${draws+4} draws`,`${Math.max(0,wins-2)} wins and ${Math.max(0,draws-3)} draws`], e:`Albion recorded ${wins} wins and ${draws} draws in ${season}.`},
       {q:`Which pair correctly describes Albion's ${season} output?`, c:`${points} points and ${goals} goals`, a:[`${points+8} points and ${goals} goals`,`${points} points and ${goals+10} goals`,`${Math.max(0,points-7)} points and ${Math.max(0,goals-8)} goals`], e:`Albion collected ${points} points and scored ${goals} league goals in ${season}.`}
@@ -1863,10 +1866,10 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         .map((month) => `<option value="${esc(month)}">${esc(month)}</option>`)
         .join("");
     const savedMonth = localStorage.getItem("albionFixtureMonth");
-    const initialMonth =
-      months.includes(savedMonth) || savedMonth === "all"
-        ? savedMonth
-        : months[0] || "all";
+    const currentMonth = new Intl.DateTimeFormat("en-GB", {month:"short",year:"numeric",timeZone:"Europe/London"}).format(new Date());
+    const initialMonth = months.includes(savedMonth) || savedMonth === "all"
+      ? savedMonth
+      : months.includes(currentMonth) ? currentMonth : "all";
     $("monthFilter").value = initialMonth;
     $("monthButtons").innerHTML =
       `<button type="button" data-month="all">All</button>` +
@@ -2350,7 +2353,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   function weather() {
     const panel = $("weatherPanel");
     if (!panel || !MATCH) return;
-    if (MATCH.venue !== "H") {
+    if (MATCH.venueCode !== "H") {
       panel.innerHTML = "<b>Away match weather</b><p>Falmer weather is hidden for away fixtures so the site does not show a misleading home forecast.</p>";
       if ($("quickWeather")) $("quickWeather").textContent = "Away fixture · local forecast not shown";
       return;
@@ -4703,7 +4706,16 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     const list = $('resultsList');
     if (!list) return;
     const filtered = resultFixtures.filter((fx) => filter === 'all' || (filter === 'league' && (fx.competition || 'Premier League') === 'Premier League') || (filter === 'europe' && /UEFA|Europa|Conference/i.test(fx.competition || '')) || (filter === 'cups' && /Cup/i.test(fx.competition || '')));
-    list.innerHTML = filtered.length ? filtered.map((fx) => {
+    // Most recent month is open; earlier months remain collapsed until requested.
+    const groups = new Map();
+    filtered.forEach(fx => {
+      const parts = String(fx.date || '').trim().split(/\s+/);
+      const month = parts.length >= 3 ? parts[1] + ' ' + parts[2] : 'Other results';
+      if (!groups.has(month)) groups.set(month, []);
+      groups.get(month).push(fx);
+    });
+    list.innerHTML = filtered.length ? [...groups].map(([month, games], groupIndex) =>
+      '<details class="result-month"' + (groupIndex === 0 ? ' open' : '') + '><summary><span>' + esc(month) + '</span><span class="result-month-count">' + games.length + ' ' + (games.length === 1 ? 'match' : 'matches') + '</span></summary><div class="result-month-games">' + games.map((fx) => {
       const o = outcome(fx);
       const venue = fx.venue === 'H' ? 'Home' : 'Away';
       const extra = [fx.round, venue, fx.attendance ? `Attendance ${Number(fx.attendance).toLocaleString('en-GB')}` : ''].filter(Boolean).join(' · ');
@@ -4712,11 +4724,14 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
         <div class="result-main"><span>${esc(fx.competition || 'Premier League')} · ${esc(fx.date)}</span><h3>${esc(displayScore(fx))}</h3><small>${esc(extra)}</small><p>${esc(fx.summary || fx.note || '')}</p></div>
         <div class="result-actions"><span class="result-score">${esc(fx.result || `${fx.albionGoals}–${fx.opponentGoals}`)}</span>${fx.reportUrl ? `<a href="${esc(fx.reportUrl)}" rel="noopener" target="_blank">Match report ↗</a>` : ''}</div>
       </article>`;
-    }).join('') : '<p class="empty-result-state">No completed results in this competition yet.</p>';
+    }).join('') + '</div></details>').join('') : '<p class="empty-result-state">No completed results in this competition yet.</p>';
   }
 
   function renderResultFilters() {
     const wrap = $('resultFilterButtons');
+    const resultList = $('resultsList');
+    $('expandResultsMonths')?.addEventListener('click', () => resultList?.querySelectorAll('.result-month').forEach(group => { group.open = true; }));
+    $('collapseResultsMonths')?.addEventListener('click', () => resultList?.querySelectorAll('.result-month').forEach(group => { group.open = false; }));
     if (!wrap) return;
     const options = [
       ['all','All'], ['league','Premier League'], ['europe','Europe'], ['cups','Cups']
