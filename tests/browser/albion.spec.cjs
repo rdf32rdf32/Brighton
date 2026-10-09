@@ -20,9 +20,15 @@ test('results accordion and squad category switching work',async({page})=>{
   await expect.poll(async()=>months.evaluateAll(a=>a.every(e=>e.open))).toBe(true);
   await page.locator('#collapseResultsMonths').click();
   await expect.poll(async()=>months.evaluateAll(a=>a.every(e=>!e.open))).toBe(true);
+  // Desktop presents a position filter. Mobile displays dedicated category tabs.
+  await page.locator('#playerPositionFilter').selectOption('Defender');
+  await expect(page.locator('#playerProfileGrid')).not.toBeEmpty();
+  await page.setViewportSize({width:390,height:844});
   for(const position of ['Defender','Midfielder','Forward','Goalkeeper']){
     const tab=page.locator('#playerCategoryTabs [data-player-category="'+position+'"]');
-    await tab.click();await expect(tab).toHaveAttribute('aria-selected','true');
+    await expect(tab).toBeVisible();
+    await tab.click();
+    await expect(tab).toHaveAttribute('aria-selected','true');
   }
   expect(errors).toEqual([]);
 });
