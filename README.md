@@ -1,4 +1,4 @@
-# Albion Fan Hub — r85 (9 October 2026)
+# Albion Fan Hub — r86 (9 October 2026)
 
 Independent Brighton & Hove Albion supporter website. Not affiliated with or endorsed by the club.
 
@@ -13,7 +13,7 @@ Independent Brighton & Hove Albion supporter website. Not affiliated with or end
 
 ## Current release
 
-r85 refines the penalty goalkeeper's sizing, movement and gloves, reduces exaggerated ball movement on mobile, improves pre-whistle reactions, and protects against stale penalty outcomes after a restart.
+r86 further fixes mobile goalkeeper placement: both boots are anchored just behind the painted goal line, using SVG width measured safely on mobile WebKit. r85 refines the penalty goalkeeper's sizing, movement and gloves, reduces exaggerated ball movement on mobile, improves pre-whistle reactions, and protects against stale penalty outcomes after a restart.
 
 It also fixes incorrect home-match weather handling, defaults the fixture month selector to the current month, includes kick-off times in downloadable calendars, and validates quiz question options.
 
@@ -27,7 +27,7 @@ It also fixes incorrect home-match weather handling, defaults the fixture month 
 - `shootout-r82.js` — penalty game physics, keyboard/touch handling, scoring and animations
 - `site-r76.css` and `site-r77.css`–`site-r83.css` — current stylesheets and responsive fixes
 
-File basenames retain historical release names. The current delivered bundle is identified as r85 by the HTML release metadata and cache-query strings.
+File basenames retain historical release names. The current delivered bundle is identified as r86 by the HTML release metadata and cache-query strings.
 
 ## Tests and publishing
 
