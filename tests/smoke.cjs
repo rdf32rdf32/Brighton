@@ -88,7 +88,7 @@ function checkKeeperLine({ stageHeight, stageWidth, keeperWidth, mobile, cssWidt
   };
   const helpers = new Function('keeper','stage','window','syncGoalBox',
     'PITCH_GOAL_LINE_RATIO','keeperBootRatio','mobilePenaltyLayout',
-    geometrySource + '\\nreturn {keeperDimensions,positionKeeperOnLine};')(
+    geometrySource + '\nreturn {keeperDimensions,positionKeeperOnLine};')(
       keeperNode,stageNode,{getComputedStyle:()=>({width:cssWidth || keeperWidth + 'px'})},
       ()=>{},315/650,229/250,()=>mobile);
   const dimensions = helpers.keeperDimensions();
