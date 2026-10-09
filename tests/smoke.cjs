@@ -67,7 +67,45 @@ assert.equal(cards, completed.length, 'Not all completed results render');
 assert.equal(typeof get('expandResultsMonths').handlers.click, 'function', 'Expand months not wired');
 assert.equal(typeof get('collapseResultsMonths').handlers.click, 'function', 'Collapse months not wired');
 assert(styles.includes('.result-month-games'), 'Missing monthly results styles');
-assert(game.includes('keeper.offsetWidth'), 'Keeper geometry regression');
+// Exercise the actual keeper geometry helpers with SVG offsets absent (mobile WebKit).
+const geometryStart = game.indexOf('  function keeperDimensions()');
+const geometryEnd = game.indexOf('  function resetCrowd()', geometryStart);
+assert(geometryStart >= 0 && geometryEnd > geometryStart, 'Keeper positioning helpers missing');
+const geometrySource = game.slice(geometryStart, geometryEnd);
+function checkKeeperLine({ stageHeight, stageWidth, keeperWidth, mobile, cssWidth }) {
+  const style = {};
+  const stageStyle = {};
+  const keeperNode = {
+    style,
+    clientWidth: 0,
+    // Intentionally no offsetWidth or offsetHeight: matches SVG behaviour
+    // on devices where these HTML-only offsets are unavailable.
+    getBoundingClientRect: () => ({ width: keeperWidth, height: keeperWidth * 250 / 180 }),
+  };
+  const stageNode = {
+    clientWidth: stageWidth, clientHeight: stageHeight,
+    style: { setProperty(key, value) { stageStyle[key] = value; } },
+  };
+  const helpers = new Function('keeper','stage','window','syncGoalBox',
+    'PITCH_GOAL_LINE_RATIO','keeperBootRatio','mobilePenaltyLayout',
+    geometrySource + '\\nreturn {keeperDimensions,positionKeeperOnLine};')(
+      keeperNode,stageNode,{getComputedStyle:()=>({width:cssWidth || keeperWidth + 'px'})},
+      ()=>{},315/650,229/250,()=>mobile);
+  const dimensions = helpers.keeperDimensions();
+  assert(Math.abs(dimensions.width - keeperWidth) < 0.01, 'SVG keeper width was underestimated');
+  helpers.positionKeeperOnLine();
+  const paintedLine = stageHeight * 315 / 650;
+  const bootY = parseFloat(style.top) + dimensions.height * 229 / 250;
+  const inset = paintedLine - bootY;
+  assert(mobile ? inset >= 4.9 && inset <= 9.1 : Math.abs(inset) < 0.01,
+    'Keeper boots are not on/behind painted goal line');
+  assert.equal(style.left, '50%');
+  assert.equal(style.transform, 'translateX(-50%)');
+  return inset;
+}
+checkKeeperLine({stageHeight:480,stageWidth:390,keeperWidth:64,mobile:true});
+checkKeeperLine({stageHeight:320,stageWidth:736,keeperWidth:70,mobile:true});
+checkKeeperLine({stageHeight:560,stageWidth:1050,keeperWidth:94,mobile:false});
 assert(game.includes('gameRun: state.gameRun + 1'), 'Restart state guard regression');
 assert(game.includes('await sleep(1900)'), 'Pre-whistle decision window regression');
 assert(game.includes('xf: .70, yf: .78'), 'Mobile shot movement regression');
