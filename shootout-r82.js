@@ -1,4 +1,4 @@
-// Albion Fan Hub r87 penalty game — goal-line shuffling and post-whistle mouse saves
+// Albion Fan Hub r89 penalty game — pre-whistle goal-line shuffling, whistle-locked dives
 (() => {
   "use strict";
 
@@ -2835,6 +2835,7 @@
     stage.classList.remove("pre-whistle-save-window");
 
     state.phase = "palace-run"; // Diving unlocks exactly when the whistle sounds.
+    keeper.style.transition = ""; // Stop pre-whistle shuffle easing before dives.
     sound("whistle");
     await sleep(reducedMotion() ? 70 : 180);
     if (token !== state.sequence) return;
@@ -3558,10 +3559,15 @@
       const current = ((Number.parseFloat(keeper.style.left) || 50) / 100 - .5) / Math.max(.001, goalBox.width * .46) / 2 + .5;
       shuffleKeeperOnLine({ x: clamp(current + (event.key === "ArrowLeft" ? -.08 : .08), 0, 1) });
     }
-    else if (event.key === "ArrowLeft") setReticle(state.aim.x - step, state.aim.y);
-    else if (event.key === "ArrowRight") setReticle(state.aim.x + step, state.aim.y);
-    else if (event.key === "ArrowUp") setReticle(state.aim.x, state.aim.y - step);
-    else if (event.key === "ArrowDown") setReticle(state.aim.x, state.aim.y + step);
+    else if (["save","palace-run"].includes(state.phase) && ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(event.key)) {
+      const aim={x:event.key==="ArrowLeft"?.17:event.key==="ArrowRight"?.83:.5,y:event.key==="ArrowUp"?.18:event.key==="ArrowDown"?.82:.53};
+      if(state.phase==="save") takeUserDive(aim,"keyboard-direction");
+      else queueEarlyDive(aim,"keyboard-direction");
+    }
+    else if (state.phase === "albion-aim" && event.key === "ArrowLeft") setReticle(state.aim.x - step, state.aim.y);
+    else if (state.phase === "albion-aim" && event.key === "ArrowRight") setReticle(state.aim.x + step, state.aim.y);
+    else if (state.phase === "albion-aim" && event.key === "ArrowUp") setReticle(state.aim.x, state.aim.y - step);
+    else if (state.phase === "albion-aim" && event.key === "ArrowDown") setReticle(state.aim.x, state.aim.y + step);
     else if (["save","palace-run"].includes(state.phase) && ["1","2","3","4","5","6","7","8","9"].includes(event.key)) {
       const n=Number(event.key)-1, col=n%3, row=2-Math.floor(n/3);
       const point={x:[.17,.5,.83][col],y:[.18,.5,.82][row]};
@@ -3675,7 +3681,7 @@
 
   const resizeObserver = typeof ResizeObserver === "function"
     ? new ResizeObserver(() => {
-        if (!state.phase.includes("run") && state.phase !== "save" && state.phase !== "palace-prewhistle") positionKeeperOnLine();
+        if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine(state.phase === "palace-prewhistle");
       })
     : null;
   resizeObserver?.observe(stage);
@@ -3685,7 +3691,7 @@
     resizeTimer = window.setTimeout(() => {
       syncGoalBox();
       setReticle(state.aim.x, state.aim.y);
-      if (!state.phase.includes("run") && state.phase !== "save" && state.phase !== "palace-prewhistle") positionKeeperOnLine();
+      if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine(state.phase === "palace-prewhistle");
     }, 90);
   };
   window.addEventListener("resize", resyncStage, { passive: true });

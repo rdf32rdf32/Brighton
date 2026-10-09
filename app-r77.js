@@ -2367,11 +2367,13 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         $("quickWeather").textContent = "Available nearer kick-off";
       return;
     }
+    const requestedFixture = MATCH.dateISO;
     fetch(
       "https://api.open-meteo.com/v1/forecast?latitude=50.8616&longitude=-0.0837&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FLondon",
     )
       .then((response) => response.json())
       .then((data) => {
+        if (MATCH.dateISO !== requestedFixture || MATCH.venueCode !== "H") return;
         const index = data.daily.time.indexOf(target);
         const weatherText =
           index < 0
@@ -2384,6 +2386,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         if ($("quickWeather")) $("quickWeather").textContent = weatherText;
       })
       .catch(() => {
+        if (MATCH.dateISO !== requestedFixture || MATCH.venueCode !== "H") return;
         panel.innerHTML =
           "<b>Falmer weather</b><p>Weather is temporarily unavailable.</p>";
         if ($("quickWeather"))
