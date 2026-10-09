@@ -3835,7 +3835,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         ["Duplicate players", duplicates.length === 0],
         ["Quiz bank", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.length >= 5],
         ["Quiz answer integrity", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.every((q) => Array.isArray(q.options) && q.options.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length && new Set(q.options.map(v => String(v).trim().toLowerCase())).size === q.options.length)],
-        ["Fixture score integrity", (C.fixtures || []).every((f) => (Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals)) || (!Number.isFinite(f.albionGoals) && !Number.isFinite(f.opponentGoals)))],
+        ["Fixture score integrity", (window.ALBION_CONTENT?.fixtures || []).every((f) => (Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals)) || (!Number.isFinite(f.albionGoals) && !Number.isFinite(f.opponentGoals)))],
         ["Penalty game", Boolean($("penaltyStage") && $("keeperFigure") && $("takerFigure"))],
         ["Internal section links", brokenAnchors.length === 0],
         [`Audio controls · ${audioFiles} sources`, Boolean($("soundToggle"))],

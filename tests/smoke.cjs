@@ -68,6 +68,7 @@ assert.equal(typeof get('expandResultsMonths').handlers.click, 'function', 'Expa
 assert.equal(typeof get('collapseResultsMonths').handlers.click, 'function', 'Collapse months not wired');
 assert(styles.includes('.result-month-games'), 'Missing monthly results styles');
 assert(html.includes('site-current.css?v=20261009-r89'),'Current stylesheet missing');
+assert(!app.includes('Fixture score integrity", (C.fixtures || [])'),'Diagnostics must not reference unscoped C');
 assert(html.includes('site-reliability.js?v=20261009-r89'),'Football data warnings missing');
 assert(!html.includes('site-r83.css?v='),'Historical overrides are still linked');
 // Exercise the actual keeper geometry helpers with SVG offsets absent (mobile WebKit).
