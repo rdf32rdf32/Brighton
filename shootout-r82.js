@@ -214,9 +214,9 @@
     shotSpread: 0.0022,
     keeperNoise: 0.39,
     keeperReach: 0.109,
-    palaceMiss: 0.18,
-    saveRadius: 0.235,
-    fingertipMargin: 0.075,
+    palaceMiss: 0.12,
+    saveRadius: 0.25,
+    fingertipMargin: 0.08,
     preContactWindow: 300,
     postContactWindow: 520,
     flight: 790,
@@ -267,6 +267,7 @@
     phase: "loading",
     locked: true,
     finished: false,
+    gameRun: 0,
     aim: { x: 0.5, y: 0.5 },
     albionResults: [],
     palaceResults: [],
@@ -945,7 +946,7 @@
   function reactionWindowFor(player,target){
     const power=shotPowerFor(player,target);
     const cornerLoad=Math.min(1,Math.abs((target?.x??.5)-.5)*1.5+Math.max(0,.42-(target?.y??.55))*.7);
-    return Math.round(clamp(585-(power-.72)*620-cornerLoad*72+(isMobilePenalty()?45:0),390,565));
+    return Math.round(clamp(650-(power-.72)*590-cornerLoad*65+(isMobilePenalty()?75:0),435,660));
   }
 
   function shotFlightFor(player,target){
@@ -2637,6 +2638,7 @@
 
   async function takeAlbionPenalty(aim) {
     if (state.phase !== "albion-aim" || state.locked || state.finished) return;
+    const gameRun = state.gameRun;
     ensureAudio();
     if (tutorial && !tutorial.hidden) { tutorial.hidden = true; localStorage.setItem("albionShootoutTutorial", "done"); }
     const token = state.sequence;
@@ -2654,7 +2656,7 @@
     setStatus(`${player.name} begins the run-up`, `${runUpLabel(player.foot, runProfile)}. ${isPanenka ? "A disguised central chip." : "The goalkeeper stays on the line until contact."}`);
     const run = animateRunUp(false, player.foot, aim, player.style, runProfile);
     await sleep(reducedMotion() ? 100 : Math.max(390, run.duration * (mobilePenaltyLayout() ? .90 : .84)));
-    if (token !== state.sequence) return;
+    if (token !== state.sequence || gameRun !== state.gameRun) return;
 
     const edge = Math.max(Math.abs(aim.x - .5), Math.abs(aim.y - .5));
     const playerAccuracy = player.accuracy ?? .75;
@@ -2705,6 +2707,7 @@
       frameReaction(resolved);
       await animateWoodworkRebound(resolved);
     }
+    if (gameRun !== state.gameRun) return;
 
     state.albionKicks += 1;
     if (scored) state.albionGoals += 1;
@@ -2751,6 +2754,7 @@
     renderScore();
     const outcome = resultDecision();
     await sleep(reducedMotion() ? 360 : Math.round(1725 * ceremonyPace()));
+    if (gameRun !== state.gameRun) return;
     if (outcome.finished) finishShootout(outcome.albionWon);
     else preparePalaceKick();
   }
@@ -2774,6 +2778,7 @@
 
   async function beginPalacePenalty() {
     if (state.phase !== "palace-ready" || state.finished) return;
+    const gameRun = state.gameRun;
     ensureAudio();
     const token = ++state.sequence;
     readyPanel.hidden = true;
@@ -2812,7 +2817,8 @@
     preWhistleControls.hidden = false;
     $("stageInstruction").textContent = "Dive now — or wait for the whistle";
     setStatus("Pre-whistle choice", "Gamble left or right now, or wait and react to the run-up.");
-    await sleep(reducedMotion() ? 260 : 1150);
+    // Accessibility: reduced-motion users get the same decision time, not less.
+    await sleep(1900);
     if (token !== state.sequence) return;
     preWhistleControls.hidden = true;
     stage.classList.remove("pre-whistle-save-window");
@@ -2880,6 +2886,7 @@
     window.setTimeout(()=>stage.classList.remove("camera-contact"),reducedMotion()?140:Math.max(480,state.currentShotFlight));
     const approach = animateBallApproach(state.palaceTarget, approachDuration, "driven");
     await approach.animation?.finished.catch(() => {});
+    if (gameRun !== state.gameRun) return;
     state.saveResolutionLocked = true;
     state.reactionOpen = false;
     cancelCentreHold();
@@ -2915,6 +2922,7 @@
       const ballAnimation = animateBall(state.palaceTarget, remainingFlight, false, state.palaceMiss, "driven", { silentKick: true, from: approach.point });
       await ballAnimation?.finished.catch(() => {});
     }
+    if (gameRun !== state.gameRun) return;
     if (state.palaceMiss) frameReaction(state.palaceTarget);
     state.palaceKicks += 1;
     if (scored) state.palaceGoals += 1;
@@ -2961,6 +2969,7 @@
     renderScore();
     const outcome = resultDecision();
     await sleep(reducedMotion() ? 370 : Math.round(1775 * ceremonyPace()));
+    if (gameRun !== state.gameRun) return;
     if (outcome.finished) finishShootout(outcome.albionWon);
     else prepareAlbionKick();
   }
@@ -3120,11 +3129,13 @@
 
   function resetGame() {
     window.clearTimeout(state.reactionTimer);
+    window.clearTimeout(state.centreHoldTimer);
     ++state.sequence;
     Object.assign(state, {
       phase: "loading",
       locked: true,
       finished: false,
+      gameRun: state.gameRun + 1,
       albionResults: [],
       palaceResults: [],
       albionGoals: 0,
