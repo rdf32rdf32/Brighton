@@ -192,7 +192,9 @@
     stage.style.setProperty("--aim-height", `${goalBox.height * (1 + AIM_MARGIN) * 100}%`);
     return goalBox;
   }
-  const keeperBootRatio = 0.924;
+  // SVG boots finish at y=229 in the keeper's 250-unit viewBox.
+  // Keep the painted line visible in front of both boots on small screens.
+  const keeperBootRatio = 229 / 250;
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const sleep = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
   const reducedMotion = () =>
@@ -787,10 +789,18 @@
   }
 
   function keeperDimensions() {
-    // offsetWidth/Height ignore animated transforms. A transformed bounding rect
-    // changes while diving and caused keeper size/position to jump between phases.
-    const width = keeper.offsetWidth || stage.clientWidth * 0.108;
-    const height = keeper.offsetHeight || width * (250 / 180);
+    // SVG elements do not reliably expose offsetWidth/offsetHeight in all
+    // browsers (particularly WebKit). The old 10.8%-of-stage fallback could
+    // underestimate the keeper by 20px+ on mobile and place him in front.
+    // A resolved CSS width is stable even while the figure is being animated.
+    const cssWidth = Number.parseFloat(window.getComputedStyle(keeper).width);
+    const width = cssWidth > 0 && Number.isFinite(cssWidth)
+      ? cssWidth
+      : keeper.clientWidth || keeper.getBoundingClientRect().width || stage.clientWidth * .145;
+    const cssHeight = Number.parseFloat(window.getComputedStyle(keeper).height);
+    const height = cssHeight > 0 && Number.isFinite(cssHeight)
+      ? cssHeight
+      : width * (250 / 180);
     return { width, height };
   }
 
@@ -798,15 +808,20 @@
     if (!stage.clientHeight) return;
     syncGoalBox();
     const dimensions = keeperDimensions();
-    // r68: the painted goal line (315/650 of the stage) is authoritative.
-    // The goal-mouth CSS is aligned to the same coordinate, but the keeper no
-    // longer depends on goal-box height, so later net/goal styling cannot move him.
+    // Pitch SVG goal line = y315 / 650. All goal CSS breakpoints align the front
+    // of the frame with that mark. Do not anchor to the net's rear perspective.
     const goalLineY = PITCH_GOAL_LINE_RATIO * stage.clientHeight;
-    const top = goalLineY - dimensions.height * keeperBootRatio;
+    // On mobile, stand a few CSS pixels *behind* the paint, rather than letting
+    // the boots cover the line and give the illusion the keeper is in front.
+    const lineInset = mobilePenaltyLayout()
+      ? Math.min(9, Math.max(5, stage.clientHeight * .012))
+      : 0;
+    const top = goalLineY - dimensions.height * keeperBootRatio - lineInset;
     keeper.style.left = "50%";
     keeper.style.top = `${top}px`;
     keeper.style.transform = "translateX(-50%)";
     stage.style.setProperty("--keeper-line-y", `${goalLineY}px`);
+    stage.style.setProperty("--keeper-boot-line-inset", `${lineInset}px`);
   }
 
   function resetCrowd() {
