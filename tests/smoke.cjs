@@ -106,6 +106,13 @@ function checkKeeperLine({ stageHeight, stageWidth, keeperWidth, mobile, cssWidt
 checkKeeperLine({stageHeight:480,stageWidth:390,keeperWidth:64,mobile:true});
 checkKeeperLine({stageHeight:320,stageWidth:736,keeperWidth:70,mobile:true});
 checkKeeperLine({stageHeight:560,stageWidth:1050,keeperWidth:94,mobile:false});
+// Keeper control regressions: mouse hover shuffles; dives require a whistle.
+assert(game.includes('function shuffleKeeperOnLine(point)'), 'Pre-whistle shuffle controller missing');
+assert(game.includes('state.phase !== "palace-run" || state.pendingDive'), 'Dive must be gated until whistle');
+assert(game.includes('shuffleKeeperOnLine(eventStagePoint(event));'), 'Mouse hover does not steer keeper');
+assert(game.includes('queueEarlyDive(target, "mouse-direction")'), 'Mouse direction must dive during run-up');
+assert(game.includes('takeUserDive(target, "mouse-direction")'), 'Mouse direction must dive on contact');
+assert(!game.includes('data-early-dive="left"'), 'Illegal pre-whistle dive button still present');
 assert(game.includes('gameRun: state.gameRun + 1'), 'Restart state guard regression');
 assert(game.includes('await sleep(1900)'), 'Pre-whistle decision window regression');
 assert(game.includes('xf: .70, yf: .78'), 'Mobile shot movement regression');
