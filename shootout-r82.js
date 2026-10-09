@@ -796,6 +796,7 @@
       : 0;
     const top = goalLineY - dimensions.height * keeperBootRatio - lineInset;
     keeper.style.left = keepLateral && keeper.style.left ? keeper.style.left : "50%";
+    keeper.style.setProperty("--keeper-lateral-position", keeper.style.left);
     keeper.style.top = `${top}px`;
     keeper.style.transform = "translateX(-50%)";
     stage.style.setProperty("--keeper-line-y", `${goalLineY}px`);
@@ -813,6 +814,7 @@
     const offset = (clamp(point.x, 0, 1) - .5) * travel * 2;
     keeper.style.transition = reducedMotion() ? "none" : "left 115ms ease-out";
     keeper.style.left = `${(50 + offset / width * 100).toFixed(3)}%`;
+    keeper.style.setProperty("--keeper-lateral-position", keeper.style.left);
   }
 
   function resetCrowd() {
