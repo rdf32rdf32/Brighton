@@ -233,6 +233,9 @@
 
 /* r85: keeper, frame, camera and mobile interaction finishing layer. */
 .shootout-v17 .keeper-figure {
+  /* Earlier site-r82.css fixes left:50%!important. This dynamic override lets
+     the keeper shuffle while the JS preserves his goal-line boot position. */
+  left:var(--keeper-lateral-position,50%)!important;
   backface-visibility:hidden;
   transform-style:flat;
   will-change:transform;
