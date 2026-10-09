@@ -787,11 +787,11 @@
   }
 
   function keeperDimensions() {
-    const rect = keeper.getBoundingClientRect();
-    return {
-      width: rect.width || stage.clientWidth * 0.108,
-      height: rect.height || stage.clientWidth * 0.108 * (250 / 180),
-    };
+    // offsetWidth/Height ignore animated transforms. A transformed bounding rect
+    // changes while diving and caused keeper size/position to jump between phases.
+    const width = keeper.offsetWidth || stage.clientWidth * 0.108;
+    const height = keeper.offsetHeight || width * (250 / 180);
+    return { width, height };
   }
 
   function positionKeeperOnLine() {
@@ -1254,11 +1254,11 @@
       // develops its left/right direction. This prevents a sideways slide.
       const path = [
         { o: 0,    xf: 0,    yf: 0,    sf: 1.00, spin: 0 },
-        { o: .08,  xf: 0,    yf: .17,  sf: .995, spin: 36 },
-        { o: .22,  xf: .025, yf: .39,  sf: .965, spin: 104 },
-        { o: .44,  xf: .12,  yf: .65,  sf: .875, spin: 216 },
-        { o: .70,  xf: .40,  yf: .87,  sf: .72,  spin: 366 },
-        { o: 1,    xf: 1,    yf: 1,    sf: endScale, spin: 540 },
+        { o: .08,  xf: .08, yf: .12, sf: .995, spin: 16 },
+        { o: .22,  xf: .22, yf: .29, sf: .955, spin: 40 },
+        { o: .44,  xf: .44, yf: .53, sf: .85, spin: 82 },
+        { o: .70,  xf: .70, yf: .78, sf: .68, spin: 130 },
+        { o: 1,    xf: 1, yf: 1, sf: endScale, spin: 185 },
       ];
       const liftAt = (factor, offset) => {
         const base = from.y + (point.y - from.y) * factor;
@@ -1271,9 +1271,10 @@
         const y = liftAt(k.yf, k.o);
         const scale = i === path.length - 1 ? endScale : startScale * k.sf;
         const direction = point.x < from.x ? -1 : 1;
+        const spinFactor = panenkaShot ? .12 : placedShot ? .33 : .7;
         return {
           left: `${x * 100}%`, top: `${y * 100}%`,
-          transform: `translate(-50%,-50%) scale(${scale}) rotate(${direction * k.spin}deg)`, offset: k.o,
+          transform: `translate(-50%,-50%) scale(${scale}) rotate(${direction * k.spin * spinFactor}deg)`, offset: k.o,
         };
       });
       if (ballShadow) {
@@ -1288,7 +1289,7 @@
         });
         animateElement(ballShadow, shadowFrames, { duration, easing: "cubic-bezier(.16,.62,.22,1)" });
       }
-      return animateElement(ball, ballFrames, { duration, easing: "cubic-bezier(.16,.62,.22,1)" });
+      return animateElement(ball, ballFrames, { duration, easing: panenkaShot ? "cubic-bezier(.25,.4,.45,1)" : "linear" });
     }
 
     const midX = from.x + (point.x - from.x) * .52;
@@ -1810,13 +1811,14 @@
 
     const leadAngle = direction < 0 ? -126 : 126;
     const trailAngle = direction < 0 ? -72 : 72;
-    const bodyRotation = direction * (low ? 66 : high ? 51 : 57);
+    const bodyRotation = direction * (low ? 49 : high ? 43 : 47);
     const counterLoad = direction * -1;
     const launchLift = high ? -keeperHeight * .035 : low ? keeperHeight * .015 : -keeperHeight * .012;
     const landingY = clamp(dy + (low ? keeperHeight * .14 : keeperHeight * .085), -keeperHeight * .5, keeperHeight * .24);
     const reachEffort = clamp(Math.hypot(dx / Math.max(1, keeperWidth), dy / Math.max(1, keeperHeight)), .35, 2.2);
     const effortDuration = 650 + reachEffort * 112 + (high ? 35 : 0) + (low ? -25 : 0);
-    const totalDuration = Math.max(duration, Math.round(effortDuration), extreme ? 920 : wide ? 845 : 745);
+    const totalDuration = Math.max(duration, Math.round(effortDuration), extreme ? 875 : wide ? 805 : 725);
+    const contactOffset = clamp((duration - 80) / totalDuration, .73, .91);
 
     // Push leg: compress first, then extend sharply through the ground.
     if (pushLeg) animateElement(pushLeg, [
@@ -1913,15 +1915,13 @@
       { transform: "translateX(-50%) translate(0,0) rotate(0deg) scale(1)" },
       { transform: `translateX(-50%) translate(${counterLoad * 2.5}px,4px) rotate(${counterLoad * 1.2}deg) scale(1,.965)`, offset: .12 },
       // Push-off: lateral acceleration begins before the keeper leaves the line.
-      { transform: `translateX(-50%) translate(${dx * .11}px,${dy * .07 + launchLift}px) rotate(${bodyRotation * .07}deg) scale(1.01,.99)`, offset: .24 },
-      { transform: `translateX(-50%) translate(${dx * .36}px,${dy * .27 + launchLift}px) rotate(${bodyRotation * .24}deg) scale(1.02)`, offset: .42 },
-      // Flight: most of the distance is covered while the body rotates behind the hands.
-      { transform: `translateX(-50%) translate(${dx * .68}px,${dy * .59}px) rotate(${bodyRotation * .54}deg) scale(1.025)`, offset: .62 },
-      { transform: `translateX(-50%) translate(${dx * .9}px,${dy * .86}px) rotate(${bodyRotation * .84}deg) scale(1.02)`, offset: .8 },
-      // Contact/reach.
-      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(1.015)`, offset: .9 },
-      // Landing: shoulder/hip absorb the fall rather than freezing at full extension.
-      { transform: `translateX(-50%) translate(${dx * .985}px,${landingY}px) rotate(${bodyRotation * 1.035}deg) scale(1,.965)` },
+      { transform: `translateX(-50%) translate(${dx * .15}px,${dy * .07 + launchLift}px) rotate(${bodyRotation * .11}deg) scale(1.005,.99)`, offset: .22 },
+      { transform: `translateX(-50%) translate(${dx * .41}px,${dy * .30 + launchLift}px) rotate(${bodyRotation * .30}deg) scale(1.015)`, offset: .42 },
+      // Accelerate through the dive, with the glove reaching just before contact.
+      { transform: `translateX(-50%) translate(${dx * .72}px,${dy * .65}px) rotate(${bodyRotation * .65}deg) scale(1.02)`, offset: Math.max(.57, contactOffset - .19) },
+      { transform: `translateX(-50%) translate(${dx}px,${dy}px) rotate(${bodyRotation}deg) scale(1.012)`, offset: contactOffset },
+      // The outside shoulder absorbs the landing rather than snapping to standing.
+      { transform: `translateX(-50%) translate(${dx * .99}px,${landingY}px) rotate(${bodyRotation * 1.02}deg) scale(1,.975)` },
     ], { duration: totalDuration, easing: "cubic-bezier(.12,.68,.16,1)" });
 
     recoverKeeperAfterDive(diveSequence, saved);
@@ -1942,7 +1942,7 @@
         { transform: "translateX(-50%) translateY(-2px) rotate(0deg) scale(1.005,1)", offset: .82 },
         { transform: "translateX(-50%) translateY(0) rotate(0deg) scale(1)" },
       ], { duration: reducedMotion() ? 130 : saved ? 560 : 700, easing: "cubic-bezier(.2,.58,.24,1)" });
-      recovery?.finished.finally(() => { if (token === state.sequence) positionKeeperOnLine(); });
+      recovery?.finished.then(() => { if (token === state.sequence) positionKeeperOnLine(); }).catch(() => {});
     }, reducedMotion() ? 140 : saved ? 1060 : 1220);
   }
 
