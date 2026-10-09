@@ -2717,11 +2717,20 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   // Penalty shoot-out logic lives in shootout.js.
 
   function fixtureCarousel() {
-    const now = Date.now() - 3 * 60 * 60 * 1000;
-    const fixtures = (C.fixtures || []).filter((fixture) => fixtureTimestamp(fixture) >= now).slice(0, 3);
-    if (!fixtures.length) return;
+    const selectUpcoming = () => (C.fixtures || []).filter((fixture) => fixtureTimestamp(fixture) >= Date.now() - 3 * 60 * 60 * 1000 && !fixtureIsComplete(fixture) && !fixtureIsUnavailable(fixture)).sort((a,b) => fixtureTimestamp(a) - fixtureTimestamp(b)).slice(0, 3);
+    let fixtures = selectUpcoming();
     let index = 0;
     const render = () => {
+      if (!fixtures.length) {
+        $("nextFixtureCarousel").textContent = "Next fixture to be confirmed.";
+        $("fixtureCarouselPosition").textContent = "0 of 0";
+        $("previousFixture").disabled = true;
+        $("nextFixtureButton").disabled = true;
+        return;
+      }
+      index = Math.min(index, fixtures.length - 1);
+      $("previousFixture").disabled = fixtures.length < 2;
+      $("nextFixtureButton").disabled = fixtures.length < 2;
       const fixture = fixtures[index];
       $("nextFixtureCarousel").innerHTML =
         `<article class="${fixture.venue === "H" ? "fixture-home" : "fixture-away"}"><span>${fixture.venue === "H" ? "HOME" : "AWAY"}</span><b>${fixture.venue === "H" ? `Albion v ${esc(fixture.opponent)}` : `${esc(fixture.opponent)} v Albion`}</b><small>${esc(fixture.date)}${fixture.time ? ` · ${esc(fixture.time)}` : ""}</small></article>`;
@@ -2758,6 +2767,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       { passive: true },
     );
     render();
+    document.addEventListener("albion:nextmatch", () => { fixtures = selectUpcoming(); index = 0; render(); });
   }
 
   function calendarDownload() {
@@ -2790,23 +2800,27 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       );
       return `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
     };
+    const icsEscape = value => String(value || "").replace(/\\/g,"\\\\").replace(/\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;");
+    const icsUtc = ms => new Date(ms).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
     const eventText = (fixture, index) => {
-      const title =
-        fixture.venue === "H"
-          ? `Brighton & Hove Albion v ${fixture.opponent}`
-          : `${fixture.opponent} v Brighton & Hove Albion`;
+      const title = fixture.venue === "H" ? `Brighton & Hove Albion v ${fixture.opponent}` : `${fixture.opponent} v Brighton & Hove Albion`;
+      const hasTime = /^\d{1,2}:\d{2}$/.test(String(fixture.time || ""));
+      const utcTime = hasTime ? fixtureTimestamp(fixture) : Number.NaN;
+      const eventTimes = Number.isFinite(utcTime)
+        ? [`DTSTART:${icsUtc(utcTime)}`, `DTEND:${icsUtc(utcTime + 2 * 60 * 60 * 1000)}`]
+        : [`DTSTART;VALUE=DATE:${compactDate(fixture.date)}`, `DTEND;VALUE=DATE:${nextDay(fixture.date)}`];
       return [
         "BEGIN:VEVENT",
         `UID:albion-${index + 1}-2026@albion-fan-hub`,
-        `DTSTART;VALUE=DATE:${compactDate(fixture.date)}`,
-        `DTEND;VALUE=DATE:${nextDay(fixture.date)}`,
-        `SUMMARY:${title}`,
-        `DESCRIPTION:${fixture.competition || "Premier League"} fixture. Date and kick-off subject to change. Check the official Albion website.`,
-        `LOCATION:${fixture.venue === "H" ? "Amex Stadium, Falmer" : "Away fixture"}`,
+        ...eventTimes,
+        `SUMMARY:${icsEscape(title)}`,
+        `DESCRIPTION:${icsEscape((fixture.competition || "Premier League") + " fixture. Please verify date and kick-off against official club information.")}`,
+        `LOCATION:${icsEscape(fixture.venueName || (fixture.venue === "H" ? "Amex Stadium, Falmer" : "Away venue"))}`,
         "END:VEVENT",
       ].join("\r\n");
     };
-    const download = (events, filename) => {
+
+        const download = (events, filename) => {
       const calendar = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Albion Fan Hub//Fixtures 2026-27//EN\r\nCALSCALE:GREGORIAN\r\nMETHOD:PUBLISH\r\n${events}\r\nEND:VCALENDAR\r\n`;
       const url = URL.createObjectURL(
         new Blob([calendar], { type: "text/calendar;charset=utf-8" }),
@@ -3556,6 +3570,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   leaguePredictor();
   randomContent();
   weather();
+  document.addEventListener("albion:nextmatch", weather);
   amex();
   story();
   historyDetails();
