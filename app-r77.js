@@ -1828,7 +1828,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
           const completed = Number.isFinite(kickoff) && kickoff + matchWindow <= now;
           const liveWindow = Number.isFinite(kickoff) && kickoff <= now && kickoff + matchWindow > now;
           const result = fixture.result || (Number.isFinite(fixture.homeScore) && Number.isFinite(fixture.awayScore) ? `${fixture.homeScore}-${fixture.awayScore}` : "");
-          const statusLabel = result ? `Result ${result}` : liveWindow ? "MATCHDAY" : completed ? "COMPLETED" : fixture === nextFixture ? "NEXT FIXTURE" : "SCHEDULED";
+          const statusLabel = result ? `Result ${result}` : liveWindow ? "MATCHDAY" : completed ? "RESULT PENDING" : fixture === nextFixture ? "NEXT FIXTURE" : "SCHEDULED";
           const statusClass = result ? "fixture-result" : liveWindow ? "fixture-live" : completed ? "fixture-completed" : fixture === nextFixture ? "fixture-next" : "";
           const index = C.fixtures.indexOf(fixture);
           const aggregate = tieAggregateFor(fixture);
@@ -3831,6 +3831,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         [`Penalty takers · ${penaltyNames.length} valid`, penaltyNames.length >= 7 && missingPenaltyPlayers.length === 0],
         ["Duplicate players", duplicates.length === 0],
         ["Quiz bank", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.length >= 5],
+        ["Quiz answer integrity", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.every((q) => Array.isArray(q.options) && q.options.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length && new Set(q.options.map(v => String(v).trim().toLowerCase())).size === q.options.length)],
+        ["Fixture score integrity", (C.fixtures || []).every((f) => (Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals)) || (!Number.isFinite(f.albionGoals) && !Number.isFinite(f.opponentGoals)))],
         ["Penalty game", Boolean($("penaltyStage") && $("keeperFigure") && $("takerFigure"))],
         ["Internal section links", brokenAnchors.length === 0],
         [`Audio controls · ${audioFiles} sources`, Boolean($("soundToggle"))],
