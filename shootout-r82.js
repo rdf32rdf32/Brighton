@@ -793,15 +793,14 @@
     // browsers (particularly WebKit). The old 10.8%-of-stage fallback could
     // underestimate the keeper by 20px+ on mobile and place him in front.
     // A resolved CSS width is stable even while the figure is being animated.
-    const cssWidth = Number.parseFloat(window.getComputedStyle(keeper).width);
+    const resolvedWidth = window.getComputedStyle(keeper).width;
+    const cssWidth = resolvedWidth.endsWith("px") ? Number.parseFloat(resolvedWidth) : NaN;
     const width = cssWidth > 0 && Number.isFinite(cssWidth)
       ? cssWidth
       : keeper.clientWidth || keeper.getBoundingClientRect().width || stage.clientWidth * .145;
-    const cssHeight = Number.parseFloat(window.getComputedStyle(keeper).height);
-    const height = cssHeight > 0 && Number.isFinite(cssHeight)
-      ? cssHeight
-      : width * (250 / 180);
-    return { width, height };
+    // The keeper SVG has viewBox 180x250 and CSS auto height.
+    // Always derive height from that ratio; browser SVG offsets can be absent.
+    return { width, height: width * (250 / 180) };
   }
 
   function positionKeeperOnLine() {
