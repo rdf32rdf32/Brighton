@@ -2367,11 +2367,13 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         $("quickWeather").textContent = "Available nearer kick-off";
       return;
     }
+    const requestedFixture = MATCH.dateISO;
     fetch(
       "https://api.open-meteo.com/v1/forecast?latitude=50.8616&longitude=-0.0837&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Europe%2FLondon",
     )
       .then((response) => response.json())
       .then((data) => {
+        if (MATCH.dateISO !== requestedFixture || MATCH.venueCode !== "H") return;
         const index = data.daily.time.indexOf(target);
         const weatherText =
           index < 0
@@ -2384,6 +2386,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         if ($("quickWeather")) $("quickWeather").textContent = weatherText;
       })
       .catch(() => {
+        if (MATCH.dateISO !== requestedFixture || MATCH.venueCode !== "H") return;
         panel.innerHTML =
           "<b>Falmer weather</b><p>Weather is temporarily unavailable.</p>";
         if ($("quickWeather"))
@@ -3832,7 +3835,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
         ["Duplicate players", duplicates.length === 0],
         ["Quiz bank", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.length >= 5],
         ["Quiz answer integrity", Array.isArray(window.ALBION_QUIZ) && window.ALBION_QUIZ.every((q) => Array.isArray(q.options) && q.options.length >= 2 && Number.isInteger(q.answer) && q.answer >= 0 && q.answer < q.options.length && new Set(q.options.map(v => String(v).trim().toLowerCase())).size === q.options.length)],
-        ["Fixture score integrity", (C.fixtures || []).every((f) => (Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals)) || (!Number.isFinite(f.albionGoals) && !Number.isFinite(f.opponentGoals)))],
+        ["Fixture score integrity", (window.ALBION_CONTENT?.fixtures || []).every((f) => (Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals)) || (!Number.isFinite(f.albionGoals) && !Number.isFinite(f.opponentGoals)))],
         ["Penalty game", Boolean($("penaltyStage") && $("keeperFigure") && $("takerFigure"))],
         ["Internal section links", brokenAnchors.length === 0],
         [`Audio controls · ${audioFiles} sources`, Boolean($("soundToggle"))],

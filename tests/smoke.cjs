@@ -10,7 +10,7 @@ const html = file('index.html');
 const app = file('app-r77.js');
 const game = file('shootout-r82.js');
 const data = file('albion-data-r78.js');
-const styles = file('site-r83.css');
+const styles = file('site-current.css');
 for (const [name, source] of [['app-r77.js', app], ['shootout-r82.js', game], ['albion-data-r78.js', data]]) {
   new vm.Script(source, { filename: name });
 }
@@ -67,6 +67,10 @@ assert.equal(cards, completed.length, 'Not all completed results render');
 assert.equal(typeof get('expandResultsMonths').handlers.click, 'function', 'Expand months not wired');
 assert.equal(typeof get('collapseResultsMonths').handlers.click, 'function', 'Collapse months not wired');
 assert(styles.includes('.result-month-games'), 'Missing monthly results styles');
+assert(html.includes('site-current.css?v=20261009-r89'),'Current stylesheet missing');
+assert(!app.includes('Fixture score integrity", (C.fixtures || [])'),'Diagnostics must not reference unscoped C');
+assert(html.includes('site-reliability.js?v=20261009-r89'),'Football data warnings missing');
+assert(!html.includes('site-r83.css?v='),'Historical overrides are still linked');
 // Exercise the actual keeper geometry helpers with SVG offsets absent (mobile WebKit).
 const geometryStart = game.indexOf('  function keeperDimensions()');
 const geometryEnd = game.indexOf('  function resetCrowd()', geometryStart);
@@ -114,6 +118,8 @@ checkKeeperLine({stageHeight:320,stageWidth:736,keeperWidth:70,mobile:true});
 checkKeeperLine({stageHeight:560,stageWidth:1050,keeperWidth:94,mobile:false});
 // Keeper control regressions: mouse hover shuffles; dives require a whistle.
 assert(game.includes('function shuffleKeeperOnLine(point)'), 'Pre-whistle shuffle controller missing');
+assert(game.includes('positionKeeperOnLine(state.phase === "palace-prewhistle")'),'Rotation must retain goalkeeper line position');
+assert(game.includes('keyboard-direction'),'Directional arrow saves missing');
 assert(styles.includes('left:var(--keeper-lateral-position,50%)!important'), 'Legacy CSS still pins keeper to centre');
 assert(game.includes('state.phase !== "palace-run" || state.pendingDive'), 'Dive must be gated until whistle');
 assert(game.includes('shuffleKeeperOnLine(eventStagePoint(event));'), 'Mouse hover does not steer keeper');

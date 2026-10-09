@@ -1,4 +1,4 @@
-# Albion Fan Hub — r86 (9 October 2026)
+# Albion Fan Hub — r89 (9 October 2026)
 
 Independent Brighton & Hove Albion supporter website. Not affiliated with or endorsed by the club.
 
@@ -13,11 +13,11 @@ Independent Brighton & Hove Albion supporter website. Not affiliated with or end
 
 ## Current release
 
-r86 further fixes mobile goalkeeper placement: both boots are anchored just behind the painted goal line, using SVG width measured safely on mobile WebKit. r85 refines the penalty goalkeeper's sizing, movement and gloves, reduces exaggerated ball movement on mobile, improves pre-whistle reactions, and protects against stale penalty outcomes after a restart.
+r89 merges the active CSS overrides, preserves calibrated penalty/goal geometry, makes pre-whistle keeper shuffling responsive to rotation, and enables directional keyboard saves after the whistle only. It prevents stale weather responses replacing an away-match display. Manual football data now displays explicit age warnings and official verification links.
 
-It also fixes incorrect home-match weather handling, defaults the fixture month selector to the current month, includes kick-off times in downloadable calendars, and validates quiz question options.
+Automated smoke checks and Chromium browser tests cover the tour, squad tabs, results by month and goalkeeper line geometry. Real iPhone Safari, complete game/audio and device-specific physics still require manual verification.
 
-**Football information is maintained in** `albion-data-r78.js` **and is not automatically retrieved live.** The site displays a last-checked label; verify results and future kick-off dates against the official club website. The fixture carousel and countdown can advance within the data already provided.
+**Football information in `albion-data-r78.js` is manually maintained and is not live.** Check official fixtures and squad lists before relying on results.
 
 ## Files
 
@@ -25,14 +25,13 @@ It also fixes incorrect home-match weather handling, defaults the fixture month 
 - `albion-data-r78.js` — squad, fixtures, penalty takers
 - `app-r77.js` — fixtures, squad, quiz, search, guides and other site logic
 - `shootout-r82.js` — penalty game physics, keyboard/touch handling, scoring and animations
-- `site-r76.css` and `site-r77.css`–`site-r83.css` — current stylesheets and responsive fixes
+- `site-r76.css` and `site-current.css` — current baseline and consolidated responsive overrides; historical releases retained
+- `site-reliability.js` — manual-data freshness warning and official verification links
 
 File basenames retain historical release names. The current delivered bundle is identified as r86 by the HTML release metadata and cache-query strings.
 
 ## Tests and publishing
 
-Run `node tests/smoke.cjs` to validate local asset links, JavaScript syntax, quiz options, current fixture records, monthly results and core penalty safeguards. GitHub Actions runs this check on changes to the main branch and pull requests.
-
-These are source-level checks, **not** a substitute for manual game testing in real desktop/mobile browsers. For a publish check, confirm the latest commit on `main`, the GitHub Pages deployment status in repository Settings, and the game behaviour on desktop, mobile portrait and landscape. GitHub Pages may have a brief deploy/cache delay.
+Run `npm test` for syntax, game safeguards, monthly results and football-record checks. Run `npm run test:browser` with Playwright/Chromium installed for desktop and simulated phone-size browser tests. Both run in GitHub Actions; CI retains browser traces when checks fail.
 
 The live URL is https://rdf32rdf32.github.io/Brighton/.
