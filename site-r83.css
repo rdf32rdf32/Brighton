@@ -229,3 +229,57 @@
 .user-reduce-motion .shootout-v17 .goal-mouth.net-hit-right .goal-side-right {
   animation:none!important;
 }
+
+
+/* r85: keeper, frame, camera and mobile interaction finishing layer. */
+.shootout-v17 .keeper-figure {
+  backface-visibility:hidden;
+  transform-style:flat;
+  will-change:transform;
+}
+.shootout-v17 .keeper-figure .keeper-glove .glove-palm,
+.shootout-v17 .keeper-figure .keeper-glove .glove-pad {
+  stroke-linejoin:round;
+  stroke-linecap:round;
+}
+.shootout-v17 .keeper-figure .keeper-glove .glove-pad {
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.22));
+}
+.shootout-v17 .goal-depth { pointer-events:none; }
+.shootout-v17 .goal-net-svg .goal-side-net,
+.shootout-v17 .goal-net-svg .goal-roof-net,
+.shootout-v17 .goal-net-svg .goal-back-net {
+  vector-effect:non-scaling-stroke;
+}
+.shootout-v17 .penalty-stage {
+  contain:layout style;
+}
+.shootout-v17 .penalty-stage .keeper-choice-marker,
+.shootout-v17 .penalty-stage .save-impact,
+.shootout-v17 .penalty-stage .reaction-cue {
+  pointer-events:none;
+}
+.shootout-v17 .stadium-mini-score { font-variant-numeric:tabular-nums; }
+.shootout-v17 .shootout-scoreboard b { font-variant-numeric:tabular-nums; }
+.shootout-v17 .penalty-stage:focus-visible { outline-offset:2px; }
+.shootout-v17 .penalty-stage[data-aim-risk="miss"] .aim-risk-label {
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
+}
+@media (min-width:761px) and (max-width:900px) {
+  .shootout-v17 { --r82-keeper-width:9.8%; --r82-ref-width:5.1%; }
+  .shootout-v17 .goal-mouth { perspective:1100px!important; }
+}
+@media (max-width:760px) {
+  .shootout-v17 .referee-figure { min-width:30px!important; }
+  .shootout-v17 .penalty-stage { touch-action:none; overscroll-behavior:contain; }
+}
+@media (max-height:520px) and (orientation:landscape) and (pointer:coarse) {
+  .shootout-v17 .pre-whistle-controls {
+    bottom:1.8%; max-width: min(560px,88vw);
+  }
+  .shootout-v17 .pre-whistle-controls button { min-height:42px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .shootout-v17 .stadium-backdrop,
+  .shootout-v17 .pitch-stripes { transition:none!important; }
+}
