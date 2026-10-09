@@ -168,3 +168,64 @@
     animation:none!important;
   }
 }
+
+
+/* r84: compact results by month, readable focus states and calm responsive penalty UI. */
+.results-month-controls {
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:10px 18px; margin:12px 0 14px;
+}
+.results-month-controls p { margin:0; color:var(--muted,#5d6e82); font-size:.92rem; }
+.results-month-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.results-month-actions button { min-height:38px; padding:7px 12px; }
+.results-month-list { display:grid; gap:12px; }
+.result-month {
+  border:1px solid var(--line,#d9e5f2);
+  border-radius:15px; background:var(--white,#fff); overflow:hidden;
+  box-shadow:0 3px 12px rgba(5,55,107,.045);
+}
+.result-month > summary {
+  cursor:pointer; display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:15px 18px; font-size:1rem; font-weight:800;
+  color:var(--deep,#05376b); list-style-position:inside; touch-action:manipulation;
+}
+.result-month > summary:hover { background:rgba(0,87,184,.045); }
+.result-month > summary::marker { color:var(--blue,#0057b8); }
+.result-month > summary::-webkit-details-marker { color:var(--blue,#0057b8); }
+.result-month[open] > summary { background:rgba(0,87,184,.055); border-bottom:1px solid var(--line,#d9e5f2); }
+.result-month-count { margin-left:auto; font-weight:650; font-size:.88rem; color:var(--muted,#5d6e82); white-space:nowrap; }
+.result-month-games { display:grid; gap:10px; padding:12px; }
+.result-month-games .result-card { margin:0; }
+.result-month > summary:focus-visible, .results-month-actions button:focus-visible,
+.shootout-v17 .pre-whistle-controls button:focus-visible {
+  outline:3px solid #ffcd42; outline-offset:2px;
+}
+.shootout-v17 .pre-whistle-controls button {
+  touch-action:manipulation; transition:background-color .16s ease,box-shadow .16s ease;
+}
+.shootout-v17 .pre-whistle-controls button:focus-visible { position:relative; z-index:2; }
+.shootout-v17 .goal-net-svg .goal-back-net {
+  stroke-linejoin:round; vector-effect:non-scaling-stroke;
+}
+.shootout-v17 .keeper-glove {
+  filter:drop-shadow(0 1px 1.2px rgba(0,0,0,.25));
+}
+@media (max-width:650px) {
+  .results-month-controls { align-items:stretch; }
+  .results-month-actions { width:100%; }
+  .results-month-actions button { flex:1 1 130px; }
+  .result-month > summary { padding:13px 12px; }
+  .result-month-games { padding:8px; gap:8px; }
+  .shootout-v17 .pre-whistle-controls { bottom:2.3%; }
+  .shootout-v17 .pre-whistle-controls button { min-height:50px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .shootout-v17 .pre-whistle-controls button { transition:none; }
+}
+.user-reduce-motion .shootout-v17 .penalty-stage.camera-contact,
+.user-reduce-motion .shootout-v17 .penalty-stage.camera-replay,
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit .goal-back-net,
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit-left .goal-side-left,
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit-right .goal-side-right {
+  animation:none!important;
+}
