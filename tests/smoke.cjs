@@ -73,7 +73,7 @@ const geometryEnd = game.indexOf('  function resetCrowd()', geometryStart);
 assert(geometryStart >= 0 && geometryEnd > geometryStart, 'Keeper positioning helpers missing');
 const geometrySource = game.slice(geometryStart, geometryEnd);
 function checkKeeperLine({ stageHeight, stageWidth, keeperWidth, mobile, cssWidth }) {
-  const style = {};
+  const style = { setProperty(key, value) { this[key] = value; } };
   const stageStyle = {};
   const keeperNode = {
     style,
@@ -101,6 +101,12 @@ function checkKeeperLine({ stageHeight, stageWidth, keeperWidth, mobile, cssWidt
     'Keeper boots are not on/behind painted goal line');
   assert.equal(style.left, '50%');
   assert.equal(style.transform, 'translateX(-50%)');
+  const topOnLine = style.top;
+  style.left = '54%';
+  helpers.positionKeeperOnLine(true);
+  assert.equal(style.left, '54%', 'Keeper lateral shuffle was reset');
+  assert.equal(style.top, topOnLine, 'Keeper shuffle changed his goal-line depth');
+  assert.equal(style['--keeper-lateral-position'], '54%', 'CSS keeper lateral variable not updated');
   return inset;
 }
 checkKeeperLine({stageHeight:480,stageWidth:390,keeperWidth:64,mobile:true});
@@ -108,6 +114,7 @@ checkKeeperLine({stageHeight:320,stageWidth:736,keeperWidth:70,mobile:true});
 checkKeeperLine({stageHeight:560,stageWidth:1050,keeperWidth:94,mobile:false});
 // Keeper control regressions: mouse hover shuffles; dives require a whistle.
 assert(game.includes('function shuffleKeeperOnLine(point)'), 'Pre-whistle shuffle controller missing');
+assert(styles.includes('left:var(--keeper-lateral-position,50%)!important'), 'Legacy CSS still pins keeper to centre');
 assert(game.includes('state.phase !== "palace-run" || state.pendingDive'), 'Dive must be gated until whistle');
 assert(game.includes('shuffleKeeperOnLine(eventStagePoint(event));'), 'Mouse hover does not steer keeper');
 assert(game.includes('queueEarlyDive(target, "mouse-direction")'), 'Mouse direction must dive during run-up');
