@@ -1,4 +1,4 @@
-// Albion Fan Hub r82 penalty game — full scene realism, camera, physics and referee pass
+// Albion Fan Hub r87 penalty game — goal-line shuffling and post-whistle mouse saves
 (() => {
   "use strict";
 
@@ -86,31 +86,10 @@
   const preWhistleControls = document.createElement("div");
   preWhistleControls.className = "pre-whistle-controls";
   preWhistleControls.hidden = true;
-  preWhistleControls.setAttribute("aria-label", "Pre-whistle goalkeeper choice");
-  preWhistleControls.innerHTML = `
-    <span>GAMBLE BEFORE THE WHISTLE?</span>
-    <button type="button" data-early-dive="left">DIVE LEFT</button>
-    <button type="button" data-early-dive="wait">WAIT</button>
-    <button type="button" data-early-dive="right">DIVE RIGHT</button>
-  `;
+  preWhistleControls.setAttribute("aria-label", "Pre-whistle goalkeeper movement");
+  preWhistleControls.style.pointerEvents = "none";
+  preWhistleControls.innerHTML = `<span>MOVE MOUSE TO SHUFFLE · DIVES ONLY AFTER THE WHISTLE</span>`;
   stage.appendChild(preWhistleControls);
-  preWhistleControls.addEventListener("pointerdown", (event) => event.stopPropagation());
-  preWhistleControls.addEventListener("pointerup", (event) => event.stopPropagation());
-  preWhistleControls.addEventListener("click", (event) => {
-    const action = event.target.closest("[data-early-dive]")?.dataset.earlyDive;
-    if (!action || state.phase !== "palace-prewhistle") return;
-    event.preventDefault();
-    event.stopPropagation();
-    if (action === "wait") {
-      preWhistleControls.hidden = true;
-      $("stageInstruction").textContent = "Waiting for the whistle";
-      setStatus("Holding your nerve", "Stay central and read the run-up after the whistle.");
-      return;
-    }
-    const point = { x: action === "left" ? .16 : .84, y: .55 };
-    queueEarlyDive(point, action === "left" ? "pre-whistle-left" : "pre-whistle-right");
-    preWhistleControls.hidden = true;
-  });
 
   // The save prompt belongs inside the playing scene.
   if (readyPanel && readyPanel.parentElement !== stage) stage.appendChild(readyPanel);
@@ -803,7 +782,7 @@
     return { width, height: width * (250 / 180) };
   }
 
-  function positionKeeperOnLine() {
+  function positionKeeperOnLine(keepLateral = false) {
     if (!stage.clientHeight) return;
     syncGoalBox();
     const dimensions = keeperDimensions();
@@ -816,11 +795,24 @@
       ? Math.min(9, Math.max(5, stage.clientHeight * .012))
       : 0;
     const top = goalLineY - dimensions.height * keeperBootRatio - lineInset;
-    keeper.style.left = "50%";
+    keeper.style.left = keepLateral && keeper.style.left ? keeper.style.left : "50%";
     keeper.style.top = `${top}px`;
     keeper.style.transform = "translateX(-50%)";
     stage.style.setProperty("--keeper-line-y", `${goalLineY}px`);
     stage.style.setProperty("--keeper-boot-line-inset", `${lineInset}px`);
+  }
+
+  // Mouse and touch movement before the whistle can move the keeper sideways,
+  // but cannot invoke a dive. His feet retain the same goal-line anchor.
+  function shuffleKeeperOnLine(point) {
+    if (state.phase !== "palace-prewhistle" || state.userDive || state.pendingDive) return;
+    positionKeeperOnLine(true);
+    const width = Math.max(1, stage.clientWidth);
+    const available = Math.max(0, (goalBox.width * width - keeperDimensions().width * 1.1) / 2);
+    const travel = Math.min(available, goalBox.width * width * (mobilePenaltyLayout() ? .19 : .23));
+    const offset = (clamp(point.x, 0, 1) - .5) * travel * 2;
+    keeper.style.transition = reducedMotion() ? "none" : "left 115ms ease-out";
+    keeper.style.left = `${(50 + offset / width * 100).toFixed(3)}%`;
   }
 
   function resetCrowd() {
@@ -1721,7 +1713,8 @@
   }
 
   function animateKeeperBlock(point, duration = 760) {
-    positionKeeperOnLine();
+    positionKeeperOnLine(true);
+    keeper.style.transition = "none";
     const targetHigh = point.y < .43;
     const targetLow = point.y > .66;
     const sideBias = clamp((point.x - .5) * 8, -3, 3);
@@ -1771,7 +1764,8 @@
   function animateKeeperDive(point, duration = 840, saved = false) {
     const direction = point.x < .41 ? -1 : point.x > .59 ? 1 : 0;
     if (!direction) return animateKeeperBlock(point, duration);
-    positionKeeperOnLine();
+    positionKeeperOnLine(true);
+    keeper.style.transition = "none";
 
     const stageWidth = stage.clientWidth;
     const stageHeight = stage.clientHeight;
@@ -1788,7 +1782,7 @@
     // Aim the leading glove at the chosen point, then let the body follow it.
     const gloveXRatio = direction < 0 ? 31 / 180 : 149 / 180;
     const gloveYRatio = 124 / 250;
-    const baseCentreX = stageWidth * .5;
+    const baseCentreX = stageWidth * (Number.parseFloat(keeper.style.left) || 50) / 100;
     const baseGloveX = baseCentreX + (gloveXRatio - .5) * keeperWidth;
     const baseGloveY = baseTop + gloveYRatio * keeperHeight;
     const goalLeft = goalBox.left * stageWidth;
@@ -2798,7 +2792,7 @@
     readyPanel.hidden = true;
     $("keyboardHint")?.setAttribute("hidden", "");
     $("stageInstruction").textContent = "Referee checks the penalty";
-    setStatus("You are Verbruggen", "Get set. A clear pre-whistle gamble option appears before the kick.");
+    setStatus("You are Verbruggen", "Move to shuffle on the goal line before the whistle. Dive only after the whistle.");
     reticle.hidden = true;
     state.phase = "palace-prep";
     state.locked = true;
@@ -2808,6 +2802,7 @@
     state.pointerLast = null;
     state.activePointerId = null;
     state.pendingDive = null;
+    state.mouseSaveAnchor = null;
     delete stage.dataset.earlyCommit;
     if (keeperChoiceMarker) keeperChoiceMarker.hidden = true;
     stage.removeAttribute("data-save-choice");
@@ -2829,25 +2824,25 @@
     stage.classList.remove("is-locked");
     stage.classList.add("pre-whistle-save-window");
     preWhistleControls.hidden = false;
-    $("stageInstruction").textContent = "Dive now — or wait for the whistle";
-    setStatus("Pre-whistle choice", "Gamble left or right now, or wait and react to the run-up.");
+    $("stageInstruction").textContent = "Move mouse to shuffle — no diving before whistle";
+    setStatus("Stay on the line", "Move the mouse left or right to shuffle. You can dive only after the referee whistles.");
     // Accessibility: reduced-motion users get the same decision time, not less.
     await sleep(1900);
     if (token !== state.sequence) return;
     preWhistleControls.hidden = true;
     stage.classList.remove("pre-whistle-save-window");
 
+    state.phase = "palace-run"; // Diving unlocks exactly when the whistle sounds.
     sound("whistle");
     await sleep(reducedMotion() ? 70 : 180);
     if (token !== state.sequence) return;
 
     const settings = config();
     const runDuration = Math.round(player.delay * settings.runUpScale);
-    state.phase = "palace-run";
     const runProfile = state.pendingRunProfile || chooseRunUpProfile(player.foot, player.style || "direct");
     setApproachLabel(player.foot, runProfile);
     setStatus("Palace begin the run-up",`${runUpLabel(player.foot,runProfile)}. ${runUpClue(state.palaceTarget,player,player.foot,runProfile)}`);
-    animateKeeperSetStep(state.palaceTarget,player,runProfile);
+    if (!state.pendingDive) animateKeeperSetStep(state.palaceTarget,player,runProfile);
     const run = animateRunUp(true, player.foot, state.palaceTarget, player.style || "direct", runProfile);
     const actualRun = Math.max(runDuration, run.duration);
     const waitBeforeWindow = Math.max(80, actualRun - settings.preContactWindow);
@@ -3016,14 +3011,14 @@
     if (body) body.style.transform = `translate(${lean * .22}px,${crouch}px) rotate(${lean * .12}deg)`;
   }
 
-  function queueEarlyDive(point, source = "early-gamble") {
-    if (!["palace-prewhistle", "palace-run"].includes(state.phase) || state.pendingDive || state.userDive) return;
+  function queueEarlyDive(point, source = "after-whistle") {
+    if (state.phase !== "palace-run" || state.pendingDive || state.userDive) return;
     const assisted = assistedDivePoint(point);
     state.pendingDive = { point: { ...point }, source, at: performance.now() };
     showKeeperChoice(point, "early");
     stage.dataset.earlyCommit = "true";
     $("stageInstruction").textContent = "Early gamble committed";
-    setStatus("Early gamble", "You have committed before contact. Correct side can help; the wrong side leaves the goal exposed.");
+    setStatus("After-whistle dive", "Your movement committed Verbruggen during the run-up.");
     const duration = Math.max(610, config().flight * .92);
     const centralAction = Math.abs(assisted.x - .5) < .19;
     if (centralAction) animateKeeperBlock(assisted, duration);
@@ -3174,6 +3169,7 @@
       pointerLast: null,
       activePointerId: null,
       pendingDive: null,
+      mouseSaveAnchor: null,
       aimPointerActive: false,
     takerPose: "relaxed",
       aimDragMoved: false,
@@ -3271,22 +3267,48 @@
   });
 
   stage.addEventListener("pointermove", (event) => {
-    const keeperPreparing = state.phase === "palace-prewhistle" || state.phase === "palace-run";
-    if (state.phase !== "albion-aim" && state.phase !== "save" && !keeperPreparing) return;
+    const beforeWhistle = state.phase === "palace-prewhistle";
+    const afterWhistle = state.phase === "palace-run";
+    const saving = state.phase === "save";
+    if (state.phase !== "albion-aim" && !saving && !beforeWhistle && !afterWhistle) return;
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
-    const point = eventGoalPoint(event, touchLike ? AIM_MARGIN : AIM_MARGIN);
-
+    const point = eventGoalPoint(event, AIM_MARGIN);
     if (state.phase === "albion-aim") {
       if (!point.inside && !state.aimPointerActive) return;
       if (state.aimPointerActive || event.pointerType === "mouse") {
-        const aimPoint = aimPointForPointer(point, touchLike);
-        setReticle(aimPoint.x, aimPoint.y);
+        setReticle(...Object.values(aimPointForPointer(point, touchLike)).slice(0,2));
         if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
         if (state.aimPointerActive) event.preventDefault();
       }
       return;
     }
-
+    // Hover is enough to shuffle, but ONLY sideways and ONLY before whistle.
+    if (beforeWhistle) {
+      shuffleKeeperOnLine(eventStagePoint(event));
+      if (event.pointerType === "mouse") state.mouseSaveAnchor = { clientX: event.clientX, clientY: event.clientY };
+      return;
+    }
+    // After the whistle a deliberate mouse move (no click necessary) makes the
+    // keeper dive towards the direction of travel; tiny movements are ignored.
+    if (event.pointerType === "mouse" && !state.pendingDive && !state.userDive &&
+        (afterWhistle || (saving && state.reactionOpen))) {
+      if (!state.mouseSaveAnchor) state.mouseSaveAnchor = { clientX: event.clientX, clientY: event.clientY };
+      else {
+        const dx = event.clientX - state.mouseSaveAnchor.clientX;
+        const dy = event.clientY - state.mouseSaveAnchor.clientY;
+        const threshold = Math.max(16, stage.clientWidth * .018);
+        if (Math.hypot(dx, dy) >= threshold) {
+          const target = {
+            x: clamp(.5 + Math.sign(dx) * Math.max(.24, Math.abs(dx) / Math.max(1, stage.clientWidth) * 2.6), .07, .93),
+            y: clamp(.55 + dy / Math.max(1, stage.clientHeight) * 1.25, .13, .88)
+          };
+          if (afterWhistle) queueEarlyDive(target, "mouse-direction");
+          else takeUserDive(target, "mouse-direction");
+          clearPointerTracking();
+          return;
+        }
+      }
+    }
     if (!state.pointerStart) return;
     const nowPoint = { clientX: event.clientX, clientY: event.clientY, time: performance.now() };
     const distance = pointerDistance(state.pointerStart, nowPoint);
@@ -3294,19 +3316,17 @@
     const mappedPoint = touchLike ? swipeGoalPoint(state.pointerStart, nowPoint, mobileTapGoalPoint(event)) : mobileTapGoalPoint(event);
     state.pointerLast = nowPoint;
     if (touchLike) showSwipeTrail(state.pointerStart, nowPoint);
-    previewKeeper(mappedPoint);
-
-    if (keeperPreparing) {
+    if (saving) previewKeeper(mappedPoint);
+    if (afterWhistle) {
       event.preventDefault();
       const threshold = touchLike ? Math.max(18, stage.clientWidth * .035) : Math.max(10, stage.clientWidth * .018);
       if (distance >= threshold && !state.pendingDive) {
-        queueEarlyDive(mappedPoint, touchLike ? "early-swipe" : "early-mouse-flick");
+        queueEarlyDive(mappedPoint, touchLike ? "post-whistle-swipe" : "post-whistle-flick");
         clearPointerTracking(touchLike ? 180 : 0);
       }
       return;
     }
-
-    if (state.phase !== "save" || !state.reactionOpen || state.userDive) return;
+    if (!saving || !state.reactionOpen || state.userDive) return;
     const threshold = touchLike ? Math.max(18, stage.clientWidth * .035) : Math.max(10, stage.clientWidth * .018);
     if (distance >= threshold) {
       event.preventDefault();
@@ -3322,14 +3342,22 @@
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
     const point = eventGoalPoint(event, touchLike ? AIM_MARGIN : AIM_MARGIN);
     const savingPhase = state.phase === "save";
+    if (state.phase === "palace-prewhistle") {
+      if (touchLike) {
+        event.preventDefault();
+        beginPointerTracking(event);
+        shuffleKeeperOnLine(eventStagePoint(event));
+      }
+      return; // Before whistle: no button can dive.
+    }
     if (state.phase === "albion-aim" && !point.inside) return;
     if (!savingPhase && state.phase !== "albion-aim") {
-      if (state.phase === "palace-prewhistle" || state.phase === "palace-run") {
+      if (state.phase === "palace-run") {
         event.preventDefault();
         beginPointerTracking(event);
         const earlyPoint = mobileTapGoalPoint(event);
-        $("stageInstruction").textContent = state.phase === "palace-prep" ? "Gamble now — or wait for the whistle" : "Wait — or gamble early";
-        setStatus("Read the taker", state.phase === "palace-prep" ? "Click a side now to gamble before the whistle, or wait." : "Wait for React now, or deliberately flick/click to commit early.");
+        $("stageInstruction").textContent = "Whistle sounded — move, swipe or click to dive";
+        setStatus("Read the taker", "Move, click or swipe to make a save after the whistle.");
         if (!touchLike && !state.pendingDive && !isCentreSavePoint(earlyPoint)) {
           queueEarlyDive(earlyPoint, "early-click");
           clearPointerTracking();
@@ -3383,7 +3411,11 @@
       takeAlbionPenalty(shot);
       return;
     }
-    if (state.phase === "palace-prewhistle" || state.phase === "palace-run") {
+    if (state.phase === "palace-prewhistle") {
+      if (hadTracking) clearPointerTracking();
+      return; // A shuffle can never turn into a dive when released.
+    }
+    if (state.phase === "palace-run") {
       event.preventDefault();
       if (!state.pendingDive && hadTracking) {
         if (distance >= saveThreshold) queueEarlyDive(swipePoint, touchLike ? "early-swipe" : "early-mouse-flick");
@@ -3423,7 +3455,10 @@
     if (cancelledAim) $("stageInstruction").textContent = "Drag to aim, release to shoot";
   });
   stage.addEventListener("pointerleave", (event) => {
-    if (event.pointerType === "mouse" && state.phase !== "save" && !state.aimPointerActive) clearPointerTracking();
+    if (event.pointerType === "mouse" && state.phase !== "save" && !state.aimPointerActive) {
+      clearPointerTracking();
+      if (state.phase === "palace-prewhistle" || state.phase === "palace-run") state.mouseSaveAnchor = null;
+    }
   });
 
   // Fallback for older browsers without Pointer Events.
@@ -3464,10 +3499,12 @@
       const mapped = distance >= 18 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
       previewKeeper(mapped);
       if (distance >= 18) takeUserDive(mapped, "swipe");
-    } else if ((state.phase === "palace-prewhistle" || state.phase === "palace-run") && !state.pendingDive) {
+    } else if (state.phase === "palace-prewhistle") {
+      shuffleKeeperOnLine(eventStagePoint(touch));
+    } else if (state.phase === "palace-run" && !state.pendingDive) {
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
       const mapped = distance >= 18 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
-      if (distance >= 18) queueEarlyDive(mapped, "early-swipe");
+      if (distance >= 18) queueEarlyDive(mapped, "post-whistle-swipe");
     }
   }, { passive: false });
 
@@ -3496,9 +3533,11 @@
           $("stageInstruction").textContent = isCentreSavePoint(mapped) ? "Press and hold centre" : "Swipe further to commit";
           setStatus("No save committed", "Short uncertain movement is ignored.");
         }
-      } else if ((state.phase === "palace-prewhistle" || state.phase === "palace-run") && !state.pendingDive) {
-        if (distance >= 18) queueEarlyDive(mapped, "early-swipe");
-        else if (!isCentreSavePoint(mapped) && distance < 8) queueEarlyDive(mapped, "early-tap");
+      } else if (state.phase === "palace-prewhistle") {
+        shuffleKeeperOnLine(eventStagePoint(touch));
+      } else if (state.phase === "palace-run" && !state.pendingDive) {
+        if (distance >= 18) queueEarlyDive(mapped, "post-whistle-swipe");
+        else if (!isCentreSavePoint(mapped) && distance < 8) queueEarlyDive(mapped, "post-whistle-tap");
         else {
           $("stageInstruction").textContent = "Holding centre — wait for the whistle";
           setStatus("Holding position", "No early commitment. You can still react later.");
@@ -3513,11 +3552,15 @@
   stage.addEventListener("keydown", (event) => {
     const step = event.shiftKey ? 0.06 : 0.025;
     let handled = true;
-    if (event.key === "ArrowLeft") setReticle(state.aim.x - step, state.aim.y);
+    if (state.phase === "palace-prewhistle" && (event.key === "ArrowLeft" || event.key === "ArrowRight")) {
+      const current = ((Number.parseFloat(keeper.style.left) || 50) / 100 - .5) / Math.max(.001, goalBox.width * .46) / 2 + .5;
+      shuffleKeeperOnLine({ x: clamp(current + (event.key === "ArrowLeft" ? -.08 : .08), 0, 1) });
+    }
+    else if (event.key === "ArrowLeft") setReticle(state.aim.x - step, state.aim.y);
     else if (event.key === "ArrowRight") setReticle(state.aim.x + step, state.aim.y);
     else if (event.key === "ArrowUp") setReticle(state.aim.x, state.aim.y - step);
     else if (event.key === "ArrowDown") setReticle(state.aim.x, state.aim.y + step);
-    else if (["save","palace-prewhistle","palace-run"].includes(state.phase) && ["1","2","3","4","5","6","7","8","9"].includes(event.key)) {
+    else if (["save","palace-run"].includes(state.phase) && ["1","2","3","4","5","6","7","8","9"].includes(event.key)) {
       const n=Number(event.key)-1, col=n%3, row=2-Math.floor(n/3);
       const point={x:[.17,.5,.83][col],y:[.18,.5,.82][row]};
       if (state.phase === "save") takeUserDive(point,"keyboard-zone");
@@ -3630,7 +3673,7 @@
 
   const resizeObserver = typeof ResizeObserver === "function"
     ? new ResizeObserver(() => {
-        if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine();
+        if (!state.phase.includes("run") && state.phase !== "save" && state.phase !== "palace-prewhistle") positionKeeperOnLine();
       })
     : null;
   resizeObserver?.observe(stage);
@@ -3640,7 +3683,7 @@
     resizeTimer = window.setTimeout(() => {
       syncGoalBox();
       setReticle(state.aim.x, state.aim.y);
-      if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine();
+      if (!state.phase.includes("run") && state.phase !== "save" && state.phase !== "palace-prewhistle") positionKeeperOnLine();
     }, 90);
   };
   window.addEventListener("resize", resyncStage, { passive: true });
