@@ -1,141 +1,31 @@
 <!doctype html>
-<html lang="en-GB">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#0057a8" />
-    <title>Albion Fan Hub maintenance dashboard</title>
-    <link rel="icon" href="favicon.svg" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body class="editor-page">
-    <a class="skip-link" href="#editorMain">Skip to editor</a>
-    <header class="editor-hero">
-      <a class="brand" href="index.html"
-        ><img src="albion-safe-graphic.svg" alt="" /><span
-          >Albion Fan Hub</span
-        ></a
-      >
-      <div>
-        <p class="eyebrow">Local maintenance tool</p>
-        <h1>Site maintenance dashboard</h1>
-        <p>
-          Update the central content file without editing JavaScript by hand.
-          Nothing is uploaded automatically.
-        </p>
-      </div>
-    </header>
-    <main id="editorMain" class="editor-main">
-      <aside class="editor-warning">
-        <b>Safe workflow</b>
-        <p>
-          Make changes, run validation, then download
-          <code>content-data.js</code> and replace that one file in the GitHub
-          repository.
-        </p>
-      </aside>
-
-      <section class="card editor-section">
-        <div class="section-head">
-          <p class="eyebrow">Next match</p>
-          <h2>Fixture spotlight</h2>
-        </div>
-        <div class="editor-grid">
-          <label>Opponent<input id="editOpponent" /></label>
-          <label>Long date<input id="editDateLong" /></label>
-          <label>Short date<input id="editDateShort" /></label>
-          <label>Kick-off<input id="editTime" type="time" /></label>
-          <label>Venue<input id="editVenue" /></label>
-          <label
-            >ISO date and time<input
-              id="editDateISO"
-              placeholder="2026-08-23T14:00:00+01:00"
-          /></label>
-        </div>
-      </section>
-
-      <section class="card editor-section">
-        <div class="section-head">
-          <p class="eyebrow">Season database</p>
-          <h2>Progress and results</h2>
-        </div>
-        <div class="editor-grid compact">
-          <label>Season<input id="editSeason" /></label>
-          <label>Status<input id="editSeasonStatus" /></label>
-          <label
-            >Position<input id="editPosition" type="number" min="1" max="20"
-          /></label>
-          <label>Played<input id="editPlayed" type="number" min="0" /></label>
-          <label>Won<input id="editWon" type="number" min="0" /></label>
-          <label>Drawn<input id="editDrawn" type="number" min="0" /></label>
-          <label>Lost<input id="editLost" type="number" min="0" /></label>
-          <label
-            >Goals for<input id="editGoalsFor" type="number" min="0"
-          /></label>
-          <label
-            >Goals against<input id="editGoalsAgainst" type="number" min="0"
-          /></label>
-          <label>Points<input id="editPoints" type="number" min="0" /></label>
-        </div>
-        <label class="editor-wide"
-          >Results, one per line:
-          <code>date | opponent | H/A | Albion score-opponent score</code>
-          <textarea id="editResults" rows="7"></textarea>
-        </label>
-      </section>
-
-      <section class="card editor-section">
-        <div class="section-head">
-          <p class="eyebrow">Season schedule and squad</p>
-          <h2>Bulk editing</h2>
-        </div>
-        <div class="editor-columns">
-          <label
-            >Fixtures, one per line:
-            <code>date | H/A | opponent</code>
-            <textarea id="editFixtures" rows="18"></textarea>
-          </label>
-          <label
-            >Squad, one per line:
-            <code>position | player</code>
-            <textarea id="editSquad" rows="18"></textarea>
-          </label>
-        </div>
-      </section>
-
-      <section class="card editor-section">
-        <div class="section-head">
-          <p class="eyebrow">Accuracy</p>
-          <h2>Checked dates</h2>
-        </div>
-        <div class="editor-grid">
-          <label>Overall<input id="editLastUpdated" /></label>
-          <label>Fixtures<input id="editFreshFixtures" /></label>
-          <label>Squad<input id="editFreshSquad" /></label>
-          <label>Travel<input id="editFreshTravel" /></label>
-          <label>History<input id="editFreshHistory" /></label>
-        </div>
-      </section>
-
-      <section class="card editor-actions">
-        <div>
-          <h2>Validate and download</h2>
-          <p id="editorStatus" role="status">
-            Load complete. No changes have been downloaded.
-          </p>
-        </div>
-        <div class="button-row">
-          <button id="validateContent" type="button">Run validation</button>
-          <button id="downloadContent" type="button">
-            Download content-data.js
-          </button>
-          <a class="button-link secondary" href="index.html"
-            >Return to fan hub</a
-          >
-        </div>
-      </section>
-    </main>
-    <script src="content-data.js"></script>
-    <script src="editor.js"></script>
-  </body>
-</html>
+<html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Albion Fan Hub — active data editor</title><link rel="icon" href="favicon.svg">
+<style>
+:root{font:16px/1.5 system-ui,Arial,sans-serif;color:#142943;background:#eef5ff}
+body{margin:0}header{background:#05376b;color:white;padding:24px max(16px,calc((100vw - 1120px)/2))}header a{color:white}
+main{max-width:1120px;margin:auto;padding:20px}section{margin:18px 0;background:white;padding:22px;border-radius:14px}
+label{display:inline-flex;gap:8px;align-items:center;margin:8px 20px 8px 0}
+input,select,button{font:inherit;border-radius:5px;padding:6px;border:1px solid #779}
+input[type=number]{width:64px}input[data-field=opponent]{min-width:160px}
+button{min-height:44px;background:#0057b8;color:white;cursor:pointer;padding:8px 15px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid #dce2ec;text-align:left}
+[role=status]{font-weight:bold;white-space:pre-wrap}.muted{color:#425872}.skip{position:absolute;left:-999px}.skip:focus{left:10px;top:10px;background:white;color:#000}
+</style></head><body>
+<a href="#main" class="skip">Skip to editor</a>
+<header><a href="./">← Albion Fan Hub</a><h1>Football information editor</h1><p>This editor exports the <strong>active live-site data file</strong>; changes are not uploaded automatically.</p></header>
+<main id="main"><section><h2>Independent verification dates</h2>
+<label>Fixtures checked <input id="checkedISO" type="date"></label>
+<label>Squad checked <input id="squadCheckedISO" type="date"></label>
+<p class="muted">Only change a review date after independently checking the relevant information. The squad was last checked separately from the Sunderland result.</p></section>
+<section><h2>Results and fixtures</h2>
+<p>Scores are from Brighton's perspective: Albion goals, then opponent goals. For an unplayed game, leave both empty.</p>
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Opponent</th><th>Home/Away</th><th>UK kick-off</th><th>Albion</th><th>Opponent</th></tr></thead><tbody id="fixtureRows"></tbody></table></div></section>
+<section><h2>Current squad</h2><p class="muted">Retains player descriptions, eligibility and other existing metadata.</p>
+<div class="table-wrap"><table><thead><tr><th>Number</th><th>Name</th><th>Position</th><th>Active</th></tr></thead><tbody id="squadRows"></tbody></table></div></section>
+<section><h2>Publish verified changes</h2><p id="editorStatus" role="status" aria-live="polite">Loading…</p>
+<button type="button" id="validateContent">Validate</button>
+<button type="button" id="downloadContent">Download albion-data-r78.js</button>
+<p>Commit the downloaded <code>albion-data-r78.js</code> to GitHub, update its cache version in <code>index.html</code>, and confirm GitHub Actions pass.</p></section></main>
+<script defer src="albion-data-r78.js?v=20261010-r91"></script><script defer src="editor.js?v=20261010-r91"></script>
+</body></html>

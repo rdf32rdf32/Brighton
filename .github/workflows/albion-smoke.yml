@@ -4,9 +4,20 @@ on:
     branches: [main, audit-improvements-20261009]
   pull_request:
   workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * *" # daily freshness check; failures are visible in GitHub Actions
 permissions:
   contents: read
 jobs:
+  freshness:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node tests/data-freshness.cjs
   smoke:
     runs-on: ubuntu-latest
     steps:
