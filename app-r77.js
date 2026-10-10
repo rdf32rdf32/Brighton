@@ -4902,3 +4902,28 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     if (!flag.parentNode) node.appendChild(flag);
   });
 })();
+
+
+/* r90 restore section deep-link after layout and other scripts finish initialising. */
+(() => {
+  "use strict";
+  if (!window.location.hash) return;
+  const restoreFragment = () => {
+    if (!window.location.hash) return;
+    let id;
+    try { id = decodeURIComponent(window.location.hash.slice(1)); }
+    catch { id = window.location.hash.slice(1); }
+    const section = document.getElementById(id);
+    if (!section) return;
+    // Override site-wide smooth scrolling for restoration, not for user navigation.
+    const previous = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = "auto";
+    section.scrollIntoView({ behavior: "instant", block: "start" });
+    document.documentElement.style.scrollBehavior = previous;
+  };
+  if (document.readyState === "complete") {
+    requestAnimationFrame(restoreFragment);
+  } else {
+    window.addEventListener("load", () => requestAnimationFrame(() => requestAnimationFrame(restoreFragment)), { once: true });
+  }
+})();
