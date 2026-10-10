@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" aria-hidden="true">
+<defs><linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0057B8"/><stop offset="1" stop-color="#002F64"/></linearGradient></defs>
+<rect width="160" height="160" rx="24" fill="url(#blue)"/>
+<path d="M18 12v136M49 12v136M111 12v136M142 12v136" fill="none" stroke="#fff" stroke-width="6" opacity=".23"/>
+<rect x="11" y="34" width="138" height="92" rx="12" fill="#fff"/>
+<text x="80" y="94" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="73" font-weight="900" letter-spacing="-7" fill="#0057B8">125</text>
+<text x="80" y="116" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="12" font-weight="700" letter-spacing="2" fill="#002F64">YEARS</text>
+<text x="80" y="146" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="13" font-weight="700" letter-spacing="1.5" fill="#fff">1901—2026</text>
+</svg>

@@ -41,3 +41,6 @@ The live URL is https://rdf32rdf32.github.io/Brighton/.
 - `editor.html` now edits the **active** `albion-data-r78.js` for match results and player status, preserving other metadata. It downloads a replacement, but never uploads automatically.
 - The daily GitHub Actions freshness job fails when a past result is missing, fixture/result data have not been reviewed within eight days, or the squad has not been checked for over 30 days. GitHub notifications depend on your account settings.
 - Browser regression tests now include Sunderland 0–2, the new opponent, the maintenance editor's exported file, and settings. Real iPhone Safari, full gameplay, visual proportions and audio still require device testing.
+
+- Nine football penalty-rule unit scenarios cover early clinches, tied regulation, paired sudden-death kicks and both winning outcomes.
+- Active script and CSS assets have a regression performance budget of 1.15 MB, with a custom 125-year supporter mark replacing the generic graphic in the anniversary banner. This is an original supporter graphic, not an official club crest.

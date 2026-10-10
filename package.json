@@ -3,7 +3,7 @@
   "version": "1.91.0",
   "private": true,
   "scripts": {
-    "test": "node tests/smoke.cjs && node tests/content-audit.cjs",
+    "test": "node tests/smoke.cjs && node tests/content-audit.cjs && node tests/game-rules.cjs && node tests/performance.cjs",
     "test:browser": "playwright test"
   },
   "devDependencies": {
