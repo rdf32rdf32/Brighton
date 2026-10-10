@@ -1077,6 +1077,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   function initSettings() {
     const panel = byId("supporter-settings");
     const openButton = byId("settingsToggle");
+    const headerButton = byId("headerSettingsToggle");
     const closeButton = byId("closeSettings");
     if (!panel || !openButton || !closeButton || openButton.dataset.controlsBound === "true") return;
     openButton.dataset.controlsBound = "true";
@@ -1087,6 +1088,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       open = Boolean(nextOpen);
       document.body.classList.toggle("settings-open", open);
       openButton.setAttribute("aria-expanded", String(open));
+      headerButton?.setAttribute("aria-expanded", String(open));
       panel.setAttribute("aria-hidden", String(!open));
       panel.dataset.open = String(open);
       panel.removeAttribute("inert");
@@ -1102,6 +1104,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       event.stopPropagation();
       setOpen(!open);
     });
+    headerButton?.addEventListener("click", (event) => { event.preventDefault(); event.stopPropagation(); setOpen(!open); });
     closeButton.addEventListener("click", (event) => {
       event.preventDefault();
       setOpen(false);
@@ -1113,7 +1116,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       });
     });
     document.addEventListener("pointerdown", (event) => {
-      if (!open || panel.contains(event.target) || openButton.contains(event.target)) return;
+      if (!open || panel.contains(event.target) || openButton.contains(event.target) || headerButton?.contains(event.target)) return;
       setOpen(false, false);
     });
     document.addEventListener("keydown", (event) => {

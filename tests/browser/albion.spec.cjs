@@ -109,8 +109,8 @@ test('sound, monthly results and accessibility preferences respond',async({page}
   await expect(page.locator('#resultsList details.result-month[open]').first()).toBeAttached();
   await page.locator('#inlineSoundToggle').click();
   await expect(page.locator('#soundStatus')).not.toBeEmpty();
-  await page.locator('#floatingTools > summary').click();
-  await page.locator('#settingsToggle').click();
+  await page.locator('#headerSettingsToggle').click();
+  await expect(page.locator('#headerSettingsToggle')).toHaveAttribute('aria-expanded','true');
   await expect(page.locator('#supporter-settings')).toBeVisible();
   await page.locator('#largeTextSetting').check();
   await expect(page.locator('#largeTextSetting')).toBeChecked();
