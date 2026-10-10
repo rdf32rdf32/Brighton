@@ -1,4 +1,4 @@
-# Albion Fan Hub — r90 (10 October 2026)
+# Albion Fan Hub — r91 (10 October 2026)
 
 Independent Brighton & Hove Albion supporter website. Not affiliated with or endorsed by the club.
 
@@ -13,11 +13,11 @@ Independent Brighton & Hove Albion supporter website. Not affiliated with or end
 
 ## Current release
 
-r90 preserves deep-link fragments on reload, updates opponent briefing headings and verification notes with the active fixture, and clarifies that goalkeepers can shuffle but not dive before the whistle. New browser regression tests cover those changes. The preceding r89 release merged the active CSS overrides, preserves calibrated penalty/goal geometry, makes pre-whistle keeper shuffling responsive to rotation, and enables directional keyboard saves after the whistle only. It prevents stale weather responses replacing an away-match display. Manual football data now displays explicit age warnings and official verification links.
+r91 records Sunderland 0–2 Brighton (10 October), advances the next match to FK Kauno Žalgiris and separates fixture-data freshness from the older squad check. r90 preserves deep-link fragments on reload, updates opponent briefing headings and verification notes with the active fixture, and clarifies that goalkeepers can shuffle but not dive before the whistle. New browser regression tests cover those changes. The preceding r89 release merged the active CSS overrides, preserves calibrated penalty/goal geometry, makes pre-whistle keeper shuffling responsive to rotation, and enables directional keyboard saves after the whistle only. It prevents stale weather responses replacing an away-match display. Manual football data now displays explicit age warnings and official verification links.
 
 Automated smoke checks and Chromium browser tests cover the tour, squad tabs, results by month and goalkeeper line geometry. Real iPhone Safari, complete game/audio and device-specific physics still require manual verification.
 
-**Football information in `albion-data-r78.js` is manually maintained and is not live.** Check official fixtures and squad lists before relying on results.
+**Football information in `albion-data-r78.js` is manually maintained and is not live.** Sunderland result verified against published match reports; the rest of the fixture/squad list has NOT all been independently re-verified. Check official fixtures and squad lists before relying on results.
 
 ## Files
 

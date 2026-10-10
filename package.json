@@ -1,6 +1,6 @@
 {
   "name": "albion-fan-hub",
-  "version": "1.89.0",
+  "version": "1.91.0",
   "private": true,
   "scripts": {
     "test": "node tests/smoke.cjs && node tests/content-audit.cjs",

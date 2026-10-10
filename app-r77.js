@@ -1827,7 +1827,9 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
           const kickoff = fixtureTimestamp(fixture);
           const completed = Number.isFinite(kickoff) && kickoff + matchWindow <= now;
           const liveWindow = Number.isFinite(kickoff) && kickoff <= now && kickoff + matchWindow > now;
-          const result = fixture.result || (Number.isFinite(fixture.homeScore) && Number.isFinite(fixture.awayScore) ? `${fixture.homeScore}-${fixture.awayScore}` : "");
+          const result = Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)
+            ? (fixture.venue === "H" ? `${fixture.albionGoals}-${fixture.opponentGoals}` : `${fixture.opponentGoals}-${fixture.albionGoals}`)
+            : (fixture.result || (Number.isFinite(fixture.homeScore) && Number.isFinite(fixture.awayScore) ? `${fixture.homeScore}-${fixture.awayScore}` : ""));
           const statusLabel = result ? `Result ${result}` : liveWindow ? "MATCHDAY" : completed ? "RESULT PENDING" : fixture === nextFixture ? "NEXT FIXTURE" : "SCHEDULED";
           const statusClass = result ? "fixture-result" : liveWindow ? "fixture-live" : completed ? "fixture-completed" : fixture === nextFixture ? "fixture-next" : "";
           const index = C.fixtures.indexOf(fixture);
@@ -1876,7 +1878,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
       months
         .map(
           (month) =>
-            `<button type="button" data-month="${esc(month)}">${esc(month.split(" ")[0])}</button>`,
+            `<button type="button" data-month="${esc(month)}" aria-label="${esc(month)}">${esc(month.split(" ")[0])}${months.filter(item => item.split(" ")[0] === month.split(" ")[0]).length > 1 ? " " + esc(month.split(" ")[1]) : ""}</button>`,
         )
         .join("");
     $("monthButtons")

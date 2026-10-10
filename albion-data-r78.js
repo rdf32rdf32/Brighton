@@ -1,8 +1,9 @@
-// Shared active squad, fixture and shoot-out data for Albion Fan Hub r78.
+// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r91.
+// Sunderland 0–2 Albion verified 10 October 2026; squad still requires independent review.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r78",
-  "checked": "25 September 2026",
-  "checkedISO": "2026-09-25",
+  "version": "r91",
+  "checked": "10 October 2026",
+  "checkedISO": "2026-10-10",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -762,9 +763,15 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "15:00",
       "competition": "Premier League",
       "round": "Matchweek 6",
-      "status": "Confirmed fixture · 15:00 UK kick-off",
-      "note": "Albion travel to the Stadium of Light to face Sunderland in the Premier League.",
-      "venueName": "Stadium of Light"
+      "status": "Full-time",
+      "note": "Brighton won 2–0 at Sunderland. Maxim De Cuyper scored in the 53rd minute and Jaouen Hadjam added a stoppage-time goal (90+3). Pascal Struijk was sent off in the second half.",
+      "venueName": "Stadium of Light",
+      "albionGoals": 2,
+      "opponentGoals": 0,
+      "homeScore": 0,
+      "awayScore": 2,
+      "result": "0-2",
+      "sourceUrl": "https://www.theguardian.com/football/2026/oct/10/sunderland-brighton-premier-league-match-report"
     },
     {
       "date": "15 Oct 2026",
@@ -1053,5 +1060,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "opponent": "Arsenal",
       "venue": "A"
     }
-  ]
+  ],
+  "squadCheckedISO": "2026-09-16",
+  "fixtureCheckedISO": "2026-10-10"
 });
