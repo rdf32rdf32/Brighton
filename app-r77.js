@@ -4926,4 +4926,6 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
   } else {
     window.addEventListener("load", () => requestAnimationFrame(() => requestAnimationFrame(restoreFragment)), { once: true });
   }
+  // Native history restoration can run after load; re-apply the requested anchor on pageshow.
+  window.addEventListener("pageshow", () => window.setTimeout(restoreFragment, 150), { once: true });
 })();
