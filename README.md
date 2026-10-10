@@ -1,4 +1,4 @@
-# Albion Fan Hub — r89 (9 October 2026)
+# Albion Fan Hub — r90 (10 October 2026)
 
 Independent Brighton & Hove Albion supporter website. Not affiliated with or endorsed by the club.
 
@@ -13,7 +13,7 @@ Independent Brighton & Hove Albion supporter website. Not affiliated with or end
 
 ## Current release
 
-r89 merges the active CSS overrides, preserves calibrated penalty/goal geometry, makes pre-whistle keeper shuffling responsive to rotation, and enables directional keyboard saves after the whistle only. It prevents stale weather responses replacing an away-match display. Manual football data now displays explicit age warnings and official verification links.
+r90 preserves deep-link fragments on reload, updates opponent briefing headings and verification notes with the active fixture, and clarifies that goalkeepers can shuffle but not dive before the whistle. New browser regression tests cover those changes. The preceding r89 release merged the active CSS overrides, preserves calibrated penalty/goal geometry, makes pre-whistle keeper shuffling responsive to rotation, and enables directional keyboard saves after the whistle only. It prevents stale weather responses replacing an away-match display. Manual football data now displays explicit age warnings and official verification links.
 
 Automated smoke checks and Chromium browser tests cover the tour, squad tabs, results by month and goalkeeper line geometry. Real iPhone Safari, complete game/audio and device-specific physics still require manual verification.
 
@@ -28,7 +28,7 @@ Automated smoke checks and Chromium browser tests cover the tour, squad tabs, re
 - `site-r76.css` and `site-current.css` — current baseline and consolidated responsive overrides; historical releases retained
 - `site-reliability.js` — manual-data freshness warning and official verification links
 
-File basenames retain historical release names. The current delivered bundle is identified as r86 by the HTML release metadata and cache-query strings.
+File basenames retain historical release names. The current delivered bundle is identified as r90 by the HTML release metadata and the updated app cache-query string.
 
 ## Tests and publishing
 
