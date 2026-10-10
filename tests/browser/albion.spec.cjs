@@ -53,6 +53,7 @@ test('deep links keep their fragment and scroll target after reload', async ({pa
   await page.goto('/#players', {waitUntil:'load'});
   await expect(page).toHaveURL(/#players$/);
   await page.reload({waitUntil:'load'});
+  console.log('RELOAD ANCHOR', await page.evaluate(() => ({hash:location.hash,y:scrollY,viewport:innerHeight,documentHeight:document.documentElement.scrollHeight,playersTop:document.querySelector('#players')?.getBoundingClientRect().top,playersBottom:document.querySelector('#players')?.getBoundingClientRect().bottom})));
   await expect(page).toHaveURL(/#players$/);
   await expect(page.locator('#players')).toBeVisible();
   await expect.poll(() => page.locator('#players').evaluate(el =>
