@@ -115,3 +115,16 @@ test('sound, monthly results and accessibility preferences respond',async({page}
   await page.locator('#largeTextSetting').check();
   await expect(page.locator('#largeTextSetting')).toBeChecked();
 });
+
+test('mobile navigation opens accessible settings',async({page})=>{
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/');
+  await expect(page.locator('#menuToggle')).toBeVisible();
+  await page.locator('#menuToggle').click();
+  await expect(page.locator('#headerSettingsToggle')).toBeVisible();
+  await page.locator('#headerSettingsToggle').click();
+  await expect(page.locator('#supporter-settings')).toBeVisible();
+  await expect(page.locator('#headerSettingsToggle')).toHaveAttribute('aria-expanded','true');
+  await page.locator('#closeSettings').click();
+  await expect(page.locator('#headerSettingsToggle')).toHaveAttribute('aria-expanded','false');
+});
