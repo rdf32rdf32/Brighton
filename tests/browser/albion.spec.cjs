@@ -86,7 +86,7 @@ test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
   await expect(page.locator('#resultsList')).toContainText('0–2');
   await expect(page.locator('#centreMatchTitle')).toContainText('FK Kauno Žalgiris');
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
-  await expect(page.locator('#fixtureList')).toContainText('RESULT');
+  await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
 test('maintenance editor validates and exports the active dataset',async({page})=>{
   await page.goto('/editor.html');
@@ -109,6 +109,9 @@ test('sound, monthly results and accessibility preferences respond',async({page}
   await expect(page.locator('#resultsList details.result-month[open]').first()).toBeAttached();
   await page.locator('#inlineSoundToggle').click();
   await expect(page.locator('#soundStatus')).not.toBeEmpty();
+  await page.locator('#floatingTools > summary').click();
+  await page.locator('#settingsToggle').click();
+  await expect(page.locator('#supporter-settings')).toBeVisible();
   await page.locator('#largeTextSetting').check();
   await expect(page.locator('#largeTextSetting')).toBeChecked();
 });
