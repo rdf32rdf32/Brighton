@@ -5,20 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name="viewport"/>
 <meta content="#05376b" name="theme-color"/>
-<script>
-      (() => {
-        if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-        const nav = performance.getEntriesByType?.("navigation")?.[0];
-        const isReload = nav?.type === "reload" || performance.navigation?.type === 1;
-        if (isReload) {
-          history.replaceState(null, "", location.pathname + location.search);
-          window.scrollTo(0, 0);
-          addEventListener("DOMContentLoaded", () => window.scrollTo(0, 0), { once: true });
-          addEventListener("load", () => requestAnimationFrame(() => window.scrollTo(0, 0)), { once: true });
-        }
-        addEventListener("beforeunload", () => window.scrollTo(0, 0));
-      })();
-    </script>
+<!-- Keep native fragment navigation and scroll restoration across reloads. -->
 <title>Albion Fan Hub</title>
 <meta content="Independent supporter-built Brighton &amp; Hove Albion project with results, fixtures, a match centre, squad numbers, quiz, penalty shoot-out and XI builder." name="description"/>
 <meta content="Albion Fan Hub" property="og:title"/>
@@ -33,7 +20,7 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r89-20261009" name="release"/>
+<meta content="professional-r90-20261010" name="release"/>
 
 
 
@@ -101,7 +88,7 @@
 <p class="eyebrow">Brighton v Palace penalty shoot-out</p>
 <h2>Seagulls v Eagles</h2>
 <p class="shootout-lead">
-<strong>Albion kick:</strong> drag towards your target and release. <strong>Palace kick:</strong> gamble before the whistle or wait and react at contact — swipe or click to the exact point you want Verbruggen to reach. Timing, height and distance all matter.
+<strong>Albion kick:</strong> drag towards your target and release. <strong>Palace kick:</strong> before the whistle, move the mouse or swipe to shuffle Verbruggen along his goal line (no diving). After the whistle, click or swipe to dive during the run-up, or wait and react at contact. Timing, height and distance all matter.
             </p>
 </div>
 <div aria-label="Penalty game sound" class="shootout-top-controls single-control">
@@ -466,7 +453,7 @@
 <section aria-labelledby="opponentBriefingTitle" class="opponent-briefing match-centre-panel">
 <div>
 <p class="eyebrow">Opponent briefing</p>
-<h3 id="opponentBriefingTitle">Sunderland</h3>
+<h3 id="opponentBriefingTitle">Next opponent</h3>
 <p id="opponentBriefingText">Confirmed fixture information only. Team news will not be guessed.</p>
 </div>
 <div class="opponent-briefing-facts" id="opponentBriefingFacts"></div>
@@ -486,7 +473,7 @@
 <a href="#players">Explore the squad</a>
 </section>
 </div>
-<p class="verified-note match-centre-source">Next fixture and recent results checked against official Albion information on 25 September 2026. Albion visit Sunderland in the Premier League on 10 October at 15:00, then host FK Kauno Žalgiris in the Conference League on 15 October at 20:00.</p>
+<p class="verified-note match-centre-source" id="matchCentreSource">Fixture information is maintained manually. Check the official club listings for the latest dates and kick-off times.</p>
 <div class="weather-note" id="weatherPanel"><b>Matchday weather</b><p>Home-match forecasts appear here within the reliable forecast window.</p></div>
 <div class="next-three-card embedded-next">
 <p class="eyebrow">Coming up</p><h3>Next three fixtures</h3>
@@ -1388,5 +1375,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20260925-r78"></script><script defer src="app-r77.js?v=20261009-r89"></script><script defer src="shootout-r82.js?v=20261009-r89"></script><script defer src="site-reliability.js?v=20261009-r89"></script></body>
+<script defer src="albion-data-r78.js?v=20260925-r78"></script><script defer src="app-r77.js?v=20261010-r90"></script><script defer src="shootout-r82.js?v=20261009-r89"></script><script defer src="site-reliability.js?v=20261009-r89"></script></body>
 </html>
