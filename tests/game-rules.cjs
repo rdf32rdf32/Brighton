@@ -7,7 +7,7 @@ assert(begin>0&&end>begin,'Penalty decision engine missing');
 const scenarios=[
 [{albionKicks:0,palaceKicks:0,albionGoals:0,palaceGoals:0},false,false,'opening'],
 [{albionKicks:4,palaceKicks:3,albionGoals:4,palaceGoals:0},true,true,'early clinch'],
-[{albionKicks:4,palaceKicks:3,albionGoals:0,palaceGoals:3},false,false,'Palace not yet clinched'],
+[{albionKicks:4,palaceKicks:3,albionGoals:1,palaceGoals:2},false,false,'Palace not yet clinched'],
 [{albionKicks:5,palaceKicks:4,albionGoals:3,palaceGoals:2},false,false,'remaining Palace kick'],
 [{albionKicks:5,palaceKicks:5,albionGoals:3,palaceGoals:3},false,false,'level after five'],
 [{albionKicks:6,palaceKicks:5,albionGoals:4,palaceGoals:3},false,false,'sudden death incomplete pair'],
