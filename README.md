@@ -35,3 +35,9 @@ File basenames retain historical release names. The current delivered bundle is 
 Run `npm test` for syntax, game safeguards, monthly results and football-record checks. Run `npm run test:browser` with Playwright/Chromium installed for desktop and simulated phone-size browser tests. Both run in GitHub Actions; CI retains browser traces when checks fail.
 
 The live URL is https://rdf32rdf32.github.io/Brighton/.
+
+
+## Maintenance and daily checks (r91)
+- `editor.html` now edits the **active** `albion-data-r78.js` for match results and player status, preserving other metadata. It downloads a replacement, but never uploads automatically.
+- The daily GitHub Actions freshness job fails when a past result is missing, fixture/result data have not been reviewed within eight days, or the squad has not been checked for over 30 days. GitHub notifications depend on your account settings.
+- Browser regression tests now include Sunderland 0–2, the new opponent, the maintenance editor's exported file, and settings. Real iPhone Safari, full gameplay, visual proportions and audio still require device testing.

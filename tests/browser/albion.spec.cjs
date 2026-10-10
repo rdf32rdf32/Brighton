@@ -78,3 +78,37 @@ test('penalty instructions forbid diving before the whistle', async ({page}) => 
   await expect(lead).toContainText('After the whistle');
   await expect(lead).not.toContainText('gamble before the whistle');
 });
+
+test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-10-10T19:00:00Z'));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#resultsList')).toContainText('Sunderland');
+  await expect(page.locator('#resultsList')).toContainText('0–2');
+  await expect(page.locator('#centreMatchTitle')).toContainText('FK Kauno Žalgiris');
+  await expect(page.locator('#fixtureList')).toContainText('Sunderland');
+  await expect(page.locator('#fixtureList')).toContainText('RESULT');
+});
+test('maintenance editor validates and exports the active dataset',async({page})=>{
+  await page.goto('/editor.html');
+  await expect(page.locator('#fixtureRows tr')).toHaveCount(48);
+  await expect(page.locator('#squadRows tr')).toHaveCount(36);
+  const sunderland=page.locator('#fixtureRows tr').nth(8);
+  await expect(sunderland.locator('[data-field="opponent"]')).toHaveValue('Sunderland');
+  await expect(sunderland.locator('[data-field="albionGoals"]')).toHaveValue('2');
+  await expect(sunderland.locator('[data-field="opponentGoals"]')).toHaveValue('0');
+  await page.locator('#validateContent').click();
+  await expect(page.locator('#editorStatus')).toContainText('Validation passed');
+  const pending=page.waitForEvent('download');
+  await page.locator('#downloadContent').click();
+  const download=await pending;
+  expect(download.suggestedFilename()).toBe('albion-data-r78.js');
+});
+test('sound, monthly results and accessibility preferences respond',async({page})=>{
+  await page.goto('/');
+  await page.locator('#expandResultsMonths').click();
+  await expect(page.locator('#resultsList details.result-month[open]').first()).toBeAttached();
+  await page.locator('#inlineSoundToggle').click();
+  await expect(page.locator('#soundStatus')).not.toBeEmpty();
+  await page.locator('#largeTextSetting').check();
+  await expect(page.locator('#largeTextSetting')).toBeChecked();
+});

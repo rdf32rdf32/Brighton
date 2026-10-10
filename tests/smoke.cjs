@@ -34,6 +34,16 @@ for (const q of questions) {
   assert.equal(new Set(q.options.map(x => String(x).trim().toLowerCase())).size, q.options.length, 'Duplicate quiz options: ' + q.question);
 }
 const fixtures = context.window.ALBION_DATA_R66.fixtures;
+const sunderland = fixtures.find(f=>f.date==='10 Oct 2026' && f.opponent==='Sunderland');
+assert(sunderland && sunderland.venue==='A','Sunderland away match missing');
+assert.equal(sunderland.albionGoals,2,'Sunderland Albion score');
+assert.equal(sunderland.opponentGoals,0,'Sunderland opposition score');
+assert.equal(sunderland.result,'0-2','Sunderland home-away score');
+assert.equal(context.window.ALBION_DATA_R66.checkedISO,'2026-10-10');
+assert.equal(context.window.ALBION_DATA_R66.squadCheckedISO,'2026-09-16');
+assert(html.includes('albion-data-r78.js?v=20261010-r91'),'Result data cache not updated');
+assert(html.includes('professional-r91-20261010'),'Release metadata not updated');
+assert(app.includes('Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)'),'Canonical scores must drive fixture cards');
 assert(fixtures.length >= 20, 'Fixture list too short');
 for (const f of fixtures) {
   assert(/^\d{1,2} [A-Z][a-z]{2} 20\d{2}$/.test(f.date), 'Invalid fixture date: ' + f.date);
@@ -69,7 +79,7 @@ assert.equal(typeof get('collapseResultsMonths').handlers.click, 'function', 'Co
 assert(styles.includes('.result-month-games'), 'Missing monthly results styles');
 assert(html.includes('site-current.css?v=20261009-r89'),'Current stylesheet missing');
 assert(!app.includes('Fixture score integrity", (C.fixtures || [])'),'Diagnostics must not reference unscoped C');
-assert(html.includes('site-reliability.js?v=20261009-r89'),'Football data warnings missing');
+assert(html.includes('site-reliability.js?v=20261010-r91'),'Football data warnings missing');
 assert(!html.includes('site-r83.css?v='),'Historical overrides are still linked');
 // Exercise the actual keeper geometry helpers with SVG offsets absent (mobile WebKit).
 const geometryStart = game.indexOf('  function keeperDimensions()');
