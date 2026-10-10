@@ -77,7 +77,7 @@ assert.equal(cards, completed.length, 'Not all completed results render');
 assert.equal(typeof get('expandResultsMonths').handlers.click, 'function', 'Expand months not wired');
 assert.equal(typeof get('collapseResultsMonths').handlers.click, 'function', 'Collapse months not wired');
 assert(styles.includes('.result-month-games'), 'Missing monthly results styles');
-assert(html.includes('site-current.css?v=20261009-r89'),'Current stylesheet missing');
+assert(html.includes('site-current.css?v=20261010-r91'),'Current stylesheet missing');
 assert(!app.includes('Fixture score integrity", (C.fixtures || [])'),'Diagnostics must not reference unscoped C');
 assert(html.includes('site-reliability.js?v=20261010-r91'),'Football data warnings missing');
 assert(!html.includes('site-r83.css?v='),'Historical overrides are still linked');
