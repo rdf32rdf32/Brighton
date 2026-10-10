@@ -4143,6 +4143,12 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
     if ($("centreMatchBroadcast")) $("centreMatchBroadcast").textContent = MATCH.broadcast || "To be confirmed";
     if ($("centreMatchStatus")) $("centreMatchStatus").textContent = MATCH.status || "Fixture scheduled";
     if ($("centreMatchNote")) $("centreMatchNote").textContent = MATCH.note || "Check official listings before travelling.";
+    if ($("opponentBriefingTitle")) $("opponentBriefingTitle").textContent = MATCH.opponent || "Next opponent";
+    if ($("matchCentreSource")) {
+      const reviewed = window.ALBION_DATA_R66?.checked || "an earlier date";
+      const kickoff = MATCH.hasConfirmedTime ? `at ${MATCH.time} UK time` : "with kick-off time to be confirmed";
+      $("matchCentreSource").textContent = `Fixture data last reviewed ${reviewed}. Next listed match: ${MATCH.opponent || "opponent TBC"} on ${MATCH.dateLong || "date TBC"} ${kickoff} (${competition}, ${MATCH.venue || "venue TBC"}). Verify current details with the official club.`;
+    }
     if ($("opponentBriefingText")) $("opponentBriefingText").textContent = `${MATCH.venueCode === "A" ? "Albion travel to" : "Albion host"} ${MATCH.opponent || "their next opponents"}. This panel uses the fixture list and avoids unverified team news.`;
     if ($("opponentBriefingFacts")) $("opponentBriefingFacts").innerHTML = `<article><span>Round</span><b>${esc(MATCH.round || "League fixture")}</b></article><article><span>Venue</span><b>${esc(MATCH.venue || "Amex Stadium")}</b></article><article><span>Kick-off</span><b>${esc(MATCH.time || "Time TBC")}</b></article><article><span>Coverage</span><b>${esc(MATCH.broadcast || "To be confirmed")}</b></article>`;
   }
