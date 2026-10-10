@@ -48,3 +48,32 @@ for(const viewport of [{width:390,height:844},{width:736,height:320},{width:1200
     expect(v.inset).toBeLessThan(viewport.width<=900?11:2);
   });
 }
+
+test('deep links keep their fragment and scroll target after reload', async ({page}) => {
+  await page.goto('/#players', {waitUntil:'load'});
+  await expect(page).toHaveURL(/#players$/);
+  await page.reload({waitUntil:'load'});
+  await expect(page).toHaveURL(/#players$/);
+  await expect(page.locator('#players')).toBeVisible();
+  await expect.poll(() => page.locator('#players').evaluate(el =>
+    el.getBoundingClientRect().top < window.innerHeight &&
+    el.getBoundingClientRect().bottom > 0
+  )).toBe(true);
+});
+
+test('next opponent briefing and verification note follow the active fixture', async ({page}) => {
+  await page.clock.setFixedTime(new Date('2026-10-11T12:00:00Z'));
+  await page.goto('/', {waitUntil:'load'});
+  await expect(page.locator('#centreMatchTitle')).toContainText('FK Kauno Žalgiris');
+  await expect(page.locator('#opponentBriefingTitle')).toHaveText('FK Kauno Žalgiris');
+  await expect(page.locator('#matchCentreSource')).toContainText('15 October 2026');
+  await expect(page.locator('#matchCentreSource')).not.toContainText('Sunderland');
+});
+
+test('penalty instructions forbid diving before the whistle', async ({page}) => {
+  await page.goto('/');
+  const lead=page.locator('#shootout .shootout-lead');
+  await expect(lead).toContainText('shuffle Verbruggen along his goal line (no diving)');
+  await expect(lead).toContainText('After the whistle');
+  await expect(lead).not.toContainText('gamble before the whistle');
+});
