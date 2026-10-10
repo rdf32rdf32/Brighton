@@ -42,3 +42,21 @@ jobs:
           name: playwright-artifacts
           path: test-results/
           if-no-files-found: ignore
+
+  webkit-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install --with-deps webkit
+      - run: npx playwright test --browser webkit --grep 'goalkeeper line|Sunderland'
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: webkit-mobile-artifacts
+          path: test-results/
+          if-no-files-found: ignore
