@@ -40,9 +40,9 @@ assert.equal(sunderland.albionGoals,2,'Sunderland Albion score');
 assert.equal(sunderland.opponentGoals,0,'Sunderland opposition score');
 assert.equal(sunderland.result,'0-2','Sunderland home-away score');
 assert.equal(context.window.ALBION_DATA_R66.checkedISO,'2026-10-10');
-assert.equal(context.window.ALBION_DATA_R66.squadCheckedISO,'2026-09-16');
-assert(html.includes('albion-data-r78.js?v=20261010-r91'),'Result data cache not updated');
-assert(html.includes('professional-r91-20261010'),'Release metadata not updated');
+assert.equal(context.window.ALBION_DATA_R66.squadCheckedISO,'2026-10-15');
+assert(html.includes('albion-data-r78.js?v=20261015-r92'),'Result data cache not updated');
+assert(html.includes('professional-r92-20261015'),'Release metadata not updated');
 assert(app.includes('Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)'),'Canonical scores must drive fixture cards');
 assert(fixtures.length >= 20, 'Fixture list too short');
 for (const f of fixtures) {
@@ -77,9 +77,9 @@ assert.equal(cards, completed.length, 'Not all completed results render');
 assert.equal(typeof get('expandResultsMonths').handlers.click, 'function', 'Expand months not wired');
 assert.equal(typeof get('collapseResultsMonths').handlers.click, 'function', 'Collapse months not wired');
 assert(styles.includes('.result-month-games'), 'Missing monthly results styles');
-assert(html.includes('site-current.css?v=20261010-r91-settings'),'Current stylesheet missing');
+assert(html.includes('site-current.css?v=20261015-r92-ui'),'Current stylesheet missing');
 assert(!app.includes('Fixture score integrity", (C.fixtures || [])'),'Diagnostics must not reference unscoped C');
-assert(html.includes('site-reliability.js?v=20261010-r91'),'Football data warnings missing');
+assert(html.includes('site-reliability.js?v=20261015-r92'),'Football data warnings missing');
 assert(!html.includes('site-r83.css?v='),'Historical overrides are still linked');
 // Exercise the actual keeper geometry helpers with SVG offsets absent (mobile WebKit).
 const geometryStart = game.indexOf('  function keeperDimensions()');

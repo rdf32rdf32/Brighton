@@ -88,7 +88,7 @@
   preWhistleControls.hidden = true;
   preWhistleControls.setAttribute("aria-label", "Pre-whistle goalkeeper movement");
   preWhistleControls.style.pointerEvents = "none";
-  preWhistleControls.innerHTML = `<span>MOVE MOUSE TO SHUFFLE · DIVES ONLY AFTER THE WHISTLE</span>`;
+  preWhistleControls.innerHTML = `<span>SHUFFLE ALONG THE LINE · NO DIVE UNTIL THE WHISTLE</span>`;
   stage.appendChild(preWhistleControls);
 
   // The save prompt belongs inside the playing scene.
@@ -196,15 +196,15 @@
     keeperNoise: 0.39,
     keeperReach: 0.109,
     palaceMiss: 0.12,
-    saveRadius: 0.25,
-    fingertipMargin: 0.08,
+    saveRadius: 0.265,
+    fingertipMargin: 0.085,
     preContactWindow: 300,
     postContactWindow: 520,
     flight: 790,
     runUpScale: 1.04,
     cueStrength: 0.68,
     diveAssist: 0.08,
-    sameSideBonus: 0.025,
+    sameSideBonus: 0.035,
     scoringDifficultyIncrease: 0.035,
     contactDecisionDelay: 610,
     edgeAccuracyPenalty: 0.0055,
@@ -954,7 +954,7 @@
   function reactionWindowFor(player,target){
     const power=shotPowerFor(player,target);
     const cornerLoad=Math.min(1,Math.abs((target?.x??.5)-.5)*1.5+Math.max(0,.42-(target?.y??.55))*.7);
-    return Math.round(clamp(650-(power-.72)*590-cornerLoad*65+(isMobilePenalty()?75:0),435,660));
+    return Math.round(clamp(655-(power-.72)*540-cornerLoad*55+(isMobilePenalty()?90:0),495,620));
   }
 
   function shotFlightFor(player,target){
@@ -1040,7 +1040,7 @@
     const heightFactor=target.y<.27?.91:target.y>.73?.97:1;
     const sideFactor=Math.abs(target.x-.5)>.39?.90:1;
     const anticipationBoost=timing< -90&&timing> -560&&sameSide?1.045:1;
-    const cleanReachX=Math.max(.085,settings.saveRadius*timingFactor*powerFactor*sideFactor*sideRead*anticipationBoost);
+    const cleanReachX=Math.max(.085,settings.saveRadius*timingFactor*powerFactor*sideFactor*sideRead*anticipationBoost+(sameSide&&heightGap===0?settings.sameSideBonus:0));
     const cleanReachY=Math.max(.08,settings.saveRadius*.92*timingFactor*powerFactor*heightFactor*heightRead);
     const tipBonus=settings.fingertipMargin*clamp(timingFactor,.72,1.06);
     const tipReachX=cleanReachX+tipBonus*(sameSide?1:.68);
@@ -2616,7 +2616,7 @@
     $("turnBadge").textContent = "PALACE PENALTY · YOU ARE VERBRUGGEN";
     $("turnBadge").className = "turn-badge palace-turn";
     $("stageInstruction").textContent = "Press READY TO SAVE";
-    stage.setAttribute("aria-label", "Palace penalty. Press Ready, read the run-up, then click or swipe towards the shot. You may gamble early or stay still for the centre.");
+    stage.setAttribute("aria-label", "Palace penalty. Press Ready, read the run-up, then click or swipe towards the shot. You can dive only after the whistle, or hold centre.");
     setStatus("YOU ARE VERBRUGGEN", "Press READY. React at contact, gamble early if you choose, or make no move to stay central.");
     readyButton.textContent = "READY TO SAVE";
     readyButton.focus({ preventScroll: true });
@@ -2792,7 +2792,7 @@
     ensureAudio();
     const token = ++state.sequence;
     readyPanel.hidden = true;
-    $("keyboardHint")?.setAttribute("hidden", "");
+    // Keep controls help visible throughout the game.
     $("stageInstruction").textContent = "Referee checks the penalty";
     setStatus("You are Verbruggen", "Move to shuffle on the goal line before the whistle. Dive only after the whistle.");
     reticle.hidden = true;
@@ -2826,8 +2826,8 @@
     stage.classList.remove("is-locked");
     stage.classList.add("pre-whistle-save-window");
     preWhistleControls.hidden = false;
-    $("stageInstruction").textContent = "Move mouse to shuffle — no diving before whistle";
-    setStatus("Stay on the line", "Move the mouse left or right to shuffle. You can dive only after the referee whistles.");
+    $("stageInstruction").textContent = "Shuffle along the line — no diving before the whistle";
+    setStatus("Stay on the line", "Move left or right to shuffle along the line. Dive only after the referee whistles.");
     // Accessibility: reduced-motion users get the same decision time, not less.
     await sleep(1900);
     if (token !== state.sequence) return;
@@ -2892,7 +2892,7 @@
     }
 
     // Start the ball immediately, then lock the outcome while it is still in front of the goal.
-    const approachDuration = reducedMotion() ? 80 : Math.min(settings.contactDecisionDelay,state.currentReactionWindow+90);
+    const approachDuration = reducedMotion() ? 80 : Math.min(state.currentShotFlight-25,Math.max(settings.contactDecisionDelay,state.currentReactionWindow+40));
     crowdReaction("crowd-gasp", Math.max(520,state.currentShotFlight));
     stage.classList.add("camera-contact");
     window.setTimeout(()=>stage.classList.remove("camera-contact"),reducedMotion()?140:Math.max(480,state.currentShotFlight));
@@ -3050,7 +3050,7 @@
       const y = clamp(shot.y, 0, 1) * 76 + 10;
       const cls = shot.result === "goal" ? "map-goal" : shot.result === "saved" ? "map-save" : shot.result === "woodwork" ? "map-frame" : "map-miss";
       const arrow = shot.dive ? `<path class="map-dive" d="M50 82 L${clamp(shot.dive.x,0,1)*92+4} ${clamp(shot.dive.y,0,1)*76+10}"/>` : "";
-      return `${arrow}<g class="map-shot ${cls}" tabindex="0" role="img" aria-label="Kick ${index + 1}: ${shot.result}"><circle cx="${x}" cy="${y}" r="3.2"/><text x="${x}" y="${y + 1.2}" text-anchor="middle">${index + 1}</text></g>`;
+      return `${arrow}<g class="map-shot ${cls}" tabindex="0" role="button" data-shot-side="${label.startsWith("Map of Albion") ? "albion" : "palace"}" data-shot-index="${index}" aria-label="Details for kick ${index + 1}: ${shot.result}"><circle cx="${x}" cy="${y}" r="3.2"/><text x="${x}" y="${y + 1.2}" text-anchor="middle">${index + 1}</text></g>`;
     }).join("");
     return `<svg class="penalty-map-svg" viewBox="0 0 100 92" role="img" aria-label="${label}">
       <path class="map-frame-line" d="M4 86V8H96V86M4 8H96"/>
@@ -3123,6 +3123,7 @@
         <article><h4>Albion penalties</h4>${shotMapSvg(state.albionShots, "Map of Albion penalties")}<ol>${shotSequence(state.albionShots)}</ol></article>
         <article><h4>Palace penalties</h4>${shotMapSvg(state.palaceShots, "Map of Palace penalties and Verbruggen dives")}<ol>${shotSequence(state.palaceShots)}</ol></article>
       </div>
+      <p id="shootoutShotDetail" class="shootout-shot-detail" aria-live="polite">Select a shot number on either goal map to see its outcome and direction.</p>
       <div class="penalty-map-legend" aria-label="Penalty map legend"><span class="map-goal-dot">Goal</span><span class="map-save-dot">Saved</span><span class="map-frame-dot">Woodwork</span><span class="map-miss-dot">Miss</span><span class="map-dive-key">Keeper dive</span></div>
       <p>${state.catches ? `${state.catches} clean ${state.catches === 1 ? "catch" : "catches"}. ` : ""}${state.fingertips ? `${state.fingertips} fingertip ${state.fingertips === 1 ? "save" : "saves"}. ` : ""}${state.panenkaAttempts ? `${state.panenkaGoals}/${state.panenkaAttempts} Panenkas scored.` : ""}</p>
       <button id="retakeShootoutFinal" class="retake-shootout-final" type="button">RETAKE SHOOT-OUT</button>`;
@@ -3482,8 +3483,8 @@
       const tapPoint = mobileTapGoalPoint(touch);
       if (state.reactionOpen && isCentreSavePoint(tapPoint)) beginCentreHold(tapPoint);
       if (earlySavingPhase) {
-        $("stageInstruction").textContent = "Swipe or tap a side to gamble now";
-        setStatus("Pre-whistle gamble available", "Commit now, or keep still and wait for the whistle.");
+        $("stageInstruction").textContent = "Swipe to shuffle only — no dive before whistle";
+        setStatus("Keeper ready", state.phase === "palace-prewhistle" ? "Shuffle along the line; no early diving." : "Whistle sounded; swipe to save or hold centre.");
       }
     }
     event.preventDefault();
@@ -3542,7 +3543,7 @@
         if (distance >= 18) queueEarlyDive(mapped, "post-whistle-swipe");
         else if (!isCentreSavePoint(mapped) && distance < 8) queueEarlyDive(mapped, "post-whistle-tap");
         else {
-          $("stageInstruction").textContent = "Holding centre — wait for the whistle";
+          $("stageInstruction").textContent = "Holding centre — react at ball contact";
           setStatus("Holding position", "No early commitment. You can still react later.");
         }
       }
@@ -3604,8 +3605,25 @@
 
   readyButton.addEventListener("click", () => { unlockAudio(); beginPalacePenalty(); });
   $("resetShootout").addEventListener("click", resetGame);
+  function revealMappedShot(target) {
+    const marker = target?.closest?.("[data-shot-side][data-shot-index]");
+    if (!marker) return false;
+    const side = marker.dataset.shotSide;
+    const i = Number(marker.dataset.shotIndex);
+    const shot = (side === "albion" ? state.albionShots : state.palaceShots)[i];
+    const detail = summary.querySelector("#shootoutShotDetail");
+    if (!shot || !detail) return false;
+    const horizontal = shot.x < .35 ? "left" : shot.x > .65 ? "right" : "centre";
+    const vertical = shot.y < .35 ? "high" : shot.y > .65 ? "low" : "middle";
+    detail.textContent = (side === "albion" ? "Albion" : "Palace") + " kick " + (i+1) + " · " + (shot.name || "Taker") + " · " + shot.result + " · " + vertical + " " + horizontal + (shot.dive ? " · Verbruggen moved " + saveZoneName(shot.dive) : "") + (shot.saveType ? " · " + shot.saveType.toLowerCase() : "");
+    return true;
+  }
   summary.addEventListener("click", (event) => {
     if (event.target?.id === "retakeShootoutFinal") resetGame();
+    else revealMappedShot(event.target);
+  });
+  summary.addEventListener("keydown", (event) => {
+    if (["Enter"," "].includes(event.key) && revealMappedShot(event.target)) event.preventDefault();
   });
 
 

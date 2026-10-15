@@ -1,4 +1,4 @@
-# Albion Fan Hub — r91 (10 October 2026)
+# Albion Fan Hub — r92 (15 October 2026)
 
 Independent Brighton & Hove Albion supporter website. Not affiliated with or endorsed by the club.
 
@@ -44,3 +44,11 @@ The live URL is https://rdf32rdf32.github.io/Brighton/.
 
 - Nine football penalty-rule unit scenarios cover early clinches, tied regulation, paired sudden-death kicks and both winning outcomes.
 - Active script and CSS assets have a regression performance budget of 1.15 MB, with a custom 125-year supporter mark replacing the generic graphic in the anniversary banner. This is an original supporter graphic, not an official club crest.
+
+## r92 corrections (15 October 2026)
+- Updated static match/result fallbacks and checked published squad numbers, verified September departures and October team news. No unverified result has been entered for the 15 October fixture.
+- Fixed hidden keyboard instructions; clarified no pre-whistle dives on both pointer and legacy touch controls.
+- Corrected the goalkeeper's reaction window so resolution cannot lock before the stated time, with modest reach improvements for correctly anticipated direction and height.
+- Completed shoot-out shot maps can now be selected with keyboard or pointer for kick-by-kick details.
+- Added manual results disclosure, pending-result warning, and mobile page simplification.
+- Expanded tests; real iPhone, complete penalty game and visual animation still require real-device checks.

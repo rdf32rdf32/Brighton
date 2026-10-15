@@ -1,9 +1,9 @@
-// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r91.
-// Sunderland 0–2 Albion verified 10 October 2026; squad still requires independent review.
+// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r92.
+// Sunderland 0–2 verified; reviewed published squad numbers, September transfers and October team news on 15 October. Scores remain manual, not live; no unverified European match result.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r91",
-  "checked": "10 October 2026",
-  "checkedISO": "2026-10-10",
+  "version": "r92",
+  "checked": "15 October 2026",
+  "checkedISO": "2026-10-15",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -1061,6 +1061,6 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venue": "A"
     }
   ],
-  "squadCheckedISO": "2026-09-16",
-  "fixtureCheckedISO": "2026-10-10"
+  "squadCheckedISO": "2026-10-15",
+  "fixtureCheckedISO": "2026-10-15"
 });

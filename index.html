@@ -20,14 +20,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r91-20261010" name="release"/>
+<meta content="professional-r92-20261015" name="release"/>
 
 
 
 
 
 
-<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261010-r91-settings" rel="stylesheet"/></head>
+<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -67,14 +67,14 @@
 <h2 id="heroMatchTitle">Albion v FK Kauno Žalgiris</h2>
 <div class="fixture-detail" id="heroMatchDetail">
 <span id="heroMatchDate">Thursday 15 October 2026</span>
-<span id="heroMatchTime">15:00</span>
+<span id="heroMatchTime">20:00</span>
 <span id="heroMatchVenue">Stadium of Light</span>
 </div>
 <p class="local-kickoff" id="localKickoff"></p>
 <p class="tie-aggregate" hidden id="heroAggregate"></p>
 <div aria-live="polite" class="countdown" id="countdown"></div>
 <p class="small">Fixture details remain subject to official confirmation.</p>
-<div class="hero-latest-result" id="heroLatestResult"><span>Latest result · 19 Sep</span><b>Albion 3–0 Arsenal</b><a href="#results">Results →</a></div>
+<div class="hero-latest-result" id="heroLatestResult"><span>Latest confirmed · 10 Oct</span><b>Sunderland 0–2 Albion</b><a href="#results">Results →</a></div>
 </section>
 </div>
 </header>
@@ -116,7 +116,7 @@
 <div class="shootout-match-strip">
 <div class="turn-badge albion-turn" id="turnBadge">ALBION PENALTY</div>
 <p id="penaltyTakerName">Georginio Rutter</p>
-<p id="shootoutSituation">Five kicks each</p>
+<p id="shootoutSituation">Best of five, then sudden death</p>
 <p aria-live="polite" class="penalty-approach" id="penaltyApproach">Run-up details appear before the kick</p>
 </div>
 <div aria-describedby="stageInstruction shootoutStatus keyboardHint" aria-label="Penalty shoot-out game. Brighton penalties can be aimed up to five per cent beyond the posts or crossbar." class="penalty-stage is-aiming" id="penaltyStage" role="group" tabindex="0">
@@ -396,13 +396,14 @@
 </div>
 <p aria-live="polite" class="save-reaction-feedback" hidden id="saveReactionFeedback"></p>
 <div class="palace-ready-panel" hidden="" id="palaceReadyPanel">
-<p>Before the whistle, move to shuffle on the line. After the whistle, move the mouse or swipe towards the save; stay still for centre.</p>
+<p>Before the whistle, move to shuffle on the line but do not dive. After the whistle, move the mouse, click or swipe to dive, or stay still for centre.</p>
 <button id="palaceReadyButton" type="button">READY TO SAVE</button>
 </div>
 <div class="shootout-option-row shot-style-controls panenka-only-control" aria-label="Optional special penalty">
 <button aria-pressed="false" class="shot-style-button panenka-button" data-shot-style="panenka" id="panenkaChoice" type="button"><span>Panenka</span><small>Special next kick</small></button>
-<span id="keyboardHint">Drag and release to shoot. Before the whistle, move left/right to shuffle on the goal line. After the whistle, move the mouse towards the save (no click needed), swipe or click, or stay central. Keyboard: arrows to shuffle, 1–9 to save after the whistle.</span>
+
 </div>
+<p class="penalty-help" id="keyboardHint">Drag and release to shoot. Before the whistle, shuffle along the goal line without diving; after the whistle, move the mouse or swipe to save. Keyboard: arrows to shuffle or aim, 1–9 to save after the whistle.</p>
 <div class="shootout-summary-v10" hidden="" id="shootoutSummary"></div>
 <div class="button-row shootout-actions-v10">
 <button class="ghost" id="resetShootout" type="button">Restart shoot-out</button>
@@ -439,16 +440,16 @@
 <span id="centreCoverageChip">To be confirmed</span>
 </div>
 <div class="match-details match-details-expanded">
-<article><span>Date</span><b id="centreMatchDate">10 October 2026</b></article>
-<article><span>Kick-off</span><b id="centreMatchTime">15:00</b></article>
+<article><span>Date</span><b id="centreMatchDate">15 October 2026</b></article>
+<article><span>Kick-off</span><b id="centreMatchTime">20:00 UK</b></article>
 <article><span>Venue</span><b id="centreMatchVenue">Stadium of Light</b></article>
-<article><span>Competition</span><b id="centreMatchCompetition">Premier League</b></article>
+<article><span>Competition</span><b id="centreMatchCompetition">UEFA Conference League</b></article>
 <article><span>Broadcast</span><b id="centreMatchBroadcast">To be confirmed</b></article>
 <article><span>Fixture status</span><b id="centreMatchStatus">Confirmed fixture · 15:00 UK kick-off</b></article>
 </div>
 <p class="match-centre-note" id="centreMatchNote">Albion host FK Kauno Žalgiris in the Conference League on Thursday 15 October. Kick-off is 20:00 UK time.</p>
 <p class="tie-aggregate" hidden id="centreAggregate"></p>
-<a class="match-centre-latest" href="#results" id="matchCentreLatestResult"><span>Latest result</span><b>Albion 3–0 Arsenal</b><small>Premier League · 19 Sep</small></a>
+<a class="match-centre-latest" href="#results" id="matchCentreLatestResult"><span>Latest result</span><b>Sunderland 0–2 Albion</b><small>Premier League · 10 Oct</small></a>
 <div class="match-centre-grid">
 <section aria-labelledby="opponentBriefingTitle" class="opponent-briefing match-centre-panel">
 <div>
@@ -485,7 +486,7 @@
 <section class="card matches-card" id="matches">
 <div class="section-head matches-heading">
 <p class="eyebrow">2026/27 · All competitions</p>
-<h2>Fixtures &amp; results</h2>
+<h2>Fixtures &amp; results</h2><p class="fixture-manual-note">Scores are reviewed manually, not live. <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener noreferrer">Check the club for updates ↗</a></p>
 <p>One match hub for completed scores, current form and the upcoming Albion schedule.</p>
 </div>
 <div aria-label="Choose fixtures or results" class="match-view-tabs" role="tablist">
@@ -1375,5 +1376,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20261010-r91"></script><script defer src="app-r77.js?v=20261010-r91-settings"></script><script defer src="shootout-r82.js?v=20261009-r89"></script><script defer src="site-reliability.js?v=20261010-r91"></script></body>
+<script defer src="albion-data-r78.js?v=20261015-r92"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script></body>
 </html>

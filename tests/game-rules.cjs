@@ -25,3 +25,9 @@ assert(game.includes('state.phase = "palace-run"'),'No post-whistle dive phase')
 assert(game.includes('state.phase !== "palace-run" || state.pendingDive'),'Early dives not whistle-gated');
 assert(game.includes('shuffleKeeperOnLine(eventStagePoint(event));'),'Goalkeeper shuffling not wired');
 console.log('PASS: 9 penalty decision scenarios, regulation and sudden death, whistle gating');
+
+assert(game.includes("state.currentReactionWindow+40"),'Early penalty save lock regressed');
+assert(game.includes('sameSide&&heightGap===0?settings.sameSideBonus:0'),'Correctly read saves are not rewarded');
+assert(!game.includes('Pre-whistle gamble available'),'Legacy controls still promote pre-whistle diving');
+assert(game.includes('summary.addEventListener("keydown"'),'Shot maps lack keyboard selection');
+console.log('PASS: r92 reaction time, direction reads, whistle restrictions and shot map');

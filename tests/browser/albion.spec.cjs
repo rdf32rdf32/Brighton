@@ -128,3 +128,18 @@ test('mobile navigation opens accessible settings',async({page})=>{
   await page.locator('#closeSettings').click();
   await expect(page.locator('#headerSettingsToggle')).toHaveAttribute('aria-expanded','false');
 });
+
+test('penalty guidance remains independently visible while Panenka is hidden',async({page})=>{
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#keyboardHint')).toBeVisible();
+  await expect(page.locator('#keyboardHint')).toContainText('without diving');
+  await expect(page.locator('#shootoutSituation')).toContainText('sudden death');
+  await expect(page.locator('#shootout .shootout-lead')).toContainText('After the whistle');
+});
+test('manual results notice is available with the latest verified result',async({page})=>{
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('.fixture-manual-note').first()).toContainText('not live');
+  await expect(page.locator('#resultsList')).toContainText('Sunderland');
+  expect(errors).toEqual([]);
+});
