@@ -39,7 +39,7 @@ assert(sunderland && sunderland.venue==='A','Sunderland away match missing');
 assert.equal(sunderland.albionGoals,2,'Sunderland Albion score');
 assert.equal(sunderland.opponentGoals,0,'Sunderland opposition score');
 assert.equal(sunderland.result,'0-2','Sunderland home-away score');
-assert.equal(context.window.ALBION_DATA_R66.checkedISO,'2026-10-10');
+assert.equal(context.window.ALBION_DATA_R66.checkedISO,'2026-10-15');
 assert.equal(context.window.ALBION_DATA_R66.squadCheckedISO,'2026-10-15');
 assert(html.includes('albion-data-r78.js?v=20261015-r92'),'Result data cache not updated');
 assert(html.includes('professional-r92-20261015'),'Release metadata not updated');

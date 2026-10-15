@@ -133,7 +133,7 @@ test('penalty guidance remains independently visible while Panenka is hidden',as
   await page.goto('/',{waitUntil:'load'});
   await expect(page.locator('#keyboardHint')).toBeVisible();
   await expect(page.locator('#keyboardHint')).toContainText('without diving');
-  await expect(page.locator('#shootoutSituation')).toContainText('sudden death');
+  await expect(page.locator('#shootoutSituation')).toContainText('5 Albion · 5 Palace left');
   await expect(page.locator('#shootout .shootout-lead')).toContainText('After the whistle');
 });
 test('manual results notice is available with the latest verified result',async({page})=>{

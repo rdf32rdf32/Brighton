@@ -28,7 +28,7 @@ Automated smoke checks and Chromium browser tests cover the tour, squad tabs, re
 - `site-r76.css` and `site-current.css` — current baseline and consolidated responsive overrides; historical releases retained
 - `site-reliability.js` — manual-data freshness warning and official verification links
 
-File basenames retain historical release names. The current delivered bundle is identified as r90 by the HTML release metadata and the updated app cache-query string.
+File basenames retain historical release names. The current delivered bundle is identified as r92 by the HTML release metadata and updated asset cache-query strings.
 
 ## Tests and publishing
 
