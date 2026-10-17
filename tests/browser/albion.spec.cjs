@@ -98,7 +98,7 @@ test('17 October match centre advances to Palace with Kauno recorded as 4-0', as
   await expect(page.locator('#heroLatestResult')).toContainText('4–0');
   await expect(page.locator('#heroLatestResult')).toContainText('Kauno');
   await expect(page.locator('#resultsList')).toContainText('Kauno');
-  await expect(page.locator('#allCompPlayed')).toHaveText('9');
+  await expect(page.locator('#allCompPlayed')).toHaveText('10');
   await expect(page.locator('#matchCentreSource')).toContainText('17 October 2026');
 });
 test('maintenance editor validates and exports the active dataset',async({page})=>{
