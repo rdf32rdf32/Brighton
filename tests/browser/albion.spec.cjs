@@ -62,12 +62,12 @@ test('deep links keep their fragment and scroll target after reload', async ({pa
   )).toBe(true);
 });
 
-test('next opponent briefing and verification note follow the active fixture', async ({page}) => {
-  await page.clock.setFixedTime(new Date('2026-10-11T12:00:00Z'));
+test('opponent briefing and verification note follow the newly active fixture', async ({page}) => {
+  await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
   await page.goto('/', {waitUntil:'load'});
-  await expect(page.locator('#centreMatchTitle')).toContainText('FK Kauno Žalgiris');
-  await expect(page.locator('#opponentBriefingTitle')).toHaveText('FK Kauno Žalgiris');
-  await expect(page.locator('#matchCentreSource')).toContainText('15 October 2026');
+  await expect(page.locator('#centreMatchTitle')).toContainText('Crystal Palace');
+  await expect(page.locator('#opponentBriefingTitle')).toHaveText('Crystal Palace');
+  await expect(page.locator('#matchCentreSource')).toContainText('17 October 2026');
   await expect(page.locator('#matchCentreSource')).not.toContainText('Sunderland');
 });
 
@@ -80,11 +80,11 @@ test('penalty instructions forbid diving before the whistle', async ({page}) => 
 });
 
 test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
-  await page.clock.setFixedTime(new Date('2026-10-10T19:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
   await page.goto('/',{waitUntil:'load'});
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   await expect(page.locator('#resultsList')).toContainText('0–2');
-  await expect(page.locator('#centreMatchTitle')).toContainText('FK Kauno Žalgiris');
+  await expect(page.locator('#centreMatchTitle')).toContainText('Crystal Palace');
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
