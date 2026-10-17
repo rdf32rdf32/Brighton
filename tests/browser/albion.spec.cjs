@@ -88,6 +88,19 @@ test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
+test('17 October match centre advances to Palace with Kauno recorded as 4-0', async ({page}) => {
+  await page.clock.setFixedTime(new Date('2026-10-17T10:00:00Z'));
+  await page.goto('/', {waitUntil:'load'});
+  await expect(page.locator('#heroMatchTitle')).toHaveText('Albion v Crystal Palace');
+  await expect(page.locator('#centreMatchTitle')).toHaveText('Albion v Crystal Palace');
+  await expect(page.locator('#heroMatchVenue')).toHaveText('Amex Stadium');
+  await expect(page.locator('#centreMatchDate')).toContainText('18 October 2026');
+  await expect(page.locator('#heroLatestResult')).toContainText('4–0');
+  await expect(page.locator('#heroLatestResult')).toContainText('Kauno');
+  await expect(page.locator('#resultsList')).toContainText('Kauno');
+  await expect(page.locator('#allCompPlayed')).toHaveText('9');
+  await expect(page.locator('#matchCentreSource')).toContainText('17 October 2026');
+});
 test('maintenance editor validates and exports the active dataset',async({page})=>{
   await page.goto('/editor.html');
   await expect(page.locator('#fixtureRows tr')).toHaveCount(48);

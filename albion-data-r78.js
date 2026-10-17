@@ -1,9 +1,9 @@
-// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r92.
-// Sunderland 0–2 verified; reviewed published squad numbers, September transfers and October team news on 15 October. Scores remain manual, not live; no unverified European match result.
+// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r93.
+// 17 October fixture/results review: Albion 4–0 Kauno Zalgiris verified with the official club match report. Squad last checked 15 October. Scores remain verified manually, not live.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r92",
-  "checked": "15 October 2026",
-  "checkedISO": "2026-10-15",
+  "version": "r93",
+  "checked": "17 October 2026",
+  "checkedISO": "2026-10-17",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -780,9 +780,16 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "20:00",
       "competition": "UEFA Conference League",
       "round": "League phase matchday 1",
-      "status": "Confirmed fixture · 20:00 UK kick-off",
-      "note": "Albion open the Conference League phase at home to FK Kauno Žalgiris.",
-      "venueName": "Amex Stadium"
+      "status": "Full-time",
+      "note": "Albion won 4–0 at the Amex. Georginio Rutter scored twice, with Jack Hinshelwood and Matt O'Riley also on target.",
+      "venueName": "Amex Stadium",
+      "albionGoals": 4,
+      "opponentGoals": 0,
+      "homeScore": 4,
+      "awayScore": 0,
+      "result": "4-0",
+      "resultOutcome": "W",
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-albion-v-kauno-zalgiris"
     },
     {
       "date": "18 Oct 2026",
@@ -1062,5 +1069,5 @@ window.ALBION_DATA_R66 = Object.freeze({
     }
   ],
   "squadCheckedISO": "2026-10-15",
-  "fixtureCheckedISO": "2026-10-15"
+  "fixtureCheckedISO": "2026-10-17"
 });

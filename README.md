@@ -1,3 +1,9 @@
+### 17 October 2026 — r93 fixture/results maintenance
+- Confirmed Brighton's 4–0 UEFA Conference League win against FK Kauno Žalgiris on 15 October using the [official match report](https://www.brightonandhovealbion.com/media-article/mft-match-report-albion-v-kauno-zalgiris-conference-league).
+- Next match is Crystal Palace, Sunday 18 October, 14:00 UK at the Amex; refreshed non-JavaScript fallback text and all-competition totals.
+- Fixture/results reviewed on 17 October; squad review remains 15 October. Updated automated regression coverage.
+- Score updates are curated, not a live feed; the daily Actions freshness check is intentionally retained to flag future missing final scores.
+
 # Albion Fan Hub — r92 (15 October 2026)
 
 Independent Brighton & Hove Albion supporter website. Not affiliated with or endorsed by the club.
