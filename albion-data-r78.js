@@ -1,9 +1,9 @@
-// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r93.
-// 17 October fixture/results review: Albion 4–0 Kauno Zalgiris verified with the official club match report. Squad last checked 15 October. Scores remain verified manually, not live.
+// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r94.
+// 18 October results review: Albion 5–0 Crystal Palace confirmed by match reports; Jablonec is next on 22 October. Squad last checked 15 October. Results are manually curated, not live.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r93",
-  "checked": "17 October 2026",
-  "checkedISO": "2026-10-17",
+  "version": "r94",
+  "checked": "18 October 2026",
+  "checkedISO": "2026-10-18",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -797,11 +797,18 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venue": "H",
       "time": "14:00",
       "broadcast": "Sky Sports",
-      "status": "Confirmed fixture · 14:00 UK kick-off",
-      "note": "Home fixture moved to Sunday 18 October, kick-off 14:00, live on Sky Sports.",
+      "status": "Full-time",
+      "note": "Albion beat Palace 5–0 at the Amex: a Jaydee Canvot own goal, a Diego Gómez strike from inside his own half, and goals from Yasin Ayari, Charalampos Kostoulas and Jack Hinshelwood.",
       "competition": "Premier League",
       "round": "Matchweek 7",
-      "venueName": "Amex Stadium"
+      "venueName": "Amex Stadium",
+      "albionGoals": 5,
+      "opponentGoals": 0,
+      "homeScore": 5,
+      "awayScore": 0,
+      "result": "5-0",
+      "resultOutcome": "W",
+      "sourceUrl": "https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report"
     },
     {
       "date": "22 Oct 2026",
@@ -1069,5 +1076,5 @@ window.ALBION_DATA_R66 = Object.freeze({
     }
   ],
   "squadCheckedISO": "2026-10-15",
-  "fixtureCheckedISO": "2026-10-17"
+  "fixtureCheckedISO": "2026-10-18"
 });
