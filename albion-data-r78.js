@@ -1,7 +1,7 @@
-// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r95.
+// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r96.
 // 18 October results review: Albion 5–0 Crystal Palace confirmed by match reports; Jablonec is next on 22 October. Squad last checked 15 October. Results are manually curated, not live.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r95",
+  "version": "r96",
   "checked": "18 October 2026",
   "checkedISO": "2026-10-18",
   "squad": [

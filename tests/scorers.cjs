@@ -41,5 +41,5 @@ assert.equal(s.players.find(p=>p.name==='Jack Hinshelwood').premierLeague,3,'Pal
 const html=fs.readFileSync('index.html','utf8');
 assert(html.includes('id="top-scorers"')&&html.includes('id="scorersRows"'),'Scorer section not present');
 assert(html.includes('href="#top-scorers"'),'Scorers not linked in navigation');
-assert(html.includes('top-scorers.css?v=20261018-r95')&&html.includes('top-scorers.js?v=20261018-r95'),'Scorer assets missing');
+assert(html.includes('top-scorers.css?v=20261018-r96')&&html.includes('top-scorers.js?v=20261018-r96'),'Scorer assets missing');
 console.log('PASS: '+s.players.length+' scorers, 31 player goals, 3 own goals, all competitions reconcile');

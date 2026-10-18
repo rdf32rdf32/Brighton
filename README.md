@@ -1,3 +1,12 @@
+### 18 October 2026 — r96: Interactive archive, improved XI and Stats Centre
+- **Stats Centre** (#stats-centre): competition filters, results KPIs, win rate, goals per match, monthly trend, home/away splits, competition table and top goalscorers. Calculated from completed fixtures already in the site; **no invented appearance, assists or minutes data**. Manual fixture/scoring updates still required.
+- **Albion history archive** (#history-archive): search 12 milestones, filter by era, explore sourced details and three historic stadium photographs (Goldstone 1996, Withdean, Amex 2011). Each photograph has creator attribution and Creative Commons licence links; the club's 125th anniversary gallery and Historic England archive provide further source images.
+- **XI enhancements** (#xi): current first-team players appear as searchable draggable/tappable chips; eligible pitch positions are highlighted, with mouse drag and touch-to-place alongside the existing dropdowns. Players may be moved/swapped where position eligibility permits.
+- **Prediction accuracy**: lock an 11-player XI for the next recorded fixture, enter the actual 11 starters **manually** from the official team sheet, and compare by player identity. Results and overall accuracy are stored only on the current device, with a history of completed checks. No automatic line-up feed is claimed.
+- New regression tests cover all three sections, source data and asset links. Existing matchday and penalty features remain unchanged.
+- The earlier \`top-scorers.js\` and \`top-scorers.css\` are intentionally reused for these extensions, preserving the active eight-asset performance limit.
+
+
 ### 18 October 2026 — r95 top scorers by competition
 - Added a sortable 2026/27 **Top scorers** section with Premier League, Carabao Cup, UEFA Conference League, FA Cup and all-competition columns, plus responsive horizontal scrolling and direct navigation links.
 - Through 18 October: Charalampos Kostoulas leads with five. Reconciled **31 player goals + 3 own goals = 34 Brighton goals** across all recorded completed fixtures; excludes own goals from player rankings.
