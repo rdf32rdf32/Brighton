@@ -61,8 +61,8 @@ const completedNow = fixtures.filter(f=>Number.isFinite(f.albionGoals)&&Number.i
 assert.equal(completedNow.length,11,'Expected 11 completed matches after Palace');
 assert.equal(completedNow.reduce((sum,f)=>sum+f.albionGoals,0),34,'All-competition goals scored');
 assert.equal(completedNow.reduce((sum,f)=>sum+f.opponentGoals,0),7,'All-competition goals conceded');
-assert(html.includes('albion-data-r78.js?v=20261018-r94'),'Result data cache not updated');
-assert(html.includes('professional-r94-20261018'),'Release metadata not updated');
+assert(html.includes('albion-data-r78.js?v=20261018-' + context.window.ALBION_DATA_R66.version),'Result data cache not updated');
+assert(html.includes('professional-' + context.window.ALBION_DATA_R66.version + '-20261018'),'Release metadata not updated');
 assert(app.includes('Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)'),'Canonical scores must drive fixture cards');
 assert(fixtures.length >= 20, 'Fixture list too short');
 for (const f of fixtures) {
