@@ -161,3 +161,10 @@
  .xi-player-palette{max-height:230px}
 }
 @media(prefers-reduced-motion:reduce){.stats-trend-bar{transition:none}}
+
+
+/* r96 mobile feature placement: respect the site's reordered mobile sections. */
+@media(max-width:760px){
+  main>#matches,main>#stats-centre,main>#top-scorers{order:6}
+  main>#history-archive{order:15}
+}
