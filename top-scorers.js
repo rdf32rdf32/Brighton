@@ -278,3 +278,316 @@
  $('archiveEra').addEventListener('change',render);
  render();
 })();
+
+
+
+/* r96: enhanced XI selection and local, manually checked prediction accuracy. */
+(() => {
+  'use strict';
+  const d=window.ALBION_DATA_R66;
+  const wrapper=document.getElementById('xiUpgrade');
+  const pitch=document.getElementById('pitch');
+  if(!d || !wrapper || !pitch)return;
+  const $=id=>document.getElementById(id);
+  const squad=(d.squad||[]).filter(p=>p.active!==false && (p.squadStatus||'first-team')==='first-team');
+  const slots=()=>Array.from(pitch.querySelectorAll('.player-slot'));
+  const selects=()=>Array.from(pitch.querySelectorAll('select'));
+  const playerByName=new Map(squad.map(p=>[p.name,p]));
+  const getRecords=()=>{try{const d=JSON.parse(localStorage.getItem('albionXIAccuracyV1'));return Array.isArray(d)?d:[];}catch{return[];}};
+  const storeRecords=records=>localStorage.setItem('albionXIAccuracyV1',JSON.stringify(records.slice(-40)));
+  const future=(d.fixtures||[]).filter(f=>!Number.isFinite(f.albionGoals)&&Number.isFinite(Date.parse(f.date+' 12:00:00 GMT')))
+    .sort((a,b)=>Date.parse(a.date+' 12:00:00 GMT')-Date.parse(b.date+' 12:00:00 GMT'));
+  const nextMatch=future.find(f=>Date.parse(f.date+' 12:00:00 GMT')>=Date.now()-86400000)||future[0]||null;
+  const matchKey=nextMatch?nextMatch.date+'|'+nextMatch.opponent:'';
+  let picked=null;
+  let dragOrigin=-1;
+  let dragName='';
+  function message(value){$('xiPaletteStatus').textContent=value;}
+  function eligible(select,name){
+    return !!select && Array.from(select.options).some(o=>o.value===name);
+  }
+  function markSlots(){
+    slots().forEach((label,i)=>{
+      label.dataset.xiPosition=String(i);
+      const select=label.querySelector('select');
+      label.draggable=!!select?.value;
+      label.classList.toggle('xi-ready-for-drop',!!picked&&eligible(select,picked));
+      label.classList.toggle('xi-ineligible',!!picked&&!eligible(select,picked));
+      if(select?.value)label.title='Drag '+select.value+' to swap with another eligible position';
+      else label.removeAttribute('title');
+    });
+  }
+  function renderPalette(){
+    const name=$('xiPaletteSearch').value.trim().toLocaleLowerCase('en-GB');
+    const pos=$('xiPalettePosition').value;
+    const chosen=new Set(selects().map(s=>s.value).filter(Boolean));
+    const players=squad.filter(p=>(pos==='all'||p.position===pos)&&
+      (!name||[p.name,p.number,p.role].join(' ').toLocaleLowerCase('en-GB').includes(name)));
+    const fragment=document.createDocumentFragment();
+    players.forEach(p=>{
+      const button=document.createElement('button');
+      button.type='button';
+      button.className='xi-player-chip';
+      button.draggable=true;
+      button.dataset.xiPlayer=p.name;
+      button.setAttribute('aria-pressed',String(p.name===picked));
+      if(chosen.has(p.name))button.classList.add('xi-on-pitch');
+      if(p.name===picked)button.classList.add('xi-picked');
+      const number=document.createElement('b');
+      number.textContent=p.number||'—';
+      const nameLabel=document.createElement('span');
+      nameLabel.textContent=p.name;
+      button.append(number,nameLabel);
+      button.addEventListener('click',()=>{
+        picked=(picked===p.name)?null:p.name;
+        renderPalette();
+        message(picked?'Selected '+picked+'. Tap an eligible pitch position or drag this player there.':'Selection cleared.');
+      });
+      fragment.append(button);
+    });
+    if(!players.length){
+      const empty=document.createElement('p');
+      empty.textContent='No matching current first-team players.';
+      fragment.append(empty);
+    }
+    $('xiPlayerPalette').replaceChildren(fragment);
+    markSlots();
+  }
+  function notifyChange(select){
+    select.dispatchEvent(new Event('change',{bubbles:true}));
+  }
+  function assignPlayer(name,index,origin=-1){
+    const destinations=selects();
+    const target=destinations[index];
+    if(!playerByName.has(name) || !target)return false;
+    if(!eligible(target,name)){
+      message(name+' cannot be selected for this position. Try another position.');
+      return false;
+    }
+    const current=target.value;
+    if(current===name){picked=null;renderPalette();return true;}
+    if(origin<0)origin=destinations.findIndex((s,i)=>i!==index&&s.value===name);
+    // If moving a player already on the pitch, swap only when the displaced player fits the old role.
+    if(origin>=0 && origin!==index){
+      if(current && eligible(destinations[origin],current)){
+        destinations[origin].value=current;
+      }else{
+        destinations[origin].value='';
+      }
+    }
+    destinations.forEach((s,i)=>{
+      if(i!==index&&i!==origin&&s.value===name)s.value='';
+    });
+    target.value=name;
+    notifyChange(target);
+    picked=null;
+    renderPalette();
+    message('Placed '+name+' into '+(slots()[index]?.querySelector('span')?.textContent||'your XI')+'. Your selection has been saved.');
+    return true;
+  }
+  $('xiPaletteSearch').addEventListener('input',renderPalette);
+  $('xiPalettePosition').addEventListener('change',renderPalette);
+  $('xiPlayerPalette').addEventListener('dragstart',event=>{
+    const chip=event.target.closest('[data-xi-player]');
+    if(!chip||!event.dataTransfer)return;
+    dragName=chip.dataset.xiPlayer;dragOrigin=-1;
+    event.dataTransfer.effectAllowed='move';
+    event.dataTransfer.setData('text/plain',dragName);
+  });
+  pitch.addEventListener('dragstart',event=>{
+    const label=event.target.closest('.player-slot');
+    const index=slots().indexOf(label);
+    const name=label?.querySelector('select')?.value;
+    if(index<0||!name||!event.dataTransfer)return;
+    dragName=name;dragOrigin=index;
+    event.dataTransfer.effectAllowed='move';
+    event.dataTransfer.setData('text/plain',name);
+  });
+  pitch.addEventListener('dragover',event=>{
+    const label=event.target.closest('.player-slot');
+    const name=dragName || event.dataTransfer?.getData('text/plain');
+    if(label&&name&&eligible(label.querySelector('select'),name)){
+      event.preventDefault();
+      event.dataTransfer.dropEffect='move';
+    }
+  });
+  pitch.addEventListener('drop',event=>{
+    const label=event.target.closest('.player-slot');
+    const index=slots().indexOf(label);
+    if(index<0)return;
+    event.preventDefault();
+    const name=event.dataTransfer?.getData('text/plain')||dragName;
+    assignPlayer(name,index,dragOrigin);
+    dragName='';dragOrigin=-1;
+  });
+  pitch.addEventListener('dragend',()=>{dragName='';dragOrigin=-1;});
+  $('xiPlayerPalette').addEventListener('dragend',()=>{dragName='';dragOrigin=-1;});
+  pitch.addEventListener('click',event=>{
+    if(!picked||event.target.closest('select'))return;
+    const label=event.target.closest('.player-slot');
+    if(!label)return;
+    const index=slots().indexOf(label);
+    if(index>=0){
+      event.preventDefault();
+      assignPlayer(picked,index);
+    }
+  });
+  pitch.addEventListener('change',event=>{
+    if(!event.target.matches('select'))return;
+    const select=event.target;
+    const val=select.value;
+    // A player cannot occupy two starting places.
+    if(val)selects().forEach(other=>{
+      if(other!==select&&other.value===val){
+        other.value='';
+        notifyChange(other);
+      }
+    });
+    renderPalette();
+  });
+  new MutationObserver(renderPalette).observe(pitch,{childList:true});
+  document.getElementById('formation')?.addEventListener('change',()=>{picked=null;renderPalette();});
+  document.getElementById('clearXI')?.addEventListener('click',()=>{picked=null;renderPalette();});
+  document.getElementById('loadPredicted')?.addEventListener('click',()=>{picked=null;renderPalette();});
+  document.getElementById('completeXI')?.addEventListener('click',renderPalette);
+  renderPalette();
+
+  // A confirmed XI is entered manually; no fabricated live team sheet.
+  const confirmed=$('xiConfirmedPlayers');
+  const review=$('xiReviewMatch');
+  const checkboxes=new Map();
+  squad.forEach(p=>{
+    const label=document.createElement('label');
+    label.className='xi-confirmed-player';
+    const input=document.createElement('input');
+    input.type='checkbox';input.value=p.name;
+    const text=document.createElement('span');
+    text.textContent=(p.number?'#'+p.number+' · ':'')+p.name;
+    label.append(input,text);
+    confirmed.append(label);
+    checkboxes.set(p.name,input);
+    input.addEventListener('change',()=>{
+      updateConfirmedCount();
+      updateComparisonButton();
+    });
+  });
+  function updateConfirmedCount(){
+    const num=[...checkboxes.values()].filter(b=>b.checked).length;
+    $('xiConfirmedCount').textContent=num+' of 11 selected';
+    $('xiConfirmedCount').classList.toggle('xi-count-ready',num===11);
+  }
+  $('xiConfirmedSearch').addEventListener('input',()=>{
+    const term=$('xiConfirmedSearch').value.toLocaleLowerCase('en-GB').trim();
+    confirmed.querySelectorAll('.xi-confirmed-player').forEach(label=>{
+      label.hidden=!!term&&!label.textContent.toLocaleLowerCase('en-GB').includes(term);
+    });
+  });
+  const matchingRecord=()=>getRecords().find(r=>r.key===review.value);
+  function updateComparisonButton(){
+    const rec=matchingRecord();
+    $('xiCompareLineup').disabled=!rec || [...checkboxes.values()].filter(x=>x.checked).length!==11;
+  }
+  function renderHistory(){
+    const records=getRecords();
+    const total=records.filter(r=>Number.isInteger(r.correct));
+    const wrap=$('xiAccuracyHistory');
+    const frag=document.createDocumentFragment();
+    if(total.length){
+      const accuracy=Math.round(100*total.reduce((n,r)=>n+r.correct,0)/(total.length*11));
+      const intro=document.createElement('p');
+      intro.textContent=total.length+' checked '+(total.length===1?'match':'matches')+' · Overall accuracy '+accuracy+'%';
+      frag.append(intro);
+      total.slice().reverse().slice(0,8).forEach(r=>{
+        const row=document.createElement('div');
+        row.className='xi-history-row';
+        const title=document.createElement('span');
+        title.textContent=r.label+' · '+r.formation;
+        const value=document.createElement('strong');
+        value.textContent=r.correct+'/11';
+        row.append(title,value);
+        frag.append(row);
+      });
+    }else{
+      const p=document.createElement('p');
+      p.textContent='No checked predictions yet. Lock a prediction, then enter the official XI after it is announced.';
+      frag.append(p);
+    }
+    wrap.replaceChildren(frag);
+  }
+  function renderReviewOptions(){
+    const records=getRecords();
+    const selected=review.value;
+    review.replaceChildren();
+    if(!records.length){
+      const option=document.createElement('option');
+      option.value='';option.textContent='No predictions locked yet';
+      review.append(option);
+    }else{
+      records.slice().reverse().forEach(r=>{
+        const opt=document.createElement('option');
+        opt.value=r.key;opt.textContent=r.label;
+        review.append(opt);
+      });
+      review.value=records.some(r=>r.key===selected)?selected:
+        records.some(r=>r.key===matchKey)?matchKey:records[records.length-1].key;
+    }
+    renderSelectedReview();
+  }
+  function renderSelectedReview(){
+    const rec=matchingRecord();
+    checkboxes.forEach((input,name)=>{input.checked=!!rec?.actual?.includes(name);});
+    updateConfirmedCount();
+    updateComparisonButton();
+    if(!rec){
+      $('xiAccuracyResult').textContent='Lock a prediction to compare it with the actual eleven.';
+      return;
+    }
+    if(Number.isInteger(rec.correct)){
+      const matched=rec.starters.filter(n=>rec.actual.includes(n));
+      $('xiAccuracyResult').textContent=rec.label+': '+rec.correct+'/11 correct ('+Math.round(rec.correct/11*100)+'%). Matching players: '+matched.join(', ')+'.';
+    }else{
+      $('xiAccuracyResult').textContent='Locked prediction for '+rec.label+' ('+rec.formation+'). Enter the confirmed starters to check your accuracy.';
+    }
+  }
+  $('xiConfirmedPlayers').addEventListener('change',updateConfirmedCount);
+  review.addEventListener('change',renderSelectedReview);
+  function lockButton(){
+    const locked=getRecords().some(r=>r.key===matchKey);
+    $('xiLockPrediction').disabled=!matchKey||locked;
+    $('xiLockStatus').textContent=!nextMatch?'No upcoming fixture found in the recorded schedule.':
+      locked?'A prediction is already locked for '+nextMatch.opponent+'. Use the comparison panel below after the line-up is published.':
+      'Choose 11 unique starters, then lock your prediction before the match.';
+  }
+  $('xiLockPrediction').addEventListener('click',()=>{
+    if(!nextMatch){$('xiLockStatus').textContent='No upcoming match is available.';return;}
+    const starters=selects().map(s=>s.value);
+    if(starters.filter(Boolean).length!==11||new Set(starters).size!==11){
+      $('xiLockStatus').textContent='Please select 11 different starting players first.';
+      return;
+    }
+    const records=getRecords();
+    if(records.some(r=>r.key===matchKey))return;
+    records.push({key:matchKey,label:nextMatch.date+' · '+nextMatch.opponent,
+      formation:$('formation').value,starters,createdAt:new Date().toISOString()});
+    storeRecords(records);
+    lockButton();renderReviewOptions();renderHistory();
+    $('xiLockStatus').textContent='Prediction locked. Check the official team sheet when published, then enter the actual XI below.';
+  });
+  $('xiCompareLineup').addEventListener('click',()=>{
+    const rec=matchingRecord();
+    const actual=[...checkboxes.entries()].filter(([,input])=>input.checked).map(([name])=>name);
+    if(!rec||actual.length!==11||new Set(actual).size!==11){
+      $('xiAccuracyResult').textContent='Select precisely 11 confirmed starting players first.';
+      return;
+    }
+    const records=getRecords();
+    const entry=records.find(r=>r.key===rec.key);
+    if(!entry)return;
+    entry.actual=actual;
+    entry.correct=entry.starters.filter(name=>actual.includes(name)).length;
+    entry.checkedAt=new Date().toISOString();
+    storeRecords(records);renderSelectedReview();renderHistory();
+  });
+  $('xiMatchLabel').textContent=nextMatch?'Next scheduled: '+nextMatch.date+' · '+nextMatch.opponent:'No further fixture currently recorded';
+  lockButton();renderReviewOptions();renderHistory();
+})();
