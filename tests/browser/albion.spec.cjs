@@ -192,7 +192,8 @@ test('mobile XI palette, locked prediction and manual accuracy check',async({pag
   const errors=[];page.on('pageerror',err=>errors.push(err.message));
   await page.setViewportSize({width:390,height:844});
   await page.goto('/',{waitUntil:'load'});
-  console.log('XI_VISIBILITY_DIAGNOSTICS',JSON.stringify(await page.evaluate(()=>{let el=document.querySelector('#xiPlayerPalette [data-xi-player="Bart Verbruggen"]');const out=[];for(let i=0;el&&i<10;i++,el=el.parentElement){const s=getComputedStyle(el);const r=el.getBoundingClientRect();out.push({tag:el.tagName,id:el.id,cls:el.className,hidden:el.hidden,display:s.display,visibility:s.visibility,opacity:s.opacity,width:r.width,height:r.height});}return out;})));
+  await page.locator('#xi > .mobile-section-toggle').click();
+  await expect(page.locator('#xi')).not.toHaveClass(/mobile-collapsed/);
   const player=page.locator('#xiPlayerPalette [data-xi-player="Bart Verbruggen"]');
   await player.click();
   await page.locator('#pitch .player-slot').first().click({position:{x:18,y:18}});
