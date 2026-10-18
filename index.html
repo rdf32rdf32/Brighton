@@ -20,14 +20,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r95-20261018" name="release"/>
+<meta content="professional-r96-20261018" name="release"/>
 
 
 
 
 
 
-<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r95" rel="stylesheet"/></head>
+<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -36,7 +36,7 @@
 <button aria-label="Start a guided tour of the site" class="top-tour-button" id="startTour" type="button"><span aria-hidden="true">◆</span> Tour</button>
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#top-scorers">Scorers</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#travel">Visit</a><button id="headerSettingsToggle" type="button" class="header-settings-toggle" aria-controls="supporter-settings" aria-expanded="false">⚙ Settings</button></div>
+<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#stats-centre">Stats</a><a href="#top-scorers">Scorers</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#history-archive">Archive</a><a href="#travel">Visit</a><button id="headerSettingsToggle" type="button" class="header-settings-toggle" aria-controls="supporter-settings" aria-expanded="false">⚙ Settings</button></div>
 </nav>
 
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -559,6 +559,39 @@
 </details>
 </div>
 </section>
+
+<section class="card stats-centre" id="stats-centre" aria-labelledby="statsCentreHeading">
+ <div class="section-head">
+  <p class="eyebrow">2026/27 · Results-powered dashboard</p><h2 id="statsCentreHeading">Albion Stats Centre</h2>
+  <p>Track form, goals and results by competition, venue and month. All figures come from completed fixtures recorded on this site.</p>
+ </div>
+ <div class="stats-controls">
+  <label for="statsCompetition">Competition<select id="statsCompetition"><option value="all">All competitions</option><option value="Premier League">Premier League</option><option value="Carabao Cup">Carabao Cup</option><option value="UEFA Conference League">UEFA Conference League</option><option value="FA Cup">FA Cup</option></select></label>
+  <span id="statsUpdated" class="stats-updated">Fixture results checked 18 October 2026 · manually maintained</span>
+ </div>
+ <div class="stats-kpi-grid" id="statsKpis" aria-live="polite">
+  <article><span>Played</span><strong>11</strong></article><article><span>Goals for</span><strong>34</strong></article><article><span>Goals against</span><strong>7</strong></article><article><span>Goal difference</span><strong>+27</strong></article>
+ </div>
+ <div class="stats-panels">
+  <article class="stats-panel">
+   <h3>Monthly scoring trend</h3>
+   <label class="stats-mini-label" for="statsTrendMetric">Show<select id="statsTrendMetric"><option value="goals">Goals scored</option><option value="conceded">Goals conceded</option><option value="played">Games played</option></select></label>
+   <div id="statsTrend" class="stats-trend" role="list" aria-live="polite"></div>
+  </article>
+  <article class="stats-panel">
+   <h3>Home versus away</h3><div class="stats-venues" id="statsVenues" aria-live="polite"></div>
+   <h3>Leading goalscorers</h3><div class="stats-top-players" id="statsTopPlayers" aria-live="polite"></div>
+   <a href="#top-scorers">Full scorers breakdown by competition →</a>
+  </article>
+ </div>
+ <div class="stats-panel stats-competitions-panel">
+  <h3>Competition breakdown</h3>
+  <div class="stats-table-scroll" tabindex="0" role="region" aria-label="Results by competition">
+   <table class="stats-competition-table"><thead><tr><th scope="col">Competition</th><th scope="col">P</th><th scope="col">W</th><th scope="col">D</th><th scope="col">L</th><th scope="col">GF</th><th scope="col">GA</th></tr></thead><tbody id="statsCompetitionRows"></tbody></table>
+  </div>
+ </div>
+ <p class="stats-source-note" id="statsSourceNote">No live feed. Results and scorers require manual verification against <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener noreferrer">official Albion match reports ↗</a>. Assists, appearances and minutes are not shown because they are not currently in the site's verified data.</p>
+</section>
 <section class="card scorers-card" id="top-scorers" aria-labelledby="topScorersHeading">
   <div class="section-head scorers-heading"><div>
     <p class="eyebrow">2026/27 · First team</p>
@@ -782,6 +815,16 @@
             Copy recreatable XI link
           </button>
 </div>
+
+<div class="xi-upgrade" id="xiUpgrade">
+ <div class="xi-upgrade-heading"><h3>Drag or tap players into your formation</h3><p>On desktop, drag a player to an eligible position. On mobile, tap a player below, then tap a position on the pitch. You can still use the position dropdowns.</p></div>
+ <div class="xi-palette-controls">
+  <label for="xiPaletteSearch">Find a player<input id="xiPaletteSearch" type="search" placeholder="Player name or squad number…"/></label>
+  <label for="xiPalettePosition">Position<select id="xiPalettePosition"><option value="all">Every position</option><option value="Goalkeeper">Goalkeepers</option><option value="Defender">Defenders</option><option value="Midfielder">Midfielders</option><option value="Forward">Forwards</option></select></label>
+ </div>
+ <p id="xiPaletteStatus" class="xi-palette-status" aria-live="polite">Tap or drag a player, then choose a position.</p>
+ <div id="xiPlayerPalette" class="xi-player-palette" aria-label="Available current first-team players"></div>
+</div>
 <p class="drag-hint">
           Desktop: drag one selected player slot onto another to swap them.
         </p>
@@ -791,6 +834,27 @@
 <div class="bench-grid" id="bench"></div>
 </details>
 <div aria-live="polite" class="result" id="xiMessage"></div>
+
+<details class="xi-checker" id="xiChecker">
+ <summary>Compare my XI with the confirmed team · Track accuracy</summary>
+ <div class="xi-checker-content">
+  <p id="xiMatchLabel">Next competitive fixture</p>
+  <p>Lock your predicted eleven before the match. Once the official team sheet is published, manually select the actual starters and check your accuracy. No line-up is imported automatically.</p>
+  <button id="xiLockPrediction" type="button">Lock my XI prediction</button>
+  <p id="xiLockStatus" aria-live="polite">Select 11 unique starting players before locking.</p>
+  <div class="xi-checker-confirmed">
+   <h4>Enter the confirmed XI</h4>
+   <label for="xiReviewMatch">Prediction to check<select id="xiReviewMatch"><option value="">No predictions locked yet</option></select></label>
+   <p>Check exactly eleven names from the official Albion team sheet.</p>
+   <div class="xi-confirmed-toolbar"><label for="xiConfirmedSearch">Find a squad member<input id="xiConfirmedSearch" type="search" placeholder="Filter the squad…"/></label><span id="xiConfirmedCount" aria-live="polite">0 of 11 selected</span></div>
+   <div id="xiConfirmedPlayers" class="xi-confirmed-list"></div>
+   <button id="xiCompareLineup" type="button">Check prediction accuracy</button>
+   <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener noreferrer">Verify the official XI ↗</a>
+  </div>
+  <div id="xiAccuracyResult" class="xi-accuracy-result" aria-live="polite"></div>
+  <h4>My prediction history</h4><div id="xiAccuracyHistory" class="xi-accuracy-history"></div>
+ </div>
+</details>
 </section>
 <section class="card predictor" id="predictor">
 <div class="section-head">
@@ -826,7 +890,7 @@
           Choose Albion’s finishing position.
         </div>
 </section>
-<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#story">Albion story</a><a href="#travel">Visit the Amex</a><a href="#xi">Pick XI</a></nav>
+<nav aria-label="Explore more Albion features" class="explore-more"><b>Explore more Albion features</b><a href="#fixtures">Fixtures</a><a href="#players">Squad</a><a href="#history-archive">History archive</a><a href="#stats-centre">Stats</a><a href="#travel">Visit the Amex</a><a href="#xi">Pick XI</a></nav>
 <section class="card" id="story">
 <div class="section-head">
 <p class="eyebrow">History, landmarks, facts and supporter memories</p>
@@ -1006,6 +1070,28 @@
 </article>
 </div>
 </div>
+</section>
+
+<section class="card archive-centre" id="history-archive" aria-labelledby="historyArchiveHeading">
+ <div class="section-head"><p class="eyebrow">1901–2026 · Albion heritage</p><h2 id="historyArchiveHeading">Interactive Albion history archive</h2>
+  <p>Search key moments, browse different eras and explore historical stadium photographs. This complements the Albion Story timeline.</p>
+ </div>
+ <div class="archive-search-row">
+  <label for="archiveSearch">Find a year, person or event<input type="search" id="archiveSearch" placeholder="Try 1997, Goldstone, promotion…"/></label>
+  <label for="archiveEra">Era<select id="archiveEra"><option value="all">All eras</option><option value="origins">1901–1978 · Origins</option><option value="survival">1979–2010 · Glory &amp; survival</option><option value="amex">2011–2026 · Amex &amp; Europe</option></select></label>
+ </div>
+ <p class="archive-results-count" id="archiveResultsCount" aria-live="polite">Explore Albion history</p>
+ <div class="archive-explorer-layout">
+  <div class="archive-entry-list" id="archiveEntryList" aria-label="Historic milestones"></div>
+  <article class="archive-feature" id="archiveFeature" aria-live="polite" aria-atomic="true"><p>Select a historic moment to explore it.</p></article>
+ </div>
+ <h3 class="archive-photographs-heading">Grounds through the years</h3>
+ <div class="archive-photos">
+  <figure><img loading="lazy" decoding="async" src="https://commons.wikimedia.org/wiki/Special:FilePath/Hove%2C_The_Goldstone_Ground_-_geograph.org.uk_-_76513.jpg?width=640" alt="Supporters at the Goldstone Ground in Hove in April 1996."/><figcaption><strong>Goldstone Ground · 1996</strong><small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Hove,_The_Goldstone_Ground_-_geograph.org.uk_-_76513.jpg" target="_blank" rel="noopener noreferrer">Nigel Cox</a> · <a href="https://creativecommons.org/licenses/by-sa/2.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 2.0</a></small></figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="https://commons.wikimedia.org/wiki/Special:FilePath/Withdean.jpg?width=640" alt="Withdean Stadium, Albion's home before the Amex."/><figcaption><strong>Withdean Stadium</strong><small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Withdean.jpg" target="_blank" rel="noopener noreferrer">Jem</a> · <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener noreferrer">CC BY 2.0</a></small></figcaption></figure>
+  <figure><img loading="lazy" decoding="async" src="https://commons.wikimedia.org/wiki/Special:FilePath/Falmer_Stadium_-_League_debut.jpg?width=640" alt="The Amex during Brighton's first league game there on 6 August 2011."/><figcaption><strong>Amex · August 2011</strong><small>Photo: <a href="https://commons.wikimedia.org/wiki/File:Falmer_Stadium_-_League_debut.jpg" target="_blank" rel="noopener noreferrer">James Boyes</a> · <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener noreferrer">CC BY 2.0</a></small></figcaption></figure>
+ </div>
+ <p class="archive-source-note">For more original photographs, visit the <a href="https://www.brightonandhovealbion.com/media-gallery/galleries-125-anniversary-in-pictures" target="_blank" rel="noopener noreferrer">official 125th-anniversary gallery ↗</a> or the <a href="https://historicengland.org.uk/images-books/photos/volume/FGE01/01/015" target="_blank" rel="noopener noreferrer">Historic England Goldstone archive ↗</a>. Photographs above are Creative Commons licensed and credited.</p>
 </section>
 <section class="card" id="records">
 <div class="section-head">
@@ -1398,5 +1484,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20261018-r95"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="top-scorers.js?v=20261018-r95"></script></body>
+<script defer src="albion-data-r78.js?v=20261018-r96"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="top-scorers.js?v=20261018-r96"></script></body>
 </html>
