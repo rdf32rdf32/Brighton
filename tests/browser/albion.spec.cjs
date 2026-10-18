@@ -159,3 +159,53 @@ test('manual results notice is available with the latest verified result',async(
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   expect(errors).toEqual([]);
 });
+
+
+test('Stats Centre calculates fixtures and changes competition',async({page})=>{
+  const errors=[];page.on('pageerror',err=>errors.push(err.message));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#statsKpis article')).toHaveCount(8);
+  await expect(page.locator('#statsKpis')).toContainText('34');
+  await expect(page.locator('#statsCompetitionRows tr')).toHaveCount(4);
+  await page.locator('#statsCompetition').selectOption('Premier League');
+  await expect(page.locator('#statsKpis')).toContainText('23');
+  await expect(page.locator('#statsKpis')).toContainText('7');
+  await page.locator('#statsTrendMetric').selectOption('conceded');
+  await expect(page.locator('#statsTrend .stats-trend-row')).toHaveCount(3);
+  expect(errors).toEqual([]);
+});
+test('heritage archive searches and filters verified milestones',async({page})=>{
+  const errors=[];page.on('pageerror',err=>errors.push(err.message));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#archiveEntryList .archive-entry')).toHaveCount(12);
+  await page.locator('#archiveSearch').fill('Hereford');
+  await expect(page.locator('#archiveEntryList .archive-entry')).toHaveCount(1);
+  await expect(page.locator('#archiveFeature')).toContainText('Survival at Hereford');
+  await page.locator('#archiveEra').selectOption('amex');
+  await expect(page.locator('#archiveEntryList .archive-entry')).toHaveCount(0);
+  await page.locator('#archiveSearch').fill('');
+  await expect(page.locator('#archiveEntryList .archive-entry')).toHaveCount(4);
+  await expect(page.locator('.archive-photos img')).toHaveCount(3);
+  expect(errors).toEqual([]);
+});
+test('mobile XI palette, locked prediction and manual accuracy check',async({page})=>{
+  const errors=[];page.on('pageerror',err=>errors.push(err.message));
+  await page.setViewportSize({width:390,height:844});
+  await page.goto('/',{waitUntil:'load'});
+  const player=page.locator('#xiPlayerPalette [data-xi-player="Bart Verbruggen"]');
+  await player.click();
+  await page.locator('#pitch .player-slot').first().click({position:{x:18,y:18}});
+  await expect(page.locator('#pitch select').first()).toHaveValue('Bart Verbruggen');
+  await page.locator('#loadPredicted').click();
+  await expect(page.locator('#pitch select')).toHaveCount(11);
+  await page.locator('#xiChecker').evaluate(el=>{el.open=true;});
+  await page.locator('#xiLockPrediction').click();
+  await expect(page.locator('#xiLockStatus')).toContainText('locked');
+  const actual=page.locator('#xiConfirmedPlayers input[type="checkbox"]');
+  for(let i=0;i<11;i++)await actual.nth(i).check();
+  await expect(page.locator('#xiConfirmedCount')).toContainText('11 of 11');
+  await page.locator('#xiCompareLineup').click();
+  await expect(page.locator('#xiAccuracyResult')).toContainText('/11 correct');
+  await expect(page.locator('#xiAccuracyHistory')).toContainText('Overall accuracy');
+  expect(errors).toEqual([]);
+});
