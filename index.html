@@ -20,14 +20,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r94-20261018" name="release"/>
+<meta content="professional-r95-20261018" name="release"/>
 
 
 
 
 
 
-<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/></head>
+<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r95" rel="stylesheet"/></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -36,7 +36,7 @@
 <button aria-label="Start a guided tour of the site" class="top-tour-button" id="startTour" type="button"><span aria-hidden="true">◆</span> Tour</button>
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#travel">Visit</a><button id="headerSettingsToggle" type="button" class="header-settings-toggle" aria-controls="supporter-settings" aria-expanded="false">⚙ Settings</button></div>
+<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#top-scorers">Scorers</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#travel">Visit</a><button id="headerSettingsToggle" type="button" class="header-settings-toggle" aria-controls="supporter-settings" aria-expanded="false">⚙ Settings</button></div>
 </nav>
 
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -558,6 +558,28 @@
           </div>
 </details>
 </div>
+</section>
+<section class="card scorers-card" id="top-scorers" aria-labelledby="topScorersHeading">
+  <div class="section-head scorers-heading"><div>
+    <p class="eyebrow">2026/27 · First team</p>
+    <h2 id="topScorersHeading">Albion top scorers</h2>
+    <p>Goals by competition, ranked across the season. Select a competition to see its leading scorers.</p>
+  </div><span class="scorers-date" id="scorersDate">Checked 18 October 2026</span></div>
+  <div class="scorers-summary" aria-live="polite"><strong id="scorersLeader">Charalampos Kostoulas · 5 goals</strong><span id="scorersMeta">31 player goals · 3 own goals · 34 Brighton goals</span></div>
+  <div class="scorers-filters" role="group" aria-label="Rank Albion scorers by competition">
+    <button class="scorers-filter is-active" data-scorer-filter="all" aria-pressed="true" type="button">All competitions</button>
+    <button class="scorers-filter" data-scorer-filter="premierLeague" aria-pressed="false" type="button">Premier League</button>
+    <button class="scorers-filter" data-scorer-filter="carabaoCup" aria-pressed="false" type="button">Carabao Cup</button>
+    <button class="scorers-filter" data-scorer-filter="conferenceLeague" aria-pressed="false" type="button">Conference League</button>
+    <button class="scorers-filter" data-scorer-filter="faCup" aria-pressed="false" type="button">FA Cup</button>
+  </div>
+  <div class="scorers-table-scroll" role="region" aria-label="Brighton scorers by competition" tabindex="0">
+    <table class="scorers-table"><thead><tr><th scope="col">Player</th><th scope="col" data-goals-field="premierLeague">Premier League</th><th scope="col" data-goals-field="carabaoCup">Carabao Cup</th><th scope="col" data-goals-field="conferenceLeague">Conference League</th><th scope="col" data-goals-field="faCup">FA Cup</th><th scope="col" data-goals-field="all">Total</th></tr></thead>
+    <tbody id="scorersRows"><tr><th scope="row">1. Charalampos Kostoulas</th><td>3</td><td>1</td><td>1</td><td>0</td><td><strong>5</strong></td></tr></tbody>
+    </table>
+  </div>
+  <p class="scorers-empty" id="scorersEmpty" hidden>No Brighton players have scored in this competition yet.</p>
+  <p class="scorers-note" id="scorersNote">Own goals count towards Albion's match totals but are excluded from player rankings. Figures are checked manually, not live. <a href="https://en.wikipedia.org/wiki/2026%E2%80%9327_Brighton_%26_Hove_Albion_F.C._season#Goalscorers" target="_blank" rel="noopener noreferrer">Season breakdown ↗</a> · <a href="https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report" target="_blank" rel="noopener noreferrer">Latest match report ↗</a></p>
 </section>
 <section class="card player-profiles" id="players">
 <p class="content-freshness" data-freshness="squad">First-team squad snapshot: <b>updated 15 October 2026</b></p>
@@ -1322,7 +1344,7 @@
 </section>
 </main>
 <nav aria-label="Quick section navigation" class="mobile-jump-nav">
-<a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#players">Squad</a><a href="#quiz">Quiz</a>
+<a href="#shootout">Pens</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#top-scorers">Scorers</a><a href="#players">Squad</a><a href="#quiz">Quiz</a>
 </nav>
 <details class="floating-tools" id="floatingTools"><summary aria-label="Open site controls">•••</summary><div><button aria-controls="supporter-settings" aria-expanded="false" class="settings-toggle" id="settingsToggle" type="button">⚙ Settings</button><button aria-pressed="false" class="sound-toggle sound-off" id="soundToggle" title="Turn site sound on" type="button">🔇 Sound off</button><button aria-label="Back to top" class="back-to-top" id="backToTop" type="button">↑ Top</button></div></details><div aria-live="polite" class="sound-caption" hidden="" id="soundCaption" role="status"></div>
 
@@ -1376,5 +1398,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20261018-r94"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script></body>
+<script defer src="albion-data-r78.js?v=20261018-r95"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="top-scorers.js?v=20261018-r95"></script></body>
 </html>

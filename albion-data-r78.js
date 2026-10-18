@@ -1,7 +1,7 @@
-// Shared active squad, fixtures and shoot-out data for Albion Fan Hub r94.
+// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r95.
 // 18 October results review: Albion 5–0 Crystal Palace confirmed by match reports; Jablonec is next on 22 October. Squad last checked 15 October. Results are manually curated, not live.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r94",
+  "version": "r95",
   "checked": "18 October 2026",
   "checkedISO": "2026-10-18",
   "squad": [
@@ -1075,6 +1075,133 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venue": "A"
     }
   ],
+  "scoring": {
+    "season": "2026/27",
+    "checkedISO": "2026-10-18",
+    "sources": [
+      {
+        "label": "Season goalscorers through 15 October",
+        "url": "https://en.wikipedia.org/wiki/2026%E2%80%9327_Brighton_%26_Hove_Albion_F.C._season#Goalscorers"
+      },
+      {
+        "label": "18 October Crystal Palace match report",
+        "url": "https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report"
+      }
+    ],
+    "players": [
+      {
+        "name": "Charalampos Kostoulas",
+        "premierLeague": 3,
+        "carabaoCup": 1,
+        "faCup": 0,
+        "conferenceLeague": 1
+      },
+      {
+        "name": "Pascal Groß",
+        "premierLeague": 3,
+        "carabaoCup": 1,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Maxim De Cuyper",
+        "premierLeague": 2,
+        "carabaoCup": 1,
+        "faCup": 0,
+        "conferenceLeague": 1
+      },
+      {
+        "name": "Jack Hinshelwood",
+        "premierLeague": 3,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 1
+      },
+      {
+        "name": "Georginio Rutter",
+        "premierLeague": 0,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 2
+      },
+      {
+        "name": "Malick Yalcouyé",
+        "premierLeague": 2,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Yasin Ayari",
+        "premierLeague": 2,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Jaouen Hadjam",
+        "premierLeague": 1,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Lewis Dunk",
+        "premierLeague": 1,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Chema Andrés",
+        "premierLeague": 1,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Olivier Boscagli",
+        "premierLeague": 0,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 1
+      },
+      {
+        "name": "Mats Wieffer",
+        "premierLeague": 0,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 1
+      },
+      {
+        "name": "Matt O'Riley",
+        "premierLeague": 0,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 1
+      },
+      {
+        "name": "Luka Vušković",
+        "premierLeague": 1,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      },
+      {
+        "name": "Diego Gómez",
+        "premierLeague": 1,
+        "carabaoCup": 0,
+        "faCup": 0,
+        "conferenceLeague": 0
+      }
+    ],
+    "ownGoals": {
+      "premierLeague": 3,
+      "carabaoCup": 0,
+      "faCup": 0,
+      "conferenceLeague": 0
+    }
+  },
   "squadCheckedISO": "2026-10-15",
   "fixtureCheckedISO": "2026-10-18"
 });

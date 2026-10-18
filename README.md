@@ -1,3 +1,9 @@
+### 18 October 2026 — r95 top scorers by competition
+- Added a sortable 2026/27 **Top scorers** section with Premier League, Carabao Cup, UEFA Conference League, FA Cup and all-competition columns, plus responsive horizontal scrolling and direct navigation links.
+- Through 18 October: Charalampos Kostoulas leads with five. Reconciled **31 player goals + 3 own goals = 34 Brighton goals** across all recorded completed fixtures; excludes own goals from player rankings.
+- Source baseline: season goalscorers through 15 October ([season table](https://en.wikipedia.org/wiki/2026%E2%80%9327_Brighton_%26_Hove_Albion_F.C._season#Goalscorers)); added goals from [18 October's Palace report](https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report).
+- Scorers live in `albion-data-r78.js` under `scoring`. Counts remain **manually maintained**, not live. The new section displays a discrepancy warning when it does not reconcile to the recorded fixture totals; `tests/scorers.cjs` enforces competition-by-competition reconciliation in CI.
+
 ### 18 October 2026 — r94 matchday update
 - Recorded Brighton's **5–0 home win over Crystal Palace** (18 October), with the Canvot own goal followed by Gómez, Ayari, Kostoulas and Hinshelwood. Source: [The Guardian match report](https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report).
 - Next fixture is **FK Jablonec v Albion**, 22 October at **17:45 UK**, confirmed from the club's [European away-ticket notice](https://www.brightonandhovealbion.com/media-article/away-ticket-news-uefa-conference-league-information-september-2026). Broadcast is not confirmed.
