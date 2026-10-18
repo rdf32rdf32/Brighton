@@ -1,3 +1,9 @@
+### 18 October 2026 — r94 matchday update
+- Recorded Brighton's **5–0 home win over Crystal Palace** (18 October), with the Canvot own goal followed by Gómez, Ayari, Kostoulas and Hinshelwood. Source: [The Guardian match report](https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report).
+- Next fixture is **FK Jablonec v Albion**, 22 October at **17:45 UK**, confirmed from the club's [European away-ticket notice](https://www.brightonandhovealbion.com/media-article/away-ticket-news-uefa-conference-league-information-september-2026). Broadcast is not confirmed.
+- Updated manual fixture verification date, static no-script fallbacks, all-competition and Premier League summaries, and regression tests. Squad review remains 15 October.
+- **Football scores remain manually curated, not live**; daily freshness checks should flag any unrecorded result.
+
 ### 17 October 2026 — r93 fixture/results maintenance
 - Confirmed Brighton's 4–0 UEFA Conference League win against FK Kauno Žalgiris on 15 October using the [official match report](https://www.brightonandhovealbion.com/media-article/mft-match-report-albion-v-kauno-zalgiris-conference-league).
 - Next match is Crystal Palace, Sunday 18 October, 14:00 UK at the Amex; refreshed non-JavaScript fallback text and all-competition totals.
