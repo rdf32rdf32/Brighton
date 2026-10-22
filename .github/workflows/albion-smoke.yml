@@ -53,7 +53,7 @@ jobs:
           node-version: '22'
       - run: npm install --no-audit --no-fund
       - run: npx playwright install --with-deps webkit
-      - run: npx playwright test --browser webkit --grep 'goalkeeper line|Sunderland'
+      - run: npx playwright test --browser webkit --grep 'goalkeeper line|Sunderland|mobile navigation|penalty guidance|live score'
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
