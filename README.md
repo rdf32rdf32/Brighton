@@ -1,3 +1,10 @@
+### 22 October 2026 — r97: Automatic matchday score feed
+- Live matchday scores: the site checks ESPN's **unofficial, undocumented public soccer scoreboard** for the competition and match date; it only displays scores after validating both Albion and the opponent.
+- Checks every 45 seconds while a verified match is in play, less often around fixtures; suspends polling while the tab is hidden. Displays source, state and UK checking time.
+- Provider failure/missing data falls back clearly; **no scores are invented**. The archived match results, goalscorers, squad and full-season statistics remain **manually curated**, and the live feed does not silently alter them.
+- GitHub Pages hosts the site without PHP. Automated Node tests and mobile Chromium/WebKit tests cover the feed and safe failure; **real iPhone Safari audio/gesture tests still require a physical device**.
+- Provider availability, CORS or endpoint shape can change without warning; see ESPN and official Albion fixtures for confirmation.
+
 ### 18 October 2026 — r96: Interactive archive, improved XI and Stats Centre
 - **Stats Centre** (#stats-centre): competition filters, results KPIs, win rate, goals per match, monthly trend, home/away splits, competition table and top goalscorers. Calculated from completed fixtures already in the site; **no invented appearance, assists or minutes data**. Manual fixture/scoring updates still required.
 - **Albion history archive** (#history-archive): search 12 milestones, filter by era, explore sourced details and three historic stadium photographs (Goldstone 1996, Withdean, Amex 2011). Each photograph has creator attribution and Creative Commons licence links; the club's 125th anniversary gallery and Historic England archive provide further source images.
