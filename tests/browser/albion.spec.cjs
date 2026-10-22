@@ -211,3 +211,33 @@ test('mobile XI palette, locked prediction and manual accuracy check',async({pag
   await expect(page.locator('#xiAccuracyHistory')).toContainText('Overall accuracy');
   expect(errors).toEqual([]);
 });
+
+test('live score shows verified Brighton match on mobile',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-10-22T18:00:00Z'));
+  await page.setViewportSize({width:390,height:844});
+  await page.route('https://site.api.espn.com/**',route=>route.fulfill({
+    status:200,contentType:'application/json',headers:{'access-control-allow-origin':'*'},
+    body:JSON.stringify({events:[{id:'987654',date:'2026-10-22T16:45:00Z',
+      status:{type:{state:'in',completed:false,shortDetail:"74'"}},
+      competitions:[{competitors:[
+        {homeAway:'home',score:'1',team:{id:'999',displayName:'FK Jablonec',shortDisplayName:'Jablonec'}},
+        {homeAway:'away',score:'2',team:{id:'331',displayName:'Brighton & Hove Albion',shortDisplayName:'Brighton'}}
+      ]}]
+    }]})
+  }));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#albionLiveScore')).toContainText('Jablonec 1–2 Albion');
+  await expect(page.locator('#albionLiveScore')).toHaveAttribute('data-feed-state','live');
+  await expect(page.locator('#albionLiveScore')).toContainText('ESPN');
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+2);
+  expect(overflow).toBe(false);
+});
+test('live score provider failure keeps verified manual archive without guessing',async({page})=>{
+  await page.clock.setFixedTime(new Date('2026-10-22T18:00:00Z'));
+  await page.route('https://site.api.espn.com/**',route=>route.fulfill({status:503,body:'Unavailable'}));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#albionLiveScore')).toHaveAttribute('data-feed-state','offline');
+  await expect(page.locator('#albionLiveScore')).toContainText('Manual fixture information remains available');
+  await expect(page.locator('#resultsList')).toContainText('Crystal Palace');
+  await expect(page.locator('#albionLiveScore')).not.toContainText('1–2');
+});
