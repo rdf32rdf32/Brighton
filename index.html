@@ -27,7 +27,17 @@
 
 
 
-<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/></head>
+<link href="site-r76.css?v=20260916-r76" rel="stylesheet"/><link href="site-current.css?v=20261015-r92-ui" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/><style id="albion-live-feed-style">
+.albion-live-feed{display:grid;gap:.34rem;margin:1rem 0;padding:.85rem 1rem;border:1px solid rgba(110,155,195,.42);border-radius:12px;background:rgba(110,155,195,.10);color:inherit;min-width:0}
+.albion-live-feed strong{font-size:.83rem;letter-spacing:.03em;text-transform:uppercase}
+.albion-live-feed>span{font-size:clamp(.94rem,2.1vw,1.15rem);font-weight:650;overflow-wrap:anywhere}
+.albion-live-feed small{font-size:.74rem;line-height:1.5;opacity:.85}
+.albion-live-feed a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.albion-live-feed[data-feed-state="live"]{border:2px solid #d85a55;background:rgba(216,90,85,.10)}
+.albion-live-feed[data-feed-state="live"] strong{color:#ef7974}
+.albion-live-feed[data-feed-state="offline"],.albion-live-feed[data-feed-state="unavailable"]{border-style:dashed}
+@media(max-width:600px){.albion-live-feed{padding:.7rem .8rem;margin:.7rem 0}.albion-live-feed>span{font-size:1rem}}
+</style></head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -486,7 +496,7 @@
 <section class="card matches-card" id="matches">
 <div class="section-head matches-heading">
 <p class="eyebrow">2026/27 · All competitions</p>
-<h2>Fixtures &amp; results</h2><p class="fixture-manual-note">Scores are reviewed manually, not live. <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener noreferrer">Check the club for updates ↗</a></p>
+<h2>Fixtures &amp; results</h2><p class="fixture-manual-note">The season archive and top scorers are maintained manually. Matchday scores are checked automatically when a provider feed is available. <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener noreferrer">Check the club for updates ↗</a></p>
 <p>One match hub for completed scores, current form and the upcoming Albion schedule.</p>
 </div>
 <div aria-label="Choose fixtures or results" class="match-view-tabs" role="tablist">
@@ -1484,5 +1494,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20261018-r96"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="top-scorers.js?v=20261018-r96"></script></body>
+<script defer src="albion-data-r78.js?v=20261018-r96"></script><script defer src="app-r77.js?v=20261015-r92-ui"></script><script defer src="shootout-r82.js?v=20261015-r92"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="live-scores.js?v=20261022-r97"></script><script defer src="top-scorers.js?v=20261018-r96"></script></body>
 </html>
