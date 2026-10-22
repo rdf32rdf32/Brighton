@@ -155,7 +155,7 @@ test('penalty guidance remains independently visible while Panenka is hidden',as
 test('manual results notice is available with the latest verified result',async({page})=>{
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto('/',{waitUntil:'load'});
-  await expect(page.locator('.fixture-manual-note').first()).toContainText('not live');
+  await expect(page.locator('.fixture-manual-note').first()).toContainText('maintained manually');
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   expect(errors).toEqual([]);
 });
