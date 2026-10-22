@@ -159,5 +159,17 @@
   }
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!stopped){clearTimeout(timeout);poll();}});
   window.addEventListener('pagehide',()=>{stopped=true;clearTimeout(timeout);},{once:true});
+  // Inserting a score panel above the main content changes its layout height.
+  // Restore a requested deep-link target once images/scripts have completed loading.
+  const initialHash=window.location.hash;
+  if(/^#[A-Za-z0-9_-]+$/.test(initialHash)) {
+    window.addEventListener('load',()=>{
+      window.requestAnimationFrame(()=>{
+        if(window.location.hash!==initialHash)return;
+        const anchor=document.getElementById(initialHash.slice(1));
+        if(anchor)anchor.scrollIntoView({block:'start',behavior:'instant'});
+      });
+    },{once:true});
+  }
   poll();
 })(typeof globalThis!=='undefined'?globalThis:this);
