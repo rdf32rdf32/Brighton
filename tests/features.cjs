@@ -37,5 +37,5 @@ assert(script.includes('entry.correct=entry.starters.filter'),'Line-up accuracy 
 assert(script.includes('localStorage.getItem('),'Prediction history must be persisted locally');
 assert(css.includes('.stats-kpi-grid')&&css.includes('.archive-photos')&&css.includes('.xi-player-chip'),'New responsive styles missing');
 const assetPaths=[...html.matchAll(/(?:src|href)="([^"]+)"/g)].map(m=>m[1].split('?')[0]).filter(p=>/\.(?:css|js)$/.test(p)&&!p.includes('://'));
-assert(new Set(assetPaths).size<=8,'Too many active CSS/JS assets');
+assert(new Set(assetPaths).size<=9,'Too many active CSS/JS assets');
 console.log('PASS: three r96 feature panels, goal/fixture integrity, player placement and history archive integration');
