@@ -3,7 +3,7 @@
   "version": "1.96.0",
   "private": true,
   "scripts": {
-    "test": "node tests/smoke.cjs && node tests/content-audit.cjs && node tests/game-rules.cjs && node tests/performance.cjs && node tests/scorers.cjs && node tests/features.cjs",
+    "test": "node tests/smoke.cjs && node tests/content-audit.cjs && node tests/game-rules.cjs && node tests/performance.cjs && node tests/scorers.cjs && node tests/features.cjs && node tests/live-feed.cjs",
     "test:browser": "playwright test"
   },
   "devDependencies": {
