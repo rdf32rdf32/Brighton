@@ -8,7 +8,7 @@ vm.runInContext(data,context,{timeout:3000});
 new vm.Script(fs.readFileSync('top-scorers.js','utf8'),{filename:'top-scorers.js'});
 const d=context.window.ALBION_DATA_R66;
 const s=d.scoring;
-assert(s && s.season==='2026/27' && s.checkedISO==='2026-10-18','Scorer version/date missing');
+assert(s && s.season==='2026/27' && s.checkedISO==='2026-10-23','Scorer version/date missing');
 assert(s.players.length>=15,'Missing goal scorers');
 const keys=['premierLeague','carabaoCup','conferenceLeague','faCup'];
 const names=new Set();
