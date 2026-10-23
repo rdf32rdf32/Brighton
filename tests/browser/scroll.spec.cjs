@@ -34,10 +34,18 @@ for(const viewport of [{width:1280,height:800},{width:390,height:844}]){
       await page.waitForTimeout(65);
       ys.push(await page.evaluate(()=>{
         const game=document.getElementById('shootout').getBoundingClientRect();
+        const el=document.getElementById('shootout');
+        const before=el.previousElementSibling,after=el.nextElementSibling;
         return {y:window.scrollY,absoluteBottom:game.bottom+window.scrollY,
+          top:game.top+window.scrollY,height:game.height,offsetHeight:el.offsetHeight,
+          previous:before&&{name:before.id||before.className,top:before.getBoundingClientRect().top+window.scrollY,height:before.getBoundingClientRect().height},
+          after:after&&{name:after.id||after.className,top:after.getBoundingClientRect().top+window.scrollY,height:after.getBoundingClientRect().height},
+          scrollHeight:document.documentElement.scrollHeight,
+          viewportHeight:window.innerHeight,
           shootoutVisible:document.body.classList.contains('shootout-in-view')};
       }));
     }
+    console.log('SCROLL_TRACE_'+viewport.width,JSON.stringify(ys));
     for(let i=1;i<ys.length;i++){
       expect(ys[i].y).toBeGreaterThan(ys[i-1].y-3);
       expect(Math.abs(ys[i].absoluteBottom-ys[0].absoluteBottom)).toBeLessThan(9);
