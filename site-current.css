@@ -660,3 +660,26 @@
 .penalty-map-svg .map-shot[role=button]:focus-visible{outline:2px solid #f5cf44;outline-offset:2px}
 @media(max-width:760px){#prototype{display:none!important}#shootout .penalty-help{font-size:.76rem;line-height:1.5;padding:0 3px}}
 @media(prefers-reduced-motion:reduce){.penalty-map-svg .map-shot{transition:none!important}}
+
+
+/* r99: smooth hand-off from the penalty game to the rest of the site.
+   The large-section rise/reveal transitions caused a brief visual judder
+   while the goalkeeper scene and sticky controls were being repainted. */
+main > .card { animation:none; }
+main > .card.reveal-ready { opacity:1; transform:none; }
+/* A blurred sticky tab strip is expensive to composite on mobile when it
+   scrolls over the 3D penalty stage. Keep it solid and fully legible. */
+@media (max-width:760px) {
+  main > .matchday-quick-view,
+  main > #fan-control-centre,
+  main > #supporter-profile {
+    content-visibility:visible;
+    contain-intrinsic-size:auto;
+  }
+  .section-game-tabs {
+    -webkit-backdrop-filter:none;
+    backdrop-filter:none;
+    background:#eef7ff;
+  }
+  .night-theme .section-game-tabs { background:#102f4a; }
+}
