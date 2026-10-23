@@ -4756,7 +4756,7 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
       return `<article class="result-card result-${o.toLowerCase()}">
         <div class="result-outcome" aria-label="${o === 'W' ? 'Win' : o === 'D' ? 'Draw' : 'Loss'}">${o}</div>
         <div class="result-main"><span>${esc(fx.competition || 'Premier League')} · ${esc(fx.date)}</span><h3>${esc(displayScore(fx))}</h3><small>${esc(extra)}</small><p>${esc(fx.summary || fx.note || '')}</p></div>
-        <div class="result-actions"><span class="result-score">${esc(fx.result || `${fx.albionGoals}–${fx.opponentGoals}`)}</span>${fx.reportUrl ? `<a href="${esc(fx.reportUrl)}" rel="noopener" target="_blank">Match report ↗</a>` : ''}</div>
+        <div class="result-actions"><span class="result-score">${esc(fx.result || `${fx.albionGoals}–${fx.opponentGoals}`)}</span>${/^https:\/\//.test(fx.reportUrl || fx.sourceUrl || "") ? `<a href="${esc(fx.reportUrl || fx.sourceUrl)}" rel="noopener noreferrer" target="_blank">Match report ↗</a>` : ''}</div>
       </article>`;
     }).join('') + '</div></details>').join('') : '<p class="empty-result-state">No completed results in this competition yet.</p>';
   }
