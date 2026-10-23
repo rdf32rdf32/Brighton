@@ -851,7 +851,8 @@ window.ALBION_DATA_R66 = Object.freeze({
       "round": "Fourth round",
       "status": "Confirmed fixture · 19:30 UK kick-off",
       "note": "Albion travel to the Etihad Stadium to face Manchester City in the Carabao Cup fourth round.",
-      "venueName": "Etihad Stadium"
+      "venueName": "Etihad Stadium",
+      "broadcast": "Sky Sports+"
     },
     {
       "date": "31 Oct 2026",
@@ -875,20 +876,25 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venueName": "Estadio Coliseum"
     },
     {
-      "date": "7 Nov 2026",
+      "date": "8 Nov 2026",
       "opponent": "Brentford",
       "venue": "H",
-      "time": "15:00",
+      "time": "14:00",
       "competition": "Premier League",
-      "venueName": "Amex Stadium"
+      "venueName": "Amex Stadium",
+      "broadcast": "Sky Sports",
+      "status": "Confirmed fixture · 14:00 UK kick-off",
+      "round": "Matchweek 10"
     },
     {
-      "date": "21 Nov 2026",
+      "date": "22 Nov 2026",
       "opponent": "Hull City",
       "venue": "A",
-      "time": "15:00",
+      "time": "14:00",
       "competition": "Premier League",
-      "venueName": "MKM Stadium"
+      "venueName": "MKM Stadium",
+      "broadcast": "Sky Sports",
+      "status": "Confirmed fixture · 14:00 UK kick-off"
     },
     {
       "date": "26 Nov 2026",
@@ -902,12 +908,14 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venueName": "Amex Stadium"
     },
     {
-      "date": "28 Nov 2026",
+      "date": "29 Nov 2026",
       "opponent": "Newcastle United",
       "venue": "H",
-      "time": "15:00",
+      "time": "14:05",
       "competition": "Premier League",
-      "venueName": "Amex Stadium"
+      "venueName": "Amex Stadium",
+      "broadcast": "Sky Sports",
+      "status": "Confirmed fixture · 14:05 UK kick-off"
     },
     {
       "date": "2 Dec 2026",
