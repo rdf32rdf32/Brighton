@@ -67,7 +67,7 @@ test('opponent briefing and verification note follow the newly active fixture', 
   await page.goto('/', {waitUntil:'load'});
   await expect(page.locator('#centreMatchTitle')).toContainText('FK Jablonec');
   await expect(page.locator('#opponentBriefingTitle')).toHaveText('FK Jablonec');
-  await expect(page.locator('#matchCentreSource')).toContainText('18 October 2026');
+  await expect(page.locator('#matchCentreSource')).toContainText('23 October 2026');
   await expect(page.locator('#matchCentreSource')).not.toContainText('Sunderland');
 });
 
@@ -88,21 +88,45 @@ test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
-test('19 October match centre advances to Jablonec with Palace recorded as 5-0', async ({page}) => {
+test('19 October next-fixture selector still resolves Jablonec', async ({page}) => {
   await page.clock.setFixedTime(new Date('2026-10-19T10:00:00Z'));
   await page.goto('/', {waitUntil:'load'});
   await expect(page.locator('#heroMatchTitle')).toHaveText('FK Jablonec v Albion');
   await expect(page.locator('#centreMatchTitle')).toHaveText('FK Jablonec v Albion');
   await expect(page.locator('#heroMatchVenue')).toHaveText('Stadion Střelnice');
   await expect(page.locator('#centreMatchDate')).toContainText('22 October 2026');
-  await expect(page.locator('#heroLatestResult')).toContainText('5–0');
-  await expect(page.locator('#heroLatestResult')).toContainText('Crystal Palace');
+  await expect(page.locator('#heroLatestResult')).toContainText('0–0');
+  await expect(page.locator('#heroLatestResult')).toContainText('Jablonec');
   await expect(page.locator('#resultsList')).toContainText('Kauno');
   await expect(page.locator('#resultsList')).toContainText('Crystal Palace');
   await expect(page.locator('#resultsList')).toContainText('5–0');
-  await expect(page.locator('#allCompPlayed')).toHaveText('11');
+  await expect(page.locator('#allCompPlayed')).toHaveText('12');
   await expect(page.locator('#allCompGoals')).toHaveText('34–7');
-  await expect(page.locator('#matchCentreSource')).toContainText('18 October 2026');
+  await expect(page.locator('#matchCentreSource')).toContainText('23 October 2026');
+});
+test('23 October match centre, draw stats and verified report are in sync', async ({page}) => {
+  const errors=[];page.on('pageerror',error=>errors.push(error.message));
+  await page.clock.setFixedTime(new Date('2026-10-23T12:00:00Z'));
+  await page.goto('/',{waitUntil:'load'});
+  await expect(page.locator('#heroMatchTitle')).toHaveText('Liverpool v Albion');
+  await expect(page.locator('#heroMatchDate')).toContainText('25 October 2026');
+  await expect(page.locator('#centreMatchTitle')).toHaveText('Liverpool v Albion');
+  await expect(page.locator('#centreMatchVenue')).toHaveText('Anfield');
+  await expect(page.locator('#centreMatchTime')).toHaveText('14:00');
+  await expect(page.locator('#heroLatestResult')).toContainText('Jablonec 0–0 Albion');
+  await expect(page.locator('#allCompPlayed')).toHaveText('12');
+  await expect(page.locator('#allCompWon')).toHaveText('8');
+  await expect(page.locator('#allCompDrawn')).toHaveText('3');
+  await expect(page.locator('#allCompLost')).toHaveText('1');
+  await expect(page.locator('#allCompGoals')).toHaveText('34–7');
+  const jablonec=page.locator('#resultsList .result-card').filter({hasText:'FK Jablonec'});
+  await expect(jablonec).toContainText('0–0');
+  await expect(jablonec.getByRole('link',{name:'Match report'})).toHaveAttribute('href',/brightonandhovealbion\.com\/media-article\/mft-match-report-conference-league/);
+  await expect(page.locator('#nextAwayFixture')).toContainText('Liverpool');
+  await expect(page.locator('#nextHomeDate')).toContainText('8 Nov 2026');
+  await expect(page.locator('#nextOpponentMeetingsTitle')).toContainText('Liverpool');
+  await expect(page.locator('#fixtureList')).toContainText('8 Nov');
+  expect(errors).toEqual([]);
 });
 test('maintenance editor validates and exports the active dataset',async({page})=>{
   await page.goto('/editor.html');
