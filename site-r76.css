@@ -4380,7 +4380,7 @@ html, body { max-width: 100%; overflow-x: clip; }
   .player-card-copy small{margin-top:auto;padding-top:.45rem}
 }
 
-/* Mobile shoot-out focus: more game, less surrounding chrome. */
+/* Mobile penalty gameplay: keep game dimensions stable during page scroll. */
 @media (max-width:760px){
   body.shootout-playing.shootout-in-view .matchday-bar,
   body.shootout-playing.shootout-in-view .settings-toggle,
@@ -4388,17 +4388,14 @@ html, body { max-width: 100%; overflow-x: clip; }
   body.shootout-playing.shootout-in-view .back-to-top,
   body.shootout-playing.shootout-in-view #startTour,
   body.shootout-playing.shootout-in-view .mobile-jump-nav{display:none!important}
-  body.shootout-playing.shootout-in-view main>.shootout-card{
-    width:100vw!important;max-width:none!important;margin-left:calc(50% - 50vw)!important;margin-right:0!important;
-    padding:10px 5px 12px!important;border-radius:0!important;border-left:0!important;border-right:0!important;box-shadow:none!important
-  }
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-intro{display:none!important}
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-shell{border-radius:0!important;padding:5px!important}
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-scoreboard{padding:5px 6px!important;gap:3px!important}
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-match-strip{padding:4px 6px!important;min-height:0!important}
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-status-v10{margin-top:4px!important;padding:6px 8px!important}
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-status-v10 b{font-size:.85rem}
-  body.shootout-playing.shootout-in-view .shootout-v17 .shootout-status-v10 span{font-size:.72rem}
+  
+  
+  
+  
+  
+  
+  
+  
 
   /* 50% larger visible target. Its centre and scoring coordinates are unchanged. */
   .shootout-v17 .aim-reticle{

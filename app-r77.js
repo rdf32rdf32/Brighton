@@ -4064,15 +4064,7 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
     });
   }
 
-  function shootoutViewportMode() {
-    const section = $("shootout");
-    if (!section || !("IntersectionObserver" in window)) return;
-    const observer = new IntersectionObserver(([entry]) => {
-      document.body.classList.toggle("shootout-in-view", entry.isIntersecting && entry.intersectionRatio > 0.28);
-    }, { threshold: [0, 0.28, 0.55] });
-    observer.observe(section);
-  }
-
+  // Penalty visibility is managed once by shootout-r82.js using a scroll-frame update.
   function addReleaseStatus() {
     const footer = document.querySelector(".footer-copy");
     if (!footer || footer.querySelector(".site-smooth-status")) return;
@@ -4082,11 +4074,12 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
   completeControlSemantics();
   activeNavigation();
   mobileFocusModes();
-  progressiveReveal();
+  // Large cards must not translate/fade as they enter the viewport; that causes
+  // a visible judder when scrolling out of the graphics-heavy penalty stage.
+  // All sections remain directly visible and accessible.
   polishQuizStates();
   lazyMedia();
   anchorFocus();
-  shootoutViewportMode();
   addReleaseStatus();
 })();
 
@@ -4618,13 +4611,7 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     menu.classList.remove('open');
     menuButton?.setAttribute('aria-expanded','false');
   });
-  const shootout = $('shootout');
-  if (shootout && 'IntersectionObserver' in window) {
-    new IntersectionObserver(([entry]) => {
-      document.body.classList.toggle('shootout-in-view', Boolean(entry?.isIntersecting));
-    }, { threshold:.16 }).observe(shootout);
-  }
-
+  // Penalty visibility is managed once by shootout-r82.js using a scroll-frame update.
   // Keep drag controls from scrolling the page while a penalty or save gesture is active.
   const stage=$('penaltyStage');
   stage?.addEventListener('pointerdown',()=>document.body.classList.add('penalty-gesture-active'),{passive:true});

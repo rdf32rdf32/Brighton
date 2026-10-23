@@ -3715,13 +3715,9 @@
   window.addEventListener("resize", resyncStage, { passive: true });
   window.addEventListener("orientationchange", resyncStage, { passive: true });
 
-  if (typeof IntersectionObserver === "function") {
-    const visibilityObserver = new IntersectionObserver((entries) => {
-      const entry = entries[0];
-      document.body.classList.toggle("shootout-in-view", Boolean(entry?.isIntersecting));
-    }, { threshold: [0, 0.18, 0.4] });
-    visibilityObserver.observe(shootoutCard);
-  }
+  // One scroll-frame observer controls floating UI; additional intersection
+  // observers used conflicting thresholds and made controls flicker at the end
+  // of the game on both desktop and mobile.
 
   // Mobile browsers can report an unreliable intersection ratio for a game taller than the viewport.
   // Keep floating controls away whenever any substantial part of the shoot-out is on screen.
