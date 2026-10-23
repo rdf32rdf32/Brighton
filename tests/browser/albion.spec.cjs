@@ -63,10 +63,10 @@ test('deep links keep their fragment and scroll target after reload', async ({pa
 });
 
 test('opponent briefing and verification note follow the newly active fixture', async ({page}) => {
-  await page.clock.setFixedTime(new Date('2026-10-19T10:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-10-23T10:00:00Z'));
   await page.goto('/', {waitUntil:'load'});
-  await expect(page.locator('#centreMatchTitle')).toContainText('FK Jablonec');
-  await expect(page.locator('#opponentBriefingTitle')).toHaveText('FK Jablonec');
+  await expect(page.locator('#centreMatchTitle')).toContainText('Liverpool');
+  await expect(page.locator('#opponentBriefingTitle')).toHaveText('Liverpool');
   await expect(page.locator('#matchCentreSource')).toContainText('23 October 2026');
   await expect(page.locator('#matchCentreSource')).not.toContainText('Sunderland');
 });
@@ -80,21 +80,21 @@ test('penalty instructions forbid diving before the whistle', async ({page}) => 
 });
 
 test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
-  await page.clock.setFixedTime(new Date('2026-10-19T10:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-10-23T10:00:00Z'));
   await page.goto('/',{waitUntil:'load'});
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   await expect(page.locator('#resultsList')).toContainText('0–2');
-  await expect(page.locator('#centreMatchTitle')).toContainText('FK Jablonec');
+  await expect(page.locator('#centreMatchTitle')).toContainText('Liverpool');
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
-test('19 October next-fixture selector still resolves Jablonec', async ({page}) => {
-  await page.clock.setFixedTime(new Date('2026-10-19T10:00:00Z'));
+test('23 October next-fixture selector resolves Liverpool after Jablonec result', async ({page}) => {
+  await page.clock.setFixedTime(new Date('2026-10-23T10:00:00Z'));
   await page.goto('/', {waitUntil:'load'});
-  await expect(page.locator('#heroMatchTitle')).toHaveText('FK Jablonec v Albion');
-  await expect(page.locator('#centreMatchTitle')).toHaveText('FK Jablonec v Albion');
-  await expect(page.locator('#heroMatchVenue')).toHaveText('Stadion Střelnice');
-  await expect(page.locator('#centreMatchDate')).toContainText('22 October 2026');
+  await expect(page.locator('#heroMatchTitle')).toHaveText('Liverpool v Albion');
+  await expect(page.locator('#centreMatchTitle')).toHaveText('Liverpool v Albion');
+  await expect(page.locator('#heroMatchVenue')).toHaveText('Anfield');
+  await expect(page.locator('#centreMatchDate')).toContainText('25 October 2026');
   await expect(page.locator('#heroLatestResult')).toContainText('0–0');
   await expect(page.locator('#heroLatestResult')).toContainText('Jablonec');
   await expect(page.locator('#resultsList')).toContainText('Kauno');
