@@ -125,7 +125,8 @@ test('23 October match centre, draw stats and verified report are in sync', asyn
   await expect(page.locator('#nextAwayFixture')).toContainText('Liverpool');
   await expect(page.locator('#nextHomeDate')).toContainText('8 Nov 2026');
   await expect(page.locator('#nextOpponentMeetingsTitle')).toContainText('Liverpool');
-  await page.locator('#monthFilter').selectOption('Nov 2026');
+  await page.locator('#fixturesTab').click();
+  await page.locator('#monthButtons [data-month="Nov 2026"]').click();
   await expect(page.locator('#fixtureList')).toContainText('8 Nov 2026');
   expect(errors).toEqual([]);
 });
