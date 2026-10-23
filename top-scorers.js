@@ -293,8 +293,26 @@
   const slots=()=>Array.from(pitch.querySelectorAll('.player-slot'));
   const selects=()=>Array.from(pitch.querySelectorAll('select'));
   const playerByName=new Map(squad.map(p=>[p.name,p]));
-  const getRecords=()=>{try{const d=JSON.parse(localStorage.getItem('albionXIAccuracyV1'));return Array.isArray(d)?d:[];}catch{return[];}};
-  const storeRecords=records=>localStorage.setItem('albionXIAccuracyV1',JSON.stringify(records.slice(-40)));
+  // In strict privacy modes storage can be blocked entirely. Keep the XI tools usable
+  // for this visit, but never claim a browser-only fallback is persistent.
+  let inMemoryRecords=[];
+  let storagePersistent=true;
+  const getRecords=()=>{
+    try {
+      const stored=window.localStorage.getItem('albionXIAccuracyV1');
+      if(stored===null)return inMemoryRecords;
+      const parsed=JSON.parse(stored);
+      return Array.isArray(parsed)?parsed:inMemoryRecords;
+    } catch {
+      storagePersistent=false;
+      return inMemoryRecords;
+    }
+  };
+  const storeRecords=records=>{
+    inMemoryRecords=records.slice(-40);
+    try { window.localStorage.setItem('albionXIAccuracyV1',JSON.stringify(inMemoryRecords)); }
+    catch { storagePersistent=false; }
+  };
   const future=(d.fixtures||[]).filter(f=>!Number.isFinite(f.albionGoals)&&Number.isFinite(Date.parse(f.date+' 12:00:00 GMT')))
     .sort((a,b)=>Date.parse(a.date+' 12:00:00 GMT')-Date.parse(b.date+' 12:00:00 GMT'));
   const nextMatch=future.find(f=>Date.parse(f.date+' 12:00:00 GMT')>=Date.now()-86400000)||future[0]||null;
@@ -571,7 +589,7 @@
       formation:$('formation').value,starters,createdAt:new Date().toISOString()});
     storeRecords(records);
     lockButton();renderReviewOptions();renderHistory();
-    $('xiLockStatus').textContent='Prediction locked. Check the official team sheet when published, then enter the actual XI below.';
+    $('xiLockStatus').textContent='Prediction locked'+(storagePersistent?'':' for this visit only (browser storage is blocked)')+'. Check the official team sheet when published, then enter the actual XI below.';
   });
   $('xiCompareLineup').addEventListener('click',()=>{
     const rec=matchingRecord();
