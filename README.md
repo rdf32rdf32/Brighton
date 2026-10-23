@@ -1,3 +1,11 @@
+### 23 October 2026 — r98: Verified Jablonec draw and fixture reliability audit
+- Entered the official **FK Jablonec 0–0 Brighton** Conference League result (22 October); included the official report, 6,114 attendance and draw status. The manually checked archive now has **12 competitive matches, 8 wins, 3 draws, 1 defeat, 34 scored and 7 conceded**. Scorers remain unchanged after a goalless draw.
+- Next opponent and no-JavaScript fallback now correctly show **Liverpool at Anfield, Sunday 25 October, 14:00 UK** (Sky Sports). Refreshed match centre, latest result, all-competition figures, monthly result cards and relevant verification dates. The squad's separate last-check date remains 15 October.
+- Corrected three previously out-of-date Premier League fixtures following [the club's rescheduling announcement](https://www.brightonandhovealbion.com/media-article/mft-fixture-news-brentford-hull-city-newcastle-united-november-selection-september-2026): **Brentford 8 November 14:00**, **Hull City 22 November 14:00** and **Newcastle United 29 November 14:05**.
+- Fixed match-report links for historical fixture records that use `sourceUrl` rather than `reportUrl`; only HTTPS reports are offered.
+- Added automated fixture consistency tests and updated browser checks to prevent stale result totals, broken report links and obsolete fallback match details. Existing security and penalty controls are preserved.
+- Season archives are still **manually verified**, not silently overwritten by the optional ESPN feed. UK times are local UK kick-off times and subject to official changes.
+
 ### 22 October 2026 — r97: Automatic matchday score feed
 - Live matchday scores: the site checks ESPN's **unofficial, undocumented public soccer scoreboard** for the competition and match date; it only displays scores after validating both Albion and the opponent.
 - Checks every 45 seconds while a verified match is in play, less often around fixtures; suspends polling while the tab is hidden. Displays source, state and UK checking time.
