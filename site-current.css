@@ -670,11 +670,8 @@ main > .card.reveal-ready { opacity:1; transform:none; }
 /* A blurred sticky tab strip is expensive to composite on mobile when it
    scrolls over the 3D penalty stage. Keep it solid and fully legible. */
 @media (max-width:760px) {
-  /* On narrow screens the base stylesheet assigned a made-up 700px
-     intrinsic height to every unopened card. When WebKit rendered those
-     cards while approaching the shoot-out, the game moved by ~155px.
-     Keep the direct sections' real heights in the layout from the start. */
-  main > .card,
+  /* Keep the immediately adjacent mobile sections at their real heights;
+     do not disable lazy rendering on the rest of the long archive. */
   main > .matchday-quick-view,
   main > #fan-control-centre,
   main > #supporter-profile {
