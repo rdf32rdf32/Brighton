@@ -52,7 +52,7 @@ assert(html.includes('id="allCompPlayed">12<'),'Incorrect static played count');
 assert(html.includes('id="allCompDrawn">3<'),'Incorrect static draw count');
 assert(html.includes('id="nextHomeDate">8 Nov 2026'),'Outdated next-home fallback');
 assert(html.includes('albion-data-r78.js?v=20261023-r98'),'Fixture-data cache version missing');
-assert(html.includes('app-r77.js?v=20261023-r98'),'Result report link fix must bust cached app script');
+assert(html.includes('app-r77.js?v=20261023-r99-scroll'),'Result report link fix must bust cached app script');
 const app=fs.readFileSync('app-r77.js','utf8');
 assert(app.includes('fx.reportUrl || fx.sourceUrl'),'Report links must support both source field names');
 console.log('PASS: 12 verified results, next Liverpool, three rescheduled November dates and consistent static/dynamic UI');
