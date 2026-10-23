@@ -32,7 +32,7 @@ for(const viewport of [{width:1280,height:800},{width:390,height:844}]){
       const target=start+(end-start)*(i/12);
       await page.evaluate(y=>window.scrollTo({top:y,behavior:'instant'}),target);
       await page.waitForTimeout(65);
-      ys.push(await page.evaluate(()=>{
+      ys.push(await page.evaluate(i=>{
         const game=document.getElementById('shootout').getBoundingClientRect();
         const el=document.getElementById('shootout');
         const before=el.previousElementSibling,after=el.nextElementSibling;
@@ -42,8 +42,13 @@ for(const viewport of [{width:1280,height:800},{width:390,height:844}]){
           after:after&&{name:after.id||after.className,top:after.getBoundingClientRect().top+window.scrollY,height:after.getBoundingClientRect().height},
           scrollHeight:document.documentElement.scrollHeight,
           viewportHeight:window.innerHeight,
-          shootoutVisible:document.body.classList.contains('shootout-in-view')};
-      }));
+          shootoutVisible:document.body.classList.contains('shootout-in-view'),
+          diagnostic:[0,7,8,9,12].includes(i) ? {
+            style:{contain:getComputedStyle(el).contain,contentVisibility:getComputedStyle(el).contentVisibility,animation:getComputedStyle(el).animationName},
+            children:[...el.children].map(ch=>({name:ch.id||ch.className,height:Math.round(ch.getBoundingClientRect().height),top:Math.round(ch.getBoundingClientRect().top+scrollY),display:getComputedStyle(ch).display})),
+            stageHeight:document.getElementById('penaltyStage')?.getBoundingClientRect().height
+          }:null};
+      },i));
     }
     console.log('SCROLL_TRACE_'+viewport.width,JSON.stringify(ys));
     for(let i=1;i<ys.length;i++){
