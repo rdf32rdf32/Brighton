@@ -1,9 +1,9 @@
-// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r96.
-// 18 October results review: Albion 5–0 Crystal Palace confirmed by match reports; Jablonec is next on 22 October. Squad last checked 15 October. Results are manually curated, not live.
+// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r98.
+// 23 October results review: FK Jablonec 0–0 Albion (22 October); Liverpool away next (25 October). Squad last checked 15 October. Scores are manually curated, not live.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r96",
-  "checked": "18 October 2026",
-  "checkedISO": "2026-10-18",
+  "version": "r98",
+  "checked": "23 October 2026",
+  "checkedISO": "2026-10-23",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -817,9 +817,19 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "17:45",
       "competition": "UEFA Conference League",
       "round": "League phase matchday 2",
-      "status": "Confirmed fixture · 17:45 UK kick-off",
-      "note": "Conference League away fixture in the Czech Republic.",
-      "venueName": "Stadion Střelnice"
+      "status": "Full-time",
+      "note": "Albion were held to a goalless draw in the Czech Republic despite dominating possession. Bart Verbruggen made important saves in the closing stages.",
+      "venueName": "Stadion Střelnice",
+      "summary": "Albion drew 0–0 away to FK Jablonec in the UEFA Conference League, extending their unbeaten run to eight matches.",
+      "albionGoals": 0,
+      "opponentGoals": 0,
+      "homeScore": 0,
+      "awayScore": 0,
+      "result": "0–0",
+      "resultOutcome": "D",
+      "attendance": 6114,
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-conference-league-fk-jablonek-x-albion-x",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-conference-league-fk-jablonek-x-albion-x"
     },
     {
       "date": "25 Oct 2026",
@@ -829,7 +839,8 @@ window.ALBION_DATA_R66 = Object.freeze({
       "competition": "Premier League",
       "round": "Matchweek 8",
       "status": "Confirmed fixture · 14:00 UK kick-off",
-      "venueName": "Anfield"
+      "venueName": "Anfield",
+      "broadcast": "Sky Sports"
     },
     {
       "date": "28 Oct 2026",
@@ -1077,7 +1088,7 @@ window.ALBION_DATA_R66 = Object.freeze({
   ],
   "scoring": {
     "season": "2026/27",
-    "checkedISO": "2026-10-18",
+    "checkedISO": "2026-10-23",
     "sources": [
       {
         "label": "Season goalscorers through 15 October",
@@ -1086,6 +1097,10 @@ window.ALBION_DATA_R66 = Object.freeze({
       {
         "label": "18 October Crystal Palace match report",
         "url": "https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report"
+      },
+      {
+        "label": "22 October Jablonec goalless draw (no goalscorers)",
+        "url": "https://www.brightonandhovealbion.com/media-article/mft-match-report-conference-league-fk-jablonek-x-albion-x"
       }
     ],
     "players": [
@@ -1203,5 +1218,5 @@ window.ALBION_DATA_R66 = Object.freeze({
     }
   },
   "squadCheckedISO": "2026-10-15",
-  "fixtureCheckedISO": "2026-10-18"
+  "fixtureCheckedISO": "2026-10-23"
 });
