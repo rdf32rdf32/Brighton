@@ -5125,10 +5125,10 @@ body.shootout-playing{overscroll-behavior-y:contain}body.penalty-gesture-active{
   .shootout-r66 .penalty-stage[data-taker-ready="outside-box"] .taker-figure{will-change:top,left,transform}
   .shootout-r66 .penalty-stage[data-runup] .stage-instruction{opacity:0!important;visibility:hidden!important;transform:translate(-50%,8px)!important}
   .shootout-r66 .penalty-stage[data-runup] .taker-figure{filter:drop-shadow(0 6px 3px rgba(0,0,0,.32))!important}
-  body.shootout-playing.shootout-in-view .section-game-tabs{visibility:hidden!important;opacity:0!important;pointer-events:none!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;box-shadow:none!important}
-  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-top-controls{display:none!important}
-  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-status-v10 span{display:none!important}
-  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-status-v10{min-height:34px!important;padding:6px 8px!important}
+  body.shootout-playing.shootout-in-view .section-game-tabs{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-top-controls{visibility:hidden!important;pointer-events:none!important}
+  body.shootout-playing.shootout-in-view .shootout-r66 .shootout-status-v10 span{visibility:hidden!important}
+  /* Keep the status panel's dimensions constant through visibility hand-off. */
   .shootout-r66 .penalty-ball-shadow{background:radial-gradient(ellipse at center,rgba(0,18,7,.34) 0 34%,rgba(0,18,7,.11) 66%,transparent 100%)!important;filter:blur(.45px)!important}
   .shootout-r66 .goal-post{width:1.28%!important;min-width:4px!important}
   .shootout-r66 .goal-crossbar{height:3.35%!important;min-height:5px!important}

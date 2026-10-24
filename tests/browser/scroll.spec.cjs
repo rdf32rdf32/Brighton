@@ -46,7 +46,9 @@ for(const viewport of [{width:1280,height:800},{width:390,height:844}]){
           diagnostic:[0,7,8,9,12].includes(i) ? {
             style:{contain:getComputedStyle(el).contain,contentVisibility:getComputedStyle(el).contentVisibility,animation:getComputedStyle(el).animationName},
             children:[...el.children].map(ch=>({name:ch.id||ch.className,height:Math.round(ch.getBoundingClientRect().height),top:Math.round(ch.getBoundingClientRect().top+scrollY),display:getComputedStyle(ch).display})),
-            stageHeight:document.getElementById('penaltyStage')?.getBoundingClientRect().height
+            stageHeight:document.getElementById('penaltyStage')?.getBoundingClientRect().height,
+             bodyClass:document.body.className,
+             shellChildren:[...el.querySelector('.shootout-shell').children].map(ch=>({name:ch.id||ch.className,height:Math.round(ch.getBoundingClientRect().height),display:getComputedStyle(ch).display}))
           }:null};
       },i));
     }

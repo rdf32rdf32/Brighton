@@ -1,0 +1,37 @@
+name: Automatically update Albion results
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *" # hourly; GitHub schedules may run late
+permissions:
+  contents: write
+concurrency:
+  group: albion-automatic-results
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # pinned v4.2.2
+        with:
+          persist-credentials: true
+          ref: main
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # pinned v4.4.0
+        with:
+          node-version: '22'
+      - name: Confirm completed matches and scorers from ESPN
+        run: node scripts/automate-results.cjs
+      - name: Run site regression checks before any publication
+        run: npm test
+      - name: Publish only changed, verified result records
+        run: |
+          if git diff --quiet -- auto-results.json auto-results.js; then
+            echo "No verified result updates."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add auto-results.json auto-results.js
+          git commit -m "Automatic Albion results: verified final scores and scorers"
+          git push origin HEAD:main

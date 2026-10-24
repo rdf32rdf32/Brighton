@@ -3,7 +3,7 @@
   "version": "1.97.0",
   "private": true,
   "scripts": {
-    "test": "node tests/smoke.cjs && node tests/content-audit.cjs && node tests/game-rules.cjs && node tests/performance.cjs && node tests/scorers.cjs && node tests/features.cjs && node tests/live-feed.cjs && node tests/security.cjs && node tests/fixture-integrity.cjs",
+    "test": "node tests/smoke.cjs && node tests/content-audit.cjs && node tests/game-rules.cjs && node tests/performance.cjs && node tests/scorers.cjs && node tests/features.cjs && node tests/live-feed.cjs && node tests/security.cjs && node tests/fixture-integrity.cjs && node tests/automatic-results.cjs",
     "test:browser": "playwright test"
   },
   "devDependencies": {
