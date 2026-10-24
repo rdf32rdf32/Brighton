@@ -35,8 +35,10 @@ const record={...away,eventId:'123456789',albionGoals:2,opponentGoals:1,
  checkedISO:'2026-10-25',scorers:goals};
 const output=sync.render([record]);
 new vm.Script(output);
-vm.runInContext(output,ctx);
-const next=ctx.window.ALBION_DATA_R66;
+const approved=vm.createContext({window:{}});
+vm.runInContext(read('albion-data-r78.js'),approved);
+vm.runInContext(output,approved);
+const next=approved.window.ALBION_DATA_R66;
 assert.notEqual(next,baseline);
 assert.equal(next.fixtures.filter(x=>Number.isFinite(x.albionGoals)).length,initialCount+1);
 const liverpool=next.fixtures.find(f=>f.opponent==='Liverpool' && f.date==='25 Oct 2026');
