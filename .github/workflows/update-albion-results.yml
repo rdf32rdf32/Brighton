@@ -1,0 +1,30 @@
+name: Update Albion final scores
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: albion-results-sync
+  cancel-in-progress: false
+jobs:
+  update-results:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Fetch and validate completed fixtures
+        run: python3 scripts/update_results.py
+      - name: Commit results only when changed
+        run: |
+          if ! git diff --quiet -- auto-results.js; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add auto-results.js
+            git commit -m "Automatically update Albion final results"
+            git push
+          fi
