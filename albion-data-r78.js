@@ -754,7 +754,8 @@ window.ALBION_DATA_R66 = Object.freeze({
       "opponentGoals": 0,
       "result": "3–0",
       "resultOutcome": "W",
-      "summary": "Albion beat champions Arsenal 3–0 on the club's 125th-anniversary matchday."
+      "summary": "Albion beat champions Arsenal 3–0 on the club's 125th-anniversary matchday.",
+      "reportUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-pl-bhaars"
     },
     {
       "date": "10 Oct 2026",
