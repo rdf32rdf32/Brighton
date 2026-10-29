@@ -4709,7 +4709,8 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
   function stats(list) {
     return list.reduce((s, fx) => {
       s.p += 1; s.gf += fx.albionGoals; s.ga += fx.opponentGoals;
-      const o = outcome(fx); if (o === 'W') s.w += 1; else if (o === 'D') s.d += 1; else s.l += 1;
+      const o = outcome(fx);
+      const reportLink = officialMatchLink(fx); if (o === 'W') s.w += 1; else if (o === 'D') s.d += 1; else s.l += 1;
       return s;
     }, {p:0,w:0,d:0,l:0,gf:0,ga:0});
   }
@@ -4721,6 +4722,21 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     if ($('seasonPoints')) $('seasonPoints').textContent = s.w * 3 + s.d;
     if ($('seasonRecord')) $('seasonRecord').textContent = `${s.w}-${s.d}-${s.l}`;
     if ($('seasonGoals')) $('seasonGoals').textContent = `${s.gf}-${s.ga}`;
+  }
+
+  // Result and match-report links must always point to Brighton & Hove Albion FC.
+  // Score feeds may be third-party, but never treat a feed URL as a match report.
+  function officialMatchLink(fixture) {
+    for (const candidate of [fixture.reportUrl, fixture.sourceUrl]) {
+      if (typeof candidate !== 'string') continue;
+      try {
+        const url = new URL(candidate);
+        if (url.protocol !== 'https:' || url.hostname !== 'www.brightonandhovealbion.com') continue;
+        if (url.pathname.startsWith('/media-article/')) return { href: url.href, label: 'Match report' };
+        if (url.pathname === '/match-centre') return { href: url.href, label: 'Official match centre' };
+      } catch (_) { /* Ignore invalid or external source URLs. */ }
+    }
+    return { href: 'https://www.brightonandhovealbion.com/fixtures-first-team-men', label: 'Official results' };
   }
 
   function renderResults(filter = 'all') {
@@ -4743,7 +4759,7 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
       return `<article class="result-card result-${o.toLowerCase()}">
         <div class="result-outcome" aria-label="${o === 'W' ? 'Win' : o === 'D' ? 'Draw' : 'Loss'}">${o}</div>
         <div class="result-main"><span>${esc(fx.competition || 'Premier League')} · ${esc(fx.date)}</span><h3>${esc(displayScore(fx))}</h3><small>${esc(extra)}</small><p>${esc(fx.summary || fx.note || '')}</p></div>
-        <div class="result-actions"><span class="result-score">${esc(fx.result || `${fx.albionGoals}–${fx.opponentGoals}`)}</span>${/^https:\/\//.test(fx.reportUrl || fx.sourceUrl || "") ? `<a href="${esc(fx.reportUrl || fx.sourceUrl)}" rel="noopener noreferrer" target="_blank">Match report ↗</a>` : ''}</div>
+        <div class="result-actions"><span class="result-score">${esc(fx.result || `${fx.albionGoals}–${fx.opponentGoals}`)}</span><a href="${esc(reportLink.href)}" rel="noopener noreferrer" target="_blank">${esc(reportLink.label)} ↗</a></div>
       </article>`;
     }).join('') + '</div></details>').join('') : '<p class="empty-result-state">No completed results in this competition yet.</p>';
   }
