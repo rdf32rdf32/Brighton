@@ -21,7 +21,7 @@ LEAGUES = {
 def normalize(value):
     value = unicodedata.normalize("NFKD", str(value or ""))
     value = "".join(ch for ch in value if not unicodedata.combining(ch))
-    value = re.sub(r"\\b(?:football|club|fc|afc|fk|cf|sc|town)\\b", "", value.lower())
+    value = re.sub(r"\b(?:football|club|fc|afc|fk|cf|sc|town)\b", "", value.lower())
     return re.sub(r"[^a-z0-9]", "", value)
 
 def team_is_brighton(team):
@@ -57,7 +57,7 @@ def main():
     current = OUT.read_text(encoding="utf-8")
     start_mark = "/* RESULTS_START */"
     end_mark = "/* RESULTS_END */"
-    match = re.search(r"const changes = (\\[[\\s\\S]*?\\]);", current)
+    match = re.search(r"const changes = (\[[\s\S]*?\]);", current)
     previous = json.loads(match.group(1)) if match else []
     accepted = { (x["date"],x["competition"],x["venue"],x["opponent"]): x for x in previous }
     new_count = 0
@@ -94,7 +94,7 @@ def main():
                 if not (0 <= home_score <= 25 and 0 <= away_score <= 25):
                     continue
                 event_id = str(event["id"])
-                if not re.fullmatch(r"\\d{6,15}", event_id):
+                if not re.fullmatch(r"\d{6,15}", event_id):
                     continue
                 key = (fixture["date"],fixture["competition"],fixture["venue"],fixture["opponent"])
                 accepted[key] = dict(date=key[0], competition=key[1], venue=key[2],
@@ -107,7 +107,7 @@ def main():
                 continue
     payload = json.dumps(list(accepted.values()), ensure_ascii=False, indent=2)
     replacement = start_mark + "\nconst changes = " + payload + ";\n" + end_mark
-    updated = re.sub(re.escape(start_mark)+r"[\\s\\S]*?"+re.escape(end_mark),
+    updated = re.sub(re.escape(start_mark)+r"[\s\S]*?"+re.escape(end_mark),
                      lambda _: replacement, current, count=1)
     if updated == current:
         print("No new changes.")
