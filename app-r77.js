@@ -4710,7 +4710,7 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     return list.reduce((s, fx) => {
       s.p += 1; s.gf += fx.albionGoals; s.ga += fx.opponentGoals;
       const o = outcome(fx);
-      const reportLink = officialMatchLink(fx); if (o === 'W') s.w += 1; else if (o === 'D') s.d += 1; else s.l += 1;
+      if (o === 'W') s.w += 1; else if (o === 'D') s.d += 1; else s.l += 1;
       return s;
     }, {p:0,w:0,d:0,l:0,gf:0,ga:0});
   }
@@ -4754,6 +4754,7 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     list.innerHTML = filtered.length ? [...groups].map(([month, games], groupIndex) =>
       '<details class="result-month"' + (groupIndex === 0 ? ' open' : '') + '><summary><span>' + esc(month) + '</span><span class="result-month-count">' + games.length + ' ' + (games.length === 1 ? 'match' : 'matches') + '</span></summary><div class="result-month-games">' + games.map((fx) => {
       const o = outcome(fx);
+      const reportLink = officialMatchLink(fx);
       const venue = fx.venue === 'H' ? 'Home' : 'Away';
       const extra = [fx.round, venue, fx.attendance ? `Attendance ${Number(fx.attendance).toLocaleString('en-GB')}` : ''].filter(Boolean).join(' · ');
       return `<article class="result-card result-${o.toLowerCase()}">
