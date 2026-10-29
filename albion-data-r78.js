@@ -771,7 +771,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "homeScore": 0,
       "awayScore": 2,
       "result": "0-2",
-      "sourceUrl": "https://www.theguardian.com/football/2026/oct/10/sunderland-brighton-premier-league-match-report"
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/match-report-pl-sunderland-v-albion"
     },
     {
       "date": "15 Oct 2026",
@@ -808,7 +808,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "awayScore": 0,
       "result": "5-0",
       "resultOutcome": "W",
-      "sourceUrl": "https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report"
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-premier-league-albion-v-crystal-palace"
     },
     {
       "date": "22 Oct 2026",
@@ -848,7 +848,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "result": "2–0",
       "resultOutcome": "L",
       "note": "Liverpool beat Brighton 2–0 at Anfield.",
-      "sourceUrl": "https://www.liverpoolfc.com/matches/mens-team/liverpool-v-brighton-and-hove-albion-english-premier-league-20261025"
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-liverpool-bha-pl-october-2026"
     },
     {
       "date": "28 Oct 2026",
@@ -868,7 +868,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "result": "2–2",
       "resultOutcome": "L",
       "note": "Manchester City drew 2–2 with Brighton and won the Carabao Cup tie 4–3 on penalties.",
-      "sourceUrl": "https://www.11v11.com/teams/brighton-and-hove-albion/option/fixtures/"
+      "sourceUrl": "https://www.brightonandhovealbion.com/match-centre?gameId=2687772"
     },
     {
       "date": "31 Oct 2026",
@@ -1120,7 +1120,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       },
       {
         "label": "18 October Crystal Palace match report",
-        "url": "https://www.theguardian.com/football/2026/oct/18/brighton-crystal-palace-premier-league-match-report"
+        "url": "https://www.brightonandhovealbion.com/media-article/mft-match-report-premier-league-albion-v-crystal-palace"
       },
       {
         "label": "22 October Jablonec goalless draw (no goalscorers)",
