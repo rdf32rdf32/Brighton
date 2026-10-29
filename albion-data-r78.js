@@ -1,5 +1,5 @@
 // Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r98.
-// 23 October results review: FK Jablonec 0–0 Albion (22 October); Liverpool away next (25 October). Squad last checked 15 October. Scores are manually curated, not live.
+// 29 October results review: Man City 2–2 Albion (28 October; City won on penalties); Man City league away next (31 October). Squad last checked 15 October. Scores are manually curated, not live.
 window.ALBION_DATA_R66 = Object.freeze({
   "version": "r98",
   "checked": "23 October 2026",
@@ -838,9 +838,17 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "14:00",
       "competition": "Premier League",
       "round": "Matchweek 8",
-      "status": "Confirmed fixture · 14:00 UK kick-off",
+      "status": "Full-time",
       "venueName": "Anfield",
-      "broadcast": "Sky Sports"
+      "broadcast": "Sky Sports",
+      "albionGoals": 0,
+      "opponentGoals": 2,
+      "homeScore": 2,
+      "awayScore": 0,
+      "result": "2–0",
+      "resultOutcome": "L",
+      "note": "Liverpool beat Brighton 2–0 at Anfield.",
+      "sourceUrl": "https://www.liverpoolfc.com/matches/mens-team/liverpool-v-brighton-and-hove-albion-english-premier-league-20261025"
     },
     {
       "date": "28 Oct 2026",
@@ -849,10 +857,18 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "19:30",
       "competition": "Carabao Cup",
       "round": "Fourth round",
-      "status": "Confirmed fixture · 19:30 UK kick-off",
+      "status": "Full-time",
       "note": "Albion travel to the Etihad Stadium to face Manchester City in the Carabao Cup fourth round.",
       "venueName": "Etihad Stadium",
-      "broadcast": "Sky Sports+"
+      "broadcast": "Sky Sports+",
+      "albionGoals": 2,
+      "opponentGoals": 2,
+      "homeScore": 2,
+      "awayScore": 2,
+      "result": "2–2",
+      "resultOutcome": "L",
+      "note": "Manchester City drew 2–2 with Brighton and won the Carabao Cup tie 4–3 on penalties.",
+      "sourceUrl": "https://www.11v11.com/teams/brighton-and-hove-albion/option/fixtures/"
     },
     {
       "date": "31 Oct 2026",
@@ -1226,5 +1242,5 @@ window.ALBION_DATA_R66 = Object.freeze({
     }
   },
   "squadCheckedISO": "2026-10-15",
-  "fixtureCheckedISO": "2026-10-23"
+  "fixtureCheckedISO": "2026-10-29"
 });
