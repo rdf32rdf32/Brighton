@@ -31,7 +31,7 @@ const changes = [];
       resultOutcome: match.albionGoals > match.opponentGoals ? 'W' :
         match.albionGoals < match.opponentGoals ? 'L' : 'D',
       status: 'Full-time',
-      sourceUrl: 'https://www.espn.com/soccer/match/_/gameId/' + match.eventId,
+      // Preserve an existing official match-report URL; never promote ESPN into a report link.
       automatedSource: 'ESPN final-score feed',
       automatedCheckedISO: match.checkedISO
     });
