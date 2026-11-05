@@ -18,6 +18,7 @@ assert(!d.penaltyTakers.some(p=>p.name==='Danny Welbeck'));
 const playerGoals=d.scoring.players.reduce((n,p)=>n+p.premierLeague+p.carabaoCup+p.conferenceLeague+p.faCup,0),own=Object.values(d.scoring.ownGoals).reduce((n,x)=>n+x,0);
 assert.equal(playerGoals+own,totals.gf,'Scorer and fixture goals differ');
 for(const [id,value] of [['heroMatchTitle','Albion v Brentford'],['centreMatchTitle','Albion v Brentford'],['allCompPlayed','16'],['allCompGoals','38–11']])assert(html.includes('id="'+id+'">'+value+'<'),'Bad fallback '+id);
+for(const [id,val] of [['dashboardOpponent','Brentford'],['predictorMatchTitle','Albion v Brentford'],['awayScoreLabel','Brentford goals'],['scorersMeta','35 player goals · 3 own goals · 38 Brighton goals']])assert(html.includes('id="'+id+'">'+val+'<'),'Stale fallback '+id);
 assert(html.includes('albion-data-r78.js?v=20261105-r100'));assert(html.includes('shootout-r82.js?v=20261105-r100'));assert(html.includes('app-r77.js?v=20261105-r100'));
 const app=fs.readFileSync('app-r77.js','utf8');assert(app.includes('fx.reportUrl || fx.sourceUrl'));
 console.log('PASS: verified 16 results, 38–11, match centre, squad and shoot-out regression checks');
