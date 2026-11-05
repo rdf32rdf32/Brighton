@@ -3,21 +3,21 @@
 /* ===== Albion Fan Hub r76 application bundle ===== */
 window.ALBION_CONTENT = {
   featureVersion: "77",
-  lastUpdated: "25 September 2026",
+  lastUpdated: "5 November 2026",
   currentSeason: "2026/27",
   seasonDatabase: {
     "2026/27": {
       label: "2026/27",
       status: "Season underway",
       competition: "Premier League",
-      played: 5,
-      won: 3,
+      played: 9,
+      won: 6,
       drawn: 1,
-      lost: 1,
-      goalsFor: 16,
-      goalsAgainst: 5,
-      points: 10,
-      position: 3,
+      lost: 2,
+      goalsFor: 24,
+      goalsAgainst: 7,
+      points: 19,
+      position: null,
       results: [
         { opponent: "Aston Villa", venue: "H", score: "4–0", outcome: "W", date: "23 Aug 2026" },
         { opponent: "Chelsea", venue: "A", score: "4–3", outcome: "L", date: "30 Aug 2026" },
@@ -28,8 +28,8 @@ window.ALBION_CONTENT = {
     },
   },
   freshness: {
-    fixtures: "25 September 2026",
-    squad: "16 September 2026",
+    fixtures: "5 November 2026",
+    squad: "5 November 2026",
     travel: "20 August 2026",
     history: "5 August 2026",
   },
@@ -4753,7 +4753,7 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     });
     list.innerHTML = filtered.length ? [...groups].map(([month, games], groupIndex) =>
       '<details class="result-month"' + (groupIndex === 0 ? ' open' : '') + '><summary><span>' + esc(month) + '</span><span class="result-month-count">' + games.length + ' ' + (games.length === 1 ? 'match' : 'matches') + '</span></summary><div class="result-month-games">' + games.map((fx) => {
-      const o = outcome(fx);
+      const o = fx.resultOutcome || outcome(fx); // Show shoot-out elimination as a loss.
       const reportLink = officialMatchLink(fx);
       const venue = fx.venue === 'H' ? 'Home' : 'Away';
       const extra = [fx.round, venue, fx.attendance ? `Attendance ${Number(fx.attendance).toLocaleString('en-GB')}` : ''].filter(Boolean).join(' · ');

@@ -1,8 +1,6 @@
 name: Update Albion final scores
 on:
-  schedule:
-    - cron: '17 */3 * * *'
-  workflow_dispatch:
+  workflow_dispatch: # Manual fallback; hourly canonical updater owns scheduled writes.
 permissions:
   contents: write
 concurrency:

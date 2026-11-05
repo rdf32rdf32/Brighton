@@ -1,9 +1,9 @@
-// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r98.
-// 29 October results review: Man City 2–2 Albion (28 October; City won on penalties); Man City league away next (31 October). Squad last checked 15 October. Scores are manually curated, not live.
+// Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r100.
+// Reviewed 5 November: results, official kick-off changes and current squad/penalty takers.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r98",
-  "checked": "23 October 2026",
-  "checkedISO": "2026-10-23",
+  "version": "r100",
+  "checked": "5 November 2026",
+  "checkedISO": "2026-11-05",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -859,7 +859,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "competition": "Carabao Cup",
       "round": "Fourth round",
       "status": "Full-time",
-      "note": "Albion travel to the Etihad Stadium to face Manchester City in the Carabao Cup fourth round.",
+      "note": "Albion drew 2–2 at Manchester City through goals by Malick Yalcouyé and Georginio Rutter. City advanced 4–3 on penalties.",
       "venueName": "Etihad Stadium",
       "broadcast": "Sky Sports+",
       "albionGoals": 2,
@@ -868,8 +868,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "awayScore": 2,
       "result": "2–2",
       "resultOutcome": "L",
-      "note": "Manchester City drew 2–2 with Brighton and won the Carabao Cup tie 4–3 on penalties.",
-      "sourceUrl": "https://www.brightonandhovealbion.com/match-centre?gameId=2687772"
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-manchester-city-bha-carabao-cup-october-2026"
     },
     {
       "date": "31 Oct 2026",
@@ -878,8 +877,16 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "15:00",
       "competition": "Premier League",
       "round": "Matchweek 9",
-      "status": "Confirmed fixture · 15:00 UK kick-off",
-      "venueName": "Etihad Stadium"
+      "status": "Full-time",
+      "venueName": "Etihad Stadium",
+      "albionGoals": 1,
+      "opponentGoals": 0,
+      "homeScore": 0,
+      "awayScore": 1,
+      "result": "0–1",
+      "resultOutcome": "W",
+      "note": "Albion won 1–0 away at Manchester City, with Yasin Ayari scoring the decisive goal.",
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mft-match-report-manchester-city-bha-pl-october-2026"
     },
     {
       "date": "5 Nov 2026",
@@ -888,9 +895,16 @@ window.ALBION_DATA_R66 = Object.freeze({
       "time": "20:00",
       "competition": "UEFA Conference League",
       "round": "League phase matchday 3",
-      "status": "Confirmed fixture · 20:00 UK kick-off",
-      "note": "Conference League away fixture in Spain.",
-      "venueName": "Estadio Coliseum"
+      "status": "Full-time",
+      "note": "Albion won 1–0 away at Getafe. Malick Yalcouyé scored the winner in the second half.",
+      "venueName": "Estadio Coliseum",
+      "albionGoals": 1,
+      "opponentGoals": 0,
+      "homeScore": 0,
+      "awayScore": 1,
+      "result": "0–1",
+      "resultOutcome": "W",
+      "sourceUrl": "https://www.brightonandhovealbion.com/fixtures-first-team-men"
     },
     {
       "date": "8 Nov 2026",
@@ -938,7 +952,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "date": "2 Dec 2026",
       "opponent": "Bournemouth",
       "venue": "A",
-      "time": "20:00",
+      "time": "20:15",
       "competition": "Premier League",
       "venueName": "Vitality Stadium"
     },
@@ -946,7 +960,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "date": "5 Dec 2026",
       "opponent": "Nottingham Forest",
       "venue": "A",
-      "time": "15:00",
+      "time": "17:30",
       "competition": "Premier League",
       "venueName": "The City Ground"
     },
@@ -962,10 +976,10 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venueName": "Amex Stadium"
     },
     {
-      "date": "12 Dec 2026",
+      "date": "13 Dec 2026",
       "opponent": "Everton",
       "venue": "H",
-      "time": "15:00",
+      "time": "14:00",
       "competition": "Premier League",
       "venueName": "Amex Stadium"
     },
@@ -1113,7 +1127,7 @@ window.ALBION_DATA_R66 = Object.freeze({
   ],
   "scoring": {
     "season": "2026/27",
-    "checkedISO": "2026-10-23",
+    "checkedISO": "2026-11-05",
     "sources": [
       {
         "label": "Season goalscorers through 15 October",
@@ -1126,6 +1140,18 @@ window.ALBION_DATA_R66 = Object.freeze({
       {
         "label": "22 October Jablonec goalless draw (no goalscorers)",
         "url": "https://www.brightonandhovealbion.com/media-article/mft-match-report-conference-league-fk-jablonek-x-albion-x"
+      },
+      {
+        "label": "28 October: Carabao Cup against Manchester City",
+        "url": "https://www.brightonandhovealbion.com/media-article/mft-match-report-manchester-city-bha-carabao-cup-october-2026"
+      },
+      {
+        "label": "31 October: Manchester City 0–1 Albion",
+        "url": "https://www.brightonandhovealbion.com/media-article/mft-match-report-manchester-city-bha-pl-october-2026"
+      },
+      {
+        "label": "5 November: Getafe 0–1 Albion",
+        "url": "https://www.brightonandhovealbion.com/fixtures-first-team-men"
       }
     ],
     "players": [
@@ -1160,20 +1186,20 @@ window.ALBION_DATA_R66 = Object.freeze({
       {
         "name": "Georginio Rutter",
         "premierLeague": 0,
-        "carabaoCup": 0,
+        "carabaoCup": 1,
         "faCup": 0,
         "conferenceLeague": 2
       },
       {
         "name": "Malick Yalcouyé",
         "premierLeague": 2,
-        "carabaoCup": 0,
+        "carabaoCup": 1,
         "faCup": 0,
-        "conferenceLeague": 0
+        "conferenceLeague": 1
       },
       {
         "name": "Yasin Ayari",
-        "premierLeague": 2,
+        "premierLeague": 3,
         "carabaoCup": 0,
         "faCup": 0,
         "conferenceLeague": 0
@@ -1242,6 +1268,6 @@ window.ALBION_DATA_R66 = Object.freeze({
       "conferenceLeague": 0
     }
   },
-  "squadCheckedISO": "2026-10-15",
-  "fixtureCheckedISO": "2026-10-29"
+  "squadCheckedISO": "2026-11-05",
+  "fixtureCheckedISO": "2026-11-05"
 });

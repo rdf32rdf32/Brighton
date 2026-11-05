@@ -15,18 +15,18 @@ for(const name of ['statsCompetition','statsKpis','statsTrend','statsCompetition
   assert(html.includes('id="'+name+'"'),'Missing interactive control '+name);
 }
 assert(html.includes('href="#stats-centre"')&&html.includes('href="#history-archive"'),'Missing navigation shortcuts');
-assert(html.includes('top-scorers.js?v=20261018-r96')&&html.includes('top-scorers.css?v=20261018-r96'),'Extension cache not refreshed');
+assert(html.includes('top-scorers.js?v=20261105-r100')&&html.includes('top-scorers.css?v=20261018-r96'),'Extension cache not refreshed');
 const dates=d.fixtures.filter(f=>Number.isFinite(f.albionGoals)&&Number.isFinite(f.opponentGoals));
-assert.equal(dates.length,12,'Completed match count');
+assert.equal(dates.length,16,'Completed match count');
 const byComp=Object.groupBy(dates,f=>f.competition);
-const expect={'Premier League':[7,23],'Carabao Cup':[1,3],'UEFA Conference League':[4,8],'FA Cup':[0,0]};
+const expect={'Premier League':[9,24],'Carabao Cup':[2,5],'UEFA Conference League':[5,9],'FA Cup':[0,0]};
 for(const [name,[count,goals]] of Object.entries(expect)){
   const games=byComp[name]||[];
   assert.equal(games.length,count,name+' match count');
   assert.equal(games.reduce((n,f)=>n+f.albionGoals,0),goals,name+' goals');
 }
 const total=dates.reduce((n,f)=>n+f.albionGoals,0);
-assert.equal(total,34,'Recorded totals must reconcile');
+assert.equal(total,38,'Recorded totals must reconcile');
 assert.equal(d.scoring.players.reduce((n,p)=>n+p.premierLeague+p.carabaoCup+p.conferenceLeague+p.faCup,0)+
   Object.values(d.scoring.ownGoals).reduce((n,x)=>n+x,0),total,'Scorers and results disagree');
 assert((script.match(/\[19\d\d,'|\[20\d\d,'/g)||[]).length>=12,'History needs at least twelve entries');

@@ -30,4 +30,5 @@ assert(game.includes("state.currentReactionWindow+40"),'Early penalty save lock 
 assert(game.includes('sameSide&&heightGap===0?settings.sameSideBonus:0'),'Correctly read saves are not rewarded');
 assert(!game.includes('Pre-whistle gamble available'),'Legacy controls still promote pre-whistle diving');
 assert(game.includes('summary.addEventListener("keydown"'),'Shot maps lack keyboard selection');
+assert(game.includes('stage.releasePointerCapture(capturedPointer)'),'Pointer capture may trap mobile scrolling');
 console.log('PASS: r92 reaction time, direction reads, whistle restrictions and shot map');

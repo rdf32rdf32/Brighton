@@ -3210,6 +3210,11 @@
   }
 
   function clearPointerTracking(trailDelay = 0) {
+    // Release pointer capture so gestures and page scrolling resume after a save.
+    const capturedPointer = state.activePointerId;
+    if (capturedPointer != null) {
+      try { if (stage.hasPointerCapture?.(capturedPointer)) stage.releasePointerCapture(capturedPointer); } catch {}
+    }
     cancelCentreHold();
     state.pointerStart = null;
     state.pointerLast = null;
@@ -3276,6 +3281,7 @@
     const saving = state.phase === "save";
     if (state.phase !== "albion-aim" && !saving && !beforeWhistle && !afterWhistle) return;
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
+    if (touchLike && (event.isPrimary === false || (state.activePointerId != null && state.activePointerId !== event.pointerId))) return;
     const point = eventGoalPoint(event, AIM_MARGIN);
     if (state.phase === "albion-aim") {
       if (!point.inside && !state.aimPointerActive) return;
@@ -3341,6 +3347,7 @@
   }, { passive: false });
 
   stage.addEventListener("pointerdown", (event) => {
+    if (event.isPrimary === false) return;
     if (event.target.closest?.(".pre-whistle-controls")) return;
     unlockAudio();
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
