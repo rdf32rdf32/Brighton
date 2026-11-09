@@ -183,7 +183,7 @@
   // Keep the opening pair cinematic, then tighten repeated routines so a full shoot-out moves briskly.
   const ceremonyPace = () => {
     const kicks = (state?.albionKicks || 0) + (state?.palaceKicks || 0);
-    return kicks < 2 ? 1 : kicks < 6 ? 0.68 : 0.60;
+    return kicks < 2 ? 0.92 : kicks < 6 ? 0.64 : 0.56;
   };
 
   function haptic(pattern) {
@@ -198,15 +198,15 @@
     palaceMiss: 0.12,
     saveRadius: 0.265,
     fingertipMargin: 0.085,
-    preContactWindow: 300,
-    postContactWindow: 520,
+    preContactWindow: 380,
+    postContactWindow: 650,
     flight: 790,
     runUpScale: 1.04,
     cueStrength: 0.68,
     diveAssist: 0.08,
     sameSideBonus: 0.035,
     scoringDifficultyIncrease: 0.035,
-    contactDecisionDelay: 610,
+    contactDecisionDelay: 660,
     edgeAccuracyPenalty: 0.0055,
   });
 
