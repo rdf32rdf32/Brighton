@@ -2,8 +2,8 @@
 // Reviewed 5 November: results, official kick-off changes and current squad/penalty takers.
 window.ALBION_DATA_R66 = Object.freeze({
   "version": "r100",
-  "checked": "5 November 2026",
-  "checkedISO": "2026-11-05",
+  "checked": "9 November 2026",
+  "checkedISO": "2026-11-09",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -915,7 +915,16 @@ window.ALBION_DATA_R66 = Object.freeze({
       "venueName": "Amex Stadium",
       "broadcast": "Sky Sports",
       "status": "Confirmed fixture · 14:00 UK kick-off",
-      "round": "Matchweek 10"
+      "round": "Matchweek 10",
+      "albionGoals": 2,
+      "opponentGoals": 0,
+      "homeScore": 2,
+      "awayScore": 0,
+      "result": "2–0",
+      "resultOutcome": "W",
+      "status": "Full-time",
+      "note": "Diego Gómez and Pascal Groß scored in a 2–0 home win over Brentford.",
+      "sourceUrl": "https://www.brightonandhovealbion.com/match-centre-table?gameId=2645286"
     },
     {
       "date": "22 Nov 2026",
