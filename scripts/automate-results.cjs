@@ -92,7 +92,7 @@ async function main() {
   const t=Date.parse(today()+'T00:00:00Z');
   const fixtures=ctx.window.ALBION_DATA_R66.fixtures.filter(f=>{
     const date=live.parseFixtureDay(f.date),prev=existing.get(key(f));
-    return leagues[f.competition]&&!completed(f)&&date!==null&&date<=t&&date>=t-7*86400000&&
+    return leagues[f.competition]&&!completed(f)&&date!==null&&date<=t&&date>=t-21*86400000&&
       (!prev||prev.scorers===null);
   });
   let updated=0, errors=0;
