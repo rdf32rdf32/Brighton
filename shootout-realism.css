@@ -452,3 +452,101 @@
 @media (prefers-reduced-motion:reduce) {
   .shootout-v17 .penalty-stage .pitch-pointer {will-change:auto}
 }
+
+/* r107: Mobile low aiming repair.
+   Previous r66 CSS combined margin:-9.5px with transform translate(-50%,-50%),
+   shifting the crosshair around 19px ABOVE its true position. The lower goal
+   corners appeared unreachable even when state.aim.y approached 1. */
+.shootout-v17.shootout-r66 .penalty-stage .aim-reticle {
+  margin:0!important;
+  transform:translate(-50%,-50%)!important;
+  transform-origin:center center!important;
+  z-index:38!important;
+  pointer-events:none!important;
+  border-width:2px!important;
+}
+.shootout-v17.shootout-r66 .penalty-stage.is-drag-aiming .aim-reticle {
+  margin:0!important;
+  transform:translate(-50%,-50%) scale(1.07)!important;
+}
+.shootout-v17.shootout-r66 .penalty-stage .pitch-pointer {
+  margin:0!important;
+  pointer-events:none!important;
+}
+/* The bottom-corner alternatives are deliberate real shots, not UI mockups.
+   They stay hidden for desktop, pre-whistle play and Palace's penalties. */
+.shootout-v17 .mobile-low-shot-controls {
+  display:none!important;
+  width:100%;
+  box-sizing:border-box;
+  margin:5px auto 10px;
+  padding:6px 7px 7px;
+  border:1px solid rgba(27,108,152,.28);
+  border-radius:10px;
+  background:linear-gradient(170deg,rgba(223,241,253,.91),rgba(243,249,255,.97));
+  gap:6px;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  align-items:stretch;
+}
+.shootout-v17 .mobile-low-shot-controls[hidden] {display:none!important}
+.shootout-v17 .mobile-low-shot-controls .low-shot-heading {
+  grid-column:1/-1;
+  display:block;
+  font-size:.65rem;
+  letter-spacing:.08em;
+  font-weight:850;
+  color:#14456c;
+  text-align:center;
+  line-height:1.1;
+}
+.shootout-v17 .mobile-low-shot-controls button {
+  appearance:none;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  min-width:0;
+  min-height:48px;
+  border-radius:8px;
+  border:1px solid #2b668d;
+  background:linear-gradient(175deg,#f9fdff,#e2f4ff);
+  color:#06385c;
+  box-shadow:0 2px 3px rgba(3,32,56,.11);
+  font-size:1.08rem;
+  font-weight:900;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  padding:8px 2px;
+  cursor:pointer;
+}
+.shootout-v17 .mobile-low-shot-controls button span {font-size:clamp(.69rem,2.8vw,.81rem);white-space:nowrap}
+.shootout-v17 .mobile-low-shot-controls button:active {
+  background:#b4e1fc;
+  box-shadow:inset 0 1px 3px rgba(0,29,51,.18);
+}
+.shootout-v17 .mobile-low-shot-controls button:focus-visible {
+  outline:3px solid #f5b933;
+  outline-offset:2px;
+}
+@media (max-width:760px), (max-height:520px) and (orientation:landscape) and (pointer:coarse) {
+  .shootout-v17 .mobile-low-shot-controls:not([hidden]) {display:grid!important}
+}
+@media (prefers-color-scheme:dark) {
+  .night-theme .shootout-v17 .mobile-low-shot-controls {
+    background:linear-gradient(145deg,#12354d,#193b52);
+    border-color:#38566a;
+  }
+  .night-theme .shootout-v17 .low-shot-heading {color:#d1eeff}
+}
+/* Leave the lowest end of the goal unobstructed by instruction bubbles. */
+@media(max-width:760px) {
+  .shootout-v17 .penalty-stage.is-aiming .stage-instruction {
+    z-index:15;
+    bottom:6px!important;
+    max-width:82%;
+    white-space:normal!important;
+    overflow-wrap:anywhere;
+    line-height:1.2;
+  }
+  .shootout-v17.shootout-r66 .penalty-stage .aim-reticle {margin:0!important}
+}
