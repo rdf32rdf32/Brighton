@@ -749,9 +749,14 @@
     const allowedTolerance = Math.max(AIM_MARGIN, tolerance);
     const padX = goalBox.width * allowedTolerance;
     const padY = goalBox.height * allowedTolerance;
+    // Fingertips obscure the painted baseline. Accept a touch just *under*
+    // the white line (up to 28px of grass) as the lowest portion of the goal,
+    // rather than rejecting the bottom corners.
+    const lowTouchSlop = mobilePenaltyLayout()
+      ? Math.min(28, Math.max(18, rect.height * .05)) / Math.max(1, rect.height) : 0;
     const inside =
       sx >= goalBox.left - padX && sx <= goalBox.left + goalBox.width + padX &&
-      sy >= goalBox.top - padY && sy <= goalBox.top + goalBox.height;
+      sy >= goalBox.top - padY && sy <= goalBox.top + goalBox.height + lowTouchSlop;
     const rawX = (sx - goalBox.left) / Math.max(.001, goalBox.width);
     const rawY = (sy - goalBox.top) / Math.max(.001, goalBox.height);
     return {
@@ -3329,7 +3334,10 @@
   }
 
   function aimPointForPointer(point, touchLike) {
-    return touchLike ? { x: point.x, y: clamp(point.y - .075, -AIM_MARGIN, .995) } : point;
+    // Old mobile code always subtracted .075 from Y for a thumb offset.
+    // At the bottom of the goal that made the lowest 7.5% unreachable.
+    // The thumb halo now gives visual clearance without changing the target.
+    return { x: point.x, y: clamp(point.y, -AIM_MARGIN, .995) };
   }
 
   // Follow the physical pointer at turf level, independently of goal targeting.
@@ -3352,7 +3360,8 @@
     pitchPointer.classList.toggle("over-goal", overGoal);
     const rect = stage.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
-    const gutter = Math.min(12, Math.max(4, Math.min(rect.width, rect.height) / 8));
+    // Keep the entire halo visible even when a finger reaches the turf edge.
+    const gutter = touchLike ? 22 : 12;
     pendingPitchPointer = {
       x: clamp(event.clientX - rect.left, gutter, rect.width - gutter),
       y: clamp(event.clientY - rect.top, gutter, rect.height - gutter),
@@ -3381,14 +3390,19 @@
     const h = Math.max(1, stage.clientHeight);
     const w = Math.max(1, stage.clientWidth);
     const upward = start.clientY - current.clientY;
+    const minimumUpward = Math.max(12, h * .026);
     // A tap, sideways swipe or downward swipe must not fire an accidental kick.
-    if (upward < Math.max(12, h * .026)) return null;
+    if (upward < minimumUpward) return null;
     const dx = current.clientX - start.clientX;
     const rect = stage.getBoundingClientRect();
     const startSideBias = clamp((start.clientX - rect.left) / w - .5, -.5, .5);
     return {
       x: clamp(.5 + startSideBias * .18 + dx / (w * .34), -AIM_MARGIN, 1 + AIM_MARGIN),
-      y: clamp(.90 - clamp(upward / (h * .44), 0, 1) * .78, -AIM_MARGIN, .995)
+      // 12–20px up = grass-skimming penalty (~.97): previous formula
+      // skipped the bottom 10% even at its shortest permissible gesture.
+      // Longer upward flicks progressively select mid-height and top corner.
+      y: clamp(.975 - clamp((upward - minimumUpward) / (h * .32), 0, 1) * .89,
+        -AIM_MARGIN, .995)
     };
   }
 
