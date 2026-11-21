@@ -899,7 +899,7 @@
     referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root,.referee-head-group").forEach((part) => { part.style.transform = ""; });
     stage.classList.remove("palace-kick", "pre-whistle-save-window", "is-save-window", "is-locked", "is-waiting", "is-aiming", "is-drag-aiming", "placing-ball");
     if (preWhistleControls) preWhistleControls.hidden = true;
-    if (pitchPointer) pitchPointer.hidden = true;
+    hidePitchPointer();
     goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre");
     goalMouth.style.removeProperty("--hit-x");
     goalMouth.style.removeProperty("--hit-y");
@@ -3263,7 +3263,7 @@
     state.aimPointerActive = false;
     state.aimDragMoved = false;
     state.aimFromPitch = false;
-    if (pitchPointer) pitchPointer.hidden = true;
+    hidePitchPointer();
     stage.classList.remove("is-drag-aiming");
     hideSwipeTrail(trailDelay);
   }
@@ -3305,21 +3305,37 @@
     return touchLike ? { x: point.x, y: clamp(point.y - .075, -AIM_MARGIN, .995) } : point;
   }
 
-  // The user's physical pointer can reach every part of the grass. It is not
-  // the aiming reticle: the latter stays at the chosen point in the goal.
+  // Follow the physical pointer at turf level, independently of goal targeting.
+  // Only one CSS transform is committed per animation frame, even on 120Hz mice.
+  let pitchPointerFrame = 0;
+  let pendingPitchPointer = null;
+  function hidePitchPointer() {
+    pendingPitchPointer = null;
+    if (pitchPointerFrame) window.cancelAnimationFrame(pitchPointerFrame);
+    pitchPointerFrame = 0;
+    if (pitchPointer) pitchPointer.hidden = true;
+  }
   function movePitchPointer(event, overGoal = false, touchLike = false) {
     if (!pitchPointer) return;
     if (overGoal || (touchLike && !state.aimPointerActive)) {
-      pitchPointer.hidden = true;
+      hidePitchPointer();
       return;
     }
     const rect = stage.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
-    const px = clamp((event.clientX - rect.left) / rect.width, .015, .985);
-    const py = clamp((event.clientY - rect.top) / rect.height, .015, .985);
-    pitchPointer.style.left = `${(px * 100).toFixed(3)}%`;
-    pitchPointer.style.top = `${(py * 100).toFixed(3)}%`;
-    pitchPointer.hidden = false;
+    const gutter = Math.min(12, Math.max(4, Math.min(rect.width, rect.height) / 8));
+    pendingPitchPointer = {
+      x: clamp(event.clientX - rect.left, gutter, rect.width - gutter),
+      y: clamp(event.clientY - rect.top, gutter, rect.height - gutter),
+    };
+    if (pitchPointerFrame) return;
+    pitchPointerFrame = window.requestAnimationFrame(() => {
+      pitchPointerFrame = 0;
+      if (!pendingPitchPointer || !pitchPointer) return;
+      const p = pendingPitchPointer;
+      pitchPointer.style.transform = `translate3d(${p.x.toFixed(2)}px,${p.y.toFixed(2)}px,0) translate(-50%,-50%)`;
+      pitchPointer.hidden = false;
+    });
   }
 
   // Let supporters begin a genuine kick by dragging from the ball/approach
@@ -3550,6 +3566,7 @@
     if (cancelledAim) $("stageInstruction").textContent = "Drag to aim, release to shoot";
   });
   stage.addEventListener("pointerleave", (event) => {
+    if (event.pointerType === "mouse" && state.phase === "albion-aim" && !state.aimPointerActive) hidePitchPointer();
     if (event.pointerType === "mouse" && state.phase !== "save" && !state.aimPointerActive) {
       clearPointerTracking();
       if (state.phase === "palace-prewhistle" || state.phase === "palace-run") state.mouseSaveAnchor = null;
@@ -3574,12 +3591,7 @@
     if (state.phase === "albion-aim") {
       if (point.inside) setReticle(point.x, point.y);
       else $("stageInstruction").textContent = "Drag from the ball into the goal";
-      if (pitchPointer && !point.inside) {
-        const rect = stage.getBoundingClientRect();
-        pitchPointer.style.left = `${(clamp((touch.clientX - rect.left) / rect.width, .015, .985) * 100).toFixed(3)}%`;
-        pitchPointer.style.top = `${(clamp((touch.clientY - rect.top) / rect.height, .015, .985) * 100).toFixed(3)}%`;
-        pitchPointer.hidden = false;
-      }
+      movePitchPointer(touch, point.inside);
     }
     else {
       const tapPoint = mobileTapGoalPoint(touch);
@@ -3600,12 +3612,7 @@
     const point = eventGoalPoint(touch, AIM_MARGIN);
     if (state.phase === "albion-aim") {
       if (point.inside) setReticle(point.x, point.y);
-      if (pitchPointer) {
-        const rect = stage.getBoundingClientRect();
-        pitchPointer.style.left = `${(clamp((touch.clientX - rect.left) / rect.width, .015, .985) * 100).toFixed(3)}%`;
-        pitchPointer.style.top = `${(clamp((touch.clientY - rect.top) / rect.height, .015, .985) * 100).toFixed(3)}%`;
-        pitchPointer.hidden = point.inside;
-      }
+      movePitchPointer(touch, point.inside);
     }
     else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
@@ -3666,7 +3673,7 @@
     cancelCentreHold();
     fallbackTouchStart = null;
     fallbackTouchFromPitch = false;
-    if (pitchPointer) pitchPointer.hidden = true;
+    hidePitchPointer();
     hideSwipeTrail();
   }, { passive: false });
 
