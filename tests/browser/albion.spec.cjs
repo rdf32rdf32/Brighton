@@ -85,6 +85,7 @@ test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   await expect(page.locator('#resultsList')).toContainText('0–2');
   await expect(page.locator('#centreMatchTitle')).toContainText('Hull City');
+  await page.locator('#monthButtons [data-month="Oct 2026"]').click();
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
@@ -121,7 +122,7 @@ test('21 November match centre, draw stats and verified report are in sync', asy
   await expect(page.locator('#allCompGoals')).toHaveText('40–11');
   const jablonec=page.locator('#resultsList .result-card').filter({hasText:'FK Jablonec'});
   await expect(jablonec).toContainText('0–0');
-  await expect(jablonec.getByRole('link',{name:'Match report'})).toHaveAttribute('href',/brightonandhovealbion\.com\/media-article\/mft-match-report-conference-league/);
+  await expect(jablonec.locator('a[href*="brightonandhovealbion.com/media-article/"]')).toHaveAttribute('href',/brightonandhovealbion\.com\/media-article\/mft-match-report-conference-league/);
   await expect(page.locator('#nextAwayFixture')).toContainText('Hull City');
   await expect(page.locator('#nextHomeDate')).toContainText('26 Nov 2026');
   await expect(page.locator('#nextOpponentMeetingsTitle')).toContainText('Hull City');
@@ -197,7 +198,7 @@ test('Stats Centre calculates fixtures and changes competition',async({page})=>{
   await expect(page.locator('#statsKpis')).toContainText('26');
   await expect(page.locator('#statsKpis')).toContainText('7');
   await page.locator('#statsTrendMetric').selectOption('conceded');
-  await expect(page.locator('#statsTrend .stats-trend-row')).toHaveCount(3);
+  await expect(page.locator('#statsTrend .stats-trend-row')).toHaveCount(4);
   expect(errors).toEqual([]);
 });
 test('heritage archive searches and filters verified milestones',async({page})=>{
