@@ -954,7 +954,7 @@
   function reactionWindowFor(player,target){
     const power=shotPowerFor(player,target);
     const cornerLoad=Math.min(1,Math.abs((target?.x??.5)-.5)*1.5+Math.max(0,.42-(target?.y??.55))*.7);
-    return Math.round(clamp(655-(power-.72)*540-cornerLoad*55+(isMobilePenalty()?90:0),495,620));
+    return Math.round(clamp(655-(power-.72)*540-cornerLoad*55+(isMobilePenalty()?90:0),495,isMobilePenalty()?735:620));
   }
 
   function shotFlightFor(player,target){
@@ -2925,6 +2925,9 @@
       state.userDive.reach=resolution.reach;
       state.userDive.distance=resolution.distance;
       state.userDive.edge=resolution.edge;
+      state.userDive.reachScore=resolution.reachScore;
+      state.userDive.directionQuality=resolution.directionQuality;
+      state.userDive.timingQuality=resolution.timingQuality;
     }
 
     const scored = !state.palaceMiss && !saved;

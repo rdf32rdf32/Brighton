@@ -1,9 +1,9 @@
 // Shared active squad, fixtures, goalscorers and shoot-out data for Albion Fan Hub r100.
 // Reviewed 5 November: results, official kick-off changes and current squad/penalty takers.
 window.ALBION_DATA_R66 = Object.freeze({
-  "version": "r100",
-  "checked": "9 November 2026",
-  "checkedISO": "2026-11-09",
+  "version": "r102",
+  "checked": "21 November 2026",
+  "checkedISO": "2026-11-21",
   "squad": [
     {
       "name": "Bart Verbruggen",
@@ -914,7 +914,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "competition": "Premier League",
       "venueName": "Amex Stadium",
       "broadcast": "Sky Sports",
-      "status": "Confirmed fixture · 14:00 UK kick-off",
+      "status": "Full-time",
       "round": "Matchweek 10",
       "albionGoals": 2,
       "opponentGoals": 0,
@@ -922,7 +922,6 @@ window.ALBION_DATA_R66 = Object.freeze({
       "awayScore": 0,
       "result": "2–0",
       "resultOutcome": "W",
-      "status": "Full-time",
       "note": "Diego Gómez and Pascal Groß scored in a 2–0 home win over Brentford.",
       "sourceUrl": "https://www.brightonandhovealbion.com/match-centre-table?gameId=2645286"
     },
@@ -1136,7 +1135,7 @@ window.ALBION_DATA_R66 = Object.freeze({
   ],
   "scoring": {
     "season": "2026/27",
-    "checkedISO": "2026-11-05",
+    "checkedISO": "2026-11-21",
     "sources": [
       {
         "label": "Season goalscorers through 15 October",
@@ -1161,6 +1160,10 @@ window.ALBION_DATA_R66 = Object.freeze({
       {
         "label": "5 November: Getafe 0–1 Albion",
         "url": "https://www.brightonandhovealbion.com/fixtures-first-team-men"
+      },
+      {
+        "label": "8 November: Brighton 2–0 Brentford (club match report)",
+        "url": "https://www.brentfordfc.com/en/news/match-reports-brighton-and-hove-albion-2-brentford-0-premier-league-08-11-2026"
       }
     ],
     "players": [
@@ -1173,7 +1176,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       },
       {
         "name": "Pascal Groß",
-        "premierLeague": 3,
+        "premierLeague": 4,
         "carabaoCup": 1,
         "faCup": 0,
         "conferenceLeague": 0
@@ -1264,7 +1267,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       },
       {
         "name": "Diego Gómez",
-        "premierLeague": 1,
+        "premierLeague": 2,
         "carabaoCup": 0,
         "faCup": 0,
         "conferenceLeague": 0
@@ -1278,5 +1281,6 @@ window.ALBION_DATA_R66 = Object.freeze({
     }
   },
   "squadCheckedISO": "2026-11-05",
-  "fixtureCheckedISO": "2026-11-05"
-});
+  "fixtureCheckedISO": "2026-11-21"
+}
+);

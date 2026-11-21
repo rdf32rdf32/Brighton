@@ -32,3 +32,18 @@ assert(!game.includes('Pre-whistle gamble available'),'Legacy controls still pro
 assert(game.includes('summary.addEventListener("keydown"'),'Shot maps lack keyboard selection');
 assert(game.includes('stage.releasePointerCapture(capturedPointer)'),'Pointer capture may trap mobile scrolling');
 console.log('PASS: r92 reaction time, direction reads, whistle restrictions and shot map');
+
+
+// Reaction time should be longer on mobile, without changing desktop timing.
+const windowStart=game.indexOf('  function reactionWindowFor(');
+const windowEnd=game.indexOf('  function shotFlightFor(',windowStart);
+assert(windowStart>0&&windowEnd>windowStart,'Reaction-window formula missing');
+const reactionFor=mobile=>new Function('shotPowerFor','isMobilePenalty','clamp',
+ game.slice(windowStart,windowEnd)+'\nreturn reactionWindowFor;')(
+ ()=>.82,()=>mobile,(v,a,b)=>Math.max(a,Math.min(b,v)));
+const centreTarget={x:.5,y:.58};
+assert(reactionFor(true)({},centreTarget)>reactionFor(false)({},centreTarget),'Mobile reaction allowance was capped');
+assert(reactionFor(true)({},centreTarget)<=735,'Mobile maximum too long');
+assert(game.includes('state.userDive.reachScore=resolution.reachScore'),'Save reach score missing');
+assert(game.includes('state.userDive.directionQuality=resolution.directionQuality'),'Save direction quality missing');
+console.log('PASS: mobile reaction timing and shot-by-shot save metrics');

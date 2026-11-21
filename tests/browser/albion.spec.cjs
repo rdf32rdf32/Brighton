@@ -63,11 +63,11 @@ test('deep links keep their fragment and scroll target after reload', async ({pa
 });
 
 test('opponent briefing and verification note follow the newly active fixture', async ({page}) => {
-  await page.clock.setFixedTime(new Date('2026-11-06T10:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-11-21T10:00:00Z'));
   await page.goto('/', {waitUntil:'load'});
-  await expect(page.locator('#centreMatchTitle')).toContainText('Brentford');
-  await expect(page.locator('#opponentBriefingTitle')).toHaveText('Brentford');
-  await expect(page.locator('#matchCentreSource')).toContainText('5 November 2026');
+  await expect(page.locator('#centreMatchTitle')).toContainText('Hull City');
+  await expect(page.locator('#opponentBriefingTitle')).toHaveText('Hull City');
+  await expect(page.locator('#matchCentreSource')).toContainText('21 November 2026');
   await expect(page.locator('#matchCentreSource')).not.toContainText('Sunderland');
 });
 
@@ -80,54 +80,56 @@ test('penalty instructions forbid diving before the whistle', async ({page}) => 
 });
 
 test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
-  await page.clock.setFixedTime(new Date('2026-11-06T10:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-11-21T10:00:00Z'));
   await page.goto('/',{waitUntil:'load'});
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   await expect(page.locator('#resultsList')).toContainText('0–2');
-  await expect(page.locator('#centreMatchTitle')).toContainText('Brentford');
+  await expect(page.locator('#centreMatchTitle')).toContainText('Hull City');
+  await page.locator('#fixturesTab').click();
+  await page.locator('#monthButtons [data-month="Oct 2026"]').click();
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
 });
-test('6 November next-fixture selector resolves Brentford after Getafe', async ({page}) => {
-  await page.clock.setFixedTime(new Date('2026-11-06T10:00:00Z'));
+test('21 November selector resolves Hull City after Brentford', async ({page}) => {
+  await page.clock.setFixedTime(new Date('2026-11-21T10:00:00Z'));
   await page.goto('/', {waitUntil:'load'});
-  await expect(page.locator('#heroMatchTitle')).toHaveText('Albion v Brentford');
-  await expect(page.locator('#centreMatchTitle')).toHaveText('Albion v Brentford');
-  await expect(page.locator('#heroMatchVenue')).toHaveText('Amex Stadium');
-  await expect(page.locator('#centreMatchDate')).toContainText('8 November 2026');
-  await expect(page.locator('#heroLatestResult')).toContainText('0–1');
-  await expect(page.locator('#heroLatestResult')).toContainText('Getafe');
+  await expect(page.locator('#heroMatchTitle')).toHaveText('Hull City v Albion');
+  await expect(page.locator('#centreMatchTitle')).toHaveText('Hull City v Albion');
+  await expect(page.locator('#heroMatchVenue')).toHaveText('MKM Stadium');
+  await expect(page.locator('#centreMatchDate')).toContainText('22 November 2026');
+  await expect(page.locator('#heroLatestResult')).toContainText('2–0');
+  await expect(page.locator('#heroLatestResult')).toContainText('Brentford');
   await expect(page.locator('#resultsList')).toContainText('Kauno');
   await expect(page.locator('#resultsList')).toContainText('Crystal Palace');
   await expect(page.locator('#resultsList')).toContainText('5–0');
-  await expect(page.locator('#allCompPlayed')).toHaveText('16');
-  await expect(page.locator('#allCompGoals')).toHaveText('38–11');
-  await expect(page.locator('#matchCentreSource')).toContainText('5 November 2026');
+  await expect(page.locator('#allCompPlayed')).toHaveText('17');
+  await expect(page.locator('#allCompGoals')).toHaveText('40–11');
+  await expect(page.locator('#matchCentreSource')).toContainText('21 November 2026');
 });
-test('6 November match centre, draw stats and verified report are in sync', async ({page}) => {
+test('21 November match centre, draw stats and verified report are in sync', async ({page}) => {
   const errors=[];page.on('pageerror',error=>errors.push(error.message));
-  await page.clock.setFixedTime(new Date('2026-11-06T12:00:00Z'));
+  await page.clock.setFixedTime(new Date('2026-11-21T12:00:00Z'));
   await page.goto('/',{waitUntil:'load'});
-  await expect(page.locator('#heroMatchTitle')).toHaveText('Albion v Brentford');
-  await expect(page.locator('#heroMatchDate')).toContainText('8 November 2026');
-  await expect(page.locator('#centreMatchTitle')).toHaveText('Albion v Brentford');
-  await expect(page.locator('#centreMatchVenue')).toHaveText('Amex Stadium');
+  await expect(page.locator('#heroMatchTitle')).toHaveText('Hull City v Albion');
+  await expect(page.locator('#heroMatchDate')).toContainText('22 November 2026');
+  await expect(page.locator('#centreMatchTitle')).toHaveText('Hull City v Albion');
+  await expect(page.locator('#centreMatchVenue')).toHaveText('MKM Stadium');
   await expect(page.locator('#centreMatchTime')).toHaveText('14:00');
-  await expect(page.locator('#heroLatestResult')).toContainText('Getafe 0–1 Albion');
-  await expect(page.locator('#allCompPlayed')).toHaveText('16');
-  await expect(page.locator('#allCompWon')).toHaveText('10');
+  await expect(page.locator('#heroLatestResult')).toContainText('Albion 2–0 Brentford');
+  await expect(page.locator('#allCompPlayed')).toHaveText('17');
+  await expect(page.locator('#allCompWon')).toHaveText('11');
   await expect(page.locator('#allCompDrawn')).toHaveText('4');
   await expect(page.locator('#allCompLost')).toHaveText('2');
-  await expect(page.locator('#allCompGoals')).toHaveText('38–11');
+  await expect(page.locator('#allCompGoals')).toHaveText('40–11');
   const jablonec=page.locator('#resultsList .result-card').filter({hasText:'FK Jablonec'});
   await expect(jablonec).toContainText('0–0');
-  await expect(jablonec.getByRole('link',{name:'Match report'})).toHaveAttribute('href',/brightonandhovealbion\.com\/media-article\/mft-match-report-conference-league/);
+  await expect(jablonec.locator('a[href*="brightonandhovealbion.com/media-article/"]')).toHaveAttribute('href',/brightonandhovealbion\.com\/media-article\/mft-match-report-conference-league/);
   await expect(page.locator('#nextAwayFixture')).toContainText('Hull City');
-  await expect(page.locator('#nextHomeDate')).toContainText('8 Nov 2026');
-  await expect(page.locator('#nextOpponentMeetingsTitle')).toContainText('Brentford');
+  await expect(page.locator('#nextHomeDate')).toContainText('26 Nov 2026');
+  await expect(page.locator('#nextOpponentMeetingsTitle')).toContainText('Hull City');
   await page.locator('#fixturesTab').click();
   await page.locator('#monthButtons [data-month="Nov 2026"]').click();
-  await expect(page.locator('#fixtureList')).toContainText('8 Nov 2026');
+  await expect(page.locator('#fixtureList')).toContainText('26 Nov 2026');
   expect(errors).toEqual([]);
 });
 test('maintenance editor validates and exports the active dataset',async({page})=>{
@@ -191,13 +193,13 @@ test('Stats Centre calculates fixtures and changes competition',async({page})=>{
   const errors=[];page.on('pageerror',err=>errors.push(err.message));
   await page.goto('/',{waitUntil:'load'});
   await expect(page.locator('#statsKpis article')).toHaveCount(8);
-  await expect(page.locator('#statsKpis')).toContainText('38');
+  await expect(page.locator('#statsKpis')).toContainText('40');
   await expect(page.locator('#statsCompetitionRows tr')).toHaveCount(4);
   await page.locator('#statsCompetition').selectOption('Premier League');
-  await expect(page.locator('#statsKpis')).toContainText('24');
+  await expect(page.locator('#statsKpis')).toContainText('26');
   await expect(page.locator('#statsKpis')).toContainText('7');
   await page.locator('#statsTrendMetric').selectOption('conceded');
-  await expect(page.locator('#statsTrend .stats-trend-row')).toHaveCount(3);
+  await expect(page.locator('#statsTrend .stats-trend-row')).toHaveCount(4);
   expect(errors).toEqual([]);
 });
 test('heritage archive searches and filters verified milestones',async({page})=>{

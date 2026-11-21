@@ -685,3 +685,12 @@ main > .card.reveal-ready { opacity:1; transform:none; }
   }
   .night-theme .section-game-tabs { background:#102f4a; }
 }
+
+/* r102: Reserve enough room for longer two-line penalty status messages so
+   changing the live instruction cannot shift the page while supporters scroll. */
+@media (max-width: 600px) {
+  body.shootout-playing .shootout-v17.shootout-r66 .shootout-status-v10 {
+    min-height: 82px !important;
+    box-sizing: border-box;
+  }
+}
