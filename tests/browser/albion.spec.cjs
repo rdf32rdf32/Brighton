@@ -85,6 +85,7 @@ test('Sunderland 0-2 result and next fixture appear together',async({page})=>{
   await expect(page.locator('#resultsList')).toContainText('Sunderland');
   await expect(page.locator('#resultsList')).toContainText('0–2');
   await expect(page.locator('#centreMatchTitle')).toContainText('Hull City');
+  await page.locator('#fixturesTab').click();
   await page.locator('#monthButtons [data-month="Oct 2026"]').click();
   await expect(page.locator('#fixtureList')).toContainText('Sunderland');
   await expect(page.locator('#fixtureList')).toContainText('Result 0-2');
