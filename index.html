@@ -29,7 +29,7 @@
 
 
 
-<link href="site-r76.css?v=20261024-stable-scroll" rel="stylesheet"/><link href="site-current.css?v=20261121-r102-mobile" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/><style id="albion-live-feed-style">
+<link href="site-r76.css?v=20261024-stable-scroll" rel="stylesheet"/><link href="site-current.css?v=20261121-r102-mobile" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/><link href="shootout-realism.css?v=20261121-r103" rel="stylesheet"/><style id="albion-live-feed-style">
 .albion-live-feed{display:grid;gap:.34rem;margin:1rem 0;padding:.85rem 1rem;border:1px solid rgba(110,155,195,.42);border-radius:12px;background:rgba(110,155,195,.10);color:inherit;min-width:0}
 .albion-live-feed strong{font-size:.83rem;letter-spacing:.03em;text-transform:uppercase}
 .albion-live-feed>span{font-size:clamp(.94rem,2.1vw,1.15rem);font-weight:650;overflow-wrap:anywhere}
@@ -158,11 +158,11 @@
 <div aria-hidden="true" class="goal-depth">
 <svg class="goal-net-svg" preserveaspectratio="none" viewbox="0 0 1000 520">
 <defs>
-<pattern height="54" id="r16BackGrid" patternunits="userSpaceOnUse" width="62">
-<path d="M62 0H0V54" fill="none" stroke="rgba(245,250,255,.66)" stroke-width="2.5"></path>
+<pattern height="29" id="r16BackGrid" patternunits="userSpaceOnUse" width="38">
+<path d="M38 0H0V29" fill="none" stroke="rgba(245,250,255,.60)" stroke-width="1.4"></path>
 </pattern>
-<pattern height="44" id="r16SideGrid" patternunits="userSpaceOnUse" width="38">
-<path d="M38 0H0V44" fill="none" stroke="rgba(250,252,255,.76)" stroke-width="2.5"></path>
+<pattern height="30" id="r16SideGrid" patternunits="userSpaceOnUse" width="27">
+<path d="M27 0H0V30" fill="none" stroke="rgba(250,252,255,.65)" stroke-width="1.4"></path>
 </pattern>
 <lineargradient id="r16NetFade" x1="0" x2="0" y1="0" y2="1">
 <stop offset="0" stop-color="#fff" stop-opacity=".9"></stop>
@@ -179,7 +179,11 @@
 <path d="M34 24Q500 9 966 24M66 54Q500 39 934 54M96 83Q500 69 904 83M126 112Q500 98 874 112"></path>
 <path d="M34 24Q24 260 34 500M66 54Q57 262 66 489M96 83Q89 263 96 479M966 24Q976 260 966 500M934 54Q943 262 934 489M904 83Q911 263 904 479"></path>
 </g>
-<g class="rear-frame" fill="none" stroke="rgba(221,232,239,.72)" stroke-linecap="round" stroke-width="6">
+<path class="goal-net-ground-shadow" d="M32 498Q500 479 968 498L946 514Q500 490 52 514Z"></path>
+ <g class="goal-net-support"><path d="M34 24L126 112M966 24L874 112M34 500L126 468M966 500L874 468"></path><path d="M34 500Q500 478 966 500M126 468Q500 481 874 468"></path></g>
+ <g class="goal-net-hem"><path d="M34 24Q500 9 966 24M34 500Q500 479 966 500M126 112Q500 98 874 112M126 468Q500 482 874 468"></path></g>
+ <g class="goal-net-anchor"><path d="M34 500l-9 7m941-7 9 7M126 468l-7 8m755-8 7 8"></path></g>
+ <g class="rear-frame" fill="none" stroke="rgba(221,232,239,.72)" stroke-linecap="round" stroke-width="6">
 <path d="M126 112V468M874 112V468M126 112Q500 98 874 112"></path>
 </g>
 </svg>
@@ -254,7 +258,9 @@
 </g>
 </svg>
 <svg aria-hidden="true" class="penalty-figure keeper-figure" id="keeperFigure" viewbox="0 0 180 250">
-<defs>
+<defs><lineargradient id="keeperSkinReal" x1="0" y1=".2" x2="1" y2=".7"><stop offset="0" stop-color="#ab735b"></stop><stop offset=".24" stop-color="#cf9875"></stop><stop offset=".55" stop-color="#efb68c"></stop><stop offset=".85" stop-color="#c88968"></stop><stop offset="1" stop-color="#9d624b"></stop></lineargradient>
+ <lineargradient id="keeperSockReal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9eb4c1"></stop><stop offset=".32" stop-color="#eef7fb"></stop><stop offset=".7" stop-color="#fff"></stop><stop offset="1" stop-color="#b3c4cd"></stop></lineargradient>
+ <lineargradient id="keeperBootReal" x1="0" y1="0" x2="1" y2=".85"><stop offset="0" stop-color="#fff58c"></stop><stop offset=".45" stop-color="#eaca32"></stop><stop offset="1" stop-color="#b39411"></stop></lineargradient>
 <lineargradient id="keeperKitShade" x1="0" x2="1" y1="0" y2="0">
 <stop offset="0" stop-color="#198b57"></stop><stop offset=".52" stop-color="#39c47c"></stop><stop offset="1" stop-color="#13764a"></stop>
 </lineargradient>
@@ -266,12 +272,22 @@
 <ellipse class="figure-shadow" cx="90" cy="233" rx="42" ry="7"></ellipse>
 <g class="keeper-body-group">
 <ellipse class="skin" cx="90" cy="42" rx="17" ry="19"></ellipse>
-<path class="hair" d="M73 38c4-17 30-22 37-3-10-5-24-5-37 3z"></path>
+<path class="hair" d="M73 38c4-17 30-22 37-3-10-5-24-5-37 3z"></path><g class="face-detail"><ellipse class="ear" cx="73.5" cy="43" rx="2.7" ry="5"></ellipse><ellipse class="ear" cx="106.5" cy="43" rx="2.7" ry="5"></ellipse>
+ <path class="face-light" d="M77 39q3-7 5-8-3 10-2 19-5-4-3-11z"></path><path class="face-shadow" d="M102 36q7 7 1 17l-5 5q6-11 4-22z"></path>
+ <path class="brow" d="M80 38q4-2 7-.8M94 37.5q4-1 7 1"></path><ellipse class="eye" cx="84" cy="41.5" rx="1.4" ry="1.05"></ellipse><ellipse class="eye" cx="97" cy="41.5" rx="1.4" ry="1.05"></ellipse>
+ <path class="nose" d="M90 42l-1 5q1 1.6 3 .3"></path><path class="lip" d="M85 51q5 2 10-.4"></path></g>
 <path class="keeper-face" d="M82 47q8 5 16 0M82 40h2M96 40h2"></path>
 <rect class="keeper-neck skin" height="14" rx="5" width="12" x="84" y="58"></rect>
 <path class="keeper-shirt" d="M63 73Q90 64 117 73l-5 75H68z" fill="url(#keeperKitShade)"></path>
 <path class="keeper-collar" d="M80 69l10 10 10-10-5-4H85z"></path>
-<path class="keeper-shirt-panel" d="M89 77h3v66h-3z"></path>
+<path class="keeper-shirt-panel" d="M89 77h3v66h-3z"></path><g class="kit-texture">
+ <path class="fabric-shadow" d="M64 76q10 4 13 16l-3 45-6 8zM115 77q-8 8-11 13l2 48 5 7z"></path>
+ <path class="fabric-highlight" d="M80 80q6-3 8-2l-1 65-5-4z"></path>
+ <path class="kit-stitch" d="M68 83Q75 78 81 76M100 76q9 2 13 7M72 140q19 5 37 0"></path>
+ <path class="kit-piping" d="M80 70l10 11 10-11"></path>
+ <path class="kit-badge" d="M104 84l8 2-1 11-7 5-7-5-1-11z"></path>
+ <path class="kit-badge-mark" d="M99 91q5-4 10 0m-8 4q3 2 6-1"></path>
+ <text class="shirt-number-small" x="75" y="111" text-anchor="middle">1</text></g>
 <path class="keeper-shorts" d="M68 143h44l-5 31H93l-3-17-3 17H73z" fill="url(#keeperShortShade)"></path>
 <g class="keeper-arm keeper-arm-left">
 <path class="keeper-sleeve" d="M67 77q-14 3-22 16l11 11 17-17z" fill="url(#keeperKitShade)"></path>
@@ -303,23 +319,25 @@
 <path class="keeper-thigh" d="M73 166h16l-1 26-17 2z"></path>
 <circle class="keeper-knee" cx="79" cy="193" r="5"></circle>
 <g class="keeper-lower-leg keeper-lower-leg-left">
-<path class="keeper-sock" d="M70 190h17l-2 34H67z"></path>
-<path class="keeper-boot" d="M64 217h29v12H61q-3-7 3-12z"></path>
+<path class="keeper-sock" d="M70 190h17l-2 34H67z"></path><g class="sock-detail"><path class="sock-band" d="M70 198h17M68 203h18"></path><path class="sock-crease" d="M69 215q8 3 16 0"></path></g>
+<path class="keeper-boot" d="M64 217h29v12H61q-3-7 3-12z"></path><g class="boot-detail"><path class="boot-sole" d="M61 227h32"></path><path class="boot-laces" d="M72 220l8 5m-8 0 8-5"></path></g>
 </g>
 </g>
 <g class="keeper-leg keeper-leg-right">
 <path class="keeper-thigh" d="M92 166h16l4 26-17 2z"></path>
 <circle class="keeper-knee" cx="103" cy="193" r="5"></circle>
 <g class="keeper-lower-leg keeper-lower-leg-right">
-<path class="keeper-sock" d="M95 190h17l2 34H97z"></path>
-<path class="keeper-boot" d="M92 217h29q7 5 4 12H92z"></path>
+<path class="keeper-sock" d="M95 190h17l2 34H97z"></path><g class="sock-detail"><path class="sock-band" d="M95 198h18M96 203h17"></path><path class="sock-crease" d="M98 216q7 3 15 0"></path></g>
+<path class="keeper-boot" d="M92 217h29q7 5 4 12H92z"></path><g class="boot-detail"><path class="boot-sole" d="M92 227h33"></path><path class="boot-laces" d="M105 221l7 4m-7 0 7-4"></path></g>
 </g>
 </g>
 </g>
 </g>
 </svg>
 <svg aria-hidden="true" class="penalty-figure taker-figure" id="takerFigure" viewbox="0 0 170 290">
-<defs>
+<defs><lineargradient id="takerSkinReal" x1="0" y1=".15" x2="1" y2=".6"><stop offset="0" stop-color="#a9684f"></stop><stop offset=".28" stop-color="#d39471"></stop><stop offset=".57" stop-color="#eeb58d"></stop><stop offset=".85" stop-color="#c68b68"></stop><stop offset="1" stop-color="#9d6248"></stop></lineargradient>
+ <lineargradient id="takerSockReal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#abb6bf"></stop><stop offset=".34" stop-color="#f4f8fb"></stop><stop offset=".7" stop-color="#fff"></stop><stop offset="1" stop-color="#bec7cf"></stop></lineargradient>
+ <lineargradient id="takerBootReal" x1="0" y1="0" x2="1" y2=".8"><stop offset="0" stop-color="#4d5867"></stop><stop offset=".36" stop-color="#202b35"></stop><stop offset="1" stop-color="#080e17"></stop></lineargradient>
 <lineargradient id="albionBlueShade" x1="0" x2="1" y1="0" y2="0">
 <stop offset="0" stop-color="#0569ad"></stop><stop offset=".5" stop-color="#1294e0"></stop><stop offset="1" stop-color="#055f9e"></stop>
 </lineargradient>
@@ -327,12 +345,20 @@
 <g class="taker-root">
 <ellipse class="figure-shadow" cx="85" cy="278" rx="42" ry="7"></ellipse>
 <ellipse class="skin" cx="85" cy="35" rx="15" ry="17"></ellipse>
-<path class="hair" d="M70 32c3-16 28-20 34-2-9-4-22-4-34 2z"></path>
+<path class="hair" d="M70 32c3-16 28-20 34-2-9-4-22-4-34 2z"></path><g class="face-detail"><ellipse class="ear" cx="70.5" cy="37" rx="2.5" ry="4.2"></ellipse><ellipse class="ear" cx="99.4" cy="37" rx="2.5" ry="4.2"></ellipse>
+ <path class="face-light" d="M74 32q3-6 5-7-2 10-2 18-4-4-3-11z"></path><path class="face-shadow" d="M96 30q6 10-2 18l-2 1q4-9 4-19z"></path>
+ <path class="brow" d="M76 33q3-2 6-.6M89 32.5q4-1 6 1"></path><ellipse class="eye" cx="79" cy="36" rx="1.25" ry="1"></ellipse><ellipse class="eye" cx="92" cy="36" rx="1.25" ry="1"></ellipse>
+ <path class="nose" d="M85 36l-1 4 2 1"></path><path class="lip" d="M81 45q4.5 2 9 0"></path></g>
 <rect class="skin" height="15" rx="5" width="10" x="80" y="49"></rect>
 <path class="taker-shirt" d="M54 65Q85 55 116 65l-7 86H61z" fill="url(#albionBlueShade)"></path>
 <path class="taker-stripe stripe-one" d="M66 62h12l-2 86H65z"></path>
 <path class="taker-stripe stripe-two" d="M92 60h12l2 88H94z"></path>
-<path class="taker-collar" d="M75 61l10 10 10-10-5-4H80z"></path>
+<path class="taker-collar" d="M75 61l10 10 10-10-5-4H80z"></path><g class="kit-texture"><path class="fabric-shadow" d="M55 70q9 7 11 21l-2 44-4 14zM115 70q-8 8-11 19l4 54 2 6z"></path>
+ <path class="fabric-highlight" d="M80 69q5-3 9-2l-1 31-4-6z"></path>
+ <path class="kit-stitch" d="M55 83q9-3 12-13m37 0q7 4 12 13M63 144q24 5 45 0"></path>
+ <path class="kit-piping" d="M76 61l9 12 9-12"></path>
+ <path class="kit-badge" d="M105 78l8 2-1 13-7 5-7-5-1-13z"></path>
+ <path class="kit-badge-mark" d="M100 86q6-5 11 0m-9 4q3 3 7-1"></path></g>
 <text class="taker-number" id="penaltyShirt" text-anchor="middle" x="85" y="116">10</text>
 <path class="taker-shorts" d="M61 147h48l-5 36H88l-3-19-3 19H66z"></path>
 <g class="taker-arm taker-arm-left">
@@ -361,16 +387,16 @@
 <path class="taker-thigh" d="M67 177h18l-2 39-18 3z"></path>
 <circle class="taker-knee" cx="73" cy="217" r="5.5"></circle>
 <g class="taker-lower-leg taker-lower-leg-left">
-<path class="taker-sock" d="M64 212h18l-2 55H59z"></path>
-<path class="taker-boot" d="M55 260h32v14H52q-3-9 3-14z"></path>
+<path class="taker-sock" d="M64 212h18l-2 55H59z"></path><g class="sock-detail"><path class="sock-band" d="M64 221h18M63 226h18"></path><path class="sock-crease" d="M61 251q8 3 18 0"></path></g>
+<path class="taker-boot" d="M55 260h32v14H52q-3-9 3-14z"></path><g class="boot-detail"><path class="boot-sole" d="M52 272h35"></path><path class="boot-laces" d="M65 264l8 5m-8 0 8-5"></path></g>
 </g>
 </g>
 <g class="taker-leg taker-leg-right">
 <path class="taker-thigh" d="M87 177h18l7 39-18 3z"></path>
 <circle class="taker-knee" cx="103" cy="217" r="5.5"></circle>
 <g class="taker-lower-leg taker-lower-leg-right">
-<path class="taker-sock" d="M92 212h18l5 55H95z"></path>
-<path class="taker-boot" d="M92 260h32q8 5 5 14H92z"></path>
+<path class="taker-sock" d="M92 212h18l5 55H95z"></path><g class="sock-detail"><path class="sock-band" d="M92 221h20M93 226h20"></path><path class="sock-crease" d="M95 252q9 3 18 0"></path></g>
+<path class="taker-boot" d="M92 260h32q8 5 5 14H92z"></path><g class="boot-detail"><path class="boot-sole" d="M92 272h37"></path><path class="boot-laces" d="M105 264l8 5m-8 0 8-5"></path></g>
 </g>
 </g>
 </g>
