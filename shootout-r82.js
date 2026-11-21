@@ -3225,6 +3225,7 @@
     state.activePointerId = null;
     state.aimPointerActive = false;
     state.aimDragMoved = false;
+    state.aimFromPitch = false;
     stage.classList.remove("is-drag-aiming");
     hideSwipeTrail(trailDelay);
   }
@@ -3266,6 +3267,13 @@
     return touchLike ? { x: point.x, y: clamp(point.y - .075, -AIM_MARGIN, .995) } : point;
   }
 
+  // Let supporters begin a genuine kick by dragging from the ball/approach
+  // area, as well as by dragging directly over the goal mouth.
+  function isKickStart(event) {
+    const p = eventStagePoint(event);
+    return p.sy >= .64 && p.sy <= .95 && Math.abs(p.sx - .5) <= .19;
+  }
+
   window.addEventListener("pagehide", () => {
     if (state.collisionFrame) cancelAnimationFrame(state.collisionFrame);
     state.collisionFrame = 0;
@@ -3290,7 +3298,10 @@
     if (state.phase === "albion-aim") {
       if (!point.inside && !state.aimPointerActive) return;
       if (state.aimPointerActive || event.pointerType === "mouse") {
-        setReticle(...Object.values(aimPointForPointer(point, touchLike)).slice(0,2));
+        // While dragging up from the ball, do not snap the crosshair to an
+        // off-target position before the finger reaches the goal.
+        if (point.inside || !state.aimFromPitch)
+          setReticle(...Object.values(aimPointForPointer(point, touchLike)).slice(0,2));
         if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
         if (state.aimPointerActive) event.preventDefault();
       }
@@ -3365,7 +3376,7 @@
       }
       return; // Before whistle: no button can dive.
     }
-    if (state.phase === "albion-aim" && !point.inside) return;
+    if (state.phase === "albion-aim" && !point.inside && !isKickStart(event)) return;
     if (!savingPhase && state.phase !== "albion-aim") {
       if (state.phase === "palace-run") {
         event.preventDefault();
@@ -3386,10 +3397,15 @@
     if (state.phase === "albion-aim") {
       state.aimPointerActive = true;
       state.aimDragMoved = false;
+      state.aimFromPitch = !point.inside;
       stage.classList.add("is-drag-aiming");
-      const aimPoint = aimPointForPointer(point, touchLike);
-      setReticle(aimPoint.x, aimPoint.y);
-      $("stageInstruction").textContent = "Release to shoot";
+      if (point.inside) {
+        const aimPoint = aimPointForPointer(point, touchLike);
+        setReticle(aimPoint.x, aimPoint.y);
+        $("stageInstruction").textContent = "Release to shoot";
+      } else {
+        $("stageInstruction").textContent = "Drag from the ball into the goal";
+      }
     } else {
       const tapPoint = mobileTapGoalPoint(event);
       previewKeeper(tapPoint);
@@ -3411,6 +3427,12 @@
 
     if (state.phase === "albion-aim" && state.aimPointerActive) {
       event.preventDefault();
+      if (state.aimFromPitch && !point.inside) {
+        clearPointerTracking();
+        $("stageInstruction").textContent = "Finish your drag inside the goal";
+        setStatus("Find your target", "Drag from the ball towards the goal, then release over your chosen corner.");
+        return;
+      }
       const aimPoint = aimPointForPointer(point, touchLike);
       setReticle(aimPoint.x, aimPoint.y);
       const minimumDrag = touchLike ? Math.max(8, stage.clientWidth * AIM_DRAG_TOUCH_RATIO) : AIM_DRAG_MOUSE_PX;
@@ -3478,6 +3500,7 @@
 
   // Fallback for older browsers without Pointer Events.
   let fallbackTouchStart = null;
+  let fallbackTouchFromPitch = false;
   stage.addEventListener("touchstart", (event) => {
     if (event.target.closest?.(".pre-whistle-controls")) return;
     if (window.PointerEvent) return;
@@ -3487,9 +3510,13 @@
     const touch = event.touches[0];
     if (!touch) return;
     const point = eventGoalPoint(touch, AIM_MARGIN);
-    if (state.phase === "albion-aim" && !point.inside) return;
+    if (state.phase === "albion-aim" && !point.inside && !isKickStart(touch)) return;
     fallbackTouchStart = { clientX: touch.clientX, clientY: touch.clientY, time: performance.now() };
-    if (state.phase === "albion-aim") setReticle(point.x, point.y);
+    fallbackTouchFromPitch = state.phase === "albion-aim" && !point.inside;
+    if (state.phase === "albion-aim") {
+      if (point.inside) setReticle(point.x, point.y);
+      else $("stageInstruction").textContent = "Drag from the ball into the goal";
+    }
     else {
       const tapPoint = mobileTapGoalPoint(touch);
       if (state.reactionOpen && isCentreSavePoint(tapPoint)) beginCentreHold(tapPoint);
@@ -3507,7 +3534,9 @@
     if (!touch) return;
     event.preventDefault();
     const point = eventGoalPoint(touch, AIM_MARGIN);
-    if (state.phase === "albion-aim") setReticle(point.x, point.y);
+    if (state.phase === "albion-aim") {
+      if (point.inside || !fallbackTouchFromPitch) setReticle(point.x, point.y);
+    }
     else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
       if (distance > 10) cancelCentreHold();
@@ -3531,6 +3560,10 @@
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
       const mapped = distance > 18 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
       if (state.phase === "albion-aim") {
+        if (fallbackTouchFromPitch && !point.inside) {
+          $("stageInstruction").textContent = "Finish your drag inside the goal";
+          setStatus("Find your target", "Drag from the ball towards the goal before releasing.");
+        } else {
         setReticle(point.x, point.y);
         const minimumDrag = Math.max(8, stage.clientWidth * AIM_DRAG_TOUCH_RATIO);
         if (distance >= minimumDrag) {
@@ -3539,6 +3572,7 @@
         } else {
           $("stageInstruction").textContent = "Drag slightly, then release to shoot";
           setStatus("Aim selected", "Make a short deliberate drag to take the penalty.");
+        }
         }
       } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
         cancelCentreHold();
@@ -3561,6 +3595,7 @@
     }
     cancelCentreHold();
     fallbackTouchStart = null;
+    fallbackTouchFromPitch = false;
     hideSwipeTrail();
   }, { passive: false });
 
