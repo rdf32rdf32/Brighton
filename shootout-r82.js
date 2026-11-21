@@ -789,11 +789,12 @@
     // Pitch SVG goal line = y315 / 650. All goal CSS breakpoints align the front
     // of the frame with that mark. Do not anchor to the net's rear perspective.
     const goalLineY = PITCH_GOAL_LINE_RATIO * stage.clientHeight;
-    // On mobile, stand a few CSS pixels *behind* the paint, rather than letting
-    // the boots cover the line and give the illusion the keeper is in front.
+    // Both post bases and boots meet the same white-line centre (315/650).
+    // A 1–2px optical inset lets the paint remain visible beneath the soles
+    // rather than leaving the keeper visibly floating behind it on mobile.
     const lineInset = mobilePenaltyLayout()
-      ? Math.min(9, Math.max(5, stage.clientHeight * .012))
-      : 0;
+      ? Math.min(2, Math.max(1, stage.clientHeight * .0035))
+      : 0.7;
     const top = goalLineY - dimensions.height * keeperBootRatio - lineInset;
     keeper.style.left = keepLateral && keeper.style.left ? keeper.style.left : "50%";
     keeper.style.setProperty("--keeper-lateral-position", keeper.style.left);
