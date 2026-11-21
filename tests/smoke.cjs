@@ -39,7 +39,7 @@ assert(sunderland && sunderland.venue==='A','Sunderland away match missing');
 assert.equal(sunderland.albionGoals,2,'Sunderland Albion score');
 assert.equal(sunderland.opponentGoals,0,'Sunderland opposition score');
 assert.equal(sunderland.result,'0-2','Sunderland home-away score');
-assert.equal(context.window.ALBION_DATA_R66.checkedISO,'2026-11-05');
+assert.equal(context.window.ALBION_DATA_R66.checkedISO,'2026-11-21');
 assert.equal(context.window.ALBION_DATA_R66.squadCheckedISO,'2026-11-05');
 const kauno = fixtures.find(f=>f.date==='15 Oct 2026' && f.opponent==='FK Kauno Žalgiris');
 assert(kauno && kauno.venue==='H','Kauno Zalgiris home fixture missing');
@@ -65,11 +65,11 @@ assert(jablonec.reportUrl.includes('brightonandhovealbion.com/'),'Missing offici
 const liverpool=fixtures.find(f=>f.date==='25 Oct 2026' && f.opponent==='Liverpool');
 assert(liverpool && liverpool.venue==='A' && liverpool.albionGoals===0 && liverpool.opponentGoals===2,'Liverpool final score missing');
 const completedNow = fixtures.filter(f=>Number.isFinite(f.albionGoals)&&Number.isFinite(f.opponentGoals));
-assert.equal(completedNow.length,16,'Expected 16 matches through Getafe');
-assert.equal(completedNow.reduce((sum,f)=>sum+f.albionGoals,0),38,'All-competition goals scored');
+assert.equal(completedNow.length,17,'Expected 17 matches through Brentford');
+assert.equal(completedNow.reduce((sum,f)=>sum+f.albionGoals,0),40,'All-competition goals scored');
 assert.equal(completedNow.reduce((sum,f)=>sum+f.opponentGoals,0),11,'All-competition goals conceded');
-assert(html.includes('albion-data-r78.js?v=20261105-' + context.window.ALBION_DATA_R66.version),'Result data cache not updated');
-assert(html.includes('professional-' + context.window.ALBION_DATA_R66.version + '-20261105'),'Release metadata not updated');
+assert(html.includes('albion-data-r78.js?v=20261121-' + context.window.ALBION_DATA_R66.version),'Result data cache not updated');
+assert(html.includes('professional-' + context.window.ALBION_DATA_R66.version + '-20261121'),'Release metadata not updated');
 assert(app.includes('Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)'),'Canonical scores must drive fixture cards');
 assert(fixtures.length >= 20, 'Fixture list too short');
 for (const f of fixtures) {
