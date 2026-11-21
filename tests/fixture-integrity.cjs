@@ -20,5 +20,5 @@ assert.equal(playerGoals+own,totals.gf,'Scorer and fixture goals differ');
 for(const [id,value] of [['heroMatchTitle','Hull City v Albion'],['centreMatchTitle','Hull City v Albion'],['allCompPlayed','17'],['allCompGoals','40–11']])assert(html.includes('id="'+id+'">'+value+'<'),'Bad fallback '+id);
 for(const [id,val] of [['dashboardOpponent','Hull City'],['predictorMatchTitle','Hull City v Albion'],['awayScoreLabel','Hull City goals'],['scorersMeta','37 player goals · 3 own goals · 40 Brighton goals']])assert(html.includes('id="'+id+'">'+val+'<'),'Stale fallback '+id);
 assert(html.includes('albion-data-r78.js?v=20261121-r102'));assert(html.includes('shootout-r82.js?v=20261121-r102'));assert(html.includes('app-r77.js?v=20261105-r100'));
-const app=fs.readFileSync('app-r77.js','utf8');assert(app.includes('fx.reportUrl || fx.sourceUrl'));
+const app=fs.readFileSync('app-r77.js','utf8');assert(app.includes('for (const candidate of [fixture.reportUrl, fixture.sourceUrl])'),'Match report URL fallback lost');
 console.log('PASS: verified 17 results, 40–11, match centre, squad and shoot-out regression checks');
