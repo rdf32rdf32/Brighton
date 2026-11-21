@@ -119,6 +119,23 @@
     return clamp(bootY, PENALTY_AREA_LINE_Y + .007, .932);
   }
 
+  // Real-world proportions: keeper (about 1.9m) occupies roughly 78% of
+  // the 2.44m goal height. The taker is bigger because he is closer to camera.
+  // Use the measured stage height, not a percentage of its width: this stays
+  // consistent in portrait and landscape without stretching either SVG.
+  let lastTakerScenicWidth = 0;
+  function sizeTakerForPitch() {
+    if (!stage.clientHeight) return;
+    syncGoalBox();
+    const goalHeight = goalBox.height * stage.clientHeight;
+    const apparentSize = mobilePenaltyLayout() ? 1.34 : 1.43;
+    const takerWidth = clamp(goalHeight * .78 * apparentSize * 170 / 261, 42, 150);
+    if (Math.abs(takerWidth - lastTakerScenicWidth) > .4) {
+      taker.style.setProperty("--taker-scenic-width", `${takerWidth.toFixed(2)}px`);
+      lastTakerScenicWidth = takerWidth;
+    }
+  }
+
   function mobileReadyTopPx(profile = state.pendingRunProfile, style = state.pendingRunStyle) {
     const stageHeight = Math.max(1, stage.clientHeight);
     const renderedHeight = taker.getBoundingClientRect().height || stageHeight * .18;
@@ -138,6 +155,7 @@
   }
 
   function setTakerReadyPosition(profile = state.pendingRunProfile, style = state.pendingRunStyle) {
+    sizeTakerForPitch();
     const mobile = mobilePenaltyLayout();
     const readyLeft = mobileReadyLeftPercent(profile);
     const readyTop = mobileReadyTopPx(profile, style);
@@ -792,9 +810,17 @@
     return { width, height: width * (250 / 180) };
   }
 
+  let lastKeeperScenicWidth = 0;
   function positionKeeperOnLine(keepLateral = false) {
     if (!stage.clientHeight) return;
     syncGoalBox();
+    const goalHeight = goalBox.height * stage.clientHeight;
+    // The SVG's visibly occupied area is y20 to y229 of a 250-unit viewBox.
+    const keeperWidth = clamp(goalHeight * .78 * 180 / 209, 40, 122);
+    if (Math.abs(keeperWidth - lastKeeperScenicWidth) > .4) {
+      keeper.style.setProperty("--keeper-scenic-width", `${keeperWidth.toFixed(2)}px`);
+      lastKeeperScenicWidth = keeperWidth;
+    }
     const dimensions = keeperDimensions();
     // Pitch SVG goal line = y315 / 650. All goal CSS breakpoints align the front
     // of the frame with that mark. Do not anchor to the net's rear perspective.
