@@ -138,7 +138,12 @@
 
   function mobileReadyTopPx(profile = state.pendingRunProfile, style = state.pendingRunStyle) {
     const stageHeight = Math.max(1, stage.clientHeight);
-    const renderedHeight = taker.getBoundingClientRect().height || stageHeight * .18;
+    // SVG intrinsic height is fixed by viewBox 170×290. Do not use an
+    // animated bounding rectangle, which includes running/leaning transforms.
+    const widthPx = Number.parseFloat(window.getComputedStyle(taker).width);
+    const renderedHeight = Number.isFinite(widthPx) && widthPx > 0
+      ? widthPx * (290 / 170)
+      : stageHeight * .18;
     const desiredBootY = mobileRunUpBootY(profile, style);
     return clamp(stageHeight * desiredBootY - renderedHeight * takerBootRatio, stageHeight * .48, stageHeight * .82);
   }
@@ -175,8 +180,30 @@
   // Avoid rewriting layout-dependent CSS variables for every pointer movement.
   // Re-evaluate when the measured goal/stage geometry actually changes.
   let lastGoalGeometry = null;
+  let lastCalibratedStage = "";
   function syncGoalBox() {
     const stageRect = stage.getBoundingClientRect();
+    // r106: the mobile frame must retain a 3:1 width-to-height aspect.
+    // The old CSS used percentages of two unrelated dimensions; on wide
+    // phones and tablets this stretched the goal to more than five times its height.
+    if (stageRect.width > 0 && stageRect.height > 0 && mobilePenaltyLayout()) {
+      const settings = window.getComputedStyle(shootoutCard);
+      const widthPct = Number.parseFloat(settings.getPropertyValue("--r82-goal-width"));
+      const heightPct = Number.parseFloat(settings.getPropertyValue("--r82-goal-height"));
+      if (Number.isFinite(widthPct) && Number.isFinite(heightPct) && widthPct > 0 && heightPct > 0) {
+        const key = [stageRect.width, stageRect.height, widthPct, heightPct].map(n => n.toFixed(2)).join(":");
+        if (key !== lastCalibratedStage) {
+          const width = Math.min(stageRect.width * widthPct / 100, stageRect.height * heightPct * 3.02 / 100);
+          goalMouth.style.setProperty("--scene-goal-width", `${width.toFixed(2)}px`);
+          goalMouth.style.setProperty("--scene-goal-left", `${((stageRect.width - width) / 2).toFixed(2)}px`);
+          lastCalibratedStage = key;
+        }
+      }
+    } else if (lastCalibratedStage) {
+      goalMouth.style.removeProperty("--scene-goal-width");
+      goalMouth.style.removeProperty("--scene-goal-left");
+      lastCalibratedStage = "";
+    }
     const goalRect = goalMouth.getBoundingClientRect();
     if (!stageRect.width || !stageRect.height || !goalRect.width || !goalRect.height) return goalBox;
     const geometry = [
@@ -694,8 +721,8 @@
     window.setTimeout(() => { decision.hidden = true; }, reducedMotion() ? 520 : 1050);
   }
 
-  function setReticle(nx, ny) {
-    syncGoalBox();
+  function setReticle(nx, ny, geometryReady = false) {
+    if (!geometryReady) syncGoalBox();
     state.aim.x = clamp(nx, -AIM_MARGIN, 1 + AIM_MARGIN);
     // There is no useful aiming area below the goal line, but the crossbar can be missed high.
     state.aim.y = clamp(ny, -AIM_MARGIN, 0.995);
@@ -3314,13 +3341,15 @@
     if (pitchPointerFrame) window.cancelAnimationFrame(pitchPointerFrame);
     pitchPointerFrame = 0;
     if (pitchPointer) pitchPointer.hidden = true;
+    stage.classList.remove("pointer-touch");
   }
   function movePitchPointer(event, overGoal = false, touchLike = false) {
     if (!pitchPointer) return;
-    if (overGoal || (touchLike && !state.aimPointerActive)) {
+    if (touchLike && !state.aimPointerActive) {
       hidePitchPointer();
       return;
     }
+    pitchPointer.classList.toggle("over-goal", overGoal);
     const rect = stage.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const gutter = Math.min(12, Math.max(4, Math.min(rect.width, rect.height) / 8));
@@ -3342,7 +3371,25 @@
   // area, as well as by dragging directly over the goal mouth.
   function isKickStart(event) {
     const p = eventStagePoint(event);
-    return p.sy >= .60 && p.sy <= .99 && Math.abs(p.sx - .5) <= .28;
+    // The whole grass below the line is valid, not just a narrow strip in
+    // front of the ball. UI controls are excluded by the event handler.
+    return p.sy >= Math.max(.515, goalBox.top + goalBox.height + .025) && p.sy <= 1;
+  }
+
+  function swipeShotTarget(start, current) {
+    if (!start || !current) return null;
+    const h = Math.max(1, stage.clientHeight);
+    const w = Math.max(1, stage.clientWidth);
+    const upward = start.clientY - current.clientY;
+    // A tap, sideways swipe or downward swipe must not fire an accidental kick.
+    if (upward < Math.max(12, h * .026)) return null;
+    const dx = current.clientX - start.clientX;
+    const rect = stage.getBoundingClientRect();
+    const startSideBias = clamp((start.clientX - rect.left) / w - .5, -.5, .5);
+    return {
+      x: clamp(.5 + startSideBias * .18 + dx / (w * .34), -AIM_MARGIN, 1 + AIM_MARGIN),
+      y: clamp(.90 - clamp(upward / (h * .44), 0, 1) * .78, -AIM_MARGIN, .995)
+    };
   }
 
   window.addEventListener("pagehide", () => {
@@ -3373,7 +3420,10 @@
         // moves only when the pointer is in (or just over) the goal mouth.
         if (point.inside) {
           const target = aimPointForPointer(point, touchLike);
-          setReticle(target.x, target.y);
+          setReticle(target.x, target.y, true);
+        } else if (state.aimFromPitch && state.pointerStart) {
+          const swipeTarget = swipeShotTarget(state.pointerStart, event);
+          if (swipeTarget) setReticle(swipeTarget.x, swipeTarget.y, true);
         }
         if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
         if (state.aimPointerActive) event.preventDefault();
@@ -3436,7 +3486,7 @@
 
   stage.addEventListener("pointerdown", (event) => {
     if (event.isPrimary === false) return;
-    if (event.target.closest?.(".pre-whistle-controls")) return;
+    if (event.target.closest?.("button, a, input, select, textarea, [role=button], .pre-whistle-controls")) return;
     unlockAudio();
     const touchLike = event.pointerType === "touch" || event.pointerType === "pen";
     const point = eventGoalPoint(event, touchLike ? AIM_MARGIN : AIM_MARGIN);
@@ -3472,6 +3522,7 @@
       state.aimDragMoved = false;
       state.aimFromPitch = !point.inside;
       stage.classList.add("is-drag-aiming");
+      stage.classList.toggle("pointer-touch", touchLike);
       movePitchPointer(event, point.inside, touchLike);
       if (point.inside) {
         const aimPoint = aimPointForPointer(point, touchLike);
@@ -3577,7 +3628,7 @@
   let fallbackTouchStart = null;
   let fallbackTouchFromPitch = false;
   stage.addEventListener("touchstart", (event) => {
-    if (event.target.closest?.(".pre-whistle-controls")) return;
+    if (event.target.closest?.("button, a, input, select, textarea, [role=button], .pre-whistle-controls")) return;
     if (window.PointerEvent) return;
     const savingPhase = state.phase === "save";
     const earlySavingPhase = state.phase === "palace-prewhistle" || state.phase === "palace-run";
@@ -3588,6 +3639,7 @@
     if (state.phase === "albion-aim" && !point.inside && !isKickStart(touch)) return;
     fallbackTouchStart = { clientX: touch.clientX, clientY: touch.clientY, time: performance.now() };
     fallbackTouchFromPitch = state.phase === "albion-aim" && !point.inside;
+    stage.classList.toggle("pointer-touch", state.phase === "albion-aim");
     if (state.phase === "albion-aim") {
       if (point.inside) setReticle(point.x, point.y);
       else $("stageInstruction").textContent = "Drag from the ball into the goal";
@@ -3611,7 +3663,11 @@
     event.preventDefault();
     const point = eventGoalPoint(touch, AIM_MARGIN);
     if (state.phase === "albion-aim") {
-      if (point.inside) setReticle(point.x, point.y);
+      if (point.inside) setReticle(point.x, point.y, true);
+      else if (fallbackTouchFromPitch) {
+        const target = swipeShotTarget(fallbackTouchStart, touch);
+        if (target) setReticle(target.x, target.y, true);
+      }
       movePitchPointer(touch, point.inside);
     }
     else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
