@@ -61,6 +61,7 @@
   const referee = $("refereeFigure");
   const reticle = $("aimReticle");
   const pitchPointer = $("pitchPointer");
+  const lowShotControls = $("mobileLowShotControls");
   const cue = $("reactionCue");
   const decision = $("kickDecision");
   const status = $("shootoutStatus");
@@ -931,6 +932,7 @@
     referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root,.referee-head-group").forEach((part) => { part.style.transform = ""; });
     stage.classList.remove("palace-kick", "pre-whistle-save-window", "is-save-window", "is-locked", "is-waiting", "is-aiming", "is-drag-aiming", "placing-ball");
     if (preWhistleControls) preWhistleControls.hidden = true;
+    if (lowShotControls) lowShotControls.hidden = true;
     hidePitchPointer();
     goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre");
     goalMouth.style.removeProperty("--hit-x");
@@ -2648,6 +2650,7 @@
     reticle.hidden = true;
     if (!(await preKickCeremony("albion", token))) return;
     state.phase = "albion-aim";
+    if (lowShotControls) lowShotControls.hidden = !mobilePenaltyLayout();
     setReticle(0.5, 0.5);
     reticle.hidden = false;
     state.locked = false;
@@ -2724,6 +2727,7 @@
     const token = state.sequence;
     state.locked = true;
     state.phase = "albion-run";
+    if (lowShotControls) lowShotControls.hidden = true;
     stage.classList.remove("is-aiming");
     stage.classList.add("is-locked", "crowd-hush");
     panenka.disabled = true;
@@ -3797,6 +3801,24 @@
   });
 
   readyButton.addEventListener("click", () => { unlockAudio(); beginPalacePenalty(); });
+
+  // Mobile fallback for reliably picking the lowest 5% of the goal.
+  // A deliberate button press shoots at the bottom corner regardless of
+  // where Safari locates the player's finger or how it handles scrolling.
+  if (lowShotControls) lowShotControls.addEventListener("click", (event) => {
+    const button = event.target.closest?.("button[data-low-shot]");
+    if (!button || state.phase !== "albion-aim" || state.locked || state.finished || !mobilePenaltyLayout()) return;
+    event.preventDefault();
+    unlockAudio();
+    const targets = { left: .095, centre: .5, right: .905 };
+    const x = targets[button.dataset.lowShot];
+    if (!Number.isFinite(x)) return;
+    const target = { x, y: .975 };
+    setReticle(target.x, target.y);
+    state.aimGesture = { distance: 30, duration: 420, speed: .3 };
+    takeAlbionPenalty(target);
+  });
+
   $("resetShootout").addEventListener("click", resetGame);
   function revealMappedShot(target) {
     const marker = target?.closest?.("[data-shot-side][data-shot-index]");
@@ -3897,6 +3919,7 @@
           if (state.phase.includes("prep") || state.phase === "albion-aim" || state.phase === "palace-ready" || state.phase === "palace-prewhistle")
             setTakerReadyPosition();
         }
+        if (lowShotControls) lowShotControls.hidden = !(state.phase === "albion-aim" && mobilePenaltyLayout());
       })
     : null;
   resizeObserver?.observe(stage);
