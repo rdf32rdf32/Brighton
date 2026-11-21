@@ -734,9 +734,10 @@
     const preview = classifyFrame(state.aim);
     reticle.classList.toggle("aim-woodwork", preview === "woodwork");
     reticle.classList.toggle("aim-outside", preview === "miss");
+    reticle.classList.toggle("aim-low", !preview && state.aim.y >= .84);
     stage.dataset.aimRisk = preview || "inside";
     if (aimRiskLabel) {
-      const text = preview === "woodwork" ? "FRAME" : preview === "miss" ? (state.aim.y < 0 ? "OVER" : "WIDE") : "ON TARGET";
+      const text = preview === "woodwork" ? "FRAME" : preview === "miss" ? (state.aim.y < 0 ? "OVER" : "WIDE") : state.aim.y >= .84 ? "LOW SHOT" : "ON TARGET";
       aimRiskLabel.textContent = text;
       aimRiskLabel.dataset.risk = preview || "inside";
     }
@@ -2661,8 +2662,12 @@
       panenka.disabled = !showBonus;
       panenka.closest(".shot-style-controls")?.toggleAttribute("hidden", !showBonus);
     }
-    $("stageInstruction").textContent = "Drag to aim, release to shoot";
-    setStatus("Pick your spot", "Aim up to 5% beyond the posts or crossbar, but outside placement can miss.");
+    $("stageInstruction").textContent = mobilePenaltyLayout()
+      ? "Swipe to shoot · Low-corner buttons below"
+      : "Drag to aim, release to shoot";
+    setStatus("Pick your spot", mobilePenaltyLayout()
+      ? "Aim right down to the white line, or use the Low left / centre / right buttons."
+      : "Aim up to 5% beyond the posts or crossbar, but outside placement can miss.");
   }
 
   function preparePalaceKick() {
@@ -3814,6 +3819,7 @@
     const x = targets[button.dataset.lowShot];
     if (!Number.isFinite(x)) return;
     const target = { x, y: .975 };
+    setShotStyle("normal"); // A low button must never trigger an old Panenka choice.
     setReticle(target.x, target.y);
     state.aimGesture = { distance: 30, duration: 420, speed: .3 };
     takeAlbionPenalty(target);
