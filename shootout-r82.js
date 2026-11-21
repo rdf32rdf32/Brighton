@@ -60,6 +60,7 @@
   const taker = $("takerFigure");
   const referee = $("refereeFigure");
   const reticle = $("aimReticle");
+  const pitchPointer = $("pitchPointer");
   const cue = $("reactionCue");
   const decision = $("kickDecision");
   const status = $("shootoutStatus");
@@ -153,14 +154,23 @@
     }
   }
 
+  // Avoid rewriting layout-dependent CSS variables for every pointer movement.
+  // Re-evaluate when the measured goal/stage geometry actually changes.
+  let lastGoalGeometry = null;
   function syncGoalBox() {
     const stageRect = stage.getBoundingClientRect();
     const goalRect = goalMouth.getBoundingClientRect();
     if (!stageRect.width || !stageRect.height || !goalRect.width || !goalRect.height) return goalBox;
-    goalBox.left = (goalRect.left - stageRect.left) / stageRect.width;
-    goalBox.top = (goalRect.top - stageRect.top) / stageRect.height;
-    goalBox.width = goalRect.width / stageRect.width;
-    goalBox.height = goalRect.height / stageRect.height;
+    const geometry = [
+      (goalRect.left - stageRect.left) / stageRect.width,
+      (goalRect.top - stageRect.top) / stageRect.height,
+      goalRect.width / stageRect.width,
+      goalRect.height / stageRect.height
+    ];
+    if (lastGoalGeometry && geometry.every((value, index) =>
+      Math.abs(value - lastGoalGeometry[index]) < .00005)) return goalBox;
+    lastGoalGeometry = geometry;
+    [goalBox.left, goalBox.top, goalBox.width, goalBox.height] = geometry;
     stage.style.setProperty("--goal-left", `${goalBox.left * 100}%`);
     stage.style.setProperty("--goal-top", `${goalBox.top * 100}%`);
     stage.style.setProperty("--goal-width", `${goalBox.width * 100}%`);
@@ -863,6 +873,7 @@
     referee.querySelectorAll(".referee-arm,.referee-leg,.referee-root,.referee-head-group").forEach((part) => { part.style.transform = ""; });
     stage.classList.remove("palace-kick", "pre-whistle-save-window", "is-save-window", "is-locked", "is-waiting", "is-aiming", "is-drag-aiming", "placing-ball");
     if (preWhistleControls) preWhistleControls.hidden = true;
+    if (pitchPointer) pitchPointer.hidden = true;
     goalMouth.classList.remove("net-hit", "net-hit-left", "net-hit-right", "net-hit-high", "net-hit-low", "net-hit-centre");
     goalMouth.style.removeProperty("--hit-x");
     goalMouth.style.removeProperty("--hit-y");
@@ -3226,6 +3237,7 @@
     state.aimPointerActive = false;
     state.aimDragMoved = false;
     state.aimFromPitch = false;
+    if (pitchPointer) pitchPointer.hidden = true;
     stage.classList.remove("is-drag-aiming");
     hideSwipeTrail(trailDelay);
   }
@@ -3267,11 +3279,28 @@
     return touchLike ? { x: point.x, y: clamp(point.y - .075, -AIM_MARGIN, .995) } : point;
   }
 
+  // The user's physical pointer can reach every part of the grass. It is not
+  // the aiming reticle: the latter stays at the chosen point in the goal.
+  function movePitchPointer(event, overGoal = false, touchLike = false) {
+    if (!pitchPointer) return;
+    if (overGoal || (touchLike && !state.aimPointerActive)) {
+      pitchPointer.hidden = true;
+      return;
+    }
+    const rect = stage.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const px = clamp((event.clientX - rect.left) / rect.width, .015, .985);
+    const py = clamp((event.clientY - rect.top) / rect.height, .015, .985);
+    pitchPointer.style.left = `${(px * 100).toFixed(3)}%`;
+    pitchPointer.style.top = `${(py * 100).toFixed(3)}%`;
+    pitchPointer.hidden = false;
+  }
+
   // Let supporters begin a genuine kick by dragging from the ball/approach
   // area, as well as by dragging directly over the goal mouth.
   function isKickStart(event) {
     const p = eventStagePoint(event);
-    return p.sy >= .64 && p.sy <= .95 && Math.abs(p.sx - .5) <= .19;
+    return p.sy >= .60 && p.sy <= .99 && Math.abs(p.sx - .5) <= .28;
   }
 
   window.addEventListener("pagehide", () => {
@@ -3296,12 +3325,14 @@
     if (touchLike && (event.isPrimary === false || (state.activePointerId != null && state.activePointerId !== event.pointerId))) return;
     const point = eventGoalPoint(event, AIM_MARGIN);
     if (state.phase === "albion-aim") {
-      if (!point.inside && !state.aimPointerActive) return;
+      movePitchPointer(event, point.inside, touchLike);
       if (state.aimPointerActive || event.pointerType === "mouse") {
-        // While dragging up from the ball, do not snap the crosshair to an
-        // off-target position before the finger reaches the goal.
-        if (point.inside || !state.aimFromPitch)
-          setReticle(...Object.values(aimPointForPointer(point, touchLike)).slice(0,2));
+        // An unrestricted cursor follows the grass, but the shot target
+        // moves only when the pointer is in (or just over) the goal mouth.
+        if (point.inside) {
+          const target = aimPointForPointer(point, touchLike);
+          setReticle(target.x, target.y);
+        }
         if (state.pointerStart && pointerDistance(state.pointerStart, event) > 5) state.aimDragMoved = true;
         if (state.aimPointerActive) event.preventDefault();
       }
@@ -3399,6 +3430,7 @@
       state.aimDragMoved = false;
       state.aimFromPitch = !point.inside;
       stage.classList.add("is-drag-aiming");
+      movePitchPointer(event, point.inside, touchLike);
       if (point.inside) {
         const aimPoint = aimPointForPointer(point, touchLike);
         setReticle(aimPoint.x, aimPoint.y);
@@ -3516,6 +3548,12 @@
     if (state.phase === "albion-aim") {
       if (point.inside) setReticle(point.x, point.y);
       else $("stageInstruction").textContent = "Drag from the ball into the goal";
+      if (pitchPointer && !point.inside) {
+        const rect = stage.getBoundingClientRect();
+        pitchPointer.style.left = `${(clamp((touch.clientX - rect.left) / rect.width, .015, .985) * 100).toFixed(3)}%`;
+        pitchPointer.style.top = `${(clamp((touch.clientY - rect.top) / rect.height, .015, .985) * 100).toFixed(3)}%`;
+        pitchPointer.hidden = false;
+      }
     }
     else {
       const tapPoint = mobileTapGoalPoint(touch);
@@ -3535,7 +3573,13 @@
     event.preventDefault();
     const point = eventGoalPoint(touch, AIM_MARGIN);
     if (state.phase === "albion-aim") {
-      if (point.inside || !fallbackTouchFromPitch) setReticle(point.x, point.y);
+      if (point.inside) setReticle(point.x, point.y);
+      if (pitchPointer) {
+        const rect = stage.getBoundingClientRect();
+        pitchPointer.style.left = `${(clamp((touch.clientX - rect.left) / rect.width, .015, .985) * 100).toFixed(3)}%`;
+        pitchPointer.style.top = `${(clamp((touch.clientY - rect.top) / rect.height, .015, .985) * 100).toFixed(3)}%`;
+        pitchPointer.hidden = point.inside;
+      }
     }
     else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
@@ -3596,6 +3640,7 @@
     cancelCentreHold();
     fallbackTouchStart = null;
     fallbackTouchFromPitch = false;
+    if (pitchPointer) pitchPointer.hidden = true;
     hideSwipeTrail();
   }, { passive: false });
 
