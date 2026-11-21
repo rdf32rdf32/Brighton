@@ -3552,21 +3552,22 @@
 
     if (state.phase === "albion-aim" && state.aimPointerActive) {
       event.preventDefault();
-      if (state.aimFromPitch && !point.inside) {
-        clearPointerTracking();
-        $("stageInstruction").textContent = "Finish your drag inside the goal";
-        setStatus("Find your target", "Drag from the ball towards the goal, then release over your chosen corner.");
-        return;
-      }
-      const aimPoint = aimPointForPointer(point, touchLike);
-      setReticle(aimPoint.x, aimPoint.y);
+      const startedOnPitch = state.aimFromPitch;
       const minimumDrag = touchLike ? Math.max(8, stage.clientWidth * AIM_DRAG_TOUCH_RATIO) : AIM_DRAG_MOUSE_PX;
-      if (distance < minimumDrag) {
+      const target = startedOnPitch && !point.inside
+        ? swipeShotTarget(state.pointerStart, event)
+        : aimPointForPointer(point, touchLike);
+      if (distance < minimumDrag || !target) {
         clearPointerTracking();
-        $("stageInstruction").textContent = "Drag slightly, then release to shoot";
-        setStatus("Aim selected", "Make a short deliberate drag to take the penalty.");
+        $("stageInstruction").textContent = startedOnPitch
+          ? "Swipe upwards from the grass to shoot"
+          : "Drag slightly, then release to shoot";
+        setStatus("Choose your shot", startedOnPitch
+          ? "Swipe upwards from anywhere on the grass. The direction chooses the corner and height."
+          : "Make a short deliberate drag to take the penalty.");
         return;
       }
+      setReticle(target.x, target.y, true);
       const shot = { ...state.aim };
       state.aimGesture = captureAimGesture(state.pointerStart, { clientX:event.clientX, clientY:event.clientY, time:performance.now() });
       clearPointerTracking();
@@ -3693,19 +3694,17 @@
       const distance = Math.hypot(touch.clientX - fallbackTouchStart.clientX, touch.clientY - fallbackTouchStart.clientY);
       const mapped = distance > 18 ? swipeGoalPoint(fallbackTouchStart, touch, mobileTapGoalPoint(touch)) : mobileTapGoalPoint(touch);
       if (state.phase === "albion-aim") {
-        if (fallbackTouchFromPitch && !point.inside) {
-          $("stageInstruction").textContent = "Finish your drag inside the goal";
-          setStatus("Find your target", "Drag from the ball towards the goal before releasing.");
-        } else {
-        setReticle(point.x, point.y);
+        const target = fallbackTouchFromPitch && !point.inside
+          ? swipeShotTarget(fallbackTouchStart, touch)
+          : aimPointForPointer(point, true);
         const minimumDrag = Math.max(8, stage.clientWidth * AIM_DRAG_TOUCH_RATIO);
-        if (distance >= minimumDrag) {
+        if (distance >= minimumDrag && target) {
+          setReticle(target.x, target.y, true);
           state.aimGesture = captureAimGesture(fallbackTouchStart, { clientX:touch.clientX, clientY:touch.clientY, time:performance.now() });
           takeAlbionPenalty({ ...state.aim });
         } else {
-          $("stageInstruction").textContent = "Drag slightly, then release to shoot";
-          setStatus("Aim selected", "Make a short deliberate drag to take the penalty.");
-        }
+          $("stageInstruction").textContent = "Swipe upwards or drag to aim";
+          setStatus("Choose your shot", "Aim at the goal or swipe upwards from the grass.");
         }
       } else if (state.phase === "save" && state.reactionOpen && !state.userDive) {
         cancelCentreHold();
@@ -3879,7 +3878,11 @@
 
   const resizeObserver = typeof ResizeObserver === "function"
     ? new ResizeObserver(() => {
-        if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine(state.phase === "palace-prewhistle");
+        if (!state.phase.includes("run") && state.phase !== "save") {
+          positionKeeperOnLine(state.phase === "palace-prewhistle");
+          if (state.phase.includes("prep") || state.phase === "albion-aim" || state.phase === "palace-ready" || state.phase === "palace-prewhistle")
+            setTakerReadyPosition();
+        }
       })
     : null;
   resizeObserver?.observe(stage);
@@ -3889,7 +3892,11 @@
     resizeTimer = window.setTimeout(() => {
       syncGoalBox();
       setReticle(state.aim.x, state.aim.y);
-      if (!state.phase.includes("run") && state.phase !== "save") positionKeeperOnLine(state.phase === "palace-prewhistle");
+      if (!state.phase.includes("run") && state.phase !== "save") {
+        positionKeeperOnLine(state.phase === "palace-prewhistle");
+        if (state.phase.includes("prep") || state.phase === "albion-aim" || state.phase === "palace-ready" || state.phase === "palace-prewhistle")
+          setTakerReadyPosition();
+      }
     }, 90);
   };
   window.addEventListener("resize", resyncStage, { passive: true });
