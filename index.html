@@ -22,14 +22,14 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r106-20261121" name="release"/>
+<meta content="professional-r107-20261121" name="release"/>
 
 
 
 
 
 
-<link href="site-r76.css?v=20261024-stable-scroll" rel="stylesheet"/><link href="site-current.css?v=20261121-r102-mobile" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/><link href="shootout-realism.css?v=20261121-r106" rel="stylesheet"/><style id="albion-live-feed-style">
+<link href="site-r76.css?v=20261024-stable-scroll" rel="stylesheet"/><link href="site-current.css?v=20261121-r102-mobile" rel="stylesheet"/><link href="top-scorers.css?v=20261018-r96" rel="stylesheet"/><link href="shootout-realism.css?v=20261121-r107" rel="stylesheet"/><style id="albion-live-feed-style">
 .albion-live-feed{display:grid;gap:.34rem;margin:1rem 0;padding:.85rem 1rem;border:1px solid rgba(110,155,195,.42);border-radius:12px;background:rgba(110,155,195,.10);color:inherit;min-width:0}
 .albion-live-feed strong{font-size:.83rem;letter-spacing:.03em;text-transform:uppercase}
 .albion-live-feed>span{font-size:clamp(.94rem,2.1vw,1.15rem);font-weight:650;overflow-wrap:anywhere}
@@ -432,7 +432,13 @@
 <div aria-hidden="true" class="keeper-choice-marker" hidden id="keeperChoiceMarker">Stay centre</div>
 <div aria-hidden="true" class="save-zone-guide three-zone-guide"><span>Swipe left</span><span>Hold centre</span><span>Swipe right</span></div>
 </div>
-<aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Swipe upwards from the grass to shoot, even if you release below the goal. Drag within the goal to pick a precise corner. A shot beyond the frame may miss.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
+<div class="mobile-low-shot-controls" id="mobileLowShotControls" hidden role="group" aria-label="Precision low penalty shots">
+  <span class="low-shot-heading">GROUND-LEVEL SHOTS</span>
+  <button type="button" data-low-shot="left" aria-label="Shoot low into the left corner">↙ <span>Low left</span></button>
+  <button type="button" data-low-shot="centre" aria-label="Shoot low down the middle">↓ <span>Low centre</span></button>
+  <button type="button" data-low-shot="right" aria-label="Shoot low into the right corner">↘ <span>Low right</span></button>
+</div>
+<aside class="shootout-tutorial" hidden id="shootoutTutorial"><b>Your first kick</b><p>Swipe upwards from the grass or drag directly in the goal. For precise grass-skimming shots on mobile, tap Low left, Low centre or Low right below the pitch.</p><button class="ghost" id="dismissShootoutTutorial" type="button">Got it</button></aside>
 <div aria-atomic="true" aria-live="polite" class="shootout-status-v10" id="shootoutStatus">
 <b>Pick your spot</b>
 <span>Drag and release. The target can move narrowly outside the frame.</span>
@@ -446,7 +452,7 @@
 <button aria-pressed="false" class="shot-style-button panenka-button" data-shot-style="panenka" id="panenkaChoice" type="button"><span>Panenka</span><small>Special next kick</small></button>
 
 </div>
-<p class="penalty-help" id="keyboardHint">Swipe upwards from the grass to shoot, or drag inside the goal to aim. Before the whistle, shuffle along the goal line without diving; after the whistle, click or swipe to save. Keyboard: arrows to shuffle or aim, 1–9 to save.</p>
+<p class="penalty-help" id="keyboardHint">Swipe upwards from the grass, drag inside the goal, or use the Low corner buttons on mobile. Before the whistle, shuffle along the goal line without diving; after the whistle, click or swipe to save. Keyboard: arrows to shuffle or aim, 1–9 to save.</p>
 <div class="shootout-summary-v10" hidden="" id="shootoutSummary"></div>
 <div class="button-row shootout-actions-v10">
 <button class="ghost" id="resetShootout" type="button">Restart shoot-out</button>
@@ -1527,5 +1533,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20261121-r102"></script><script defer src="auto-results.js?v=20261121-synced"></script><script defer src="app-r77.js?v=20261105-r100"></script><script defer src="shootout-r82.js?v=20261121-r106"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="live-scores.js?v=20261022-r97"></script><script defer src="top-scorers.js?v=20261105-r100"></script></body>
+<script defer src="albion-data-r78.js?v=20261121-r102"></script><script defer src="auto-results.js?v=20261121-synced"></script><script defer src="app-r77.js?v=20261105-r100"></script><script defer src="shootout-r82.js?v=20261121-r107"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="live-scores.js?v=20261022-r97"></script><script defer src="top-scorers.js?v=20261105-r100"></script></body>
 </html>
