@@ -1,0 +1,119 @@
+/* Shoot-out realism pass — 21 November 2026.
+   Detail only: no stage geometry, hit boxes or JavaScript movement changed. */
+.shootout-v17 .goal-mouth {
+  filter:drop-shadow(0 6px 3px rgba(5,20,24,.24));
+}
+.shootout-v17 .goal-post,
+.shootout-v17 .goal-crossbar {
+  background:linear-gradient(90deg,#9babb4 0%,#dce5ea 14%,#fff 34%,#fff 53%,#e4eaed 73%,#9facb4 100%)!important;
+  box-shadow:2px 3px 4px rgba(11,30,37,.24),inset -1px 0 1px rgba(52,72,82,.22),inset 1px 0 1px rgba(255,255,255,.8)!important;
+}
+.shootout-v17 .goal-crossbar {
+  background:linear-gradient(180deg,#f8fbfd 0%,#fff 28%,#e4eaee 62%,#acb8c0 100%)!important;
+  box-shadow:0 4px 3px rgba(11,30,37,.28),inset 0 1px 1px #fff!important;
+}
+.shootout-v17 .goal-net-svg .goal-roof-net {opacity:.46!important}
+.shootout-v17 .goal-net-svg .goal-back-net {opacity:.56!important}
+.shootout-v17 .goal-net-svg .goal-side-net {opacity:.44!important}
+.shootout-v17 .goal-net-svg .goal-perspective-lines {opacity:.46!important;stroke-width:1.5!important}
+.shootout-v17 .goal-net-svg .rear-frame {opacity:.32!important}
+.shootout-v17 .goal-net-svg .goal-net-anchor {stroke:#e8f1f1;stroke-width:4;opacity:.72;fill:none}
+.shootout-v17 .goal-net-svg .goal-net-hem {stroke:rgba(236,245,247,.68);stroke-width:3;fill:none}
+.shootout-v17 .goal-net-svg .goal-net-support {stroke:rgba(233,241,244,.5);stroke-width:2;fill:none}
+.shootout-v17 .goal-net-svg .goal-net-ground-shadow {fill:rgba(1,24,28,.17);stroke:none}
+.shootout-v17 .goal-net-svg .goal-net-knot {fill:#fff;opacity:.8}
+.shootout-v17 .keeper-figure,
+.shootout-v17 .taker-figure {
+  overflow:visible;
+  shape-rendering:geometricPrecision;
+  filter:drop-shadow(1px 3px 2px rgba(4,19,19,.30))!important;
+}
+.shootout-v17 .keeper-figure .skin {fill:url(#keeperSkinReal)!important}
+.shootout-v17 .taker-figure .skin {fill:url(#takerSkinReal)!important}
+.shootout-v17 .keeper-figure .hair,
+.shootout-v17 .taker-figure .hair {
+  fill:#211b1a;
+  stroke:#11171a;
+  stroke-width:.75;
+  stroke-linejoin:round;
+}
+.shootout-v17 .keeper-figure .figure-shadow,
+.shootout-v17 .taker-figure .figure-shadow {
+  fill:rgba(0,25,22,.25);
+  filter:blur(2px);
+}
+.shootout-v17 .keeper-figure .face-detail,
+.shootout-v17 .taker-figure .face-detail {pointer-events:none}
+.shootout-v17 .face-detail .ear {fill:#b77a60;stroke:#92573d;stroke-width:.7}
+.shootout-v17 .face-detail .brow {stroke:#302320;stroke-width:1.65;stroke-linecap:round;fill:none}
+.shootout-v17 .face-detail .eye {fill:#22282b}
+.shootout-v17 .face-detail .nose {stroke:#a96e55;stroke-width:1.05;stroke-linecap:round;fill:none}
+.shootout-v17 .face-detail .lip {stroke:#874f41;stroke-width:1.1;stroke-linecap:round;fill:none}
+.shootout-v17 .face-detail .face-light {fill:rgba(255,255,255,.17)}
+.shootout-v17 .face-detail .face-shadow {fill:rgba(99,46,32,.17)}
+.shootout-v17 .keeper-figure .keeper-collar,
+.shootout-v17 .taker-figure .taker-collar {stroke:rgba(7,29,39,.5);stroke-width:1}
+.shootout-v17 .keeper-figure .kit-texture,
+.shootout-v17 .taker-figure .kit-texture {pointer-events:none}
+.shootout-v17 .kit-texture .fabric-highlight {fill:rgba(255,255,255,.11);stroke:none}
+.shootout-v17 .kit-texture .fabric-shadow {fill:rgba(2,18,29,.17);stroke:none}
+.shootout-v17 .kit-texture .kit-stitch {
+  fill:none;stroke:rgba(235,246,251,.54);stroke-width:1.25;stroke-linecap:round;
+  stroke-dasharray:2.2 2;
+}
+.shootout-v17 .kit-texture .kit-piping {fill:none;stroke:rgba(232,243,248,.72);stroke-width:1.5;stroke-linecap:round}
+.shootout-v17 .kit-texture .kit-badge {fill:rgba(242,250,255,.87);stroke:rgba(8,47,65,.55);stroke-width:.8}
+.shootout-v17 .kit-texture .kit-badge-mark {stroke:#086bba;stroke-width:1.2;fill:none}
+.shootout-v17 .kit-texture .shirt-number-small {
+  fill:#f7fbfb;font:700 13px system-ui,sans-serif;
+  paint-order:stroke;stroke:rgba(8,49,54,.25);stroke-width:1;
+}
+.shootout-v17 .keeper-figure .keeper-shorts,
+.shootout-v17 .taker-figure .taker-shorts {stroke:rgba(7,25,32,.35);stroke-width:1.1}
+.shootout-v17 .keeper-figure .keeper-thigh,
+.shootout-v17 .taker-figure .taker-thigh {stroke:rgba(7,27,34,.3);stroke-width:1}
+.shootout-v17 .keeper-figure .keeper-sock {fill:url(#keeperSockReal)!important}
+.shootout-v17 .taker-figure .taker-sock {fill:url(#takerSockReal)!important}
+.shootout-v17 .keeper-figure .keeper-boot {fill:url(#keeperBootReal)!important}
+.shootout-v17 .taker-figure .taker-boot {fill:url(#takerBootReal)!important}
+.shootout-v17 .boot-detail,
+.shootout-v17 .sock-detail {pointer-events:none}
+.shootout-v17 .sock-detail .sock-band {stroke:rgba(27,63,85,.38);stroke-width:2;fill:none}
+.shootout-v17 .sock-detail .sock-crease {stroke:rgba(42,64,77,.23);stroke-width:1.2;fill:none}
+.shootout-v17 .boot-detail .boot-sole {stroke:#0b1117;stroke-width:2.2;fill:none;stroke-linecap:round}
+.shootout-v17 .boot-detail .boot-laces {stroke:#dee7e8;stroke-width:1.3;fill:none;stroke-linecap:round}
+.shootout-v17 .boot-detail .boot-shine {fill:rgba(255,255,255,.29)}
+.shootout-v17 .keeper-figure .glove-pad {filter:drop-shadow(0 1px .6px rgba(0,0,0,.28))}
+.shootout-v17 .keeper-figure .glove-cuff {stroke:rgba(39,37,12,.35);stroke-width:.8}
+/* Hit reactions affect only net panels, never posts or their collision geometry. */
+.shootout-v17 .goal-mouth.net-hit .goal-net-svg .goal-back-net {
+  animation:r83-net-back .58s cubic-bezier(.2,.55,.26,1)!important;
+}
+.shootout-v17 .goal-mouth.net-hit-left .goal-net-svg .goal-side-left {
+  animation:r83-net-left .58s cubic-bezier(.2,.55,.26,1)!important;
+}
+.shootout-v17 .goal-mouth.net-hit-right .goal-net-svg .goal-side-right {
+  animation:r83-net-right .58s cubic-bezier(.2,.55,.26,1)!important;
+}
+.shootout-v17 .goal-mouth.net-hit-high .goal-net-svg .goal-roof-net {
+  animation:r83-net-roof .58s cubic-bezier(.2,.55,.26,1)!important;
+}
+@media (max-width:600px) {
+  .shootout-v17 .goal-net-svg .goal-net-anchor {stroke-width:2.5}
+  .shootout-v17 .kit-texture .kit-stitch {stroke-width:1}
+  .shootout-v17 .keeper-figure,
+  .shootout-v17 .taker-figure {filter:drop-shadow(0 2px 1px rgba(4,19,19,.25))!important}
+}
+/* Respect both app-level and OS-level reduced motion preferences. */
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit .goal-net-svg .goal-back-net,
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit-left .goal-net-svg .goal-side-left,
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit-right .goal-net-svg .goal-side-right,
+.user-reduce-motion .shootout-v17 .goal-mouth.net-hit-high .goal-net-svg .goal-roof-net {
+  animation:none!important;
+}
+@media (prefers-reduced-motion:reduce) {
+  .shootout-v17 .goal-mouth.net-hit .goal-net-svg .goal-back-net,
+  .shootout-v17 .goal-mouth.net-hit-left .goal-net-svg .goal-side-left,
+  .shootout-v17 .goal-mouth.net-hit-right .goal-net-svg .goal-side-right,
+  .shootout-v17 .goal-mouth.net-hit-high .goal-net-svg .goal-roof-net {animation:none!important}
+}
