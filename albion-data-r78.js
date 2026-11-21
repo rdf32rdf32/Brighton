@@ -923,7 +923,7 @@ window.ALBION_DATA_R66 = Object.freeze({
       "result": "2–0",
       "resultOutcome": "W",
       "note": "Diego Gómez and Pascal Groß scored in a 2–0 home win over Brentford.",
-      "sourceUrl": "https://www.brentfordfc.com/en/news/match-reports-brighton-and-hove-albion-2-brentford-0-premier-league-08-11-2026"
+      "sourceUrl": "https://www.brightonandhovealbion.com/match-centre-table?gameId=2645286"
     },
     {
       "date": "22 Nov 2026",
