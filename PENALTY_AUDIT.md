@@ -46,3 +46,32 @@ These tests are not a substitute for a live-device browser session. The publishe
 
 ## Scope
 The football simulation probabilities and win/loss scoring were not rebalanced in this patch. The work focuses on mobile pointer reliability, frame geometry, player positioning and processing of gestures. Full device-level visual/performance verification remains outstanding.
+
+
+---
+
+## r107 — Low-corner aiming repair (21 November 2026)
+
+User-reported issue: the mobile pointer still could not reliably reach the lowest portion of the goal despite the earlier r106 mobile gesture repair.
+
+### Newly confirmed source defects
+
+1. The mobile `aimPointForPointer` subtracted **0.075** from every touch Y coordinate; thus the bottom 7.5% of the goal could never be selected by direct touch.
+2. Several older mobile CSS rules set `margin:-9.5px` on the aim reticle, **as well as** `transform:translate(-50%,-50%)`. The combination painted the marker nearly 19 px above its real computed shot target.
+3. The goal-hit rectangle stopped strictly at the painted baseline, rejecting thick fingertips just below it.
+4. Upward swipe height mapping began at `y=.90` and moved higher immediately, preventing the lowest 10% from being selected by a swipe.
+5. No reliable, touch-independent mechanism existed for choosing low left/centre/right shots.
+
+### Fixes
+
+- **True low coordinates:** touch Y is no longer offset upwards; accepted touches now extend 18–28 px *below* the painted goal line and map to a final on-target height approaching `y=.995`.
+- **Reticle centred:** the mobile reticle uses `margin:0!important`, `transform:translate(-50%,-50%)`, and a matching drag-state override.
+- **Short low swipes:** a minimum valid 12–13 px upward swipe targets `y≈.97`; longer upward swipes progressively select middle and high positions.
+- **Reliable alternative:** three 48 px-tall mobile controls — Low left, Low centre, Low right — take actual ground-level shots at `y=.975`, using lateral targets `x=.095/.5/.905`. They are shown only for an active Albion penalty, reset after shooting, and cannot accidentally retain Panenka mode.
+- **Clearer guidance:** the mobile aiming label identifies LOW SHOT when the reticle enters the bottom of the goal.
+
+### Automated test checks
+
+**37 assertions passed:** JavaScript syntax; HTML/SVG and CSS structure; correct r107 asset links; reticle alignment selectors; mobile button visibility; touch Y coordinates .86/.93/.975/.995 without artificial offset; fingertip touch at and up to 20 px beneath the goal line; far-below touches rejected; continuous height mapping for 13/22/40/75/120/155 px upward swipes; left/centre/right low shots triggering; Palace-turn blocking; Panenka override; and downward/tiny gesture rejection.
+
+**Remaining limitation:** Tests exercised the actual extracted JavaScript functions with mocked DOM measurements and checked stylesheet source. They did not execute the published GitHub Pages website in mobile Safari. The public site was not accessible through the browsing tool during verification. Manual phone checks remain required, particularly immediately after GitHub Pages publishes the new commit.
