@@ -165,7 +165,7 @@
   pointer-events:none;
 }
 .shootout-v17 .taker-figure .taker-head-back .taker-hair-crown {
-  fill:url(#takerHairBack);
+  fill:#342b27;
   stroke:#1a1919;
   stroke-width:1;
 }
