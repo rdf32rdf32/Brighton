@@ -933,7 +933,16 @@ window.ALBION_DATA_R66 = Object.freeze({
       "competition": "Premier League",
       "venueName": "MKM Stadium",
       "broadcast": "Sky Sports",
-      "status": "Confirmed fixture · 14:00 UK kick-off"
+      "status": "Full-time",
+      "albionGoals": 0,
+      "opponentGoals": 2,
+      "homeScore": 2,
+      "awayScore": 0,
+      "result": "2–0",
+      "resultOutcome": "L",
+      "attendance": 24461,
+      "note": "Hull scored twice in stoppage time after Costinha was sent off late on.",
+      "sourceUrl": "https://www.brightonandhovealbion.com/media-article/mens-report-hull-albion-premierleague-november-2026"
     },
     {
       "date": "26 Nov 2026",
@@ -1281,6 +1290,6 @@ window.ALBION_DATA_R66 = Object.freeze({
     }
   },
   "squadCheckedISO": "2026-11-05",
-  "fixtureCheckedISO": "2026-11-21"
+  "fixtureCheckedISO": "2026-11-24"
 }
 );
