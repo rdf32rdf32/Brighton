@@ -5,6 +5,7 @@ on:
     - cron: "17 * * * *" # hourly; GitHub schedules may run late
 permissions:
   contents: write
+  pages: write
 concurrency:
   group: albion-automatic-results
   cancel-in-progress: false
@@ -25,6 +26,7 @@ jobs:
       - name: Run site regression checks before any publication
         run: npm test
       - name: Publish only changed, verified result records
+        id: publish
         run: |
           if git diff --quiet -- auto-results.json auto-results.js; then
             echo "No verified result updates."
@@ -35,3 +37,9 @@ jobs:
           git add auto-results.json auto-results.js
           git commit -m "Automatic Albion results: verified final scores and scorers"
           git push origin HEAD:main
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+      - name: Request GitHub Pages rebuild after automated commit
+        if: steps.publish.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${{ github.repository }}/pages/builds"
