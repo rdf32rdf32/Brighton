@@ -56,9 +56,9 @@
     if(!albion||!opponent)return null;
     const home=entries.find(e=>e.homeAway==='home');
     const away=entries.find(e=>e.homeAway==='away');
-    if(!home||!away)return null;
+    if(!home||!away || (fixture.venue && albion.homeAway!==(fixture.venue==='H'?'home':'away')))return null;
     const type=event.status?.type||{};
-    const state=type.state==='in'?'live':(type.completed===true||type.state==='post'?'final':'upcoming');
+    const state=type.state==='in'?'live':(type.completed===true&&type.state==='post'&&!/postponed|cancelled|canceled|abandoned/i.test(String(type.name||'')+' '+String(type.description||''))?'final':'upcoming');
     const homeScore=readScore(home.score),awayScore=readScore(away.score);
     if(state!=='upcoming'&&(homeScore===null||awayScore===null))return null;
     const name=e=>e===albion?'Albion':String(e.team?.shortDisplayName||e.team?.displayName||'Opponent');
@@ -75,7 +75,9 @@
       // The competition and two teams MUST match. Do not accept unrelated fixtures.
       const parsed=fromEvent(event,fixture);
       if(parsed && event.date && parseFixtureDay(date)!==null) {
-        const uk=ukDay(new Date(event.date));
+        const eventDate=new Date(event.date);
+        if(!Number.isFinite(eventDate.getTime()))continue;
+        const uk=ukDay(eventDate);
         if(uk===parseFixtureDay(date))return parsed;
       }
     }
@@ -117,6 +119,50 @@
     if(!extraNode){extraNode=document.createElement('span');extraNode.className='live-feed-extra';foot.prepend(extraNode);}
     extraNode.textContent=extra?extra+' · ':'';
   }
+  // Independent of the matchday panel: revisit unconfirmed recent fixtures,
+  // including matches more than a day old, until a verified final score arrives.
+  let checkingArchive=false;
+  async function refreshRecentResults() {
+    if(checkingArchive || stopped || document.visibilityState==='hidden')return;
+    checkingArchive=true;
+    try {
+      const today=ukDay(new Date()), DAY=86400000;
+      const pending=data.fixtures.filter(f=>{
+        const day=parseFixtureDay(f.date);
+        return day!==null && day<=today && day>=today-21*DAY && LEAGUES[f.competition] &&
+          !Number.isFinite(f.albionGoals) && !Number.isFinite(f.opponentGoals) &&
+          !/postponed|cancelled|abandoned/i.test(f.status||'');
+      });
+      let changed=false;
+      await Promise.all(pending.map(async f=>{
+        try {
+          const token=new Date(parseFixtureDay(f.date)).toISOString().slice(0,10).replace(/-/g,'');
+          const url='https://site.api.espn.com/apis/site/v2/sports/soccer/'+LEAGUES[f.competition]+'/scoreboard?dates='+token+'&limit=150';
+          const controller=new AbortController(), timer=setTimeout(()=>controller.abort(),10000);
+          let payload;
+          try {
+            const response=await fetch(url,{signal:controller.signal,cache:'no-store',credentials:'omit'});
+            if(!response.ok)return;
+            payload=await response.json();
+          } finally {clearTimeout(timer);}
+          const match=matchEvent(payload,f);
+          if(!match || match.state!=='final' || !/^\d{6,15}$/.test(match.id))return;
+          const home=Number(match.homeScore), away=Number(match.awayScore);
+          if(![home,away].every(n=>Number.isInteger(n)&&n>=0&&n<=25))return;
+          if(Number.isFinite(f.albionGoals)||Number.isFinite(f.opponentGoals))return;
+          const ag=f.venue==='H'?home:away, og=f.venue==='H'?away:home;
+          Object.assign(f,{albionGoals:ag,opponentGoals:og,homeScore:home,awayScore:away,
+            result:home+'–'+away,resultOutcome:ag>og?'W':ag<og?'L':'D',
+            status:'Full-time',automatedSource:'ESPN final-score feed',
+            note:'Final score from ESPN; official match report and scorers may follow.'});
+          changed=true;
+        } catch (_) { /* Keep the last confirmed result during provider outages. */ }
+      }));
+      if(changed)window.dispatchEvent(new Event('albion-final-score'));
+    } finally {checkingArchive=false;}
+  }
+  const archiveTimer=setInterval(refreshRecentResults,300000);
+  refreshRecentResults();
   async function poll() {
     if(stopped)return;
     if(document.visibilityState==='hidden') {timeout=setTimeout(poll,120000);return;}
@@ -157,8 +203,8 @@
     }
     timeout=setTimeout(poll,delay);
   }
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!stopped){clearTimeout(timeout);poll();}});
-  window.addEventListener('pagehide',()=>{stopped=true;clearTimeout(timeout);},{once:true});
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!stopped){clearTimeout(timeout);refreshRecentResults();poll();}});
+  window.addEventListener('pagehide',()=>{stopped=true;clearTimeout(timeout);clearInterval(archiveTimer);},{once:true});
   // Inserting a score panel above the main content changes its layout height.
   // Restore a requested deep-link target once images/scripts have completed loading.
   const initialHash=window.location.hash;
