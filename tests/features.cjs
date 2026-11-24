@@ -17,9 +17,9 @@ for(const name of ['statsCompetition','statsKpis','statsTrend','statsCompetition
 assert(html.includes('href="#stats-centre"')&&html.includes('href="#history-archive"'),'Missing navigation shortcuts');
 assert(html.includes('top-scorers.js?v=20261105-r100')&&html.includes('top-scorers.css?v=20261018-r96'),'Extension cache not refreshed');
 const dates=d.fixtures.filter(f=>Number.isFinite(f.albionGoals)&&Number.isFinite(f.opponentGoals));
-assert.equal(dates.length,17,'Completed match count');
+assert.equal(dates.length,18,'Completed match count');
 const byComp=Object.groupBy(dates,f=>f.competition);
-const expect={'Premier League':[10,26],'Carabao Cup':[2,5],'UEFA Conference League':[5,9],'FA Cup':[0,0]};
+const expect={'Premier League':[11,26],'Carabao Cup':[2,5],'UEFA Conference League':[5,9],'FA Cup':[0,0]};
 for(const [name,[count,goals]] of Object.entries(expect)){
   const games=byComp[name]||[];
   assert.equal(games.length,count,name+' match count');
