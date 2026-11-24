@@ -65,10 +65,10 @@ assert(jablonec.reportUrl.includes('brightonandhovealbion.com/'),'Missing offici
 const liverpool=fixtures.find(f=>f.date==='25 Oct 2026' && f.opponent==='Liverpool');
 assert(liverpool && liverpool.venue==='A' && liverpool.albionGoals===0 && liverpool.opponentGoals===2,'Liverpool final score missing');
 const completedNow = fixtures.filter(f=>Number.isFinite(f.albionGoals)&&Number.isFinite(f.opponentGoals));
-assert.equal(completedNow.length,17,'Expected 17 matches through Brentford');
+assert.equal(completedNow.length,18,'Expected 18 matches through Hull');
 assert.equal(completedNow.reduce((sum,f)=>sum+f.albionGoals,0),40,'All-competition goals scored');
-assert.equal(completedNow.reduce((sum,f)=>sum+f.opponentGoals,0),11,'All-competition goals conceded');
-assert(html.includes('albion-data-r78.js?v=20261121-' + context.window.ALBION_DATA_R66.version),'Result data cache not updated');
+assert.equal(completedNow.reduce((sum,f)=>sum+f.opponentGoals,0),13,'All-competition goals conceded');
+assert(html.includes('albion-data-r78.js?v=20261124-' + context.window.ALBION_DATA_R66.version),'Result data cache not updated');
 assert(html.includes('professional-' + context.window.ALBION_DATA_R66.version + '-20261121'),'Release metadata not updated');
 assert(app.includes('Number.isFinite(fixture.albionGoals) && Number.isFinite(fixture.opponentGoals)'),'Canonical scores must drive fixture cards');
 assert(fixtures.length >= 20, 'Fixture list too short');
@@ -93,6 +93,8 @@ const end = app.indexOf('/* ===== consolidated from r75-enhancements.js ===== */
 assert(begin >= 0 && end > begin, 'Result module boundaries missing');
 new Function('window','document','MutationObserver',app.slice(begin,end))(context.window, document, function() {});
 const resultHTML = get('resultsList').innerHTML;
+assert(get('heroLatestResult').innerHTML.includes('Hull City 2–0 Albion'),'Latest verified score must appear in hero');
+assert(get('matchCentreLatestResult').innerHTML.includes('Hull City 2–0 Albion'),'Latest verified score must appear in match centre');
 const monthlyGroups = (resultHTML.match(/<details class="result-month"/g) || []).length;
 const openGroups = (resultHTML.match(/<details class="result-month" open/g) || []).length;
 const cards = (resultHTML.match(/class="result-card /g) || []).length;
