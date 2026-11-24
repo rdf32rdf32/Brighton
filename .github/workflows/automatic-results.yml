@@ -23,8 +23,8 @@ jobs:
           node-version: '22'
       - name: Confirm completed matches and scorers from ESPN
         run: node scripts/automate-results.cjs
-      - name: Run site regression checks before any publication
-        run: npm test
+      - name: Validate generated results before publication
+        run: node tests/automatic-results.cjs && node tests/live-feed.cjs
       - name: Publish only changed, verified result records
         id: publish
         run: |
