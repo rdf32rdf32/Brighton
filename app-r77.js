@@ -4704,7 +4704,10 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
   const complete = (fx) => Number.isFinite(fx.albionGoals) && Number.isFinite(fx.opponentGoals);
   const outcome = (fx) => fx.albionGoals > fx.opponentGoals ? 'W' : fx.albionGoals < fx.opponentGoals ? 'L' : 'D';
   const displayScore = (fx) => fx.venue === 'H' ? `Albion ${fx.albionGoals}–${fx.opponentGoals} ${fx.opponent}` : `${fx.opponent} ${fx.opponentGoals}–${fx.albionGoals} Albion`;
-  const resultFixtures = fixtures.filter(complete).slice().reverse();
+  const resultDate = fx => Date.parse(fx.date + ' 00:00:00 GMT') || 0;
+  const sortedResults = () => fixtures.filter(complete).sort((a,b) => resultDate(b)-resultDate(a));
+  let resultFixtures = sortedResults();
+  let activeResultFilter = 'all';
 
   function stats(list) {
     return list.reduce((s, fx) => {
@@ -4778,7 +4781,8 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
     wrap.addEventListener('click', (event) => {
       const button = event.target.closest('[data-result-filter]'); if (!button) return;
       wrap.querySelectorAll('button').forEach((b) => { b.classList.toggle('active', b === button); b.setAttribute('aria-pressed', String(b === button)); });
-      renderResults(button.dataset.resultFilter);
+      activeResultFilter = button.dataset.resultFilter;
+      renderResults(activeResultFilter);
     });
   }
 
@@ -4817,6 +4821,14 @@ const st=$("mobileSearchToggle"),sp=document.querySelector(".hero-site-search");
   renderResultFilters();
   renderResults();
   updateLatestResult();
+  // A provider-confirmed final score can refresh the page before the scheduled archive deployment.
+  window.addEventListener?.('albion-final-score', () => {
+    resultFixtures = sortedResults();
+    updateLeagueStats();
+    updateResultsSummary();
+    renderResults(activeResultFilter);
+    updateLatestResult();
+  });
   reinforceNumbers();
   const squadGrid = $('playerProfileGrid');
   if (squadGrid && 'MutationObserver' in window) new MutationObserver(reinforceNumbers).observe(squadGrid, {childList:true,subtree:true});
