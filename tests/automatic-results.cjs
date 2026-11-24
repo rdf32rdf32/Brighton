@@ -9,12 +9,14 @@ const p=html.indexOf('app-r77.js?v=');
 assert(s>=0 && s<a && a<p,'Automatic results must load after the baseline and before the app');
 const ctx=vm.createContext({window:{}});
 vm.runInContext(read('albion-data-r78.js'),ctx);
+const away={date:'22 Nov 2099',opponent:'Hull City',venue:'A',competition:'Premier League'};
+const addSyntheticFixture=context=>{const d=context.window.ALBION_DATA_R66;context.window.ALBION_DATA_R66=Object.freeze({...d,fixtures:[...d.fixtures,away]});};
+addSyntheticFixture(ctx);
 const baseline=ctx.window.ALBION_DATA_R66;
 const initialCount=baseline.fixtures.filter(x=>Number.isFinite(x.albionGoals)).length;
-vm.runInContext(read('auto-results.js'),ctx);
+vm.runInContext(sync.render([]),ctx);
 assert.equal(ctx.window.ALBION_DATA_R66,baseline,'Empty overlay must leave verified records unchanged');
-const away={date:'22 Nov 2026',opponent:'Hull City',venue:'A',competition:'Premier League'};
-const event={id:'123456789',date:'2026-11-22T14:00:00Z',
+const event={id:'123456789',date:'2099-11-22T14:00:00Z',
  status:{type:{state:'post',completed:true}},competitions:[{competitors:[
   {homeAway:'away',score:'2',team:{id:'331',displayName:'Brighton & Hove Albion'}},
   {homeAway:'home',score:'1',team:{id:'337',displayName:'Hull City'}}
@@ -23,7 +25,7 @@ assert.equal(sync.validate(event,away).albionGoals,2);
 assert.equal(sync.validate(event,{...away,venue:'H'}),null,'Wrong venue must be rejected');
 assert.equal(sync.validate({...event,status:{type:{state:'in',completed:false}}},away),null,
   'Live scores must never be recorded as final');
-assert.equal(sync.validate({...event,date:'2026-11-23T14:00:00Z'},away),null,
+assert.equal(sync.validate({...event,date:'2099-11-23T14:00:00Z'},away),null,
   'Wrong-day match must never be recorded');
 const goals=sync.parseScorers([
  {scoringPlay:true,type:{text:'Goal'},team:{id:'331'},athletesInvolved:[{displayName:'Pascal Groß'}]},
@@ -32,16 +34,17 @@ const goals=sync.parseScorers([
 assert.deepEqual(goals,[{name:'Pascal Groß'},{ownGoal:true}]);
 assert.equal(sync.parseScorers([],2),null,'Incomplete scorer list cannot be published');
 const record={...away,eventId:'123456789',albionGoals:2,opponentGoals:1,
- checkedISO:'2026-11-22',scorers:goals};
+ checkedISO:'2099-11-22',scorers:goals};
 const output=sync.render([record]);
 new vm.Script(output);
 const approved=vm.createContext({window:{}});
 vm.runInContext(read('albion-data-r78.js'),approved);
+addSyntheticFixture(approved);
 vm.runInContext(output,approved);
 const next=approved.window.ALBION_DATA_R66;
 assert.notEqual(next,baseline);
 assert.equal(next.fixtures.filter(x=>Number.isFinite(x.albionGoals)).length,initialCount+1);
-const liverpool=next.fixtures.find(f=>f.opponent==='Hull City' && f.date==='22 Nov 2026');
+const liverpool=next.fixtures.find(f=>f.opponent==='Hull City' && f.date==='22 Nov 2099');
 assert.equal(liverpool.result,'1–2');
 assert.equal(liverpool.resultOutcome,'W');
 assert.equal(liverpool.albionGoals,2);
@@ -49,14 +52,22 @@ assert.equal(liverpool.opponentGoals,1);
 assert.equal(next.scoring.players.find(p=>p.name==='Pascal Groß').premierLeague,
  baseline.scoring.players.find(p=>p.name==='Pascal Groß').premierLeague+1);
 assert.equal(next.scoring.ownGoals.premierLeague,baseline.scoring.ownGoals.premierLeague+1);
-assert.equal(baseline.fixtures.find(f=>f.date==='22 Nov 2026').albionGoals,undefined,
+assert.equal(baseline.fixtures.find(f=>f.date==='22 Nov 2099').albionGoals,undefined,
  'Manual baseline cannot be mutated');
 const incompleteCode=sync.render([{...record,scorers:null}]);
 const other=vm.createContext({window:{}});
 vm.runInContext(read('albion-data-r78.js'),other);
+addSyntheticFixture(other);
 vm.runInContext(incompleteCode,other);
 assert.equal(other.window.ALBION_DATA_R66.scoring.automaticPending,true);
 assert.equal(other.window.ALBION_DATA_R66.scoring.checkedISO,baseline.scoring.checkedISO);
-assert(html.includes('auto-results.js?v=20261121-synced'),'Cache tag missing');
+const persisted=JSON.parse(read('auto-results.json'));
+assert(Array.isArray(persisted),'Persisted overlay must be an array');
+assert.equal(sync.render(persisted),read('auto-results.js'),'Persisted records and browser overlay differ');
+const published=vm.createContext({window:{}});
+vm.runInContext(read('albion-data-r78.js'),published);
+vm.runInContext(read('auto-results.js'),published);
+for(const record of persisted){const f=published.window.ALBION_DATA_R66.fixtures.find(f=>sync.key(f)===sync.key(record));if(f){assert.equal(f.albionGoals,record.albionGoals);assert.equal(f.opponentGoals,record.opponentGoals);}}
+assert(html.includes('auto-results.js?v='),'Cache tag missing');
 assert(read('.github/workflows/automatic-results.yml').includes('schedule:'));
 console.log('PASS: automated records, final-only safeguards, venue/date checks, own goals, scorer fallback and immutable archive');
