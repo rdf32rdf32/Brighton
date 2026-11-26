@@ -121,6 +121,19 @@
   }
   // Independent of the matchday panel: revisit unconfirmed recent fixtures,
   // including matches more than a day old, until a verified final score arrives.
+  // Both the fast matchday poll and the slower archive reconciliation use this guard.
+  function recordFinal(match, f) {
+    if(!match || match.state!=='final' || !/^\d{6,15}$/.test(match.id))return false;
+    const home=Number(match.homeScore), away=Number(match.awayScore);
+    if(![home,away].every(n=>Number.isInteger(n)&&n>=0&&n<=25))return false;
+    if(Number.isFinite(f.albionGoals)||Number.isFinite(f.opponentGoals))return false;
+    const ag=f.venue==='H'?home:away, og=f.venue==='H'?away:home;
+    Object.assign(f,{albionGoals:ag,opponentGoals:og,homeScore:home,awayScore:away,
+      result:home+'–'+away,resultOutcome:ag>og?'W':ag<og?'L':'D',
+      status:'Full-time',automatedSource:'ESPN final-score feed',
+      note:'Final score from ESPN; official match report and scorers may follow.'});
+    return true;
+  }
   let checkingArchive=false;
   async function refreshRecentResults() {
     if(checkingArchive || stopped || document.visibilityState==='hidden')return;
@@ -146,16 +159,7 @@
             payload=await response.json();
           } finally {clearTimeout(timer);}
           const match=matchEvent(payload,f);
-          if(!match || match.state!=='final' || !/^\d{6,15}$/.test(match.id))return;
-          const home=Number(match.homeScore), away=Number(match.awayScore);
-          if(![home,away].every(n=>Number.isInteger(n)&&n>=0&&n<=25))return;
-          if(Number.isFinite(f.albionGoals)||Number.isFinite(f.opponentGoals))return;
-          const ag=f.venue==='H'?home:away, og=f.venue==='H'?away:home;
-          Object.assign(f,{albionGoals:ag,opponentGoals:og,homeScore:home,awayScore:away,
-            result:home+'–'+away,resultOutcome:ag>og?'W':ag<og?'L':'D',
-            status:'Full-time',automatedSource:'ESPN final-score feed',
-            note:'Final score from ESPN; official match report and scorers may follow.'});
-          changed=true;
+          if(recordFinal(match,f))changed=true;
         } catch (_) { /* Keep the last confirmed result during provider outages. */ }
       }));
       if(changed)window.dispatchEvent(new Event('albion-final-score'));
@@ -192,6 +196,7 @@
         show(match.state==='live'?'● LIVE':match.state==='final'?'Final score':'Matchday updates',
           scoreText(match),'Source: ESPN · '+detail+' · Checked '+new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())+' UK',
           match.state);
+        if(recordFinal(match,fixture))window.dispatchEvent(new Event('albion-final-score'));
         if(match.state==='live')delay=45000;
         else if(match.state==='upcoming')delay=180000;
         else delay=300000;
