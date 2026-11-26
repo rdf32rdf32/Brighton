@@ -196,7 +196,8 @@
         show(match.state==='live'?'● LIVE':match.state==='final'?'Final score':'Matchday updates',
           scoreText(match),'Source: ESPN · '+detail+' · Checked '+new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date())+' UK',
           match.state);
-        if(recordFinal(match,fixture))window.dispatchEvent(new Event('albion-final-score'));
+        const archiveFixture=data.fixtures.find(f=>f.date===fixture.date&&f.competition===fixture.competition&&f.opponent===fixture.opponent&&f.venue===fixture.venue);
+        if(archiveFixture&&recordFinal(match,archiveFixture))window.dispatchEvent(new Event('albion-final-score'));
         if(match.state==='live')delay=45000;
         else if(match.state==='upcoming')delay=180000;
         else delay=300000;
