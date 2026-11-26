@@ -1,6 +1,36 @@
 /* Automatically generated match records. Updated by GitHub Actions, not by site visitors. */
 /* RESULTS_START */
-const changes = [];
+const changes = [
+  {
+    "date": "26 Nov 2026",
+    "opponent": "Universitatea Craiova",
+    "venue": "H",
+    "time": "17:45",
+    "competition": "UEFA Conference League",
+    "round": "League phase matchday 4",
+    "status": "Confirmed fixture · 17:45 UK kick-off",
+    "note": "Conference League home fixture against Universitatea Craiova.",
+    "venueName": "Amex Stadium",
+    "eventId": "401915814",
+    "albionGoals": 4,
+    "opponentGoals": 0,
+    "checkedISO": "2026-11-26",
+    "scorers": [
+      {
+        "name": "Ibrahim Osman"
+      },
+      {
+        "name": "Maxim De Cuyper"
+      },
+      {
+        "name": "Charalambos Kostoulas"
+      },
+      {
+        "name": "Ibrahim Osman"
+      }
+    ]
+  }
+];
 /* RESULTS_END */
 (function () {
   'use strict';
