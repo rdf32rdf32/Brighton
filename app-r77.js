@@ -3185,6 +3185,8 @@ ALBION_SEASONS.forEach(([season, position, points, wins, draws, goals, played]) 
 
     const sectionDefinitions = [
       ["quiz", "Albion quiz", "Game", "questions knowledge players history records"],
+      ["daily-player", "Guess the Albion player", "Game", "daily challenge career clues former players quiz"],
+      ["european-standings", "Conference League standings", "Statistics", "UEFA European table qualification knockout play-offs"],
       ["shootout", "Brighton v Palace penalty shoot-out", "Game", "penalties Verbruggen saves Seagulls Eagles"],
       ["chants", "Albion chants", "Audio", "songs terrace Seagulls Brighton Aces Great Escape"],
       ["anthem", "Sussex by the Sea", "Audio", "anthem music song"],
