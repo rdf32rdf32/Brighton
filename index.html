@@ -22,7 +22,7 @@
 <link as="image" href="albion-safe-graphic.svg" rel="preload" type="image/svg+xml"/>
 
 
-<meta content="professional-r108-20261126" name="release"/>
+<meta content="professional-r109-20261127" name="release"/>
 
 
 
@@ -39,7 +39,8 @@
 .albion-live-feed[data-feed-state="live"] strong{color:#ef7974}
 .albion-live-feed[data-feed-state="offline"],.albion-live-feed[data-feed-state="unavailable"]{border-style:dashed}
 @media(max-width:600px){.albion-live-feed{padding:.7rem .8rem;margin:.7rem 0}.albion-live-feed>span{font-size:1rem}}
-</style></head>
+</style><link rel="stylesheet" href="albion-new-features.css?v=20261127"/>
+</head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
@@ -48,7 +49,7 @@
 <button aria-label="Start a guided tour of the site" class="top-tour-button" id="startTour" type="button"><span aria-hidden="true">◆</span> Tour</button>
 <a class="brand" href="#top"><img alt="" fetchpriority="high" src="albion-safe-graphic.svg"/><span>Albion Fan Hub</span></a>
 <div class="topbar-actions"><button aria-controls="siteSearchForm" aria-expanded="false" aria-label="Open site search" class="mobile-search-toggle" id="mobileSearchToggle" type="button">⌕</button><button aria-controls="navLinks" aria-expanded="false" class="menu-toggle" id="menuToggle" type="button">Menu</button></div>
-<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#stats-centre">Stats</a><a href="#top-scorers">Scorers</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#story">Club</a><a href="#history-archive">Archive</a><a href="#travel">Visit</a><button id="headerSettingsToggle" type="button" class="header-settings-toggle" aria-controls="supporter-settings" aria-expanded="false">⚙ Settings</button></div>
+<div class="nav-links" id="navLinks"><a href="#shootout">Penalties</a><a href="#match-centre">Match</a><a href="#matches">Fixtures &amp; results</a><a href="#stats-centre">Stats</a><a href="#top-scorers">Scorers</a><a href="#players">Squad</a><a href="#quiz">Quiz</a><a href="#free-kick">Free kicks</a><a href="#european-standings">Europe</a><a href="#daily-player">Daily player</a><a href="#story">Club</a><a href="#history-archive">Archive</a><a href="#travel">Visit</a><button id="headerSettingsToggle" type="button" class="header-settings-toggle" aria-controls="supporter-settings" aria-expanded="false">⚙ Settings</button></div>
 </nav>
 
 <section aria-labelledby="globalSearchLabel" class="global-site-search hero-site-search">
@@ -73,7 +74,7 @@
 <h1>Brighton &amp; Hove Albion</h1>
 <p class="lead">A supporter-built project bringing together match information, interactive games, squad tools and Albion heritage.</p>
 
-<nav aria-label="Albion matchday highlights" class="game-tabs hero-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match centre</span><small>Next Albion fixture</small></a><a class="game-tab results-game-tab" href="#matches"><span>Fixtures &amp; results</span><small>Scores and schedule</small></a></nav><div class="hero-actions hero-secondary-action"><a href="#players">Explore the squad</a></div></section>
+<nav aria-label="Albion matchday highlights" class="game-tabs hero-game-tabs"><a class="game-tab penalties-game-tab" href="#shootout"><span>Penalty shoot-out</span><small>Albion v Palace</small></a><a class="game-tab match-game-tab" href="#match-centre"><span>Match centre</span><small>Next Albion fixture</small></a><a class="game-tab results-game-tab" href="#matches"><span>Fixtures &amp; results</span><small>Scores and schedule</small></a></nav><div class="feature-actions" aria-label="New features"><a class="button-link secondary" href="#free-kick">Free kicks</a><a class="button-link secondary" href="#european-standings">European table</a><a class="button-link secondary" href="#daily-player">Daily player</a></div><div class="hero-actions hero-secondary-action"><a href="#players">Explore the squad</a></div></section>
 <section class="match-card" id="next-match">
 <p class="eyebrow">Next competitive fixture</p>
 <h2 id="heroMatchTitle">Albion v Universitatea Craiova</h2>
@@ -462,6 +463,12 @@
 <p aria-live="polite" class="shootout-records-v10" id="shootoutRecords"></p>
 </div>
 </section>
+<section class="card albion-feature" id="free-kick" aria-labelledby="fkHeading">
+<div class="section-head"><p class="eyebrow">New · Albion arcade</p><h2 id="fkHeading">Free-kick challenge</h2><p class="feature-intro">Five attempts to beat the wall and goalkeeper. Tap or click the goal to aim, or use the sliders. Adjust power and bend before shooting.</p></div>
+<canvas class="fk-pitch" id="fkPitch" width="760" height="475" aria-label="Free-kick pitch with goal, defensive wall, goalkeeper and ball">Use the aiming controls below.</canvas>
+<div class="fk-controls"><label for="fkAim">Aim left to right <span id="fkAimValue">50</span><input id="fkAim" type="range" min="0" max="100" value="50"/></label><label for="fkHeight">Height <span id="fkHeightValue">70</span><input id="fkHeight" type="range" min="0" max="100" value="70"/></label><label for="fkPower">Power <span id="fkPowerValue">72</span><input id="fkPower" type="range" min="35" max="100" value="72"/></label><label for="fkCurl">Bend (left / right) <span id="fkCurlValue">0</span><input id="fkCurl" type="range" min="-100" max="100" value="0"/></label></div>
+<div class="fk-score"><strong>Goals / attempts: <span id="fkScore">0 / 0</span></strong></div><div class="feature-actions"><button type="button" id="fkShoot">Take free kick</button><button class="ghost" type="button" id="fkReset">Restart</button></div><p class="feature-status" role="status" id="fkStatus">Aim at the goal, choose power and curl, then shoot.</p>
+</section>
 <section aria-labelledby="prototypeTitle" class="prototype-card compact-prototype" id="prototype"><div><p class="eyebrow">Independent supporter project</p><h2 id="prototypeTitle">Albion matchday, results and supporter tools in one place</h2></div><a class="button-link secondary" href="https://www.brightonandhovealbion.com/" rel="noopener" target="_blank">Official Albion site</a></section>
 <section aria-label="Albion at a glance" class="dashboard">
 <article><span>Home</span><b>Amex Stadium</b></article>
@@ -647,6 +654,9 @@
  </div>
  <p class="stats-source-note" id="statsSourceNote">No live feed. Results and scorers require manual verification against <a href="https://www.brightonandhovealbion.com/fixtures-first-team-men" target="_blank" rel="noopener noreferrer">official Albion match reports ↗</a>. Assists, appearances and minutes are not shown because they are not currently in the site's verified data.</p>
 </section>
+<section class="card albion-feature" id="european-standings" aria-labelledby="euroHeading">
+<div class="section-head"><p class="eyebrow">2026/27 · European football</p><h2 id="euroHeading">Conference League standings</h2><p class="feature-intro">Follow Albion’s position in the 36-team league phase. The top eight qualify directly for the round of 16; places 9–24 enter the knockout play-offs.</p></div><div class="feature-actions"><button type="button" class="ghost" id="euroRefresh">Refresh standings</button><a class="button-link secondary" href="https://www.uefa.com/uefaconferenceleague/standings/" target="_blank" rel="noopener noreferrer">Official UEFA standings ↗</a></div><p id="euroStatus" class="feature-status" role="status">Standings load when you reach this section.</p><div class="feature-legend"><span style="--zone:#39a96b">1–8: round of 16</span><span style="--zone:#e1aa38">9–24: play-offs</span><span style="--zone:#8291a0">25–36: eliminated</span></div><div class="feature-table-wrap" id="euroTableWrap" hidden tabindex="0" role="region" aria-label="Conference League table"><table class="feature-table"><thead><tr><th scope="col">#</th><th scope="col">Team</th><th scope="col">P</th><th scope="col">W</th><th scope="col">D</th><th scope="col">L</th><th scope="col">GD</th><th scope="col">Pts</th></tr></thead><tbody id="euroTableBody"></tbody></table></div><p class="feature-intro">Unofficial ESPN data, refreshed every five minutes after a successful check while the page is visible. UEFA remains the authoritative source.</p>
+</section>
 <section class="card scorers-card" id="top-scorers" aria-labelledby="topScorersHeading">
   <div class="section-head scorers-heading"><div>
     <p class="eyebrow">2026/27 · First team</p>
@@ -694,7 +704,8 @@
 <button aria-label="Close player profile" class="dialog-close" id="closePlayerProfile" type="button">×</button>
 <div id="playerProfileDialogContent"></div>
 </dialog>
-</section><section class="card quiz-card" id="quiz">
+</section><section class="card albion-feature" id="daily-player" aria-labelledby="guessHeading"><div class="section-head"><p class="eyebrow">Daily challenge</p><h2 id="guessHeading">Guess the Albion player</h2><p class="feature-intro">Three clues. Four possible answers. One current or former Seagull to identify each day.</p></div><p id="guessDate"></p><ol id="guessClues" class="guess-clues"></ol><div class="guess-options" id="guessOptions" role="group" aria-label="Choose the Albion player"></div><p id="guessStatus" class="feature-status" role="status"></p><p id="guessRecord"></p><p class="feature-intro">Your answer and score are stored on this device. No account is needed.</p></section>
+<section class="card quiz-card" id="quiz">
 <div class="section-head">
 <p class="eyebrow">Albion quiz</p>
 <h2>Test your Albion knowledge</h2>
@@ -1539,5 +1550,5 @@
 
 
 
-<script defer src="albion-data-r78.js?v=20261124-r102"></script><script defer src="auto-results.js?v=20261124-synced"></script><script defer src="app-r77.js?v=20261124-results"></script><script defer src="shootout-r82.js?v=20261121-r107"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="live-scores.js?v=20261126-final"></script><script defer src="top-scorers.js?v=20261105-r100"></script><script defer src="league-milestones.js?v=20261126"></script></body>
+<script defer src="albion-data-r78.js?v=20261124-r102"></script><script defer src="auto-results.js?v=20261124-synced"></script><script defer src="app-r77.js?v=20261124-results"></script><script defer src="shootout-r82.js?v=20261121-r107"></script><script defer src="site-reliability.js?v=20261015-r92"></script><script defer src="live-scores.js?v=20261126-final"></script><script defer src="top-scorers.js?v=20261105-r100"></script><script defer src="league-milestones.js?v=20261126"></script><script defer src="albion-new-features.js?v=20261127-r109"></script></body>
 </html>
