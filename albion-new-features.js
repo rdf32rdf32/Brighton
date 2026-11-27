@@ -1,4 +1,4 @@
-/* R109 — independent supporter features; no external libraries. */
+/* R110 — independent supporter features; no external libraries. */
 (() => {
 'use strict';
 const $=id=>document.getElementById(id);
@@ -44,71 +44,12 @@ if(tableBody&&euroStatus&&euroRefresh){
       const albion=rows.find(r=>r.id==='331'||/brighton/i.test(r.name));
       lastGood=new Date();
       euroStatus.textContent='Albion: '+albion.rank+' of 36 · '+albion.points+' points · Checked '+lastGood.toLocaleString('en-GB',{timeZone:'Europe/London'})+' UK (ESPN)';
-    }catch(_){euroStatus.textContent=lastGood?'Refresh unavailable. Showing last successful check: '+lastGood.toLocaleString('en-GB',{timeZone:'Europe/London'})+' UK.':'Automatic standings unavailable. Use the official UEFA table below.';}
+    }catch(_){euroStatus.textContent=lastGood?'Refresh unavailable. Showing last successful check: '+lastGood.toLocaleString('en-GB',{timeZone:'Europe/London'})+' UK.':'Automatic standings unavailable. Use the official UEFA standings link.';}
     finally{clearTimeout(timer);busy=false;euroRefresh.disabled=false;}
   }
   euroRefresh.addEventListener('click',refresh);
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();refresh();}});observer.observe($('european-standings'));}else refresh();
   setInterval(()=>{if(!document.hidden&&euroStatus.textContent!=='Standings load when you reach this section.')refresh();},300000);
-}
-/* Free kick: independent 5-shot game, keyboard sliders and pointer aiming. */
-const canvas=$('fkPitch');
-if(canvas){
- const ctx=canvas.getContext('2d'), aim=$('fkAim'),height=$('fkHeight'),power=$('fkPower'),curl=$('fkCurl'),shoot=$('fkShoot'),reset=$('fkReset'),status=$('fkStatus');
- if(ctx&&aim&&height&&power&&curl&&shoot&&reset&&status){
- const W=760,H=475, goal={l:110,r:650,t:45,b:230},start={x:380,y:430},clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
- let attempts=0,goals=0,active=false,frame=0,keeperX=380,ball={...start},shot=null;
- function target(){return {x:goal.l+(goal.r-goal.l)*Number(aim.value)/100,y:goal.b-(goal.b-goal.t)*Number(height.value)/100+(72-Number(power.value))*2.4};}
- function path(t,s){return{x:start.x+(s.end.x-start.x)*t+Math.sin(Math.PI*t)*s.curve,y:start.y+(s.end.y-start.y)*t-24*Math.sin(Math.PI*t)};}
- function person(x,y,shirt,scale=1,keeper=false){
-  ctx.save();ctx.translate(x,y);ctx.scale(scale,scale);ctx.fillStyle='#0003';ctx.beginPath();ctx.ellipse(0,5,15,5,0,0,Math.PI*2);ctx.fill();
-  ctx.strokeStyle='#1c2736';ctx.lineWidth=6;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(-5,-18);ctx.lineTo(-9,2);ctx.moveTo(5,-18);ctx.lineTo(9,2);ctx.stroke();
-  ctx.strokeStyle=shirt;ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-8,-38);ctx.lineTo(keeper?-24:-11,keeper?-29:-21);ctx.moveTo(8,-38);ctx.lineTo(keeper?24:11,keeper?-29:-21);ctx.stroke();ctx.fillStyle=shirt;ctx.fillRect(-10,-43,20,25);
-  ctx.fillStyle='#d4a17c';ctx.beginPath();ctx.arc(0,-51,7,0,Math.PI*2);ctx.fill();ctx.restore();
- }
- function draw(){
-  ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,160);sky.addColorStop(0,'#102b46');sky.addColorStop(1,'#647b8d');ctx.fillStyle=sky;ctx.fillRect(0,0,W,160);
-  for(let i=0;i<11;i++){ctx.fillStyle=i%2?'#24663b':'#2d7543';ctx.fillRect(0,125+i*33,W,33);}
-  ctx.strokeStyle='#e5efe2';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(110,230);ctx.lineTo(650,230);ctx.moveTo(110,230);ctx.lineTo(35,365);ctx.lineTo(725,365);ctx.lineTo(650,230);ctx.stroke();
-  ctx.fillStyle='#122a3855';ctx.fillRect(goal.l,goal.t,goal.r-goal.l,goal.b-goal.t);
-  ctx.strokeStyle='#ffffff55';ctx.lineWidth=1;
-  for(let x=goal.l;x<=goal.r;x+=24){ctx.beginPath();ctx.moveTo(x,goal.t);ctx.lineTo(x,goal.b);ctx.stroke();}
-  for(let y=goal.t;y<=goal.b;y+=19){ctx.beginPath();ctx.moveTo(goal.l,y);ctx.lineTo(goal.r,y);ctx.stroke();}
-  ctx.strokeStyle='#fff';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(goal.l,goal.b);ctx.lineTo(goal.l,goal.t);ctx.lineTo(goal.r,goal.t);ctx.lineTo(goal.r,goal.b);ctx.stroke();
-  person(keeperX,goal.b-2,'#f2ba27',1.75,true);
-  for(let i=0;i<4;i++)person(315+i*28,320,'#db354c',1.25);
-  if(!active&&attempts<5){const end=target();ctx.strokeStyle='#ffeb77';ctx.lineWidth=2;ctx.beginPath();ctx.arc(end.x,end.y,10,0,Math.PI*2);ctx.moveTo(end.x-15,end.y);ctx.lineTo(end.x+15,end.y);ctx.moveTo(end.x,end.y-15);ctx.lineTo(end.x,end.y+15);ctx.stroke();}
-  ctx.fillStyle='#fff';ctx.strokeStyle='#172636';ctx.lineWidth=2;ctx.beginPath();ctx.arc(ball.x,ball.y,active?Math.max(4,11-6*(shot?.t||0)):11,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#253746';ctx.beginPath();ctx.arc(ball.x,ball.y,3,0,Math.PI*2);ctx.fill();
- }
- function refresh(){for(const input of [aim,height,power,curl]){const out=$(input.id+'Value');if(out)out.textContent=input.value;}if(!active){ball={...start};draw();}}
- function score(){ $('fkScore').textContent=goals+' / '+attempts;shoot.disabled=active||attempts>=5;for(const input of [aim,height,power,curl])input.disabled=active||attempts>=5; }
- function finish(result){active=false;attempts++;if(result==='GOAL!')goals++;score();status.textContent=result+(attempts===5?' Final score: '+goals+'/5. Play again to improve.':' · '+(5-attempts)+' kicks left.');draw();}
- function kick(){
-  if(active||attempts>=5)return;
-  active=true;score();status.textContent='Shot in progress…';
-  const end=target(),curve=Number(curl.value)*1.35;
-  shot={end,curve,t:0,keeperTarget:clamp(end.x+(Math.random()-.5)*240,135,625)};
-  keeperX=380;const started=performance.now();let prev={...start};
-  function tick(now){
-    if(!active)return;const t=clamp((now-started)/(1050-Number(power.value)*5),0,1);shot.t=t;ball=path(t,shot);
-    if(t>.56)keeperX=380+(shot.keeperTarget-380)*clamp((t-.56)/.44,0,1);
-    if(prev.y>=320&&ball.y<=320||prev.y>=255&&ball.y<=255||ball.y>=255&&ball.y<=320){
-      if(ball.x>=302&&ball.x<=412&&ball.y>=247&&ball.y<=320){finish('Blocked by the wall');return;}
-    }
-    prev=ball;draw();
-    if(t<1){frame=requestAnimationFrame(tick);return;}
-    if(end.x<=goal.l+5||end.x>=goal.r-5||end.y<=goal.t+5||end.y>=goal.b-5){finish('Off target');return;}
-    if(Math.abs(end.x-keeperX)<45&&end.y>goal.t+62){finish('Saved by the keeper');return;}
-    finish('GOAL!');
-  }
-  frame=requestAnimationFrame(tick);
- }
- function point(e){if(active||attempts>=5)return;const r=canvas.getBoundingClientRect();const x=(e.clientX-r.left)*W/r.width,y=(e.clientY-r.top)*H/r.height;aim.value=Math.round(clamp((x-goal.l)/(goal.r-goal.l)*100,0,100));height.value=Math.round(clamp((goal.b-y+(72-Number(power.value))*2.4)/(goal.b-goal.t)*100,0,100));refresh();}
- canvas.addEventListener('pointerdown',point);canvas.addEventListener('pointermove',e=>{if(e.buttons===1)point(e);});
- for(const input of [aim,height,power,curl])input.addEventListener('input',refresh);
- shoot.addEventListener('click',kick);reset.addEventListener('click',()=>{cancelAnimationFrame(frame);active=false;attempts=goals=0;keeperX=380;shot=null;status.textContent='Aim at the goal, choose power and curl, then shoot.';score();refresh();});
- score();refresh();
- }
 }
 /* Daily challenge: curated historical clues, deterministic UK date, local-only score. */
 const quiz=$('guessOptions');
