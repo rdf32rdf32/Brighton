@@ -84,7 +84,8 @@ const changes = [
       }
       for (const goal of item.scorers) {
         if (goal.ownGoal === true) { scoring.ownGoals[comp] = (scoring.ownGoals[comp] || 0) + 1; continue; }
-        const match = scoring.players.find(p => normalize(p.name) === normalize(goal.name));
+        const canonical = name => normalize(name).replace(/^charalambos kostoulas$/, 'charalampos kostoulas');
+        const match = scoring.players.find(p => canonical(p.name) === canonical(goal.name));
         if (match) match[comp] = (match[comp] || 0) + 1;
         else {
           const player = {name:goal.name,premierLeague:0,carabaoCup:0,conferenceLeague:0,faCup:0};
