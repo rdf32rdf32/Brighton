@@ -3,7 +3,7 @@
 'use strict';
 const $=id=>document.getElementById(id);
 const node=(tag,value)=>{const el=document.createElement(tag);if(value!==undefined)el.textContent=value;return el;};
-const dayKey=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const dayKey=()=>{const parts=Object.fromEntries(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/London',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(p=>[p.type,p.value]));return [parts.year,parts.month,parts.day].join('-');};
 /* Standings: never infer ranks or substitute a previous season. */
 function parseTable(payload) {
   const groups=[];
@@ -49,7 +49,7 @@ if(tableBody&&euroStatus&&euroRefresh){
   }
   euroRefresh.addEventListener('click',refresh);
   if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{if(entries.some(e=>e.isIntersecting)){observer.disconnect();refresh();}});observer.observe($('european-standings'));}else refresh();
-  setInterval(()=>{if(lastGood&&!document.hidden)refresh();},300000);
+  setInterval(()=>{if(!document.hidden&&euroStatus.textContent!=='Standings load when you reach this section.')refresh();},300000);
 }
 /* Free kick: independent 5-shot game, keyboard sliders and pointer aiming. */
 const canvas=$('fkPitch');
@@ -81,14 +81,14 @@ if(canvas){
   ctx.fillStyle='#fff';ctx.strokeStyle='#172636';ctx.lineWidth=2;ctx.beginPath();ctx.arc(ball.x,ball.y,active?Math.max(4,11-6*(shot?.t||0)):11,0,Math.PI*2);ctx.fill();ctx.stroke();ctx.fillStyle='#253746';ctx.beginPath();ctx.arc(ball.x,ball.y,3,0,Math.PI*2);ctx.fill();
  }
  function refresh(){for(const input of [aim,height,power,curl]){const out=$(input.id+'Value');if(out)out.textContent=input.value;}if(!active){ball={...start};draw();}}
- function score(){ $('fkScore').textContent=goals+' / '+attempts;shoot.disabled=active||attempts>=5; }
+ function score(){ $('fkScore').textContent=goals+' / '+attempts;shoot.disabled=active||attempts>=5;for(const input of [aim,height,power,curl])input.disabled=active||attempts>=5; }
  function finish(result){active=false;attempts++;if(result==='GOAL!')goals++;score();status.textContent=result+(attempts===5?' Final score: '+goals+'/5. Play again to improve.':' · '+(5-attempts)+' kicks left.');draw();}
  function kick(){
   if(active||attempts>=5)return;
   active=true;score();status.textContent='Shot in progress…';
   const end=target(),curve=Number(curl.value)*1.35;
   shot={end,curve,t:0,keeperTarget:clamp(end.x+(Math.random()-.5)*240,135,625)};
-  const started=performance.now();let prev={...start};
+  keeperX=380;const started=performance.now();let prev={...start};
   function tick(now){
     if(!active)return;const t=clamp((now-started)/(1050-Number(power.value)*5),0,1);shot.t=t;ball=path(t,shot);
     if(t>.56)keeperX=380+(shot.keeperTarget-380)*clamp((t-.56)/.44,0,1);
