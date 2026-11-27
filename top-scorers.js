@@ -98,7 +98,7 @@
   const root = document.getElementById('stats-centre');
   if (!d || !root) return;
   const $ = id => document.getElementById(id);
-  const fixtures = (d.fixtures || []).filter(f => Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals));
+  const getFixtures = () => (d.fixtures || []).filter(f => Number.isFinite(f.albionGoals) && Number.isFinite(f.opponentGoals));
   const competitions = ['Premier League', 'Carabao Cup', 'UEFA Conference League', 'FA Cup'];
   const scorerKeys = {'Premier League':'premierLeague', 'Carabao Cup':'carabaoCup', 'UEFA Conference League':'conferenceLeague', 'FA Cup':'faCup'};
   const named = {'all':'All competitions', ...Object.fromEntries(competitions.map(c => [c,c]))};
@@ -123,7 +123,7 @@
   const friendly = num => num > 0 ? '+' + num : String(num);
   const date = new Date(d.fixtureCheckedISO + 'T12:00:00Z');
   if(!Number.isNaN(date.valueOf())) $('statsUpdated').textContent='Fixtures checked ' + new Intl.DateTimeFormat('en-GB',{dateStyle:'long',timeZone:'UTC'}).format(date) + ' · not live';
-  const allSummary=summarize(fixtures);
+  const allSummary=summarize(getFixtures());
   const scorerTotal=(d.scoring?.players||[]).reduce((sum,p)=>sum + ['premierLeague','carabaoCup','conferenceLeague','faCup'].reduce((v,k)=>v+(p[k]||0),0),0);
   const ownGoals=Object.values(d.scoring?.ownGoals||{}).reduce((a,b)=>a+b,0);
   if(d.scoring && allSummary.gf !== scorerTotal + ownGoals) {
@@ -134,6 +134,7 @@
     return s.played+' played · '+s.w+'W '+s.d+'D '+s.l+'L · '+s.gf+'–'+s.ga+' goals';
   };
   function render(){
+    const fixtures=getFixtures();
     const comp=$('statsCompetition').value;
     const metric=$('statsTrendMetric').value;
     const filtered=comp==='all'?fixtures:fixtures.filter(f=>f.competition===comp);
@@ -210,6 +211,14 @@
   }
   $('statsCompetition').addEventListener('change',render);
   $('statsTrendMetric').addEventListener('change',render);
+  window.addEventListener('albion-final-score',()=>{
+    render();
+    $('statsUpdated').textContent='Includes provider-confirmed scores received during this visit';
+    const note=$('statsSourceNote');
+    let warning=note.querySelector('.stats-live-warning');
+    if(!warning){warning=node('strong','','stats-live-warning');note.prepend(warning);}
+    warning.textContent='New final score received; scorer details may follow. ';
+  });
   render();
 })();
 
