@@ -1,5 +1,5 @@
 
-/* R109: three independent supporter features */
+/* R110: two independent supporter features */
 .albion-feature{scroll-margin-top:5rem;min-width:0}
 .albion-feature .feature-intro{max-width:72ch}
 .feature-actions{display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;margin:.7rem 0}
@@ -15,14 +15,9 @@
 .feature-table tr.zone-out td:first-child{border-left:4px solid #8291a0}
 .feature-legend{display:flex;gap:.8rem;flex-wrap:wrap;font-size:.82rem;margin:.65rem 0}
 .feature-legend span:before{content:"";display:inline-block;width:.7rem;height:.7rem;border-radius:2px;background:var(--zone);margin-right:.25rem}
-.fk-pitch{width:100%;max-width:760px;margin:auto;display:block;aspect-ratio:16/10;border-radius:.8rem;background:#205b38;touch-action:none;cursor:crosshair}
-.fk-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.85rem;margin:1rem 0}
-.fk-controls label{display:grid;gap:.3rem;min-width:0;font-size:.87rem}
-.fk-controls input[type=range]{width:100%;accent-color:#1687d3}
-.fk-score{display:flex;gap:1rem;flex-wrap:wrap;font-variant-numeric:tabular-nums}
 .guess-clues{display:grid;gap:.4rem;padding-left:1.5rem}
 .guess-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.6rem}
 .guess-options button{white-space:normal;min-height:3rem;overflow-wrap:anywhere}
 .guess-options button[aria-pressed=true]{outline:2px solid currentColor;outline-offset:2px}
 .guess-options button:disabled{opacity:.78}
-@media(max-width:480px){.fk-controls{grid-template-columns:1fr}.guess-options{grid-template-columns:1fr}.feature-table th,.feature-table td{padding:.45rem .35rem}}
+@media(max-width:480px){.guess-options{grid-template-columns:1fr}.feature-table th,.feature-table td{padding:.45rem .35rem}}
